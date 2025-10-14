@@ -11,10 +11,21 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/generator": "^7.28.3",
+    "@babel/parser": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/runtime": "^7.28.4",
+    "@babel/template": "^7.27.2",
+    "@babel/traverse": "^7.28.4",
+    "@babel/types": "^7.28.4",
+    "@expo/metro-config": "^54.0.6",
+    "@expo/metro-runtime": "^6.1.2",
     "@expo/vector-icons": "^15.0.2",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
-    "@react-navigation/native": "^7.1.8",
+    "@react-navigation/native": "6.1.8",
+    "babel-preset-expo": "^54.0.4",
     "expo": "~54.0.13",
     "expo-constants": "~18.0.9",
     "expo-font": "~14.0.9",
@@ -27,22 +38,41 @@
     "expo-symbols": "~1.0.7",
     "expo-system-ui": "~6.0.7",
     "expo-web-browser": "~15.0.8",
+    "metro-minify-terser": "^0.83.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
-    "react-native-reanimated": "~4.1.1",
+    "react-native-reanimated": "~3.7.0",
     "react-native-safe-area-context": "~5.6.0",
-    "react-native-screens": "~4.16.0",
+    "react-native-screens": "~3.22.0",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
-    "@types/react": "~19.1.0",
-    "eslint": "^9.25.0",
+    "@types/babel__core": "^7",
+    "@types/babel__generator": "^7",
+    "@types/babel__preset-env": "^7",
+    "@types/babel__template": "^7",
+    "@types/babel__traverse": "^7",
+    "@types/react": "^19.2.2",
+    "@types/react-native": "^0.73.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint": "^9.37.0",
     "eslint-config-expo": "~10.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
     "typescript": "~5.9.2"
   },
   "private": true,
-  "packageManager": "yarn@4.10.3"
+  "packageManager": "yarn@4.10.3",
+  "dependenciesMeta": {
+    "@expo/metro-runtime@6.1.2": {
+      "unplugged": true
+    },
+    "expo-router@6.0.12": {
+      "unplugged": true
+    }
+  }
 }

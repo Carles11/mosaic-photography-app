@@ -1,13 +1,13 @@
 import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+import { ExternalLink } from '@/4-shared/components/external-link';
+import ParallaxScrollView from '@/4-shared/components/parallax-scroll-view';
+import { ThemedText } from '@/4-shared/components/themed-text';
+import { ThemedView } from '@/4-shared/components/themed-view';
+import { Collapsible } from '@/4-shared/components/ui/collapsible';
+import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
+import { Fonts } from '@/4-shared/constants/theme';
 
 export default function TabTwoScreen() {
   return (
@@ -58,7 +58,7 @@ export default function TabTwoScreen() {
           different screen densities
         </ThemedText>
         <Image
-          source={require('@/assets/images/react-logo.png')}
+          source={require('@/4-shared/assets/images//react-logo.png')}
           style={{ width: 100, height: 100, alignSelf: 'center' }}
         />
         <ExternalLink href="https://reactnative.dev/docs/images">
