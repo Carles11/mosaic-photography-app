@@ -39,7 +39,7 @@ export type GalleryImage = {
 };
 
 export type GalleryImageWithPhotographer = GalleryImage & {
-  photographers?: Photographer[];
+  photographers?: Photographer;
 };
 
 export type GalleryProps = {

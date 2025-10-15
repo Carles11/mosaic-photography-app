@@ -1,8 +1,8 @@
 import { Gallery } from '@/2-features/gallery';
-import { fetchMainGalleryImages } from '@/2-features/main-gallery';
 import { GalleryImage } from '@/4-shared/types/gallery';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+import { fetchMainGalleryImages } from '../api/fetchMainGalleryImages';
 import { styles } from './MainGallery.styles';
 
 export const MainGallery: React.FC = () => {
@@ -40,7 +40,6 @@ export const MainGallery: React.FC = () => {
       </View>
     );
   }
-    console.log("first image completed", images[30]);
 
   return (
     <View style={styles.container}>
