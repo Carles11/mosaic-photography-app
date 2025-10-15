@@ -1,9 +1,12 @@
 import { GalleryProps } from '@/4-shared/types';
-import { FlatList, Image, Text, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { styles } from './Gallery.styles';
 
-
-export const Gallery: React.FC<GalleryProps> = ({ images }) => {
+/**
+ * Gallery component renders a FlatList of images using a renderItem function.
+ * The renderItem prop allows the parent (feature) to fully control each card's layout.
+ */
+export const Gallery: React.FC<GalleryProps> = ({ images, renderItem }) => {
   return (
     <FlatList
       data={images}
@@ -12,14 +15,7 @@ export const Gallery: React.FC<GalleryProps> = ({ images }) => {
       contentContainerStyle={styles.container}
       renderItem={({ item }) => (
         <View style={styles.item}>
-          <Image
-            source={{ uri: item.url }}
-            style={styles.image}
-            resizeMode="cover"
-          />
-          <Text style={styles.title} numberOfLines={2}>
-            {item.author}, {item.year}
-          </Text>
+          {renderItem(item)}
         </View>
       )}
     />

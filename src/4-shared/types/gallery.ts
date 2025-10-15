@@ -44,6 +44,7 @@ export type GalleryImageWithPhotographer = GalleryImage & {
 
 export type GalleryProps = {
   images: GalleryImage[];
+  renderItem: (item: GalleryImage) => React.ReactNode;
 };
 
 export type MainGalleryProps = {

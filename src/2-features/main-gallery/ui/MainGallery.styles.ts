@@ -20,4 +20,15 @@ export const styles = StyleSheet.create({
     color: '#ff3333',
     fontSize: 16,
   },
+    image: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: '#333',
+  },
+  title: {
+    color: '#fff',
+    padding: 4,
+    fontSize: 14,
+    textAlign: 'center',
+  },
 });

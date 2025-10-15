@@ -13,17 +13,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#222',
     elevation: 2,
   },
-  image: {
-    width: '100%',
-    aspectRatio: 1,
-    backgroundColor: '#333',
-  },
-  title: {
-    color: '#fff',
-    padding: 4,
-    fontSize: 14,
-    textAlign: 'center',
-  },
+
 });
 
 
