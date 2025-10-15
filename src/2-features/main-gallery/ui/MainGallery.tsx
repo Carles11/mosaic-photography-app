@@ -1,12 +1,30 @@
 import { Gallery } from '@/2-features/gallery';
-import { MainGalleryProps } from '@/4-shared/types/gallery';
-import React from 'react';
+import { fetchMainGalleryImages } from '@/2-features/main-gallery';
+import { GalleryImage } from '@/4-shared/types/gallery';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { styles } from './MainGallery.styles';
 
+export const MainGallery: React.FC = () => {
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await fetchMainGalleryImages();
+        setImages(data);
+        setError(null);
+      } catch (e: any) {
+        setError(e.message || 'Error loading images');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
-export const MainGallery: React.FC<MainGalleryProps> = ({ images, loading, error }) => {
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -22,7 +40,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({ images, loading, error
       </View>
     );
   }
-
+  console.log({ images });
   return (
     <View style={styles.container}>
       <Gallery images={images} />
