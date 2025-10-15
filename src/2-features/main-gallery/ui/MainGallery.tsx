@@ -1,7 +1,7 @@
 import { Gallery } from '@/2-features/gallery';
 import { GalleryImage } from '@/4-shared/types/gallery';
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import { fetchMainGalleryImages } from '../api/fetchMainGalleryImages';
 import { styles } from './MainGallery.styles';
 
@@ -41,9 +41,23 @@ export const MainGallery: React.FC = () => {
     );
   }
 
+  // Custom card layout for MainGallery (author, year below image)
+  const renderMainGalleryItem = (item: GalleryImage) => (
+    <>
+      <Image
+        source={{ uri: item.url }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <Text style={styles.title} numberOfLines={2}>
+        {item.author}, {item.year}
+      </Text>
+    </>
+  );
+
   return (
     <View style={styles.container}>
-      <Gallery images={images} />
+      <Gallery images={images} renderItem={renderMainGalleryItem} />
     </View>
   );
 };
