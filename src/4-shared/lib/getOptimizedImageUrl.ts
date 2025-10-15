@@ -22,6 +22,10 @@ type GetOptimizedImageUrlOptions = {
 /**
  * Returns the optimal image url for any gallery/image, converting to .webp for non-originals.
  */
+function trimSlashes(str: string) {
+  return str.replace(/^\/+|\/+$/g, '');
+}
+
 export function getOptimizedImageUrl({
   photographerFolder,
   filename,
@@ -33,11 +37,13 @@ export function getOptimizedImageUrl({
   // If not "originals", convert extension to .webp
   let finalFilename = filename;
   if (sizeFolder !== 'originals') {
-    // Remove extension and append .webp
     const dotIdx = filename.lastIndexOf('.');
     finalFilename = dotIdx !== -1 ? filename.substring(0, dotIdx) + '.webp' : filename + '.webp';
   }
 
-  // Construct url: https://cdn.mosaic.photography/{basePath}/{photographerFolder}/{sizeFolder}/{finalFilename}
-  return `https://cdn.mosaic.photography/${basePath}/${photographerFolder}/${sizeFolder}/${finalFilename}`;
+  // Sanitize all segments
+  const sanitizedBasePath = trimSlashes(basePath);
+  const sanitizedPhotographerFolder = trimSlashes(photographerFolder);
+
+  return `https://cdn.mosaic.photography/${sanitizedBasePath}/${sanitizedPhotographerFolder}/${sizeFolder}/${finalFilename}`;
 }

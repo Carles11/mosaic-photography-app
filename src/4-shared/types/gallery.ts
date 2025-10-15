@@ -34,6 +34,7 @@ export type GalleryImage = {
   nudity?: string;
   year?: number;
   url: string;
+
   mosaicType?: 'normal' | 'large' | 'wide' | 'tall';
 };
 

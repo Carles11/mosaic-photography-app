@@ -40,7 +40,8 @@ export const MainGallery: React.FC = () => {
       </View>
     );
   }
-  console.log({ images });
+    console.log("first image completed", images[30]);
+
   return (
     <View style={styles.container}>
       <Gallery images={images} />

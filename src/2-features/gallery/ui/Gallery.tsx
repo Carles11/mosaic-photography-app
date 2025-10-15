@@ -8,7 +8,7 @@ export const Gallery: React.FC<GalleryProps> = ({ images }) => {
     <FlatList
       data={images}
       keyExtractor={(item) => item.id}
-      numColumns={2}
+      numColumns={1}
       contentContainerStyle={styles.container}
       renderItem={({ item }) => (
         <View style={styles.item}>
@@ -17,8 +17,8 @@ export const Gallery: React.FC<GalleryProps> = ({ images }) => {
             style={styles.image}
             resizeMode="cover"
           />
-          <Text style={styles.title} numberOfLines={1}>
-            {item.title}
+          <Text style={styles.title} numberOfLines={2}>
+            {item.author}, {item.year}
           </Text>
         </View>
       )}

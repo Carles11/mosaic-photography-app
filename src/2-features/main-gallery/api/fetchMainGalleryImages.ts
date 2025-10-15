@@ -27,16 +27,17 @@ export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
     `)
     .eq('nudity', 'not-nude');
 
+
   if (error || !images) {
+    console.log('Error fetching images:', error);
     return [];
   }
 
   // Use shared type and safe mapping for slug
   return (images as GalleryImageWithPhotographer[]).map(img => ({
     ...img,
-    photographerSlug: img.photographers?.[0]?.slug || '',
     url: getOptimizedImageUrl({
-      photographerFolder: img.photographers?.[0]?.slug || '',
+  photographerFolder: img.photographers?.slug || '',
       filename: img.filename,
     }),
   }));
