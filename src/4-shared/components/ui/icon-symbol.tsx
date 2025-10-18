@@ -32,9 +32,7 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
 
   let iconElement = null;
 
-  console.log('resolvedType', resolvedType);
  if (resolvedType === 'svg' && SvgAsset) {
-  console.log('Rendering SVG via IconSymbol', SvgAsset, size);
   iconElement = (
     <SvgAsset width={size} height={size} />
   );

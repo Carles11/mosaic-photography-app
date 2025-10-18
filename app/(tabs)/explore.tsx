@@ -7,7 +7,6 @@ import { ThemedText } from '@/4-shared/components/themed-text';
 import { ThemedView } from '@/4-shared/components/themed-view';
 import { Collapsible } from '@/4-shared/components/ui/collapsible';
 import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
-import { Fonts } from '@/4-shared/constants/theme';
 
 export default function TabTwoScreen() {
   return (
@@ -24,11 +23,7 @@ export default function TabTwoScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
+        <ThemedText type="title">
           Explore
         </ThemedText>
       </ThemedView>

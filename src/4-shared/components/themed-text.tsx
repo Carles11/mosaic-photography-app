@@ -1,6 +1,6 @@
-import { StyleSheet, Text, type TextProps } from 'react-native';
-
 import { useThemeColor } from '@/4-shared/hooks/use-theme-color';
+import { useTheme } from '@/4-shared/theme/ThemeProvider';
+import { StyleSheet, Text, type TextProps } from 'react-native';
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
@@ -16,16 +16,33 @@ export function ThemedText({
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const { theme } = useTheme();
+
+  // Font family mapping for each type
+  const fontFamily =
+    type === 'title' || type === 'subtitle' || type === 'defaultSemiBold'
+      ? theme.fontFamilyBold
+      : theme.fontFamily;
+
+  // Style mapping for each type
+  const textStyle =
+    type === 'default'
+      ? styles.default
+      : type === 'title'
+      ? styles.title
+      : type === 'defaultSemiBold'
+      ? styles.defaultSemiBold
+      : type === 'subtitle'
+      ? styles.subtitle
+      : type === 'link'
+      ? styles.link
+      : undefined;
 
   return (
     <Text
       style={[
-        { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        { color, fontFamily },
+        textStyle,
         style,
       ]}
       {...rest}
@@ -41,20 +58,21 @@ const styles = StyleSheet.create({
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
+    // fontWeight removed, handled by fontFamily
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
     lineHeight: 32,
+    // fontWeight removed, handled by fontFamily
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    // fontWeight removed, handled by fontFamily
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
     color: '#0a7ea4',
+    // fontWeight removed, handled by fontFamily
   },
 });

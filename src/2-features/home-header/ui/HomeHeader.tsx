@@ -1,31 +1,26 @@
-import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
-import { useColorScheme } from '@/4-shared/hooks/use-color-scheme';
-import { globalTheme } from '@/4-shared/theme/globalTheme';
-import React from 'react';
-import { View } from 'react-native';
-import { styles } from './HomeHeader.styles';
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
+import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
+import { globalTheme } from "@/4-shared/theme/globalTheme";
+import React from "react";
+import { styles } from "./HomeHeader.styles";
 
 // Import SVG Mosaic themed logos for light and dark modes
-import MosaicLogoLight from '@/4-shared/assets/logos/mosaic-high-resolution-logo-light-transparent.svg';
-import MosaicLogoDark from '@/4-shared/assets/logos/test.svg';
+import MosaicLogoLight from "@/4-shared/assets/logos/mosaic-high-resolution-logo-light-transparent.svg";
+import MosaicLogoDark from "@/4-shared/assets/logos/test.svg";
 
 export const HomeHeader: React.FC = () => {
   const colorScheme = useColorScheme();
   const theme = globalTheme[colorScheme];
 
   // Pick logo version based on current theme
-  const Logo = colorScheme === 'dark' ? MosaicLogoLight : MosaicLogoDark;
+  const Logo = colorScheme === "dark" ? MosaicLogoLight : MosaicLogoDark;
 
   return (
-    <View style={[styles.header, { backgroundColor: theme.background }]}>
+    <ThemedView style={[styles.header, { backgroundColor: theme.background }]}>
+      <IconSymbol type="svg" svgAsset={MosaicLogoDark} size={100} />
 
-  <IconSymbol
-  type="svg"
-  svgAsset={MosaicLogoDark}
-  size={100}
-/>
-
-      <View style={styles.iconsRow}>
+      <ThemedView style={styles.iconsRow}>
         <IconSymbol
           type="material"
           name="favorite-border"
@@ -48,7 +43,7 @@ export const HomeHeader: React.FC = () => {
             // handle messages action
           }}
         />
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 };

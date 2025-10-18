@@ -1,9 +1,10 @@
-import { Gallery } from '@/2-features/gallery';
-import { GalleryImage } from '@/4-shared/types/gallery';
-import React, { useEffect, useState } from 'react';
-import { Image, Text, View } from 'react-native';
-import { fetchMainGalleryImages } from '../api/fetchMainGalleryImages';
-import { styles } from './MainGallery.styles';
+import { Gallery } from "@/2-features/gallery";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { GalleryImage } from "@/4-shared/types/gallery";
+import React, { useEffect, useState } from "react";
+import { Image, View } from "react-native";
+import { fetchMainGalleryImages } from "../api/fetchMainGalleryImages";
+import { styles } from "./MainGallery.styles";
 
 export const MainGallery: React.FC = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -18,7 +19,7 @@ export const MainGallery: React.FC = () => {
         setImages(data);
         setError(null);
       } catch (e: any) {
-        setError(e.message || 'Error loading images');
+        setError(e.message || "Error loading images");
       } finally {
         setLoading(false);
       }
@@ -28,7 +29,7 @@ export const MainGallery: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.loading}>Loading gallery...</Text>
+        <ThemedText style={styles.loading}>Loading gallery...</ThemedText>
       </View>
     );
   }
@@ -36,7 +37,7 @@ export const MainGallery: React.FC = () => {
   if (error) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Error: {error}</Text>
+        <ThemedText style={styles.error}>Error: {error}</ThemedText>
       </View>
     );
   }
@@ -49,9 +50,9 @@ export const MainGallery: React.FC = () => {
         style={styles.image}
         resizeMode="cover"
       />
-      <Text style={styles.title} numberOfLines={2}>
+      <ThemedText style={styles.title} numberOfLines={2}>
         {item.author}, {item.year}
-      </Text>
+      </ThemedText>
     </>
   );
 

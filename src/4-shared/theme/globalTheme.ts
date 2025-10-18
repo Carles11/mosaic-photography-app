@@ -1,3 +1,6 @@
+import { fonts } from "./globalFonts";
+
+
 export const lightTheme = {
   background: "#fff",
   text: "#1d1d1d",
@@ -9,6 +12,8 @@ export const lightTheme = {
   error: "#d10101ff",
   icon: "#687076", // add icon color if not present
   favoriteIcon: "#ff4081",
+   fontFamily: fonts.regular,
+  fontFamilyBold: fonts.bold,
 };
 
 export const darkTheme = {
@@ -22,6 +27,8 @@ export const darkTheme = {
   error: "#d10101ff",
   icon: "#9BA1A6", // add icon color if not present
   favoriteIcon: "#ff4081",
+   fontFamily: fonts.regular,
+  fontFamilyBold: fonts.bold,
 };
 
 export const theme = darkTheme;
