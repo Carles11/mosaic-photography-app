@@ -1,6 +1,5 @@
 import { fonts } from "./globalFonts";
 
-
 export const lightTheme = {
   background: "#fff",
   text: "#1d1d1d",
@@ -12,7 +11,16 @@ export const lightTheme = {
   error: "#d10101ff",
   icon: "#687076", // add icon color if not present
   favoriteIcon: "#ff4081",
-   fontFamily: fonts.regular,
+
+  // Buttons
+  buttonBorderColor: "#687076",
+  buttonBackgroundColor: "transparent",
+  buttonTextColor: "#1d1d1d",
+  buttonBorderWidth: 1,
+  buttonBorderRadius: 4,
+  buttonFontSize: 14,
+  // Typography
+  fontFamily: fonts.regular,
   fontFamilyBold: fonts.bold,
 };
 
@@ -27,7 +35,17 @@ export const darkTheme = {
   error: "#d10101ff",
   icon: "#9BA1A6", // add icon color if not present
   favoriteIcon: "#ff4081",
-   fontFamily: fonts.regular,
+
+  // Buttons
+  buttonBorderColor: "#687076",
+  buttonBackgroundColor: "transparent",
+  buttonTextColor: "#fff",
+  buttonBorderWidth: 1,
+  buttonFontSize: 14,
+  buttonBorderRadius: 4,
+
+  // Typography
+  fontFamily: fonts.regular,
   fontFamilyBold: fonts.bold,
 };
 

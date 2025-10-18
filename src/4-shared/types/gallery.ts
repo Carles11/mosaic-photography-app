@@ -1,4 +1,3 @@
- 
 export type Photographer = {
   id: string | number;
   name: string;
@@ -35,7 +34,7 @@ export type GalleryImage = {
   year?: number;
   url: string;
 
-  mosaicType?: 'normal' | 'large' | 'wide' | 'tall';
+  mosaicType?: "normal" | "large" | "wide" | "tall";
 };
 
 export type GalleryImageWithPhotographer = GalleryImage & {
