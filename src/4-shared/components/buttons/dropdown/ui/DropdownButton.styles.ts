@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   button: {
-    borderRadius: 11,
+    cursor: "pointer",
   },
   buttonText: {
     letterSpacing: 0.5,
@@ -13,9 +13,10 @@ export const styles = StyleSheet.create({
   dropdownContainer: {
     position: "absolute",
     top: 50,
-    right: 0,
+    left: 11,
     backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 11,
+    borderColor: "#ccc",
 
     minWidth: 140,
     zIndex: 99,

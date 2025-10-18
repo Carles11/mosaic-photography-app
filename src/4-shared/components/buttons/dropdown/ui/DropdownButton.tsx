@@ -1,4 +1,3 @@
-import { Modal } from "@/4-shared/components/modals";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { DropdownButtonProps } from "@/4-shared/types/menu";
 import React, { useState } from "react";
@@ -17,7 +16,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
   return (
     <>
       <TouchableOpacity
-        onPress={() => setVisible(true)}
+        onPress={() => setVisible(!visible)}
         style={[styles.button, style]}
         accessibilityLabel="Customize Dropdown"
         activeOpacity={0.7}
@@ -39,7 +38,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
           {children ? children : "Customize"}
         </Text>
       </TouchableOpacity>
-      <Modal visible={visible} onClose={() => setVisible(false)}>
+      {visible && (
         <View style={styles.dropdownContainer}>
           {menuItems.map((item, idx) =>
             item.component ? (
@@ -65,7 +64,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
             )
           )}
         </View>
-      </Modal>
+      )}
     </>
   );
 };
