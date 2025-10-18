@@ -21,7 +21,6 @@ export const styles = StyleSheet.create({
   image: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: "#333",
   },
   title: {
     padding: 4,
