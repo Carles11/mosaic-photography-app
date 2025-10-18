@@ -1,24 +1,49 @@
+import { DropdownButton, SwitchButton } from "@/4-shared/components/buttons";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
-import React from "react";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { DropdownMenuItem } from "@/4-shared/types/menu";
+import React, { useState } from "react";
 import { styles } from "./HomeHeader.styles";
-
-// Import SVG Mosaic themed logos for light and dark modes
-import MosaicLogoLight from "@/4-shared/assets/logos/mosaic-high-resolution-logo-light-transparent.svg";
-import MosaicLogoDark from "@/4-shared/assets/logos/test.svg";
 
 export const HomeHeader: React.FC = () => {
   const colorScheme = useColorScheme();
+  const { mode } = useTheme();
+
   const theme = globalTheme[colorScheme];
+  const [themeIsDark, setThemeIsDark] = useState(mode === "dark");
 
   // Pick logo version based on current theme
-  const Logo = colorScheme === "dark" ? MosaicLogoLight : MosaicLogoDark;
-
+  const menuItems: DropdownMenuItem[] = [
+    {
+      label: "Filters",
+      icon: <IconSymbol name="filter" size={20} color="#222" />,
+      action: () => {
+        // open filter modal or trigger filter logic
+      },
+    },
+    {
+      label: "Toggle Theme",
+      component: (
+        <ThemedView style={{ flexDirection: "row", alignItems: "center" }}>
+          <IconSymbol name="brightness-4" size={20} color="#222" />
+          <SwitchButton
+            value={themeIsDark}
+            onValueChange={(value) => {
+              setThemeIsDark(value);
+              // Add your theme toggle logic here, e.g. update context/provider
+            }}
+          />
+        </ThemedView>
+      ),
+    },
+    // Add more items if needed
+  ];
   return (
     <ThemedView style={[styles.header, { backgroundColor: theme.background }]}>
-      <IconSymbol type="svg" svgAsset={MosaicLogoDark} size={100} />
+      <DropdownButton menuItems={menuItems}>Customize</DropdownButton>
 
       <ThemedView style={styles.iconsRow}>
         <IconSymbol
