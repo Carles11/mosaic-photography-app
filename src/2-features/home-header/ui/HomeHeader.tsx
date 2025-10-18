@@ -1,23 +1,54 @@
+import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
+import { useColorScheme } from '@/4-shared/hooks/use-color-scheme';
+import { globalTheme } from '@/4-shared/theme/globalTheme';
 import React from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { styles } from './HomeHeader.styles';
 
-// Replace with your actual logo asset path in 4-shared/assets
-const logoSrc = require('@/4-shared/assets/images/icon.png');
-// Replace with your actual icon asset paths
-const heartIcon = require('@/4-shared/assets/images/icon.png');
-const messagesIcon = require('@/4-shared/assets/images/icon.png');
+// Import SVG Mosaic themed logos for light and dark modes
+import MosaicLogoLight from '@/4-shared/assets/logos/mosaic-high-resolution-logo-light-transparent.svg';
+import MosaicLogoDark from '@/4-shared/assets/logos/test.svg';
 
-export const HomeHeader: React.FC = () => (
-  <View style={styles.header}>
-    <Image source={logoSrc} style={styles.logo} />
-    <View style={styles.iconsRow}>
-      <TouchableOpacity>
-        <Image source={heartIcon} style={styles.icon} />
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Image source={messagesIcon} style={styles.icon} />
-      </TouchableOpacity>
+export const HomeHeader: React.FC = () => {
+  const colorScheme = useColorScheme();
+  const theme = globalTheme[colorScheme];
+
+  // Pick logo version based on current theme
+  const Logo = colorScheme === 'dark' ? MosaicLogoLight : MosaicLogoDark;
+
+  return (
+    <View style={[styles.header, { backgroundColor: theme.background }]}>
+
+  <IconSymbol
+  type="svg"
+  svgAsset={MosaicLogoDark}
+  size={100}
+/>
+
+      <View style={styles.iconsRow}>
+        <IconSymbol
+          type="material"
+          name="favorite-border"
+          size={28}
+          color={theme.favoriteIcon}
+          style={styles.icon}
+          accessibilityLabel="Favorites"
+          onPress={() => {
+            // handle favorite action
+          }}
+        />
+        <IconSymbol
+          type="material"
+          name="chat-bubble-outline"
+          size={28}
+          color={theme.icon ?? theme.text}
+          style={styles.icon}
+          accessibilityLabel="Messages"
+          onPress={() => {
+            // handle messages action
+          }}
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
