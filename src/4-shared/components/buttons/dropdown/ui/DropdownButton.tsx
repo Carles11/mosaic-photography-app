@@ -39,7 +39,12 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
         </Text>
       </TouchableOpacity>
       {visible && (
-        <View style={styles.dropdownContainer}>
+        <View
+          style={[
+            styles.dropdownContainer,
+            { backgroundColor: theme.background },
+          ]}
+        >
           {menuItems.map((item, idx) =>
             item.component ? (
               <View key={idx} style={styles.menuItem}>
@@ -59,7 +64,9 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
                 disabled={item.disabled}
               >
                 {item.icon && <View style={styles.menuIcon}>{item.icon}</View>}
-                <Text style={styles.menuItemText}>{item.label}</Text>
+                <Text style={[styles.menuItemText, { color: theme.text }]}>
+                  {item.label}
+                </Text>
               </TouchableOpacity>
             )
           )}
