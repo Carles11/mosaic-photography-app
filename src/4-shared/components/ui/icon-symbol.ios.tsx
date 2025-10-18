@@ -1,32 +1,49 @@
-import { SymbolView, SymbolViewProps, SymbolWeight } from 'expo-symbols';
-import { StyleProp, ViewStyle } from 'react-native';
+import { SymbolView, SymbolViewProps } from 'expo-symbols';
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
 
-export function IconSymbol({
+import { IconSymbolProps } from '@/4-shared/types/icons';
+
+
+export const IconSymbol: React.FC<IconSymbolProps> = ({
   name,
+  type = 'sf',
   size = 24,
-  color,
+  color = '#000',
   style,
+  onPress,
+  accessibilityLabel,
+  svgAsset: SvgAsset,
   weight = 'regular',
-}: {
-  name: SymbolViewProps['name'];
-  size?: number;
-  color: string;
-  style?: StyleProp<ViewStyle>;
-  weight?: SymbolWeight;
-}) {
-  return (
-    <SymbolView
-      weight={weight}
-      tintColor={color}
-      resizeMode="scaleAspectFit"
-      name={name}
-      style={[
-        {
-          width: size,
-          height: size,
-        },
-        style,
-      ]}
-    />
-  );
-}
+}) => {
+  let iconElement = null;
+
+  if (type === 'sf') {
+    iconElement = (
+      <SymbolView
+        name={name as SymbolViewProps['name']}
+        weight={weight}
+        tintColor={color}
+        resizeMode="scaleAspectFit"
+        style={[{ width: size, height: size }, style]}
+        accessibilityLabel={accessibilityLabel}
+      />
+    );
+  } else if (type === 'svg' && SvgAsset) {
+    iconElement = <SvgAsset width={size} height={size} fill={color} style={style} accessibilityLabel={accessibilityLabel} />;
+  } else {
+    // fallback: use MaterialIcons or other packs, defer to default export
+    // This fallback will be handled by icon-symbol.tsx
+    iconElement = null;
+  }
+
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} accessibilityLabel={accessibilityLabel}>
+        {iconElement}
+      </TouchableOpacity>
+    );
+  }
+
+  return iconElement;
+};
