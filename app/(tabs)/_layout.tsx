@@ -3,15 +3,15 @@ import { Tabs } from 'expo-router';
 import { HapticTab } from '@/4-shared/components/haptic-tab';
 import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
 import { Colors } from '@/4-shared/constants/theme';
-import { useColorScheme } from '@/4-shared/hooks/use-color-scheme';
+import { useTheme } from '@/4-shared/theme/ThemeProvider';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { mode } = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[mode ?? 'light'].tint,
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
