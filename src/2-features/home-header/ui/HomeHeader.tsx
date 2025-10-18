@@ -5,21 +5,20 @@ import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { DropdownMenuItem } from "@/4-shared/types/menu";
-import React, { useState } from "react";
+import React from "react";
 import { styles } from "./HomeHeader.styles";
 
 export const HomeHeader: React.FC = () => {
   const colorScheme = useColorScheme();
-  const { mode } = useTheme();
+  const { mode, setMode } = useTheme();
 
   const theme = globalTheme[colorScheme];
-  const [themeIsDark, setThemeIsDark] = useState(mode === "dark");
 
   // Pick logo version based on current theme
   const menuItems: DropdownMenuItem[] = [
     {
       label: "Filters",
-      icon: <IconSymbol name="filter" size={20} color="#222" />,
+      icon: <IconSymbol name="filter" size={20} color={theme.text} />,
       action: () => {
         // open filter modal or trigger filter logic
       },
@@ -28,13 +27,10 @@ export const HomeHeader: React.FC = () => {
       label: "Toggle Theme",
       component: (
         <ThemedView style={{ flexDirection: "row", alignItems: "center" }}>
-          <IconSymbol name="brightness-4" size={20} color="#222" />
+          <IconSymbol name="brightness-4" size={20} color={theme.text} />
           <SwitchButton
-            value={themeIsDark}
-            onValueChange={(value) => {
-              setThemeIsDark(value);
-              // Add your theme toggle logic here, e.g. update context/provider
-            }}
+            value={mode === "dark"}
+            onValueChange={(value) => setMode(value ? "dark" : "light")}
           />
         </ThemedView>
       ),
