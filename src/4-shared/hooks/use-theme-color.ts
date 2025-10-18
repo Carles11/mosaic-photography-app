@@ -1,17 +1,20 @@
-import { Colors } from '@/4-shared/constants/theme';
 import { useTheme } from '@/4-shared/theme/ThemeProvider';
 
+/**
+ * Returns the correct color from the current theme, or an override if provided.
+ * @param props - Optional overrides for light/dark color.
+ * @param colorName - The key of the color in your theme object.
+ */
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+  colorName: keyof ReturnType<typeof useTheme>['theme']
 ) {
-  const { mode } = useTheme();
-  const theme = mode ?? 'light';
-  const colorFromProps = props[theme];
+  const { theme, mode } = useTheme();
+  const colorFromProps = props[mode];
 
   if (colorFromProps) {
     return colorFromProps;
   } else {
-    return Colors[theme][colorName];
+    return theme[colorName];
   }
 }

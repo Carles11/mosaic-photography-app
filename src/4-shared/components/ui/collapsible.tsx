@@ -4,24 +4,24 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/4-shared/components/themed-text';
 import { ThemedView } from '@/4-shared/components/themed-view';
 import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
-import { Colors } from '@/4-shared/constants/theme';
-import { useColorScheme } from '@/4-shared/hooks/use-color-scheme';
+import { useTheme } from '@/4-shared/theme/ThemeProvider';
 
 export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = useState(false);
-  const theme = useColorScheme() ?? 'light';
+  const { theme } = useTheme();
 
   return (
     <ThemedView>
       <TouchableOpacity
         style={styles.heading}
         onPress={() => setIsOpen((value) => !value)}
-        activeOpacity={0.8}>
+        activeOpacity={0.8}
+      >
         <IconSymbol
           type="sf"
           name="chevron.right"
           size={18}
-          color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
+          color={theme.icon}
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
           accessibilityLabel={isOpen ? "Collapse section" : "Expand section"}
         />

@@ -1,5 +1,4 @@
-import { StyleSheet } from 'react-native';
-
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,11 +8,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     margin: 8,
     borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: '#222',
+    overflow: "hidden",
     elevation: 2,
   },
-
 });
-
-

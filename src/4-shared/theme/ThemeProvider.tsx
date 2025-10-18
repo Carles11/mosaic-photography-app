@@ -26,12 +26,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Update on system preference change
   useEffect(() => {
     const listener = Appearance.addChangeListener(({ colorScheme }) => {
-      setMode(colorScheme === 'light' ? 'light' : 'dark');
+      if (colorScheme === 'light' || colorScheme === 'dark') {
+        setMode(colorScheme);
+      }
     });
     return () => {
       // @ts-ignore
       if (listener?.remove) listener.remove();
-      // For RN >= 0.65: Appearance.removeChangeListener(listener);
     };
   }, []);
 

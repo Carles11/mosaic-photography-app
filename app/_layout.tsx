@@ -1,19 +1,21 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import "react-native-reanimated";
 
-import { ThemeProvider, useTheme } from '@/4-shared/theme/ThemeProvider';
+import FontLoader from "@/4-shared/components/FontLoader";
+import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: "(tabs)",
 };
 
 export default function RootLayout() {
-  // We use our custom ThemeProvider below, so no need for useTheme here
   return (
-    <ThemeProvider>
-      <InnerLayout />
-    </ThemeProvider>
+    <FontLoader>
+      <ThemeProvider>
+        <InnerLayout />
+      </ThemeProvider>
+    </FontLoader>
   );
 }
 
@@ -29,9 +31,12 @@ function InnerLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        <Stack.Screen
+          name="modal"
+          options={{ presentation: "modal", title: "Modal" }}
+        />
       </Stack>
-      <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style={mode === "light" ? "light" : "dark"} />
     </>
   );
 }
