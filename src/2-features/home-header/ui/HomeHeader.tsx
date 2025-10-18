@@ -6,6 +6,7 @@ import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { DropdownMenuItem } from "@/4-shared/types/menu";
 import React from "react";
+
 import { styles } from "./HomeHeader.styles";
 
 export const HomeHeader: React.FC = () => {
@@ -30,7 +31,9 @@ export const HomeHeader: React.FC = () => {
           <IconSymbol name="brightness-4" size={20} color={theme.text} />
           <SwitchButton
             value={mode === "dark"}
-            onValueChange={(value) => setMode(value ? "dark" : "light")}
+            onValueChange={(value) => {
+              setMode(value ? "dark" : "light");
+            }}
           />
         </ThemedView>
       ),
