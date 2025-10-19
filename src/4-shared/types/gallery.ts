@@ -51,3 +51,19 @@ export type MainGalleryProps = {
   loading?: boolean;
   error?: string;
 };
+
+// Types for filters (mirroring your web app, but omitting "nudity")
+export type GalleryFilter = {
+  gender?: string;
+  orientation?: string;
+  color?: string;
+  print_quality?: string;
+  year?: { from: number; to: number };
+};
+
+export type UseGalleryFiltersReturn = {
+  filters: GalleryFilter;
+  setFilters: (filters: GalleryFilter) => void;
+  resetFilters: () => void;
+  filtersActive: boolean | undefined;
+};
