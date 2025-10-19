@@ -38,10 +38,14 @@ export const styles = StyleSheet.create({
   },
   optionActive: {
     backgroundColor: "#202030",
+  },
+  optionActiveText: {
     color: "#fff",
+    fontWeight: "bold",
   },
   optionText: {
     fontSize: 15,
+    color: "#fff",
   },
   input: {
     width: 72,

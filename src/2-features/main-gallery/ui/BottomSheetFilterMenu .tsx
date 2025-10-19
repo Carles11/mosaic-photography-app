@@ -4,7 +4,7 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useRef } from "react";
-import { Platform, Text, TextInput, TouchableOpacity } from "react-native";
+import { Platform, TextInput, TouchableOpacity } from "react-native";
 import { useGalleryFilters } from "../filters/useGalleryFilters";
 import { styles } from "./BottomSheetFilterMenu.styles";
 type BottomSheetFilterMenuProps = {
@@ -88,10 +88,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 style={[
                   styles.optionText,
                   { color: theme.text },
-                  filters.gender === opt && {
-                    fontWeight: "bold",
-                    color: theme.text,
-                  },
+                  filters.gender === opt && styles.optionActiveText,
                 ]}
               >
                 {opt}
@@ -114,9 +111,15 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
               ]}
               onPress={() => handleChange("orientation", opt)}
             >
-              <Text style={[styles.optionText, { color: theme.text }]}>
+              <ThemedText
+                style={[
+                  styles.optionText,
+                  { color: theme.text },
+                  filters.orientation === opt && styles.optionActiveText,
+                ]}
+              >
                 {opt}
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           ))}
         </ThemedView>
@@ -135,7 +138,13 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
               ]}
               onPress={() => handleChange("color", opt)}
             >
-              <ThemedText style={[styles.optionText, { color: theme.text }]}>
+              <ThemedText
+                style={[
+                  styles.optionText,
+                  { color: theme.text },
+                  filters.color === opt && styles.optionActiveText,
+                ]}
+              >
                 {opt}
               </ThemedText>
             </TouchableOpacity>
@@ -156,7 +165,13 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
               ]}
               onPress={() => handleChange("print_quality", opt)}
             >
-              <ThemedText style={[styles.optionText, { color: theme.text }]}>
+              <ThemedText
+                style={[
+                  styles.optionText,
+                  { color: theme.text },
+                  filters.print_quality === opt && styles.optionActiveText,
+                ]}
+              >
                 {opt}
               </ThemedText>
             </TouchableOpacity>
