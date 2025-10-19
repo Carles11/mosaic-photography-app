@@ -18,7 +18,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
       <TouchableOpacity
         onPress={() => setVisible(!visible)}
         style={[styles.button, style]}
-        accessibilityLabel="Customize Dropdown"
+        accessibilityLabel="Menu Dropdown"
         activeOpacity={0.7}
       >
         <Text
@@ -35,7 +35,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
             },
           ]}
         >
-          {children ? children : "Customize"}
+          {children ? children : "Menu"}
         </Text>
       </TouchableOpacity>
       {visible && (

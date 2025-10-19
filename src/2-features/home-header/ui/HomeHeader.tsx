@@ -74,7 +74,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
 
   return (
     <ThemedView style={[styles.header, { backgroundColor: theme.background }]}>
-      <DropdownButton menuItems={menuItems}>Customize</DropdownButton>
+      <DropdownButton menuItems={menuItems}>Menu</DropdownButton>
       <ThemedView style={styles.iconsRow}>
         <IconSymbol
           type="material"
