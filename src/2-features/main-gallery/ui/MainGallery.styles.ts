@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
   imageHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
     padding: 8,
   },
   centered: {
@@ -27,9 +28,18 @@ export const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
   },
+  mosaicTitle: {
+    paddingLeft: 8,
+    marginBottom: 4,
+    fontSize: 12,
+    textAlign: "center",
+  },
   title: {
     padding: 4,
+    marginBottom: 4,
     fontSize: 14,
     textAlign: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
   },
 });

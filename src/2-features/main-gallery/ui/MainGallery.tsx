@@ -1,17 +1,26 @@
 import { Gallery } from "@/2-features/gallery";
-import { RoundMosaicLogo } from "@/4-shared/components/logo/MosaicLogoRound";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { ThemedView } from "@/4-shared/components/themed-view";
+import { ThemedTitle } from "@/4-shared/components/themed-title";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
-import React, { useEffect, useState } from "react";
-import { Image, View } from "react-native";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Image, Text, View } from "react-native";
 import { fetchMainGalleryImages } from "../api/fetchMainGalleryImages";
+import { ImageHeaderRow } from "./ImageHeaderRow";
 import { styles } from "./MainGallery.styles";
 
 export const MainGallery: React.FC = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // BottomSheet logic
+  const [bottomSheetOpen, setBottomSheetOpen] = useState(false);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
+  const { theme } = useTheme();
+
+  const snapPoints = ["40%"];
 
   useEffect(() => {
     (async () => {
@@ -26,6 +35,19 @@ export const MainGallery: React.FC = () => {
         setLoading(false);
       }
     })();
+  }, []);
+
+  // Show/hide bottom sheet modal in response to state
+  useEffect(() => {
+    if (bottomSheetOpen) {
+      bottomSheetRef.current?.present();
+    } else {
+      bottomSheetRef.current?.dismiss();
+    }
+  }, [bottomSheetOpen]);
+
+  const handleBottomSheetClose = useCallback(() => {
+    setBottomSheetOpen(false);
   }, []);
 
   if (loading) {
@@ -47,12 +69,7 @@ export const MainGallery: React.FC = () => {
   // Custom card layout for MainGallery (author, year below image)
   const renderMainGalleryItem = (item: GalleryImage) => (
     <>
-      <ThemedView style={styles.imageHeaderRow}>
-        <RoundMosaicLogo size={25} />
-        <ThemedText style={styles.title} numberOfLines={1}>
-          Mosaic collection
-        </ThemedText>
-      </ThemedView>
+      <ImageHeaderRow onOpenMenu={() => setBottomSheetOpen(!bottomSheetOpen)} />
       <Image
         source={{ uri: item.url }}
         style={styles.image}
@@ -67,6 +84,25 @@ export const MainGallery: React.FC = () => {
   return (
     <View style={styles.container}>
       <Gallery images={images} renderItem={renderMainGalleryItem} />
+
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        onDismiss={handleBottomSheetClose}
+        handleIndicatorStyle={{ backgroundColor: theme.text }}
+        backgroundStyle={{ backgroundColor: theme.background }}
+      >
+        <BottomSheetView
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text> AÖSKOFASODIFHASDLIÖFIJASDÖLIF</Text>
+          <ThemedTitle style={{ marginBottom: 12 }}>Menu</ThemedTitle>
+          <ThemedText>
+            This is the bottom sheet menu. Add your content here.
+          </ThemedText>
+        </BottomSheetView>
+      </BottomSheetModal>
     </View>
   );
 };

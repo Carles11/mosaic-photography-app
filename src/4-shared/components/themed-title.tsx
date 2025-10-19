@@ -1,6 +1,6 @@
-import { useThemeColor } from '@/4-shared/hooks/use-theme-color';
-import { useTheme } from '@/4-shared/theme/ThemeProvider';
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import { useThemeColor } from "@/4-shared/hooks/use-theme-color";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { StyleSheet, Text, type TextProps } from "react-native";
 
 export type ThemedTitleProps = TextProps & {
   lightColor?: string;
@@ -15,14 +15,14 @@ export function ThemedTitle({
   children,
   ...rest
 }: ThemedTitleProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
   const { theme } = useTheme();
 
   return (
     <Text
       style={[
         {
-          color,
+          color: typeof color === "number" ? String(color) : color,
           fontFamily: theme.fontFamilyBold,
           fontSize: 32,
           lineHeight: 36,
@@ -40,7 +40,7 @@ export function ThemedTitle({
 const styles = StyleSheet.create({
   title: {
     // You can adjust these as needed for your brand or UI consistency
-    fontWeight: 'bold', // Optional, TradeGothic-Bold font will handle bolding
+    fontWeight: "bold", // Optional, TradeGothic-Bold font will handle bolding
     marginBottom: 8,
   },
 });
