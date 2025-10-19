@@ -5,6 +5,7 @@ import {
 } from "@/4-shared/components/buttons/variants";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -18,6 +19,7 @@ import { styles } from "./LoginScreen.styles";
 export const LoginScreen: React.FC = () => {
   const { theme } = useTheme();
   const { loading } = useAuthSession();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -101,14 +103,14 @@ export const LoginScreen: React.FC = () => {
         <OnlyTextButton
           title="Forgot Password?"
           onPress={() => {
-            // TODO: Navigate to ForgotPasswordScreen
+            router.push("/auth/forgot-password");
           }}
         />
 
         <OnlyTextButton
           title="Don't have an account? Register"
           onPress={() => {
-            // TODO: Navigate to RegisterScreen
+            router.push("/auth/register");
           }}
         />
       </View>

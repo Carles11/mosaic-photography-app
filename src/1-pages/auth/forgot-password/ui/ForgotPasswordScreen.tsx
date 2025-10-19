@@ -4,6 +4,7 @@ import {
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -21,7 +22,7 @@ function validateEmail(email: string): boolean {
 
 export function ForgotPasswordScreen() {
   const { theme } = useTheme();
-
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -114,7 +115,7 @@ export function ForgotPasswordScreen() {
         <OnlyTextButton
           title="Back to Login"
           onPress={() => {
-            // TODO: Implement navigation to LoginScreen
+            router.push("/auth/login");
           }}
         />
       </View>
