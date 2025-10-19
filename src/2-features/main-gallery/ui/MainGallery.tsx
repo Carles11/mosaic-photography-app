@@ -1,5 +1,7 @@
 import { Gallery } from "@/2-features/gallery";
+import { RoundMosaicLogo } from "@/4-shared/components/logo/MosaicLogoRound";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React, { useEffect, useState } from "react";
 import { Image, View } from "react-native";
@@ -45,6 +47,12 @@ export const MainGallery: React.FC = () => {
   // Custom card layout for MainGallery (author, year below image)
   const renderMainGalleryItem = (item: GalleryImage) => (
     <>
+      <ThemedView style={styles.imageHeaderRow}>
+        <RoundMosaicLogo size={25} />
+        <ThemedText style={styles.title} numberOfLines={1}>
+          Mosaic collection
+        </ThemedText>
+      </ThemedView>
       <Image
         source={{ uri: item.url }}
         style={styles.image}
