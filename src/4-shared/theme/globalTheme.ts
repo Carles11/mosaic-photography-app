@@ -38,7 +38,7 @@ export const darkTheme = {
 
   // Buttons
   buttonBorderColor: "#687076",
-  buttonBackgroundColor: "#ededed",
+  buttonBackgroundColor: "#687076",
   buttonTextColor: "#fff",
   buttonBorderWidth: 1,
   buttonFontSize: 14,

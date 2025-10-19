@@ -38,6 +38,8 @@ export const styles = StyleSheet.create({
   },
   optionActive: {
     backgroundColor: "#202030",
+    borderWidth: 1,
+    borderColor: "#313131",
   },
   optionActiveText: {
     color: "#fff",
