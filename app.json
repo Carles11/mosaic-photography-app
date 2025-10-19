@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mosaic-photography-app",
+    "name": "Iconic photography app",
     "slug": "mosaic-photography-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,19 +21,19 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./src/4-shared/assets/expo-icons//favicon.png"
+      "favicon": "./src/4-shared/assets/expo-icons/favicon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./src/4-shared/assets/expo-icons//splash-icon.png",
+          "image": "./src/4-shared/assets/expo-icons/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#202030",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#1d1d1d"
           }
         }
       ]

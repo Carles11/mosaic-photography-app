@@ -8,7 +8,7 @@ import { styles } from "./Home.styles";
 
 export const Home: React.FC = () => {
   const { theme } = useTheme();
-  const [isFilterMenuOpen, setFilterMenuOpen] = useState(true);
+  const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   return (
     <SafeAreaView
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}

@@ -7,9 +7,7 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
     elevation: 8,
   },
-  sheetBackground: {
-    backgroundColor: "#fafafa",
-  },
+
   container: {
     padding: 20,
   },
@@ -32,7 +30,6 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   option: {
-    backgroundColor: "#ededed",
     borderRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -40,11 +37,11 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   optionActive: {
-    backgroundColor: "#313131",
+    backgroundColor: "#202030",
+    color: "#fff",
   },
   optionText: {
     fontSize: 15,
-    color: "#313131",
   },
   input: {
     width: 72,
