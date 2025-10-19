@@ -42,4 +42,9 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
+  galleryList: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 32, // extra space for bottom safe area or modals
+  },
 });

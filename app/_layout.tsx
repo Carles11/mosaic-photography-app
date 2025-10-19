@@ -1,11 +1,11 @@
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-
 import FontLoader from "@/4-shared/components/FontLoader";
+import { CommentsProvider } from "@/4-shared/context/comments";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -17,7 +17,9 @@ export default function RootLayout() {
       <BottomSheetModalProvider>
         <FontLoader>
           <ThemeProvider>
-            <InnerLayout />
+            <CommentsProvider>
+              <InnerLayout />
+            </CommentsProvider>
           </ThemeProvider>
         </FontLoader>
       </BottomSheetModalProvider>
