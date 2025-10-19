@@ -14,7 +14,8 @@ export const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 220,
+    height: "auto",
+    minHeight: 450,
     backgroundColor: "#eaeaea",
   },
   title: {
