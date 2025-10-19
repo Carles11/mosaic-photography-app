@@ -1,15 +1,12 @@
-import BottomSheet from "@gorhom/bottom-sheet";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedTitle } from "@/4-shared/components/themed-title";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useRef } from "react";
-import {
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, Text, TextInput, TouchableOpacity } from "react-native";
 import { useGalleryFilters } from "../filters/useGalleryFilters";
 import { styles } from "./BottomSheetFilterMenu.styles";
-
 type BottomSheetFilterMenuProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -19,15 +16,24 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   isOpen,
   onClose,
 }) => {
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { filters, setFilters, resetFilters } = useGalleryFilters();
-
+  const { theme } = useTheme();
   // snapPoints define sheet height (can adjust for your app)
   const snapPoints = Platform.OS === "web" ? ["40%"] : ["60%"];
 
+  // Present/dismiss modal as controlled by parent
+  React.useEffect(() => {
+    if (isOpen) {
+      bottomSheetModalRef.current?.present();
+    } else {
+      bottomSheetModalRef.current?.dismiss();
+    }
+  }, [isOpen]);
+
   // Handle sheet close
   const handleClose = useCallback(() => {
-    bottomSheetRef.current?.close();
+    bottomSheetModalRef.current?.dismiss();
     onClose();
   }, [onClose]);
 
@@ -50,113 +56,145 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   };
 
   return (
-    <>
-      <Text>BottomSheetFilterMenu MOUNTED</Text>
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={isOpen ? 0 : -1}
-        snapPoints={["50%", "90%"]}
-        enablePanDownToClose
-        onClose={handleClose}
-        // style={styles.sheet}
-        // backgroundStyle={styles.sheetBackground}
-      >
-        <View style={styles.container}>
-          <Text style={styles.title}>Gallery Filters</Text>
-          {/* Gender Filter */}
-          <Text style={styles.label}>Gender</Text>
-          <View style={styles.row}>
-            {["male", "female", "mixed"].map((opt) => (
-              <TouchableOpacity
-                key={opt}
+    <BottomSheetModal
+      ref={bottomSheetModalRef}
+      index={0}
+      snapPoints={snapPoints}
+      enablePanDownToClose
+      onDismiss={handleClose}
+      style={styles.sheet}
+      backgroundStyle={{ backgroundColor: theme.background }}
+    >
+      <BottomSheetView style={styles.container}>
+        <ThemedTitle style={[styles.title, { color: theme.text }]}>
+          Gallery Filters
+        </ThemedTitle>
+        {/* Gender Filter */}
+        <ThemedText style={[styles.label, { color: theme.text }]}>
+          Gender
+        </ThemedText>
+        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
+          {["male", "female", "mixed couples"].map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              style={[
+                styles.option,
+                { backgroundColor: theme.buttonBackgroundColor },
+                filters.gender === opt && styles.optionActive,
+              ]}
+              onPress={() => handleChange("gender", opt)}
+            >
+              <ThemedText
                 style={[
-                  styles.option,
-                  filters.gender === opt && styles.optionActive,
+                  styles.optionText,
+                  { color: theme.text },
+                  filters.gender === opt && {
+                    fontWeight: "bold",
+                    color: theme.text,
+                  },
                 ]}
-                onPress={() => handleChange("gender", opt)}
               >
-                <Text style={styles.optionText}>{opt}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {/* Orientation Filter */}
-          <Text style={styles.label}>Orientation</Text>
-          <View style={styles.row}>
-            {["portrait", "landscape", "square"].map((opt) => (
-              <TouchableOpacity
-                key={opt}
-                style={[
-                  styles.option,
-                  filters.orientation === opt && styles.optionActive,
-                ]}
-                onPress={() => handleChange("orientation", opt)}
-              >
-                <Text style={styles.optionText}>{opt}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {/* Color Filter */}
-          <Text style={styles.label}>Color</Text>
-          <View style={styles.row}>
-            {["color", "black-white"].map((opt) => (
-              <TouchableOpacity
-                key={opt}
-                style={[
-                  styles.option,
-                  filters.color === opt && styles.optionActive,
-                ]}
-                onPress={() => handleChange("color", opt)}
-              >
-                <Text style={styles.optionText}>{opt}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {/* Print Quality Filter */}
-          <Text style={styles.label}>Print Quality</Text>
-          <View style={styles.row}>
-            {["high", "medium", "low"].map((opt) => (
-              <TouchableOpacity
-                key={opt}
-                style={[
-                  styles.option,
-                  filters.print_quality === opt && styles.optionActive,
-                ]}
-                onPress={() => handleChange("print_quality", opt)}
-              >
-                <Text style={styles.optionText}>{opt}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {/* Year Range Filter */}
-          <Text style={styles.label}>Year Range</Text>
-          <View style={styles.row}>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={filters.year?.from?.toString() ?? ""}
-              placeholder="From"
-              onChangeText={(v) => handleYearRangeChange("from", v)}
-            />
-            <Text style={{ marginHorizontal: 8 }}>–</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={filters.year?.to?.toString() ?? ""}
-              placeholder="To"
-              onChangeText={(v) => handleYearRangeChange("to", v)}
-            />
-          </View>
-          {/* Actions */}
-          <View style={styles.actionsRow}>
-            <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
-              <Text style={styles.resetButtonText}>Reset</Text>
+                {opt}
+              </ThemedText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <Text style={styles.closeButtonText}>Done</Text>
+          ))}
+        </ThemedView>
+        {/* Orientation Filter */}
+        <ThemedText style={[styles.label, { color: theme.text }]}>
+          Orientation
+        </ThemedText>
+        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
+          {["portrait", "landscape", "square"].map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              style={[
+                styles.option,
+                { backgroundColor: theme.buttonBackgroundColor },
+                filters.orientation === opt && styles.optionActive,
+              ]}
+              onPress={() => handleChange("orientation", opt)}
+            >
+              <Text style={[styles.optionText, { color: theme.text }]}>
+                {opt}
+              </Text>
             </TouchableOpacity>
-          </View>
-        </View>
-      </BottomSheet>
-    </>
+          ))}
+        </ThemedView>
+        {/* Color Filter */}
+        <ThemedText style={[styles.label, { color: theme.text }]}>
+          Color
+        </ThemedText>
+        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
+          {["color", "black-white"].map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              style={[
+                styles.option,
+                { backgroundColor: theme.buttonBackgroundColor },
+                filters.color === opt && styles.optionActive,
+              ]}
+              onPress={() => handleChange("color", opt)}
+            >
+              <ThemedText style={[styles.optionText, { color: theme.text }]}>
+                {opt}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ThemedView>
+        {/* Print Quality Filter */}
+        <ThemedText style={[styles.label, { color: theme.text }]}>
+          Print Quality
+        </ThemedText>
+        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
+          {["high", "medium", "low"].map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              style={[
+                styles.option,
+                { backgroundColor: theme.buttonBackgroundColor },
+                filters.print_quality === opt && styles.optionActive,
+              ]}
+              onPress={() => handleChange("print_quality", opt)}
+            >
+              <ThemedText style={[styles.optionText, { color: theme.text }]}>
+                {opt}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ThemedView>
+        {/* Year Range Filter */}
+        <ThemedText style={[styles.label, { color: theme.text }]}>
+          Year Range
+        </ThemedText>
+        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={filters.year?.from?.toString() ?? ""}
+            placeholder="From"
+            onChangeText={(v) => handleYearRangeChange("from", v)}
+          />
+          <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={filters.year?.to?.toString() ?? ""}
+            placeholder="To"
+            onChangeText={(v) => handleYearRangeChange("to", v)}
+          />
+        </ThemedView>
+        {/* Actions */}
+        <ThemedView
+          style={[styles.actionsRow, { backgroundColor: theme.background }]}
+        >
+          <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
+            <ThemedText style={styles.resetButtonText}>Reset</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+            <ThemedText style={styles.closeButtonText}>Done</ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+      </BottomSheetView>
+    </BottomSheetModal>
   );
 };
