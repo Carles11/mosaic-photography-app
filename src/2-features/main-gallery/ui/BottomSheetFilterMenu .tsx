@@ -2,22 +2,28 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedTitle } from "@/4-shared/components/themed-title";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { GalleryFilter } from "@/4-shared/types";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useRef } from "react";
 import { Platform, TextInput, TouchableOpacity } from "react-native";
-import { useGalleryFilters } from "../filters/useGalleryFilters";
 import { styles } from "./BottomSheetFilterMenu.styles";
+
 type BottomSheetFilterMenuProps = {
   isOpen: boolean;
   onClose: () => void;
+  filters: GalleryFilter;
+  setFilters: (filters: GalleryFilter) => void;
+  resetFilters: () => void;
 };
 
 export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   isOpen,
+  filters,
+  setFilters,
+  resetFilters,
   onClose,
 }) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const { filters, setFilters, resetFilters } = useGalleryFilters();
   const { theme } = useTheme();
   // snapPoints define sheet height (can adjust for your app)
   const snapPoints = Platform.OS === "web" ? ["40%"] : ["60%"];
@@ -110,7 +116,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
           Orientation
         </ThemedText>
         <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["portrait", "landscape", "square"].map((opt) => (
+          {["vertical", "horizontal"].map((opt) => (
             <TouchableOpacity
               key={opt}
               style={[
@@ -137,7 +143,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
           Color
         </ThemedText>
         <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["color", "black-white"].map((opt) => (
+          {["color", "bw"].map((opt) => (
             <TouchableOpacity
               key={opt}
               style={[
@@ -164,7 +170,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
           Print Quality
         </ThemedText>
         <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["high", "medium", "low"].map((opt) => (
+          {["standard", "good", "excellent", "professional"].map((opt) => (
             <TouchableOpacity
               key={opt}
               style={[
