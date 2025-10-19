@@ -6,7 +6,7 @@ import {
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -18,13 +18,20 @@ import { styles } from "./LoginScreen.styles";
 
 export const LoginScreen: React.FC = () => {
   const { theme } = useTheme();
-  const { loading } = useAuthSession();
+  const { user, loading } = useAuthSession();
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/");
+    }
+  }, [user, loading, router]);
 
   const handleLogin = async () => {
     setIsSubmitting(true);
@@ -37,6 +44,9 @@ export const LoginScreen: React.FC = () => {
     }
     setIsSubmitting(false);
   };
+
+  // If loading, you can show a spinner or return null
+  if (loading) return null;
 
   return (
     <KeyboardAvoidingView

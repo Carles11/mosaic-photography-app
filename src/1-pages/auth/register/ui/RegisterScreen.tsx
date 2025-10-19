@@ -3,9 +3,10 @@ import {
   OnlyTextButton,
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -17,6 +18,7 @@ import { styles } from "./RegisterScreen.styles";
 
 export const RegisterScreen: React.FC = () => {
   const { theme } = useTheme();
+  const { user, loading } = useAuthSession();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +27,13 @@ export const RegisterScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/");
+    }
+  }, [user, loading, router]);
 
   const handleRegister = async () => {
     setError(null);
@@ -51,6 +60,9 @@ export const RegisterScreen: React.FC = () => {
     }
     setIsSubmitting(false);
   };
+
+  // If loading, you can show a spinner or return null
+  if (loading) return null;
 
   return (
     <KeyboardAvoidingView
