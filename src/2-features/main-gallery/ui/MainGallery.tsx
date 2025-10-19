@@ -1,9 +1,7 @@
-import { Gallery } from "@/2-features/gallery";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
-import React, { useCallback } from "react";
-import { View } from "react-native";
+import React from "react";
+import { FlatList, View } from "react-native";
 import { styles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 
@@ -11,7 +9,8 @@ type MainGalleryProps = {
   images: GalleryImage[];
   loading: boolean;
   error: string | null;
-  onOpenMenu: (image: GalleryImage) => void; // Updated signature to receive image
+  onOpenMenu: (image: GalleryImage) => void;
+  onPressComments?: (imageId: string) => void;
 };
 
 export const MainGallery: React.FC<MainGalleryProps> = ({
@@ -19,36 +18,44 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   loading,
   error,
   onOpenMenu,
+  onPressComments,
 }) => {
-  const { theme } = useTheme();
-
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ThemedText style={styles.loading}>Loading gallery...</ThemedText>
+        <ThemedText>Loading...</ThemedText>
       </View>
     );
   }
-
   if (error) {
     return (
       <View style={styles.centered}>
-        <ThemedText style={styles.error}>Error: {error}</ThemedText>
+        <ThemedText style={styles.error}>{error}</ThemedText>
+      </View>
+    );
+  }
+  if (!images.length) {
+    return (
+      <View style={styles.centered}>
+        <ThemedText>No images found.</ThemedText>
       </View>
     );
   }
 
-  // Memoized renderItem for FlatList (passed to Gallery)
-  const renderItem = useCallback(
-    (item: GalleryImage) => (
-      <MainGalleryItem item={item} onOpenMenu={() => onOpenMenu(item)} />
-    ),
-    [onOpenMenu]
-  );
-
   return (
-    <View style={styles.container}>
-      <Gallery images={images} renderItem={renderItem} />
-    </View>
+    <FlatList
+      data={images}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <MainGalleryItem
+          item={item}
+          onOpenMenu={() => onOpenMenu(item)}
+          onPressComments={
+            onPressComments ? () => onPressComments(item.id) : undefined
+          }
+        />
+      )}
+      contentContainerStyle={styles.galleryList}
+    />
   );
 };

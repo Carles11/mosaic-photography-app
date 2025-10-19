@@ -10,6 +10,6 @@ export const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: "bold",
     flexShrink: 1,
-    fontSize: 16,
+    fontSize: 14,
   },
 });

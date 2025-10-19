@@ -3,12 +3,14 @@ import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
 import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu ";
+import { CommentsModal } from "@/4-shared/components/modals/comments/ui/CommentsModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
+import { useComments } from "@/4-shared/context/comments"; // <-- Add this import!
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
@@ -18,6 +20,9 @@ export const Home: React.FC = () => {
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+
+  // Comments modal state
+  const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
 
   // Ref for image menu bottom sheet
   const imageMenuSheetRef = useRef<BottomSheetModal>(null);
@@ -29,6 +34,9 @@ export const Home: React.FC = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Obtain batch loader for comment counts
+  const { loadCommentCountsBatch } = useComments();
 
   useEffect(() => {
     (async () => {
@@ -66,6 +74,16 @@ export const Home: React.FC = () => {
     });
   }, [images, filters]);
 
+  // Batch load comment counts for all visible images
+  useEffect(() => {
+    if (filteredImages.length > 0) {
+      const imageIds = filteredImages.map((img) =>
+        typeof img.id === "string" ? img.id : String(img.id)
+      );
+      loadCommentCountsBatch(imageIds);
+    }
+  }, [filteredImages, loadCommentCountsBatch]);
+
   // Present/dismiss image menu bottom sheet
   useEffect(() => {
     if (isImageMenuOpen) {
@@ -87,6 +105,16 @@ export const Home: React.FC = () => {
     setSelectedImage(null);
   };
 
+  // Handler for opening comments modal
+  const handleOpenComments = useCallback((imageId: string) => {
+    setCommentsImageId(imageId);
+  }, []);
+
+  // Handler for closing comments modal
+  const handleCloseComments = useCallback(() => {
+    setCommentsImageId(null);
+  }, []);
+
   return (
     <SafeAreaView
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
@@ -106,7 +134,7 @@ export const Home: React.FC = () => {
       {/* Image Actions Bottom Sheet */}
       <BottomSheetModal
         ref={imageMenuSheetRef}
-        snapPoints={["30%"]}
+        snapPoints={["40%"]}
         onDismiss={handleCloseImageMenu}
         handleIndicatorStyle={{ backgroundColor: theme.text }}
         backgroundStyle={{ backgroundColor: theme.background }}
@@ -116,10 +144,16 @@ export const Home: React.FC = () => {
         >
           {selectedImage && (
             <>
-              <Text style={{ marginBottom: 8, fontWeight: "bold" }}>
+              <Text
+                style={{
+                  marginBottom: 8,
+                  fontWeight: "bold",
+                  color: theme.text,
+                }}
+              >
                 {selectedImage.author}, {selectedImage.year}
               </Text>
-              <Text style={{ marginBottom: 8 }}>
+              <Text style={{ marginBottom: 8, color: theme.text }}>
                 {selectedImage.description}
               </Text>
               {/* Horizontal Line */}
@@ -138,7 +172,7 @@ export const Home: React.FC = () => {
                   alignItems: "center",
                   justifyContent: "space-between",
                   gap: 8,
-                  marginBottom: 8,
+                  marginVertical: 8,
                   width: "33%",
                 }}
               >
@@ -148,7 +182,6 @@ export const Home: React.FC = () => {
                   size={17}
                   color={theme.favoriteIcon}
                   accessibilityLabel="Favorites"
-                  style={{ marginRight: 8 }}
                 />
                 <ThemedText style={{ color: theme.text }}>
                   Add to Favorites
@@ -160,7 +193,6 @@ export const Home: React.FC = () => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-
                   gap: 8,
                   marginBottom: 8,
                   width: "33%",
@@ -172,7 +204,6 @@ export const Home: React.FC = () => {
                   size={17}
                   color={theme.shareIcon}
                   accessibilityLabel="Share"
-                  style={{ marginRight: 8 }}
                 />
                 <ThemedText style={{ color: theme.text }}>
                   Share this image
@@ -183,9 +214,8 @@ export const Home: React.FC = () => {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-between",
-
                   gap: 8,
-                  marginBottom: 8,
+                  marginBottom: 18,
                   width: "33%",
                 }}
               >
@@ -195,7 +225,6 @@ export const Home: React.FC = () => {
                   color={theme.icon}
                   size={17}
                   accessibilityLabel="Download"
-                  style={{ marginRight: 8 }}
                 />
                 <ThemedText style={{ color: theme.text }}>
                   Download image
@@ -211,6 +240,13 @@ export const Home: React.FC = () => {
         loading={loading}
         error={error}
         onOpenMenu={handleOpenImageMenu}
+        onPressComments={handleOpenComments}
+      />
+
+      <CommentsModal
+        visible={!!commentsImageId}
+        imageId={commentsImageId ?? ""}
+        onClose={handleCloseComments}
       />
     </SafeAreaView>
   );

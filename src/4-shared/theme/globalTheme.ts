@@ -12,6 +12,7 @@ export const lightTheme = {
   icon: "#687076", // add icon color if not present
   favoriteIcon: "#ff4081",
   shareIcon: "#29bde6ff",
+  commentIcon: "#9BA1A6",
 
   // Buttons
   buttonBorderColor: "#687076",
@@ -34,9 +35,10 @@ export const darkTheme = {
   warning: "#29bde6ff",
   success: "#3de382ff",
   error: "#d10101ff",
-  icon: "#9BA1A6", // add icon color if not present
+  icon: "#9BA1A6",
   favoriteIcon: "#ff4081",
   shareIcon: "#29bde6ff",
+  commentIcon: "#9BA1A6",
 
   // Buttons
   buttonBorderColor: "#687076",
