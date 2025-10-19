@@ -4,6 +4,7 @@ import {
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -23,6 +24,7 @@ export const RegisterScreen: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
   const handleRegister = async () => {
     setError(null);
@@ -139,7 +141,7 @@ export const RegisterScreen: React.FC = () => {
         <OnlyTextButton
           title="Already have an account? Login"
           onPress={() => {
-            // TODO: Navigate to LoginScreen
+            router.push("/auth/login");
           }}
         />
       </View>

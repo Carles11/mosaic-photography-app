@@ -30,7 +30,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
       router.replace("/"); // Redirect to home after logout
     } else {
       // Login
-      router.push("/login");
+      router.push("/auth/login");
     }
   };
 
