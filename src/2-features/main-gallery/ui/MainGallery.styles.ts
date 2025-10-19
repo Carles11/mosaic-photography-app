@@ -5,6 +5,11 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
   },
+  imageHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 8,
+  },
   centered: {
     flex: 1,
     justifyContent: "center",
