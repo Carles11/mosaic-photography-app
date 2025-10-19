@@ -122,20 +122,24 @@ export const Home: React.FC = () => {
               <Text style={{ marginBottom: 8 }}>
                 {selectedImage.description}
               </Text>
+              {/* Horizontal Line */}
               <View
                 style={{
                   height: 1,
-                  backgroundColor: "#ccc", // or theme.text or theme.border, etc.
+                  backgroundColor: "#ccc",
                   alignSelf: "stretch",
                   marginVertical: 12,
+                  width: "100%",
                 }}
               />
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  justifyContent: "space-between",
                   gap: 8,
                   marginBottom: 8,
+                  width: "33%",
                 }}
               >
                 <IconSymbol
@@ -155,13 +159,17 @@ export const Home: React.FC = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  justifyContent: "space-between",
+
                   gap: 8,
                   marginBottom: 8,
+                  width: "33%",
                 }}
               >
                 <IconSymbol
                   type="material"
                   name="share"
+                  size={17}
                   color={theme.shareIcon}
                   accessibilityLabel="Share"
                   style={{ marginRight: 8 }}
@@ -174,19 +182,23 @@ export const Home: React.FC = () => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  justifyContent: "space-between",
+
                   gap: 8,
                   marginBottom: 8,
+                  width: "33%",
                 }}
               >
                 <IconSymbol
                   type="material"
                   name="download"
                   color={theme.icon}
+                  size={17}
                   accessibilityLabel="Download"
                   style={{ marginRight: 8 }}
                 />
                 <ThemedText style={{ color: theme.text }}>
-                  Download this image
+                  Download image
                 </ThemedText>
               </View>
             </>
