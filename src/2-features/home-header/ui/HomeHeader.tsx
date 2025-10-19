@@ -9,7 +9,11 @@ import React from "react";
 
 import { styles } from "./HomeHeader.styles";
 
-export const HomeHeader: React.FC = () => {
+type HomeHeaderProps = {
+  onOpenFilters?: () => void;
+};
+
+export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
   const colorScheme = useColorScheme();
   const { mode, setMode } = useTheme();
 
@@ -21,7 +25,8 @@ export const HomeHeader: React.FC = () => {
       label: "Filters",
       icon: <IconSymbol name="filter" size={20} color={theme.text} />,
       action: () => {
-        // open filter modal or trigger filter logic
+        // open filter bottom sheet
+        if (onOpenFilters) onOpenFilters();
       },
     },
     {

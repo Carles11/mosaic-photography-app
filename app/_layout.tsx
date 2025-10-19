@@ -4,6 +4,7 @@ import "react-native-reanimated";
 
 import FontLoader from "@/4-shared/components/FontLoader";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -24,15 +25,17 @@ function InnerLayout() {
 
   return (
     <>
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: theme.background },
-          headerTintColor: theme.text,
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style={mode === "light" ? "light" : "dark"} />
+      <GestureHandlerRootView>
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: theme.background },
+            headerTintColor: theme.text,
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style={mode === "light" ? "light" : "dark"} />
+      </GestureHandlerRootView>
     </>
   );
 }
