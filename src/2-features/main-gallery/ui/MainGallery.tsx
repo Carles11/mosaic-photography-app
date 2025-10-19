@@ -11,7 +11,7 @@ type MainGalleryProps = {
   images: GalleryImage[];
   loading: boolean;
   error: string | null;
-  onOpenMenu: () => void;
+  onOpenMenu: (image: GalleryImage) => void; // Updated signature to receive image
 };
 
 export const MainGallery: React.FC<MainGalleryProps> = ({
@@ -41,7 +41,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   // Memoized renderItem for FlatList (passed to Gallery)
   const renderItem = useCallback(
     (item: GalleryImage) => (
-      <MainGalleryItem item={item} onOpenMenu={onOpenMenu} />
+      <MainGalleryItem item={item} onOpenMenu={() => onOpenMenu(item)} />
     ),
     [onOpenMenu]
   );
