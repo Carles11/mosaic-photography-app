@@ -62,8 +62,17 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
       snapPoints={snapPoints}
       enablePanDownToClose
       onDismiss={handleClose}
-      style={styles.sheet}
+      style={[
+        styles.sheet,
+        { borderWidth: 1, borderColor: theme.buttonBorderColor },
+      ]}
       backgroundStyle={{ backgroundColor: theme.background }}
+      handleIndicatorStyle={{
+        backgroundColor: theme.buttonBorderColor, // <-- set your theme color here
+        height: 4, // adjust thickness
+        borderRadius: 4, // round edges
+        width: 32, // adjust width
+      }}
     >
       <BottomSheetView style={styles.container}>
         <ThemedTitle style={[styles.title, { color: theme.text }]}>
