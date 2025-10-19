@@ -38,7 +38,7 @@ function InnerLayout() {
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
-      <StatusBar style={mode === "light" ? "light" : "dark"} />
+      <StatusBar style={mode === "light" ? "dark" : "light"} />
     </>
   );
 }
