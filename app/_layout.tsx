@@ -1,5 +1,6 @@
 import FontLoader from "@/4-shared/components/FontLoader";
 import { CommentsProvider } from "@/4-shared/context/comments";
+import { FavoritesProvider } from "@/4-shared/context/favorites/FavoritesContext";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
@@ -18,7 +19,9 @@ export default function RootLayout() {
         <FontLoader>
           <ThemeProvider>
             <CommentsProvider>
-              <InnerLayout />
+              <FavoritesProvider>
+                <InnerLayout />
+              </FavoritesProvider>
             </CommentsProvider>
           </ThemeProvider>
         </FontLoader>

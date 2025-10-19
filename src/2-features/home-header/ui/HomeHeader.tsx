@@ -5,8 +5,8 @@ import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { DropdownMenuItem } from "@/4-shared/types/menu";
+import { useRouter } from "expo-router";
 import React from "react";
-
 import { styles } from "./HomeHeader.styles";
 
 type HomeHeaderProps = {
@@ -16,16 +16,14 @@ type HomeHeaderProps = {
 export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
   const colorScheme = useColorScheme();
   const { mode, setMode } = useTheme();
-
   const theme = globalTheme[colorScheme];
+  const router = useRouter();
 
-  // Pick logo version based on current theme
   const menuItems: DropdownMenuItem[] = [
     {
       label: "Filters",
       icon: <IconSymbol name="filter" size={20} color={theme.text} />,
       action: () => {
-        // open filter bottom sheet
         if (onOpenFilters) onOpenFilters();
       },
     },
@@ -43,12 +41,11 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
         </ThemedView>
       ),
     },
-    // Add more items if needed
   ];
+
   return (
     <ThemedView style={[styles.header, { backgroundColor: theme.background }]}>
       <DropdownButton menuItems={menuItems}>Customize</DropdownButton>
-
       <ThemedView style={styles.iconsRow}>
         <IconSymbol
           type="material"
@@ -57,9 +54,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
           color={theme.favoriteIcon}
           style={styles.icon}
           accessibilityLabel="Favorites"
-          onPress={() => {
-            // handle favorite action
-          }}
+          onPress={() => router.push("/favorites-list")}
         />
         <IconSymbol
           type="material"
