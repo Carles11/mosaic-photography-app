@@ -11,6 +11,7 @@ export const lightTheme = {
   error: "#d10101ff",
   icon: "#687076", // add icon color if not present
   favoriteIcon: "#ff4081",
+  shareIcon: "#29bde6ff",
 
   // Buttons
   buttonBorderColor: "#687076",
@@ -35,6 +36,7 @@ export const darkTheme = {
   error: "#d10101ff",
   icon: "#9BA1A6", // add icon color if not present
   favoriteIcon: "#ff4081",
+  shareIcon: "#29bde6ff",
 
   // Buttons
   buttonBorderColor: "#687076",

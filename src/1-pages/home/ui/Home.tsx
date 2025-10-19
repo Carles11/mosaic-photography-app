@@ -4,10 +4,12 @@ import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainG
 import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu ";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
 
@@ -114,17 +116,79 @@ export const Home: React.FC = () => {
         >
           {selectedImage && (
             <>
-              <ThemedText style={{ marginBottom: 8, fontWeight: "bold" }}>
+              <Text style={{ marginBottom: 8, fontWeight: "bold" }}>
                 {selectedImage.author}, {selectedImage.year}
-              </ThemedText>
-              <ThemedText style={{ marginBottom: 16 }}>
-                Actions for this image:
-              </ThemedText>
-              {/* Add favorite button and other actions here */}
-              <ThemedText style={{ color: theme.text, marginBottom: 8 }}>
-                ⭐ Add to Favorites
-              </ThemedText>
-              {/* You can add more action buttons here */}
+              </Text>
+              <Text style={{ marginBottom: 8 }}>
+                {selectedImage.description}
+              </Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: "#ccc", // or theme.text or theme.border, etc.
+                  alignSelf: "stretch",
+                  marginVertical: 12,
+                }}
+              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 8,
+                }}
+              >
+                <IconSymbol
+                  type="material"
+                  name="favorite-border"
+                  size={17}
+                  color={theme.favoriteIcon}
+                  accessibilityLabel="Favorites"
+                  style={{ marginRight: 8 }}
+                />
+                <ThemedText style={{ color: theme.text }}>
+                  Add to Favorites
+                </ThemedText>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 8,
+                }}
+              >
+                <IconSymbol
+                  type="material"
+                  name="share"
+                  color={theme.shareIcon}
+                  accessibilityLabel="Share"
+                  style={{ marginRight: 8 }}
+                />
+                <ThemedText style={{ color: theme.text }}>
+                  Share this image
+                </ThemedText>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 8,
+                }}
+              >
+                <IconSymbol
+                  type="material"
+                  name="download"
+                  color={theme.icon}
+                  accessibilityLabel="Download"
+                  style={{ marginRight: 8 }}
+                />
+                <ThemedText style={{ color: theme.text }}>
+                  Download this image
+                </ThemedText>
+              </View>
             </>
           )}
         </BottomSheetView>
