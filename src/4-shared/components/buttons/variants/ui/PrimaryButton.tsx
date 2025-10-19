@@ -1,0 +1,50 @@
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import React from "react";
+import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import { styles } from "./PrimaryButton.styles";
+
+import { ButtonProps } from "@/4-shared/types";
+
+export const PrimaryButton: React.FC<ButtonProps> = ({
+  title,
+  onPress,
+  disabled = false,
+  loading = false,
+  style,
+}) => {
+  const { theme } = useTheme();
+
+  return (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        {
+          backgroundColor: theme.buttonBackgroundColor,
+          borderColor: theme.buttonBorderColor,
+          borderWidth: theme.buttonBorderWidth,
+          borderRadius: theme.buttonBorderRadius,
+        },
+        disabled && { opacity: 0.5 },
+        style,
+      ]}
+      activeOpacity={0.7}
+      onPress={onPress}
+      disabled={disabled || loading}
+    >
+      {loading ? (
+        <ActivityIndicator color={theme.buttonTextColor} />
+      ) : (
+        <Text
+          style={{
+            color: theme.buttonTextColor,
+            fontFamily: theme.fontFamilyBold,
+            fontSize: theme.buttonFontSize,
+            textAlign: "center",
+          }}
+        >
+          {title}
+        </Text>
+      )}
+    </TouchableOpacity>
+  );
+};

@@ -8,13 +8,13 @@ import { styles } from "./ImageFooterRow.styles";
 
 type ImageFooterRowProps = {
   imageId: string;
-  likesCount: number;
+  // likesCount: number;
   onPressComments?: () => void;
 };
 
 export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
   imageId,
-  likesCount,
+  // likesCount,
   onPressComments,
 }) => {
   const { theme } = useTheme();
@@ -32,9 +32,9 @@ export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
           accessibilityLabel="Likes"
           style={styles.icon}
         />
-        <ThemedText style={[{ color: theme.text }, styles.text]}>
+        {/* <ThemedText style={[{ color: theme.text }, styles.text]}>
           {likesCount}
-        </ThemedText>
+        </ThemedText> */}
       </View>
       <View style={styles.iconGroup}>
         <IconSymbol
