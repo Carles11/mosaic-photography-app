@@ -1,4 +1,5 @@
 import FontLoader from "@/4-shared/components/FontLoader";
+import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext";
 import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites/FavoritesContext";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
@@ -15,17 +16,19 @@ export const unstable_settings = {
 export default function RootLayout() {
   return (
     <GestureHandlerRootView>
-      <BottomSheetModalProvider>
-        <FontLoader>
-          <ThemeProvider>
-            <CommentsProvider>
-              <FavoritesProvider>
-                <InnerLayout />
-              </FavoritesProvider>
-            </CommentsProvider>
-          </ThemeProvider>
-        </FontLoader>
-      </BottomSheetModalProvider>
+      <AuthSessionProvider>
+        <BottomSheetModalProvider>
+          <FontLoader>
+            <ThemeProvider>
+              <CommentsProvider>
+                <FavoritesProvider>
+                  <InnerLayout />
+                </FavoritesProvider>
+              </CommentsProvider>
+            </ThemeProvider>
+          </FontLoader>
+        </BottomSheetModalProvider>
+      </AuthSessionProvider>
     </GestureHandlerRootView>
   );
 }

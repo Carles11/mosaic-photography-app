@@ -3,10 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   itemContainer: {
     marginBottom: 24,
-    backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ececec",
     overflow: "hidden",
-    shadowColor: "#000",
+    shadowColor: "#dedede",
     shadowOpacity: 0.08,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
