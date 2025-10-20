@@ -4,17 +4,16 @@ import { useComments } from "@/4-shared/context/comments";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
 import { View } from "react-native";
+import { FavoriteButton } from "./FavoriteButton";
 import { styles } from "./ImageFooterRow.styles";
 
 type ImageFooterRowProps = {
   imageId: string;
-  // likesCount: number;
   onPressComments?: () => void;
 };
 
 export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
   imageId,
-  // likesCount,
   onPressComments,
 }) => {
   const { theme } = useTheme();
@@ -24,17 +23,12 @@ export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.iconGroup}>
-        <IconSymbol
-          type="material"
-          name="favorite-border"
+        <FavoriteButton
+          imageId={imageId}
           size={18}
           color={theme.favoriteIcon ?? theme.text}
-          accessibilityLabel="Likes"
-          style={styles.icon}
+          accessibilityLabel="Toggle favorite"
         />
-        {/* <ThemedText style={[{ color: theme.text }, styles.text]}>
-          {likesCount}
-        </ThemedText> */}
       </View>
       <View style={styles.iconGroup}>
         <IconSymbol

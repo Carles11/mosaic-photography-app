@@ -3,6 +3,7 @@ import {
   getUserFavorites,
   removeFavorite,
 } from "@/4-shared/api/favoritesApi";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import React, {
   createContext,
   useCallback,
@@ -10,9 +11,6 @@ import React, {
   useEffect,
   useState,
 } from "react";
-
-// TEMP PATCH: Replace with real useAuthSession later
-const TEMP_USER = { id: "anon-id-123", email: "anon@example.com" };
 
 type FavoritesContextType = {
   favorites: Set<string>;
@@ -35,10 +33,9 @@ export function useFavorites() {
 }
 
 export function FavoritesProvider({ children }: { children: React.ReactNode }) {
-  const user = TEMP_USER; // Replace with real user logic later
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-
+  const { user } = useAuthSession();
   // Load user's favorites when user changes/mounts
   useEffect(() => {
     const loadFavorites = async () => {
@@ -64,6 +61,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     async (imageId: string | number) => {
       if (!user) return;
       const idStr = String(imageId);
+      console.log("toggleFavorite called with imageId:", idStr);
       try {
         const isFav = favorites.has(idStr);
         if (isFav) {
@@ -82,7 +80,7 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
           });
         }
       } catch (error) {
-        // Optionally handle error
+        console.log("Error toggling favorite:", error);
       }
     },
     [favorites, user]

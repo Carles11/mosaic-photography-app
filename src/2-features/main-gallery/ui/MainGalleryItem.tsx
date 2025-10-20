@@ -30,11 +30,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
         <ThemedText style={styles.title} numberOfLines={2}>
           {item.author}, {item.year}
         </ThemedText>
-        <ImageFooterRow
-          imageId={item.id}
-          // likesCount={item.likesCount ?? 0}
-          onPressComments={onPressComments}
-        />
+        <ImageFooterRow imageId={item.id} onPressComments={onPressComments} />
       </View>
     );
   }
