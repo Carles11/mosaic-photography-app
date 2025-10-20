@@ -1,4 +1,3 @@
-import { supabase } from "@/4-shared/api/supabaseClient";
 import { DropdownButton, SwitchButton } from "@/4-shared/components/buttons";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
@@ -9,6 +8,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { DropdownMenuItem } from "@/4-shared/types/menu";
 import { useRouter } from "expo-router";
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import { styles } from "./HomeHeader.styles";
 
 type HomeHeaderProps = {
@@ -20,16 +20,13 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
   const { mode, setMode } = useTheme();
   const theme = globalTheme[colorScheme];
   const router = useRouter();
-  const { user, loading } = useAuthSession();
+  const { user, signOut, loading } = useAuthSession();
 
   // Handler for login/logout menu action
   const handleAuthAction = async () => {
     if (user) {
-      // Log out
-      await supabase.auth.signOut();
-      router.replace("/"); // Redirect to home after logout
+      await signOut();
     } else {
-      // Login
       router.push("/auth/login");
     }
   };
@@ -71,6 +68,25 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
       ),
     },
   ];
+
+  // Render ActivityIndicator while loading auth/session
+  if (loading) {
+    return (
+      <ThemedView
+        style={[
+          styles.header,
+          {
+            backgroundColor: theme.background,
+            justifyContent: "center",
+            alignItems: "center",
+            height: 56,
+          },
+        ]}
+      >
+        <ActivityIndicator size="small" color={theme.text} />
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={[styles.header, { backgroundColor: theme.background }]}>
