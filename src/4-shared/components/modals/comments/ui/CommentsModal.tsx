@@ -1,203 +1,170 @@
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "@/4-shared/components/buttons/variants";
 import { Modal } from "@/4-shared/components/modals";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
-import React, { useEffect, useState } from "react";
-import { FlatList, TextInput, TouchableOpacity, View } from "react-native";
-import { styles } from "./CommentsModal.styles";
+import React, { useEffect } from "react";
+import { ActivityIndicator, FlatList, TextInput } from "react-native";
 
 type CommentsModalProps = {
-  visible: boolean;
   imageId: string;
+  visible: boolean;
   onClose: () => void;
 };
 
 export const CommentsModal: React.FC<CommentsModalProps> = ({
-  visible,
   imageId,
+  visible,
   onClose,
 }) => {
-  // TEMP PATCH: Replace with real useAuthSession later
-  const user = { id: "anon-id-123", email: "anon@example.com" }; // null for "not logged in"
-
   const {
-    getCommentsForImage,
+    comments,
+    loading,
     addComment,
     updateComment,
     deleteComment,
     loadCommentsForImage,
-    loading,
   } = useComments();
-  const [input, setInput] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingContent, setEditingContent] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const { user, loading: authLoading } = useAuthSession();
 
+  // Load comments for the image when the modal opens
   useEffect(() => {
-    if (visible) {
+    if (visible && imageId) {
       loadCommentsForImage(imageId);
     }
   }, [visible, imageId, loadCommentsForImage]);
 
-  const comments = getCommentsForImage(imageId);
+  const imageComments = comments[imageId] || [];
+  const isLoading = loading[imageId];
 
-  const handleAdd = async () => {
-    if (!input.trim() || !user) return;
-    setSubmitting(true);
-    try {
-      await addComment(imageId, user.id, input.trim());
-      setInput("");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleUpdate = async () => {
-    if (!editingId || !editingContent.trim() || !user) return;
-    setSubmitting(true);
-    try {
-      await updateComment(editingId, user.id, editingContent.trim());
-      setEditingId(null);
-      setEditingContent("");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDelete = async (commentId: string) => {
-    if (!user) return;
-    setSubmitting(true);
-    try {
-      await deleteComment(commentId, user.id, imageId);
-      if (editingId === commentId) {
-        setEditingId(null);
-        setEditingContent("");
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  type Comment = {
+  const [commentText, setCommentText] = React.useState("");
+  const [editMode, setEditMode] = React.useState<{
     id: string;
-    user_id: string;
-    user_name?: string;
-    user_email?: string;
     content: string;
+  } | null>(null);
+
+  const handleSaveComment = () => {
+    if (!user) return;
+    if (editMode) {
+      updateComment(imageId, editMode.id, user.id, commentText);
+      setEditMode(null);
+    } else {
+      addComment(imageId, user.id, commentText);
+    }
+    setCommentText("");
   };
 
-  const renderItem = ({ item }: { item: Comment }) => (
-    <View style={styles.commentRow}>
-      <View style={styles.commentContent}>
-        <ThemedText style={styles.commentUser}>
-          {item.user_name || item.user_email || "User"}
-        </ThemedText>
-        {editingId === item.id ? (
-          <TextInput
-            style={styles.input}
-            value={editingContent}
-            onChangeText={setEditingContent}
-            editable={!submitting}
-            autoFocus
-          />
-        ) : (
-          <ThemedText style={styles.commentText}>{item.content}</ThemedText>
-        )}
-      </View>
-      {user && item.user_id === user.id && (
-        <View style={styles.actions}>
-          {editingId === item.id ? (
-            <TouchableOpacity
-              onPress={handleUpdate}
-              disabled={submitting}
-              style={styles.actionBtn}
-            >
-              <IconSymbol
-                type="material"
-                name="check"
-                size={20}
-                color="#4caf50"
-              />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              onPress={() => {
-                setEditingId(item.id);
-                setEditingContent(item.content);
-              }}
-              disabled={submitting}
-              style={styles.actionBtn}
-            >
-              <IconSymbol
-                type="material"
-                name="edit"
-                size={20}
-                color="#1976d2"
-              />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity
-            onPress={() => handleDelete(item.id)}
-            disabled={submitting}
-            style={styles.actionBtn}
-          >
-            <IconSymbol
-              type="material"
-              name="delete"
-              size={20}
-              color="#e53935"
-            />
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
-  );
+  const handleEdit = (commentId: string, content: string) => {
+    setEditMode({ id: commentId, content });
+    setCommentText(content);
+  };
+
+  const handleDelete = (commentId: string) => {
+    if (!user) return;
+    deleteComment(imageId, commentId, user.id);
+  };
 
   return (
-    <Modal
-      visible={visible}
-      onClose={onClose}
-      title="Comments"
-      disableBackdropPress={submitting}
-      contentContainerStyle={styles.modalContainer}
-    >
-      <FlatList
-        data={comments}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        ListEmptyComponent={
-          <ThemedText style={styles.emptyText}>No comments yet.</ThemedText>
-        }
-        style={styles.list}
-        contentContainerStyle={{ flexGrow: 1 }}
-      />
-      {user && (
-        <View style={styles.inputRow}>
-          <TextInput
-            style={styles.input}
-            placeholder="Add a comment..."
-            value={input}
-            onChangeText={setInput}
-            editable={!submitting}
-            onSubmitEditing={handleAdd}
-            blurOnSubmit={false}
+    <Modal visible={visible} onClose={onClose}>
+      <ThemedView style={{ flex: 1, padding: 16 }}>
+        <ThemedText type="title" style={{ marginBottom: 8 }}>
+          Comments
+        </ThemedText>
+        {isLoading ? (
+          <ActivityIndicator size="small" style={{ marginTop: 16 }} />
+        ) : (
+          <FlatList
+            data={imageComments}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={
+              <ThemedText style={{ marginTop: 16, color: "#999" }}>
+                No comments yet.
+              </ThemedText>
+            }
+            renderItem={({ item }) => (
+              <ThemedView
+                style={{
+                  paddingVertical: 8,
+                  borderBottomColor: "#eee",
+                  borderBottomWidth: 1,
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <ThemedView style={{ flex: 1, width: "100%" }}>
+                  <ThemedText type="defaultSemiBold">
+                    {item.user_id === user?.id
+                      ? "You"
+                      : item.user_id || "Anonymous"}
+                  </ThemedText>
+                  <ThemedText>{item.content}</ThemedText>
+                  <ThemedText style={{ fontSize: 10, color: "#999" }}>
+                    {item.created_at
+                      ? new Date(item.created_at).toLocaleString()
+                      : ""}
+                  </ThemedText>
+                </ThemedView>
+                {user && user.id === item.user_id && (
+                  <ThemedView style={{ flexDirection: "row" }}>
+                    <SecondaryButton
+                      title="Edit"
+                      onPress={() => handleEdit(item.id, item.content)}
+                      style={{
+                        marginRight: 8,
+                        paddingVertical: 2,
+                        paddingHorizontal: 8,
+                      }}
+                    />
+                    <SecondaryButton
+                      title="Delete"
+                      onPress={() => handleDelete(item.id)}
+                      style={{ paddingVertical: 2, paddingHorizontal: 8 }}
+                    />
+                  </ThemedView>
+                )}
+              </ThemedView>
+            )}
           />
-          <TouchableOpacity
-            onPress={handleAdd}
-            disabled={submitting || !input.trim()}
-            style={styles.sendBtn}
-          >
-            <IconSymbol type="material" name="send" size={22} color="#1976d2" />
-          </TouchableOpacity>
-        </View>
-      )}
-      {!user && (
-        <View style={styles.inputRow}>
-          <ThemedText style={{ color: "#888", textAlign: "center" }}>
-            Please log in to comment.
+        )}
+        {user ? (
+          <ThemedView style={{ flexDirection: "row", marginTop: 12 }}>
+            <TextInput
+              style={{
+                flex: 1,
+                borderColor: "#ccc",
+                borderWidth: 1,
+                padding: 8,
+                borderRadius: 4,
+                marginRight: 8,
+                backgroundColor: "#fff",
+              }}
+              placeholder="Write a comment..."
+              value={commentText}
+              onChangeText={setCommentText}
+            />
+            <PrimaryButton
+              title={editMode ? "Update" : "Send"}
+              onPress={handleSaveComment}
+              disabled={authLoading || !commentText.trim()}
+              style={{ paddingVertical: 2, paddingHorizontal: 16 }}
+            />
+          </ThemedView>
+        ) : (
+          <ThemedText style={{ marginTop: 16, color: "#999" }}>
+            Log in to write and manage your comments.
           </ThemedText>
-        </View>
-      )}
+        )}
+        <PrimaryButton
+          title="Close"
+          onPress={onClose}
+          style={{ marginTop: 24 }}
+        />
+      </ThemedView>
     </Modal>
   );
 };

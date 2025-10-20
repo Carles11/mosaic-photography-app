@@ -9,6 +9,7 @@ export type Comment = {
   user_name?: string; // Optionally hydrate with profile info
 };
 
+// Fetch comments for a specific image
 export async function fetchCommentsForImage(
   imageId: string
 ): Promise<Comment[]> {
@@ -25,8 +26,9 @@ export async function fetchCommentsForImage(
     )
     .eq("image_id", imageId)
     .order("created_at", { ascending: true });
+
   if (error) throw error;
-  return data as Comment[];
+  return (data ?? []) as Comment[];
 }
 
 // Batch count loading for multiple images
@@ -43,7 +45,7 @@ export async function fetchCommentCountsBatch(
   if (error) throw error;
 
   const counts: Record<string, number> = {};
-  data.forEach(({ image_id }: { image_id: string }) => {
+  (data ?? []).forEach(({ image_id }: { image_id: string }) => {
     counts[image_id] = (counts[image_id] ?? 0) + 1;
   });
 
@@ -55,6 +57,7 @@ export async function fetchCommentCountsBatch(
   return counts;
 }
 
+// Add a new comment
 export async function addComment(
   imageId: string,
   userId: string,
@@ -70,6 +73,7 @@ export async function addComment(
   return data as Comment;
 }
 
+// Update an existing comment (only by owner)
 export async function updateComment(
   commentId: string,
   userId: string,
@@ -87,6 +91,7 @@ export async function updateComment(
   return data as Comment;
 }
 
+// Delete an existing comment (only by owner)
 export async function deleteComment(
   commentId: string,
   userId: string
