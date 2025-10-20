@@ -29,14 +29,15 @@ type CommentsContextType = {
     content: string
   ) => Promise<void>;
   updateComment: (
+    imageId: string,
     commentId: string,
     userId: string,
     content: string
   ) => Promise<void>;
   deleteComment: (
+    imageId: string,
     commentId: string,
-    userId: string,
-    imageId: string
+    userId: string
   ) => Promise<void>;
   loadCommentsForImage: (imageId: string) => Promise<void>;
 };
@@ -98,14 +99,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadCommentsForImage = useCallback(async (imageId: string) => {
-    if (!imageId) {
-      return;
-    }
-    if (
-      loadingRef.current[imageId] ||
-      commentsRef.current[imageId] !== undefined
-    )
-      return;
+    if (!imageId) return;
     setLoading((prev) => ({ ...prev, [imageId]: true }));
     try {
       const data = await fetchCommentsForImage(imageId);
@@ -118,68 +112,128 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Optimistic add
   const addComment = useCallback(
     async (imageId: string, userId: string, content: string) => {
       if (!content.trim()) return;
+      // Optimistically add comment (temporary id for instant UI)
+      const tempId = "temp-" + Date.now();
+      const tempComment: Comment = {
+        id: tempId,
+        user_id: userId,
+        image_id: imageId,
+        content: content.trim(),
+        created_at: new Date().toISOString(),
+      };
+      setComments((prev) => ({
+        ...prev,
+        [imageId]: [...(prev[imageId] || []), tempComment],
+      }));
+      setCommentCounts((prev) => ({
+        ...prev,
+        [imageId]: (prev[imageId] || 0) + 1,
+      }));
       try {
-        const comment = await apiAddComment(imageId, userId, content.trim());
+        const savedComment = await apiAddComment(
+          imageId,
+          userId,
+          content.trim()
+        );
         setComments((prev) => ({
           ...prev,
-          [imageId]: [...(prev[imageId] || []), comment],
+          [imageId]: [
+            ...(prev[imageId] || []).filter((c) => c.id !== tempId),
+            savedComment,
+          ],
+        }));
+      } catch (error) {
+        // Revert optimistic add
+        setComments((prev) => ({
+          ...prev,
+          [imageId]: (prev[imageId] || []).filter((c) => c.id !== tempId),
         }));
         setCommentCounts((prev) => ({
           ...prev,
-          [imageId]: (prev[imageId] || 0) + 1,
+          [imageId]: Math.max((prev[imageId] || 1) - 1, 0),
         }));
-      } catch (error) {
         throw error;
       }
     },
     []
   );
 
+  // Optimistic update
   const updateComment = useCallback(
-    async (commentId: string, userId: string, content: string) => {
+    async (
+      imageId: string,
+      commentId: string,
+      userId: string,
+      content: string
+    ) => {
       if (!content.trim()) return;
+      const prevComments = commentsRef.current[imageId] || [];
+      // Optimistically update comment
+      setComments((prev) => ({
+        ...prev,
+        [imageId]: (prev[imageId] || []).map((comment) =>
+          comment.id === commentId
+            ? { ...comment, content: content.trim() }
+            : comment
+        ),
+      }));
       try {
         const updated = await apiUpdateComment(
           commentId,
           userId,
           content.trim()
         );
-        setComments((prev) => {
-          const newComments = { ...prev };
-          Object.keys(newComments).forEach((imageId) => {
-            newComments[imageId] = newComments[imageId].map((comment) =>
-              comment.id === commentId
-                ? { ...comment, content: updated.content }
-                : comment
-            );
-          });
-          return newComments;
-        });
+        setComments((prev) => ({
+          ...prev,
+          [imageId]: (prev[imageId] || []).map((comment) =>
+            comment.id === commentId
+              ? { ...comment, content: updated.content }
+              : comment
+          ),
+        }));
       } catch (error) {
+        // Revert optimistic update
+        setComments((prev) => ({
+          ...prev,
+          [imageId]: prevComments,
+        }));
         throw error;
       }
     },
     []
   );
 
+  // Optimistic delete
   const deleteComment = useCallback(
-    async (commentId: string, userId: string, imageId: string) => {
+    async (imageId: string, commentId: string, userId: string) => {
+      const prevComments = commentsRef.current[imageId] || [];
+      // Optimistically remove comment
+      setComments((prev) => ({
+        ...prev,
+        [imageId]: (prev[imageId] || []).filter(
+          (comment) => comment.id !== commentId
+        ),
+      }));
+      setCommentCounts((prev) => ({
+        ...prev,
+        [imageId]: Math.max((prev[imageId] || 1) - 1, 0),
+      }));
       try {
         await apiDeleteComment(commentId, userId);
+      } catch (error) {
+        // Revert optimistic delete
         setComments((prev) => ({
           ...prev,
-          [imageId]: (prev[imageId] || []).filter(
-            (comment) => comment.id !== commentId
-          ),
+          [imageId]: prevComments,
         }));
         setCommentCounts((prev) => ({
           ...prev,
-          [imageId]: Math.max((prev[imageId] || 1) - 1, 0),
+          [imageId]: prevComments.length,
         }));
-      } catch (error) {
         throw error;
       }
     },
