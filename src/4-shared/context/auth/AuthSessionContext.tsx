@@ -1,19 +1,20 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
-import { User } from "@supabase/supabase-js";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type AuthContextType = {
-  user: User | null;
+  user: any;
   loading: boolean;
+  signOut: () => Promise<void>;
 };
 
-const AuthSessionContext = createContext<AuthContextType>({
+const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  signOut: async () => {},
 });
 
 export function useAuthSession() {
-  return useContext(AuthSessionContext);
+  return useContext(AuthContext);
 }
 
 export function AuthSessionProvider({
@@ -21,49 +22,47 @@ export function AuthSessionProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
+    // On mount, check for existing session (persistent login)
+    const initAuth = async () => {
+      setLoading(true);
+      // Get session from Supabase (AsyncStorage)
+      const { data, error } = await supabase.auth.getSession();
 
-    const getSession = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        if (mounted) {
-          setUser(session?.user ?? null);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Error getting session:", error);
-        if (mounted) {
-          setUser(null);
-          setLoading(false);
-        }
+      if (data?.session?.user) {
+        setUser(data.session.user);
+      } else {
+        setUser(null);
       }
+      setLoading(false);
     };
-    getSession();
 
+    // Listen for auth state changes (login, logout, token refresh)
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        if (mounted) {
-          setUser(session?.user ?? null);
-          setLoading(false);
-        }
+        setUser(session?.user ?? null);
       }
     );
 
+    initAuth();
+
+    // Cleanup listener
     return () => {
-      mounted = false;
-      listener?.subscription.unsubscribe();
+      listener.subscription.unsubscribe();
     };
   }, []);
 
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   return (
-    <AuthSessionContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, signOut }}>
       {children}
-    </AuthSessionContext.Provider>
+    </AuthContext.Provider>
   );
 }
