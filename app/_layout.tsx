@@ -1,7 +1,7 @@
 import FontLoader from "@/4-shared/components/FontLoader";
 import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext";
 import { CommentsProvider } from "@/4-shared/context/comments";
-import { FavoritesProvider } from "@/4-shared/context/favorites/FavoritesContext";
+import { FavoritesProvider } from "@/4-shared/context/favorites";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";

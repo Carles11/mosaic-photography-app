@@ -17,7 +17,6 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   accessibilityLabel = "Toggle favorite",
 }) => {
   const { isFavorite, toggleFavorite, loading } = useFavorites();
-
   const handlePress = () => {
     if (!loading) {
       toggleFavorite(imageId);

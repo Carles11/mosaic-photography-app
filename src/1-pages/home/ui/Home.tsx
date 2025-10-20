@@ -28,6 +28,7 @@ export const Home: React.FC = () => {
   const imageMenuSheetRef = useRef<BottomSheetModal>(null);
 
   // Filters state lifted to Home
+  // Filtering options are set in BottomSheetFilterMenu
   const { filters, setFilters, resetFilters } = useGalleryFilters();
 
   // MainGallery image loading logic moved here
