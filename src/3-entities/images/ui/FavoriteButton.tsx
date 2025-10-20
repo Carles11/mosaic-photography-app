@@ -1,6 +1,4 @@
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
-import { useFavorites } from "@/4-shared/context/favorites";
-import React from "react";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 
 type FavoriteButtonProps = {
@@ -8,6 +6,9 @@ type FavoriteButtonProps = {
   size?: number;
   color?: string;
   accessibilityLabel?: string;
+  onPressFavoriteIcon: () => void;
+  isFavorite: (imageId: string | number) => boolean;
+  loading: boolean;
 };
 
 export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
@@ -15,19 +16,15 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   size = 28,
   color = "#e53935",
   accessibilityLabel = "Toggle favorite",
+  onPressFavoriteIcon,
+  isFavorite,
+  loading,
 }) => {
-  const { isFavorite, toggleFavorite, loading } = useFavorites();
-  const handlePress = () => {
-    if (!loading) {
-      toggleFavorite(imageId);
-    }
-  };
-
   const filled = isFavorite(imageId);
 
   return (
     <TouchableOpacity
-      onPress={handlePress}
+      onPress={onPressFavoriteIcon}
       accessibilityLabel={accessibilityLabel}
       style={{ padding: 4 }}
       disabled={loading}

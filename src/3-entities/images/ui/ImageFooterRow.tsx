@@ -1,8 +1,9 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useComments } from "@/4-shared/context/comments";
+import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import React from "react";
+import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { FavoriteButton } from "./FavoriteButton";
 import { styles } from "./ImageFooterRow.styles";
@@ -19,6 +20,18 @@ export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
   const { theme } = useTheme();
   const { getCommentCount } = useComments();
   const commentsCount = getCommentCount(imageId);
+  const router = useRouter();
+
+  const { loading, toggleFavorite, isFavorite, isUserLoggedIn } =
+    useFavorites();
+
+  const handleFavoritePress = (imageId: string | number) => {
+    if (!isUserLoggedIn()) {
+      router.push("/auth/login");
+      return;
+    }
+    toggleFavorite(imageId);
+  };
 
   return (
     <View style={styles.container}>
@@ -28,6 +41,9 @@ export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
           size={18}
           color={theme.favoriteIcon ?? theme.text}
           accessibilityLabel="Toggle favorite"
+          onPressFavoriteIcon={() => handleFavoritePress(imageId)}
+          isFavorite={isFavorite}
+          loading={loading}
         />
       </View>
       <View style={styles.iconGroup}>

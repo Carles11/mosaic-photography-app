@@ -3,6 +3,7 @@ import { supabase } from "@/4-shared/api/supabaseClient";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,10 +19,14 @@ export default function FavoritesList() {
     favorites,
     loading: favoritesLoading,
     isUserLoggedIn,
+    toggleFavorite,
+    isFavorite,
+    loading,
   } = useFavorites();
   const { theme } = useTheme();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchFavoriteImages = async () => {
@@ -88,6 +93,14 @@ export default function FavoritesList() {
     );
   }
 
+  const handleFavoritePress = (imageId: string | number) => {
+    if (!isUserLoggedIn()) {
+      router.push("/auth/login");
+      return;
+    }
+    toggleFavorite(imageId);
+  };
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
@@ -122,6 +135,9 @@ export default function FavoritesList() {
               imageId={item.id}
               size={24}
               color={theme.favoriteIcon}
+              onPressFavoriteIcon={() => handleFavoritePress(item.id)}
+              isFavorite={isFavorite}
+              loading={loading}
             />
           </View>
         )}
