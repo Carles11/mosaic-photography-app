@@ -1,7 +1,8 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 import { styles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 
@@ -22,23 +23,23 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 }) => {
   if (loading) {
     return (
-      <View style={styles.centered}>
+      <ThemedView style={styles.centered}>
         <ThemedText>Loading...</ThemedText>
-      </View>
+      </ThemedView>
     );
   }
   if (error) {
     return (
-      <View style={styles.centered}>
+      <ThemedView style={styles.centered}>
         <ThemedText style={styles.error}>{error}</ThemedText>
-      </View>
+      </ThemedView>
     );
   }
   if (!images.length) {
     return (
-      <View style={styles.centered}>
+      <ThemedView style={styles.centered}>
         <ThemedText>No images found.</ThemedText>
-      </View>
+      </ThemedView>
     );
   }
 

@@ -1,10 +1,11 @@
 import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
 import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
-import { Image, View } from "react-native";
+import { Image } from "react-native";
 import { styles } from "./MainGalleryItem.styles";
 
 type MainGalleryItemProps = {
@@ -18,7 +19,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
     const { theme } = useTheme();
 
     return (
-      <View
+      <ThemedView
         style={[styles.itemContainer, { backgroundColor: theme.background }]}
       >
         <ImageHeaderRow onOpenMenu={onOpenMenu} />
@@ -31,7 +32,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
           {item.author}, {item.year}
         </ThemedText>
         <ImageFooterRow imageId={item.id} onPressComments={onPressComments} />
-      </View>
+      </ThemedView>
     );
   }
 );

@@ -17,14 +17,12 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: "auto",
     minHeight: 450,
-    backgroundColor: "#eaeaea",
   },
   title: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: "bold",
     marginHorizontal: 12,
     marginTop: 10,
     marginBottom: 8,
-    color: "#222",
   },
 });
