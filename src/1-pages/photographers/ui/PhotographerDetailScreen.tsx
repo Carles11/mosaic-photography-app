@@ -1,21 +1,15 @@
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
-import Timeline from "@/2-features/photographers/ui/Timeline";
+import { PhotographerTimeline } from "@/2-features/photographers/ui/Timeline";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { formatLifespan } from "@/4-shared/lib/formatLifespan";
 import { PhotographerImage, PhotographerSlug } from "@/4-shared/types";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Image,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Dimensions, FlatList, Image } from "react-native";
 import { styles } from "./PhotographerDetailScreen.styles";
 const { width: deviceWidth } = Dimensions.get("window");
 
@@ -62,7 +56,7 @@ const PhotographerDetailScreen: React.FC = () => {
       active = false;
     };
   }, [slug]);
-
+  console.log("PhotographerDetailScreen render with slug:", slug);
   const timelineEvents = photographer
     ? getTimelineBySlug(photographer.slug) || []
     : [];
@@ -70,7 +64,7 @@ const PhotographerDetailScreen: React.FC = () => {
   const renderHeader = useCallback(() => {
     if (!photographer) return null;
     return (
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <ThemedText style={styles.title}>
           {photographer.name} {photographer.surname}
         </ThemedText>
@@ -82,9 +76,9 @@ const PhotographerDetailScreen: React.FC = () => {
           Personal & Historical Milestones in {photographer.name}{" "}
           {photographer.surname}'s life.
         </ThemedText>
-        <View style={styles.timelineContainer}>
-          <Timeline events={timelineEvents} />
-        </View>
+        <ThemedView style={styles.timelineContainer}>
+          <PhotographerTimeline events={timelineEvents} />
+        </ThemedView>
         <ThemedText style={styles.sectionTitle}>
           About the Photographer
         </ThemedText>
@@ -106,13 +100,13 @@ const PhotographerDetailScreen: React.FC = () => {
             ({photographer.images?.length || 0})
           </ThemedText>
         </ThemedText>
-      </View>
+      </ThemedView>
     );
   }, [photographer, timelineEvents]);
 
   const renderImage = useCallback(
     ({ item }: { item: PhotographerImage }) => (
-      <View style={styles.galleryImageWrapper}>
+      <ThemedView style={styles.galleryImageWrapper}>
         <Image
           source={{ uri: item.url }}
           style={[
@@ -121,28 +115,34 @@ const PhotographerDetailScreen: React.FC = () => {
           ]}
           resizeMode="cover"
         />
-        {item.year ? <Text style={styles.imageYear}>{item.year}</Text> : null}
-        {item.description ? (
-          <Text style={styles.imageDescription}>{item.description}</Text>
+        {item.year ? (
+          <ThemedText style={styles.imageYear}>{item.year}</ThemedText>
         ) : null}
-      </View>
+        {item.description ? (
+          <ThemedText style={styles.imageDescription}>
+            {item.description}
+          </ThemedText>
+        ) : null}
+      </ThemedView>
     ),
     []
   );
 
   if (loading) {
     return (
-      <View style={styles.centered}>
+      <ThemedView style={styles.centered}>
         <ActivityIndicator size="large" />
-      </View>
+      </ThemedView>
     );
   }
 
   if (notFound || !photographer) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.notFoundText}>Photographer not found.</Text>
-      </View>
+      <ThemedView style={styles.centered}>
+        <ThemedText style={styles.notFoundText}>
+          Photographer not found.
+        </ThemedText>
+      </ThemedView>
     );
   }
 

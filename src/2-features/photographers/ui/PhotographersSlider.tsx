@@ -79,7 +79,7 @@ export const PhotographersSlider: React.FC = () => {
                   </View>
                 )}
               </View>
-              <Text style={styles.name} numberOfLines={1}>
+              <Text style={styles.name} numberOfLines={2}>
                 {item.name} {item.surname}
               </Text>
             </TouchableOpacity>

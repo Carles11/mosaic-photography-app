@@ -4,7 +4,6 @@ export const styles = StyleSheet.create({
   timelineWrapper: {
     paddingVertical: 8,
     paddingHorizontal: 4,
-    backgroundColor: "#fff",
   },
   emptyContainer: {
     paddingVertical: 24,
@@ -12,14 +11,12 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   emptyText: {
-    color: "#888",
     fontSize: 16,
     fontStyle: "italic",
   },
   eventContainer: {
     marginBottom: 20,
     borderRadius: 8,
-    backgroundColor: "#f8f8f8",
     padding: 14,
     elevation: 1,
   },
@@ -73,7 +70,6 @@ export const styles = StyleSheet.create({
     minWidth: 46,
     textAlign: "right",
     fontSize: 13,
-    color: "#888",
     paddingRight: 6,
     fontVariant: ["tabular-nums"],
     fontFamily: "System",

@@ -15,7 +15,6 @@ export const styles = StyleSheet.create({
   sectionStoresContent: {
     fontSize: 15,
     paddingBottom: 4,
-    color: "#444",
   },
   linkItem: {
     paddingVertical: 6,

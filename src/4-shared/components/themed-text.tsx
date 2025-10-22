@@ -1,53 +1,49 @@
-import { useThemeColor } from '@/4-shared/hooks/use-theme-color';
-import { useTheme } from '@/4-shared/theme/ThemeProvider';
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import { useThemeColor } from "@/4-shared/hooks/use-theme-color";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { StyleSheet, Text, type TextProps } from "react-native";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link";
 };
 
 export function ThemedText({
   style,
   lightColor,
   darkColor,
-  type = 'default',
+  type = "default",
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  const rawColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "text"
+  );
+  const color =
+    typeof rawColor === "number" ? `#${rawColor.toString(16)}` : rawColor;
   const { theme } = useTheme();
 
   // Font family mapping for each type
   const fontFamily =
-    type === 'title' || type === 'subtitle' || type === 'defaultSemiBold'
+    type === "title" || type === "subtitle" || type === "defaultSemiBold"
       ? theme.fontFamilyBold
       : theme.fontFamily;
 
   // Style mapping for each type
   const textStyle =
-    type === 'default'
+    type === "default"
       ? styles.default
-      : type === 'title'
+      : type === "title"
       ? styles.title
-      : type === 'defaultSemiBold'
+      : type === "defaultSemiBold"
       ? styles.defaultSemiBold
-      : type === 'subtitle'
+      : type === "subtitle"
       ? styles.subtitle
-      : type === 'link'
+      : type === "link"
       ? styles.link
       : undefined;
 
-  return (
-    <Text
-      style={[
-        { color, fontFamily },
-        textStyle,
-        style,
-      ]}
-      {...rest}
-    />
-  );
+  return <Text style={[{ color, fontFamily }, textStyle, style]} {...rest} />;
 }
 
 const styles = StyleSheet.create({
@@ -72,7 +68,7 @@ const styles = StyleSheet.create({
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#0a7ea4',
+    color: "#0a7ea4",
     // fontWeight removed, handled by fontFamily
   },
 });

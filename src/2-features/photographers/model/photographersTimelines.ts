@@ -1092,12 +1092,17 @@ const photographersTimelines: Record<string, TimelineItemModelProps[]> = {
 /**
  * Helper function to get timeline by slug
  */
+function normalizeSlug(slug: string) {
+  // Remove hyphens and lowercase everything
+  return slug.replace(/-/g, "").toLowerCase();
+}
+
 export function getTimelineBySlug(
   slug: string
 ): TimelineItemModelProps[] | null {
-  return photographersTimelines[slug] || null;
+  const normalized = normalizeSlug(slug);
+  return photographersTimelines[normalized] || null;
 }
-
 /*
 Sources:
  Britannica, Wikipedia, Metropolitan Museum of Art, museum retrospectives, academic biographies.

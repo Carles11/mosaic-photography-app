@@ -1,5 +1,7 @@
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
-import { Text, View } from "react-native";
 import Timeline from "react-native-timeline-flatlist";
 import { TimelineItemModelProps } from "../../../4-shared/types";
 import { styles } from "./Timeline.styles";
@@ -26,30 +28,31 @@ function mapEventsToTimelineFlatlist(events: TimelineItemModelProps[]) {
 }
 
 export const PhotographerTimeline: React.FC<TimelineProps> = ({ events }) => {
+  const { theme } = useTheme();
+
   if (!events || events.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No timeline events available.</Text>
-      </View>
+      <ThemedView style={styles.emptyContainer}>
+        <ThemedText style={styles.emptyText}>
+          No timeline events available.
+        </ThemedText>
+      </ThemedView>
     );
   }
   const data = mapEventsToTimelineFlatlist(events);
-
   return (
-    <View style={styles.timelineWrapper}>
+    <ThemedView style={styles.timelineWrapper}>
       <Timeline
         data={data}
         circleSize={16}
-        circleColor="#3498db" // must be a string, not null
-        lineColor="#bbb" // must be a string, not null
-        timeStyle={styles.timelineTime}
-        titleStyle={styles.eventTitle}
-        descriptionStyle={styles.eventDescription}
+        circleColor={theme.primary}
+        lineColor={theme.border}
+        timeStyle={[styles.timelineTime, { color: theme.text }]}
+        titleStyle={[styles.eventTitle, { color: theme.text }]}
+        descriptionStyle={[styles.eventDescription, { color: theme.text }]}
         showTime
         // options prop is NOT valid for this component!
       />
-    </View>
+    </ThemedView>
   );
 };
-
-export default PhotographerTimeline;
