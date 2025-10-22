@@ -1,21 +1,16 @@
-import { Dimensions, StyleSheet } from "react-native";
-
-const { width: deviceWidth } = Dimensions.get("window");
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "#fff",
   },
   flatListContent: {
     paddingBottom: 32,
-    backgroundColor: "#fff",
   },
   centered: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
   },
   notFoundText: {
     color: "#c00",
@@ -36,7 +31,6 @@ export const styles = StyleSheet.create({
   },
   lifespan: {
     fontSize: 16,
-    color: "#666",
     marginBottom: 16,
     paddingLeft: 4,
   },
@@ -48,7 +42,6 @@ export const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: 16,
-    color: "#444",
     marginBottom: 12,
   },
   timelineContainer: {
@@ -65,7 +58,6 @@ export const styles = StyleSheet.create({
   biography: {
     fontSize: 15,
     lineHeight: 22,
-    color: "#222",
     marginBottom: 18,
     paddingLeft: 4,
   },
@@ -76,31 +68,23 @@ export const styles = StyleSheet.create({
   },
   // Gallery styles for FlatList renderItem
   galleryImageWrapper: {
-    marginBottom: 20,
     alignItems: "center",
-    backgroundColor: "#fafafa",
-    borderRadius: 10,
+    borderRadius: 4,
     overflow: "hidden",
-    marginHorizontal: 12,
     elevation: 2,
   },
   galleryImage: {
-    width: deviceWidth - 24,
-    height: (deviceWidth - 24) * 0.7,
-    borderRadius: 10,
-    backgroundColor: "#eaeaea",
+    borderRadius: 4,
   },
   imageYear: {
     marginTop: 8,
     fontWeight: "600",
     fontSize: 16,
-    color: "#333",
     textAlign: "center",
     paddingHorizontal: 8,
   },
   imageDescription: {
     fontSize: 14,
-    color: "#666",
     marginBottom: 8,
     marginTop: 4,
     paddingHorizontal: 8,

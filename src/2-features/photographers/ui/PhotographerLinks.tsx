@@ -1,6 +1,8 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
-import { Linking, TouchableOpacity, View } from "react-native";
+import { Linking, TouchableOpacity } from "react-native";
 import { styles } from "./PhotographerLinks.styles";
 
 interface Store {
@@ -18,6 +20,8 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
   stores,
   website,
 }) => {
+  const { theme } = useTheme();
+
   const parsedStores: Store[] = Array.isArray(stores)
     ? stores.map((store) => {
         if (typeof store === "string") {
@@ -36,8 +40,8 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
   };
 
   return (
-    <View>
-      <View style={styles.sectionHeader}>
+    <ThemedView>
+      <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectionTitle}>
           Where to find prints and books
         </ThemedText>
@@ -45,7 +49,7 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
           Shop stunning prints and books at these trusted retailers, carefully
           curated by the team of mosaic.photography:
         </ThemedText>
-      </View>
+      </ThemedView>
       {parsedStores.length > 0 &&
         parsedStores.map((item, idx) => (
           <TouchableOpacity
@@ -63,7 +67,7 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
           </TouchableOpacity>
         ))}
 
-      <View style={styles.sectionHeader}>
+      <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectionTitle}>Learn more:</ThemedText>
         {website ? (
           <TouchableOpacity
@@ -82,8 +86,8 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
             </ThemedText>
           </TouchableOpacity>
         ) : null}
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 };
 
