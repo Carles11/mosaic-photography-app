@@ -2,6 +2,7 @@ import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPho
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
 import Timeline from "@/2-features/photographers/ui/Timeline";
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { formatLifespan } from "@/4-shared/lib/formatLifespan";
 import { PhotographerImage, PhotographerSlug } from "@/4-shared/types";
 import { useNavigation } from "@react-navigation/native";
@@ -70,35 +71,41 @@ const PhotographerDetailScreen: React.FC = () => {
     if (!photographer) return null;
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>
+        <ThemedText style={styles.title}>
           {photographer.name} {photographer.surname}
-        </Text>
-        <Text style={styles.lifespan}>
+        </ThemedText>
+        <ThemedText style={styles.lifespan}>
           {formatLifespan(photographer.birthdate, photographer.deceasedate)}
-        </Text>
-        <Text style={styles.sectionTitle}>A Life in Focus</Text>
-        <Text style={styles.sectionSubtitle}>
+        </ThemedText>
+        <ThemedText style={styles.sectionTitle}>A Life in Focus</ThemedText>
+        <ThemedText style={styles.sectionSubtitle}>
           Personal & Historical Milestones in {photographer.name}{" "}
           {photographer.surname}'s life.
-        </Text>
+        </ThemedText>
         <View style={styles.timelineContainer}>
           <Timeline events={timelineEvents} />
         </View>
-        <Text style={styles.sectionTitle}>About the Photographer</Text>
-        <Text style={styles.sectionLabel}>Born in:</Text>
-        <Text style={styles.sectionContent}>{photographer.origin}</Text>
-        <Text style={styles.sectionLabel}>Biography:</Text>
-        <Text style={styles.biography}>{photographer.biography}</Text>
+        <ThemedText style={styles.sectionTitle}>
+          About the Photographer
+        </ThemedText>
+        <ThemedText style={styles.sectionLabel}>Born in:</ThemedText>
+        <ThemedText style={styles.sectionContent}>
+          {photographer.origin}
+        </ThemedText>
+        <ThemedText style={styles.sectionLabel}>Biography:</ThemedText>
+        <ThemedText style={styles.biography}>
+          {photographer.biography}
+        </ThemedText>
         <PhotographerLinks
           stores={photographer.store}
           website={photographer.website}
         />
-        <Text style={styles.sectionTitle}>
+        <ThemedText style={styles.sectionTitle}>
           Gallery{" "}
-          <Text style={styles.galleryCount}>
+          <ThemedText style={styles.galleryCount}>
             ({photographer.images?.length || 0})
-          </Text>
-        </Text>
+          </ThemedText>
+        </ThemedText>
       </View>
     );
   }, [photographer, timelineEvents]);
@@ -114,9 +121,7 @@ const PhotographerDetailScreen: React.FC = () => {
           ]}
           resizeMode="cover"
         />
-        {item.title ? (
-          <Text style={styles.imageTitle}>{item.title}</Text>
-        ) : null}
+        {item.year ? <Text style={styles.imageYear}>{item.year}</Text> : null}
         {item.description ? (
           <Text style={styles.imageDescription}>{item.description}</Text>
         ) : null}

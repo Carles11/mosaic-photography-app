@@ -10,12 +10,10 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontWeight: "bold",
     fontSize: 17,
-    paddingLeft: 11,
     marginBottom: 2,
   },
   sectionStoresContent: {
     fontSize: 15,
-    paddingLeft: 22,
     paddingBottom: 4,
     color: "#444",
   },
