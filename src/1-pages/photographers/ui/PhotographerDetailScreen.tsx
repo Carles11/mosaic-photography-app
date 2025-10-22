@@ -4,6 +4,7 @@ import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
 import Timeline from "@/2-features/photographers/ui/Timeline";
 import { formatLifespan } from "@/4-shared/lib/formatLifespan";
 import { PhotographerImage, PhotographerSlug } from "@/4-shared/types";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -15,16 +16,24 @@ import {
   View,
 } from "react-native";
 import { styles } from "./PhotographerDetailScreen.styles";
-
 const { width: deviceWidth } = Dimensions.get("window");
 
 const PhotographerDetailScreen: React.FC = () => {
+  const navigation = useNavigation();
   const { slug } = useLocalSearchParams();
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null
   );
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (photographer) {
+      navigation.setOptions({
+        title: `${photographer.surname}'s Details`,
+      });
+    }
+  }, [photographer, navigation]);
 
   useEffect(() => {
     let active = true;
