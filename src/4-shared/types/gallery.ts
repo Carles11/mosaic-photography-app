@@ -33,6 +33,7 @@ export type GalleryImage = {
   nudity?: string;
   year?: number;
   url: string;
+  thumbnailUrl: string;
 
   mosaicType?: "normal" | "large" | "wide" | "tall";
 };

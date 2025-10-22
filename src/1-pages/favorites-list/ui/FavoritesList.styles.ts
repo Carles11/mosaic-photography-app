@@ -61,6 +61,12 @@ export const styles = StyleSheet.create({
     color: "#888",
     marginBottom: 2,
   },
+  thumbnail: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    marginRight: 12,
+  },
   centered: {
     flex: 1,
     alignItems: "center",

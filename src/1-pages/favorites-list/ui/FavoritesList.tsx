@@ -1,13 +1,15 @@
 import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { useFavorites } from "@/4-shared/context/favorites";
+import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { GalleryImage } from "@/4-shared/types/gallery";
+import { GalleryImage } from "@/4-shared/types";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Image,
   Text,
   TouchableOpacity,
   View,
@@ -39,7 +41,7 @@ export default function FavoritesList() {
       const { data, error } = await supabase
         .from("images_resize")
         .select(
-          "id, base_url, filename, author, title, description, orientation, created_at, width, height, year"
+          "id, base_url, filename, author, title, description, orientation, created_at, width, height, year, photographers (slug)"
         )
         .in("id", imageIds);
 
@@ -47,10 +49,14 @@ export default function FavoritesList() {
         setImages([]);
       } else {
         setImages(
-          (data ?? []).map((img) => ({
-            ...img,
-            url: img.base_url ? `${img.base_url}/${img.filename}` : "",
-          }))
+          (data ?? []).map((img) => {
+            const { url } = getBestS3FolderForWidth(img, 100);
+            return {
+              ...img,
+              url, // Add the required 'url' property
+              thumbnailUrl: url,
+            };
+          })
         );
       }
       setLoadingImages(false);
@@ -117,12 +123,14 @@ export default function FavoritesList() {
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
           <View style={styles.imageCard}>
+            <Image
+              source={{ uri: item.thumbnailUrl }}
+              style={styles.thumbnail}
+              resizeMode="cover"
+            />
             <TouchableOpacity style={styles.imageInfo}>
               <Text style={[styles.imageAuthor, { color: theme.text }]}>
                 {item.author}
-              </Text>
-              <Text style={[styles.imageTitle, { color: theme.text }]}>
-                {item.title}
               </Text>
               <Text style={[styles.imageDescription, { color: theme.text }]}>
                 {item.description}
