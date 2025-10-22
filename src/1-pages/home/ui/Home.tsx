@@ -13,7 +13,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
 
@@ -147,7 +147,7 @@ export const Home: React.FC = () => {
         >
           {selectedImage && (
             <>
-              <Text
+              <ThemedText
                 style={{
                   marginBottom: 8,
                   fontWeight: "bold",
@@ -155,10 +155,10 @@ export const Home: React.FC = () => {
                 }}
               >
                 {selectedImage.author}, {selectedImage.year}
-              </Text>
-              <Text style={{ marginBottom: 8, color: theme.text }}>
+              </ThemedText>
+              <ThemedText style={{ marginBottom: 8, color: theme.text }}>
                 {selectedImage.description}
-              </Text>
+              </ThemedText>
               {/* Horizontal Line */}
               <HrLine />
               <View
