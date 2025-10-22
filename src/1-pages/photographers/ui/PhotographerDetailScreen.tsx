@@ -11,6 +11,7 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, FlatList, Image } from "react-native";
 import { styles } from "./PhotographerDetailScreen.styles";
+
 const { width: deviceWidth } = Dimensions.get("window");
 
 const PhotographerDetailScreen: React.FC = () => {
