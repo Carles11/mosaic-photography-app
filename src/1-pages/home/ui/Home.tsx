@@ -3,6 +3,7 @@ import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
 import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu ";
+import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
 import { CommentsModal } from "@/4-shared/components/modals/comments/ui/CommentsModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
@@ -236,6 +237,7 @@ export const Home: React.FC = () => {
         </BottomSheetView>
       </BottomSheetModal>
 
+      <PhotographersSlider />
       <MainGallery
         images={filteredImages}
         loading={loading}
