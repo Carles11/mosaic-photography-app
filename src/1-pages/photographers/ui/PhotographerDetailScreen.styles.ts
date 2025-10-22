@@ -28,6 +28,12 @@ export const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 8,
   },
+  year: {
+    fontSize: 28,
+    fontWeight: "bold",
+    paddingTop: 12,
+    paddingBottom: 8,
+  },
   lifespan: {
     fontSize: 16,
     color: "#666",
@@ -84,7 +90,7 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#eaeaea",
   },
-  imageTitle: {
+  imageYear: {
     marginTop: 8,
     fontWeight: "600",
     fontSize: 16,

@@ -1,5 +1,6 @@
+import { ThemedText } from "@/4-shared/components/themed-text";
 import React from "react";
-import { Linking, Text, TouchableOpacity, View } from "react-native";
+import { Linking, TouchableOpacity, View } from "react-native";
 import { styles } from "./PhotographerLinks.styles";
 
 interface Store {
@@ -37,11 +38,13 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
   return (
     <View>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Where to find prints and books</Text>
-        <Text style={styles.sectionStoresContent}>
+        <ThemedText style={styles.sectionTitle}>
+          Where to find prints and books
+        </ThemedText>
+        <ThemedText style={styles.sectionStoresContent}>
           Shop stunning prints and books at these trusted retailers, carefully
           curated by the team of mosaic.photography:
-        </Text>
+        </ThemedText>
       </View>
       {parsedStores.length > 0 &&
         parsedStores.map((item, idx) => (
@@ -53,15 +56,15 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
             accessibilityRole="link"
             accessibilityLabel={`Shop at ${item.store}`}
           >
-            <Text style={[styles.link, !item.website && styles.noLink]}>
+            <ThemedText style={[styles.link, !item.website && styles.noLink]}>
               {item.store}
               {item.affiliate ? " (affiliate)" : ""}
-            </Text>
+            </ThemedText>
           </TouchableOpacity>
         ))}
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Learn more:</Text>
+        <ThemedText style={styles.sectionTitle}>Learn more:</ThemedText>
         {website ? (
           <TouchableOpacity
             onPress={() => handlePress(website)}
@@ -72,11 +75,11 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
                 : "Official website"
             }
           >
-            <Text style={styles.sectionStoresContent}>
+            <ThemedText style={styles.sectionStoresContent}>
               {website.toLowerCase().includes("wikipedia")
                 ? "Wikipedia"
                 : "Website"}
-            </Text>
+            </ThemedText>
           </TouchableOpacity>
         ) : null}
       </View>

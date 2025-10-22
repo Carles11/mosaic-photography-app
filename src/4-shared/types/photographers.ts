@@ -5,6 +5,7 @@ export interface PhotographerImage {
   filename: string;
   base_url: string;
   width: number;
+  year: number;
   url: string;
   title?: string;
   description?: string;
