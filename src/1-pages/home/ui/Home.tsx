@@ -6,6 +6,7 @@ import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetF
 import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
 import { CommentsModal } from "@/4-shared/components/modals/comments/ui/CommentsModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { HrLine } from "@/4-shared/components/ui/horizontal-line-hr";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useComments } from "@/4-shared/context/comments"; // <-- Add this import!
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
@@ -159,15 +160,7 @@ export const Home: React.FC = () => {
                 {selectedImage.description}
               </Text>
               {/* Horizontal Line */}
-              <View
-                style={{
-                  height: 1,
-                  backgroundColor: "#ccc",
-                  alignSelf: "stretch",
-                  marginVertical: 12,
-                  width: "100%",
-                }}
-              />
+              <HrLine />
               <View
                 style={{
                   flexDirection: "row",
