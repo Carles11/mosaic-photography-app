@@ -61,7 +61,6 @@ export function FavoritesProvider({ children }: { children: React.ReactNode }) {
     async (imageId: string | number) => {
       if (!user) return;
       const idStr = String(imageId);
-      console.log("toggleFavorite called with imageId:", idStr);
       try {
         const isFav = favorites.has(idStr);
         if (isFav) {
