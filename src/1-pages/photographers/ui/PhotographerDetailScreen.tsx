@@ -96,7 +96,7 @@ const PhotographerDetailScreen: React.FC = () => {
           website={photographer.website}
         />
         <ThemedText style={styles.sectionTitle}>
-          Gallery{" "}
+          {photographer.surname}'s Gallery{" "}
           <ThemedText style={styles.galleryCount}>
             ({photographer.images?.length || 0})
           </ThemedText>
