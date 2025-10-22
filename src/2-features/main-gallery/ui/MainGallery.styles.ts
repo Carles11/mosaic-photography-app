@@ -43,7 +43,6 @@ export const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   galleryList: {
-    paddingHorizontal: 12,
     paddingTop: 8,
     paddingBottom: 32, // extra space for bottom safe area or modals
   },
