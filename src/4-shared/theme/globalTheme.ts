@@ -13,7 +13,7 @@ export const lightTheme = {
   favoriteIcon: "#ff4081",
   shareIcon: "#29bde6ff",
   commentIcon: "#9BA1A6",
-
+  link: "#1371d6",
   // Buttons
   buttonBorderColor: "#687076",
   buttonBackgroundColor: "#ededed",
@@ -39,6 +39,7 @@ export const darkTheme = {
   favoriteIcon: "#ff4081",
   shareIcon: "#29bde6ff",
   commentIcon: "#9BA1A6",
+  link: "#1371d6",
 
   // Buttons
   buttonBorderColor: "#687076",

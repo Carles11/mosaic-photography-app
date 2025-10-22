@@ -1,6 +1,5 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { styles } from "./PhotographerLinks.styles";
@@ -20,8 +19,6 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
   stores,
   website,
 }) => {
-  const { theme } = useTheme();
-
   const parsedStores: Store[] = Array.isArray(stores)
     ? stores.map((store) => {
         if (typeof store === "string") {
@@ -79,7 +76,7 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
                 : "Official website"
             }
           >
-            <ThemedText style={styles.sectionStoresContent}>
+            <ThemedText style={styles.link}>
               {website.toLowerCase().includes("wikipedia")
                 ? "Wikipedia"
                 : "Website"}
