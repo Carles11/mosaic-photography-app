@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 18,
-    textAlign: "center",
+    textAlign: "left",
   },
   label: {
     fontSize: 16,
