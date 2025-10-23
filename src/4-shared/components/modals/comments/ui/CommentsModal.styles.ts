@@ -4,7 +4,6 @@ export const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
   },
   list: {
     flex: 1,
@@ -24,11 +23,9 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 14,
     marginBottom: 2,
-    color: "#444",
   },
   commentText: {
     fontSize: 15,
-    color: "#222",
   },
   actions: {
     flexDirection: "row",

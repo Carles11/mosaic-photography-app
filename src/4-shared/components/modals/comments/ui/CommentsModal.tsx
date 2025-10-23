@@ -151,7 +151,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
               title={editMode ? "Update" : "Send"}
               onPress={handleSaveComment}
               disabled={authLoading || !commentText.trim()}
-              style={{ paddingVertical: 2, paddingHorizontal: 16 }}
+              style={{ paddingVertical: 6, paddingHorizontal: 16 }}
             />
           </ThemedView>
         ) : (

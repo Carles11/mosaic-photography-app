@@ -2,10 +2,11 @@ import {
   addComment as apiAddComment,
   deleteComment as apiDeleteComment,
   updateComment as apiUpdateComment,
-  Comment,
   fetchCommentCountsBatch,
   fetchCommentsForImage,
 } from "@/4-shared/api/commentsApi";
+import { Comment } from "@/4-shared/types/comments";
+
 import type { ReactNode } from "react";
 import React, {
   createContext,
