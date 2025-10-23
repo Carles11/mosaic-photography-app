@@ -1,10 +1,11 @@
+import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedTitle } from "@/4-shared/components/themed-title";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryFilter } from "@/4-shared/types";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { useCallback, useRef } from "react";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
+import React, { useCallback, useEffect, useRef } from "react";
 import { Platform, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
@@ -24,13 +25,13 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   resetFilters,
   onClose,
 }) => {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const bottomSheetModalRef = useRef<any>(null);
   const { theme } = useTheme();
   // snapPoints define sheet height (can adjust for your app)
   const snapPoints = Platform.OS === "web" ? ["40%"] : ["60%"];
 
   // Present/dismiss modal as controlled by parent
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       bottomSheetModalRef.current?.present();
     } else {
@@ -63,7 +64,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   };
 
   return (
-    <BottomSheetModal
+    <ReusableBottomSheetModal
       ref={bottomSheetModalRef}
       index={0}
       snapPoints={snapPoints}
@@ -75,10 +76,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
       ]}
       backgroundStyle={{ backgroundColor: theme.background }}
       handleIndicatorStyle={{
-        backgroundColor: theme.buttonBorderColor, // <-- set your theme color here
-        height: 4, // adjust thickness
-        borderRadius: 4, // round edges
-        width: 32, // adjust width
+        backgroundColor: theme.buttonBorderColor,
+        height: 4,
+        borderRadius: 4,
+        width: 32,
       }}
     >
       <BottomSheetView style={styles.container}>
@@ -241,6 +242,6 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
           </ThemedView>
         </SafeAreaView>
       </BottomSheetView>
-    </BottomSheetModal>
+    </ReusableBottomSheetModal>
   );
 };
