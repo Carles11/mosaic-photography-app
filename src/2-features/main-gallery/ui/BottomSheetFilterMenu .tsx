@@ -1,4 +1,8 @@
 import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedTitle } from "@/4-shared/components/themed-title";
 import { ThemedView } from "@/4-shared/components/themed-view";
@@ -237,12 +241,30 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
           <ThemedView
             style={[styles.actionsRow, { backgroundColor: theme.background }]}
           >
-            <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
-              <ThemedText style={styles.resetButtonText}>Reset</ThemedText>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-              <ThemedText style={styles.closeButtonText}>Done</ThemedText>
-            </TouchableOpacity>
+            <ThemedView
+              style={{
+                flexDirection: "row",
+                backgroundColor: theme.background,
+              }}
+            >
+              <PrimaryButton
+                title="Reset"
+                onPress={() => resetFilters()}
+                style={{
+                  marginRight: 8,
+                  paddingVertical: 2,
+                  paddingHorizontal: 8,
+                }}
+              />
+              <SecondaryButton
+                title="Close"
+                onPress={() => handleClose}
+                style={{
+                  paddingVertical: 2,
+                  paddingHorizontal: 8,
+                }}
+              />
+            </ThemedView>
           </ThemedView>
         </SafeAreaView>
       </BottomSheetView>
