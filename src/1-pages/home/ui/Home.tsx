@@ -141,6 +141,7 @@ export const Home: React.FC = () => {
         onDismiss={handleCloseImageMenu}
         handleIndicatorStyle={{ backgroundColor: theme.text }}
         backgroundStyle={{ backgroundColor: theme.background }}
+        enableDismissOnClose
       >
         <BottomSheetView
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
