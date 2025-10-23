@@ -16,7 +16,6 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   container: {
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     minWidth: "80%",

@@ -108,9 +108,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
           color={theme.icon ?? theme.text}
           style={styles.icon}
           accessibilityLabel="Messages"
-          onPress={() => {
-            // handle messages action
-          }}
+          onPress={() => router.push("/comments-list")}
         />
       </ThemedView>
     </ThemedView>
