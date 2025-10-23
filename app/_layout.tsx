@@ -8,6 +8,7 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -15,21 +16,23 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView>
-      <AuthSessionProvider>
-        <BottomSheetModalProvider>
-          <FontLoader>
-            <ThemeProvider>
-              <CommentsProvider>
-                <FavoritesProvider>
-                  <InnerLayout />
-                </FavoritesProvider>
-              </CommentsProvider>
-            </ThemeProvider>
-          </FontLoader>
-        </BottomSheetModalProvider>
-      </AuthSessionProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView>
+        <AuthSessionProvider>
+          <BottomSheetModalProvider>
+            <FontLoader>
+              <ThemeProvider>
+                <CommentsProvider>
+                  <FavoritesProvider>
+                    <InnerLayout />
+                  </FavoritesProvider>
+                </CommentsProvider>
+              </ThemeProvider>
+            </FontLoader>
+          </BottomSheetModalProvider>
+        </AuthSessionProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 
