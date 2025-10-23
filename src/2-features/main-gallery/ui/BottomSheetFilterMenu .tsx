@@ -85,7 +85,11 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
       <BottomSheetView style={styles.container}>
         <SafeAreaView
           edges={["bottom"]}
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          style={{
+            flex: 1,
+            alignItems: "flex-start",
+            justifyContent: "center",
+          }}
         >
           <ThemedTitle style={[styles.title, { color: theme.text }]}>
             Gallery Filters

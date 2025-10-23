@@ -38,7 +38,7 @@ export const SecondaryButton: React.FC<SecondaryButtonProps> = ({
       <Text
         style={[
           {
-            color: theme.buttonTextColor,
+            color: theme.buttonBorderColor,
             fontFamily: theme.fontFamily,
             fontSize: theme.buttonFontSize,
             textAlign: "center",
