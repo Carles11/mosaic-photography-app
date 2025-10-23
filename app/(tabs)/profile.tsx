@@ -4,6 +4,7 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import React from "react";
 import { ActivityIndicator } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuthSession();
@@ -33,5 +34,13 @@ export default function ProfilePage() {
     );
   }
 
-  return <ProfileForm user={user} />;
+  return (
+    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+      <ThemedView
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
+        <ProfileForm user={user} />
+      </ThemedView>
+    </SafeAreaView>
+  );
 }
