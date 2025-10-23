@@ -17,13 +17,14 @@ export const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   iconsRow: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
   },
   icon: {
     width: 28,
     height: 28,
-    marginLeft: 16,
     resizeMode: "contain",
   },
 });
