@@ -1,6 +1,13 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  sheet: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    alignItems: "stretch",
+    justifyContent: "flex-start",
+  },
   sheetInput: {
     height: 48,
     borderWidth: 1,

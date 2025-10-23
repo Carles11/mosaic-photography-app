@@ -4,14 +4,15 @@ import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainG
 import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu ";
 import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
+import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import { CommentsModal } from "@/4-shared/components/modals/comments/ui/CommentsModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { HrLine } from "@/4-shared/components/ui/horizontal-line-hr";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
-import { useComments } from "@/4-shared/context/comments"; // <-- Add this import!
+import { useComments } from "@/4-shared/context/comments";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,7 +28,7 @@ export const Home: React.FC = () => {
   const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
 
   // Ref for image menu bottom sheet
-  const imageMenuSheetRef = useRef<BottomSheetModal>(null);
+  const imageMenuSheetRef = useRef<any>(null);
 
   // Filters state lifted to Home
   // Filtering options are set in BottomSheetFilterMenu
@@ -135,13 +136,11 @@ export const Home: React.FC = () => {
       />
 
       {/* Image Actions Bottom Sheet */}
-      <BottomSheetModal
+      <ReusableBottomSheetModal
         ref={imageMenuSheetRef}
         snapPoints={["40%"]}
         onDismiss={handleCloseImageMenu}
-        handleIndicatorStyle={{ backgroundColor: theme.text }}
-        backgroundStyle={{ backgroundColor: theme.background }}
-        enableDismissOnClose
+        enablePanDownToClose
       >
         <BottomSheetView
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
@@ -234,7 +233,7 @@ export const Home: React.FC = () => {
             )}
           </SafeAreaView>
         </BottomSheetView>
-      </BottomSheetModal>
+      </ReusableBottomSheetModal>
 
       <PhotographersSlider />
       <MainGallery

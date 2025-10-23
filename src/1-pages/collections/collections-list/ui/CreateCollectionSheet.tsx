@@ -1,4 +1,5 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
   PrimaryButton,
   SecondaryButton,
@@ -7,7 +8,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -31,7 +32,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
   ({ onCreated }, ref) => {
     const { user } = useAuthSession();
     const { theme } = useTheme();
-    const sheetRef = useRef<BottomSheetModal>(null);
+    const sheetRef = useRef<any>(null);
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -78,26 +79,16 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
     };
 
     return (
-      <BottomSheetModal
+      <ReusableBottomSheetModal
         ref={sheetRef}
         snapPoints={["90%"]}
         enablePanDownToClose
         index={0}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
-        handleIndicatorStyle={{ backgroundColor: theme.text }}
-        backgroundStyle={{ backgroundColor: theme.background }}
-        onChange={() => {}}
       >
         <BottomSheetView
-          style={{
-            flex: 1,
-            paddingHorizontal: 16,
-            paddingTop: 10,
-            backgroundColor: theme.background,
-            alignItems: "stretch",
-            justifyContent: "flex-start",
-          }}
+          style={[styles.sheet, { backgroundColor: theme.background }]}
         >
           <ScrollView
             keyboardShouldPersistTaps="handled"
@@ -180,7 +171,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
             </ThemedView>
           </ScrollView>
         </BottomSheetView>
-      </BottomSheetModal>
+      </ReusableBottomSheetModal>
     );
   }
 );
