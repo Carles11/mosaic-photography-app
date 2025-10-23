@@ -62,7 +62,6 @@ export const styles = StyleSheet.create({
     height: 70,
     borderRadius: 8,
     marginRight: 12,
-    backgroundColor: "#ddd",
   },
   commentDate: {
     fontSize: 12,

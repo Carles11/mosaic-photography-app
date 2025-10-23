@@ -6,4 +6,5 @@ export type ButtonProps = {
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
+  textStyles?: ViewStyle;
 };

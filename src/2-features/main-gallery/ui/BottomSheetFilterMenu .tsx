@@ -6,6 +6,7 @@ import { GalleryFilter } from "@/4-shared/types";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useRef } from "react";
 import { Platform, TextInput, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
 type BottomSheetFilterMenuProps = {
@@ -81,149 +82,164 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
       }}
     >
       <BottomSheetView style={styles.container}>
-        <ThemedTitle style={[styles.title, { color: theme.text }]}>
-          Gallery Filters
-        </ThemedTitle>
-        {/* Gender Filter */}
-        <ThemedText style={[styles.label, { color: theme.text }]}>
-          Gender
-        </ThemedText>
-        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["male", "female", "mixed couples"].map((opt) => (
-            <TouchableOpacity
-              key={opt}
-              style={[
-                styles.option,
-                { backgroundColor: theme.buttonBackgroundColor },
-                filters.gender === opt && styles.optionActive,
-              ]}
-              onPress={() => handleChange("gender", opt)}
-            >
-              <ThemedText
-                style={[
-                  styles.optionText,
-                  { color: theme.text },
-                  filters.gender === opt && styles.optionActiveText,
-                ]}
-              >
-                {opt}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </ThemedView>
-        {/* Orientation Filter */}
-        <ThemedText style={[styles.label, { color: theme.text }]}>
-          Orientation
-        </ThemedText>
-        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["vertical", "horizontal"].map((opt) => (
-            <TouchableOpacity
-              key={opt}
-              style={[
-                styles.option,
-                { backgroundColor: theme.buttonBackgroundColor },
-                filters.orientation === opt && styles.optionActive,
-              ]}
-              onPress={() => handleChange("orientation", opt)}
-            >
-              <ThemedText
-                style={[
-                  styles.optionText,
-                  { color: theme.text },
-                  filters.orientation === opt && styles.optionActiveText,
-                ]}
-              >
-                {opt}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </ThemedView>
-        {/* Color Filter */}
-        <ThemedText style={[styles.label, { color: theme.text }]}>
-          Color
-        </ThemedText>
-        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["color", "bw"].map((opt) => (
-            <TouchableOpacity
-              key={opt}
-              style={[
-                styles.option,
-                { backgroundColor: theme.buttonBackgroundColor },
-                filters.color === opt && styles.optionActive,
-              ]}
-              onPress={() => handleChange("color", opt)}
-            >
-              <ThemedText
-                style={[
-                  styles.optionText,
-                  { color: theme.text },
-                  filters.color === opt && styles.optionActiveText,
-                ]}
-              >
-                {opt}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </ThemedView>
-        {/* Print Quality Filter */}
-        <ThemedText style={[styles.label, { color: theme.text }]}>
-          Print Quality
-        </ThemedText>
-        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          {["standard", "good", "excellent", "professional"].map((opt) => (
-            <TouchableOpacity
-              key={opt}
-              style={[
-                styles.option,
-                { backgroundColor: theme.buttonBackgroundColor },
-                filters.print_quality === opt && styles.optionActive,
-              ]}
-              onPress={() => handleChange("print_quality", opt)}
-            >
-              <ThemedText
-                style={[
-                  styles.optionText,
-                  { color: theme.text },
-                  filters.print_quality === opt && styles.optionActiveText,
-                ]}
-              >
-                {opt}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
-        </ThemedView>
-        {/* Year Range Filter */}
-        <ThemedText style={[styles.label, { color: theme.text }]}>
-          Year Range
-        </ThemedText>
-        <ThemedView style={[styles.row, { backgroundColor: theme.background }]}>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={filters.year?.from?.toString() ?? ""}
-            placeholder="From"
-            onChangeText={(v) => handleYearRangeChange("from", v)}
-          />
-          <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={filters.year?.to?.toString() ?? ""}
-            placeholder="To"
-            onChangeText={(v) => handleYearRangeChange("to", v)}
-          />
-        </ThemedView>
-        {/* Actions */}
-        <ThemedView
-          style={[styles.actionsRow, { backgroundColor: theme.background }]}
+        <SafeAreaView
+          edges={["bottom"]}
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
-            <ThemedText style={styles.resetButtonText}>Reset</ThemedText>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-            <ThemedText style={styles.closeButtonText}>Done</ThemedText>
-          </TouchableOpacity>
-        </ThemedView>
+          <ThemedTitle style={[styles.title, { color: theme.text }]}>
+            Gallery Filters
+          </ThemedTitle>
+          {/* Gender Filter */}
+          <ThemedText style={[styles.label, { color: theme.text }]}>
+            Gender
+          </ThemedText>
+          <ThemedView
+            style={[styles.row, { backgroundColor: theme.background }]}
+          >
+            {["male", "female", "mixed couples"].map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.option,
+                  { backgroundColor: theme.buttonBackgroundColor },
+                  filters.gender === opt && styles.optionActive,
+                ]}
+                onPress={() => handleChange("gender", opt)}
+              >
+                <ThemedText
+                  style={[
+                    styles.optionText,
+                    { color: theme.text },
+                    filters.gender === opt && styles.optionActiveText,
+                  ]}
+                >
+                  {opt}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </ThemedView>
+          {/* Orientation Filter */}
+          <ThemedText style={[styles.label, { color: theme.text }]}>
+            Orientation
+          </ThemedText>
+          <ThemedView
+            style={[styles.row, { backgroundColor: theme.background }]}
+          >
+            {["vertical", "horizontal"].map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.option,
+                  { backgroundColor: theme.buttonBackgroundColor },
+                  filters.orientation === opt && styles.optionActive,
+                ]}
+                onPress={() => handleChange("orientation", opt)}
+              >
+                <ThemedText
+                  style={[
+                    styles.optionText,
+                    { color: theme.text },
+                    filters.orientation === opt && styles.optionActiveText,
+                  ]}
+                >
+                  {opt}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </ThemedView>
+          {/* Color Filter */}
+          <ThemedText style={[styles.label, { color: theme.text }]}>
+            Color
+          </ThemedText>
+          <ThemedView
+            style={[styles.row, { backgroundColor: theme.background }]}
+          >
+            {["color", "bw"].map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.option,
+                  { backgroundColor: theme.buttonBackgroundColor },
+                  filters.color === opt && styles.optionActive,
+                ]}
+                onPress={() => handleChange("color", opt)}
+              >
+                <ThemedText
+                  style={[
+                    styles.optionText,
+                    { color: theme.text },
+                    filters.color === opt && styles.optionActiveText,
+                  ]}
+                >
+                  {opt}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </ThemedView>
+          {/* Print Quality Filter */}
+          <ThemedText style={[styles.label, { color: theme.text }]}>
+            Print Quality
+          </ThemedText>
+          <ThemedView
+            style={[styles.row, { backgroundColor: theme.background }]}
+          >
+            {["standard", "good", "excellent", "professional"].map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.option,
+                  { backgroundColor: theme.buttonBackgroundColor },
+                  filters.print_quality === opt && styles.optionActive,
+                ]}
+                onPress={() => handleChange("print_quality", opt)}
+              >
+                <ThemedText
+                  style={[
+                    styles.optionText,
+                    { color: theme.text },
+                    filters.print_quality === opt && styles.optionActiveText,
+                  ]}
+                >
+                  {opt}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+          </ThemedView>
+          {/* Year Range Filter */}
+          <ThemedText style={[styles.label, { color: theme.text }]}>
+            Year Range
+          </ThemedText>
+          <ThemedView
+            style={[styles.row, { backgroundColor: theme.background }]}
+          >
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={filters.year?.from?.toString() ?? ""}
+              placeholder="From"
+              onChangeText={(v) => handleYearRangeChange("from", v)}
+            />
+            <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={filters.year?.to?.toString() ?? ""}
+              placeholder="To"
+              onChangeText={(v) => handleYearRangeChange("to", v)}
+            />
+          </ThemedView>
+          {/* Actions */}
+          <ThemedView
+            style={[styles.actionsRow, { backgroundColor: theme.background }]}
+          >
+            <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
+              <ThemedText style={styles.resetButtonText}>Reset</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+              <ThemedText style={styles.closeButtonText}>Done</ThemedText>
+            </TouchableOpacity>
+          </ThemedView>
+        </SafeAreaView>
       </BottomSheetView>
     </BottomSheetModal>
   );

@@ -57,7 +57,6 @@ const PhotographerDetailScreen: React.FC = () => {
       active = false;
     };
   }, [slug]);
-  console.log("PhotographerDetailScreen render with slug:", slug);
   const timelineEvents = photographer
     ? getTimelineBySlug(photographer.slug) || []
     : [];

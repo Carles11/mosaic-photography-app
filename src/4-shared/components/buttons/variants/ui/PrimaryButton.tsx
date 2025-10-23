@@ -1,16 +1,27 @@
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
-import { ActivityIndicator, Text, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  StyleProp,
+  Text,
+  TextStyle,
+  TouchableOpacity,
+} from "react-native";
 import { styles } from "./PrimaryButton.styles";
 
 import { ButtonProps } from "@/4-shared/types";
 
-export const PrimaryButton: React.FC<ButtonProps> = ({
+type PrimaryButtonProps = ButtonProps & {
+  textStyles?: StyleProp<TextStyle>;
+};
+
+export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   title,
   onPress,
   disabled = false,
   loading = false,
   style,
+  textStyles,
 }) => {
   const { theme } = useTheme();
 
@@ -35,12 +46,15 @@ export const PrimaryButton: React.FC<ButtonProps> = ({
         <ActivityIndicator color={theme.buttonTextColor} />
       ) : (
         <Text
-          style={{
-            color: theme.buttonTextColor,
-            fontFamily: theme.fontFamilyBold,
-            fontSize: theme.buttonFontSize,
-            textAlign: "center",
-          }}
+          style={[
+            {
+              color: theme.buttonTextColor,
+              fontFamily: theme.fontFamilyBold,
+              fontSize: theme.buttonFontSize,
+              textAlign: "center",
+            },
+            textStyles,
+          ]}
         >
           {title}
         </Text>

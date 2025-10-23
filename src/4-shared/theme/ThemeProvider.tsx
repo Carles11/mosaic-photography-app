@@ -27,7 +27,7 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // Detect system theme, default to dark
+  // Detect system theme, default to system
   const systemColorScheme = Appearance.getColorScheme();
   const [mode, setMode] = useState<"light" | "dark">(
     systemColorScheme === "light" ? "light" : "dark"

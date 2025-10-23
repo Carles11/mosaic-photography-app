@@ -1,9 +1,11 @@
 import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { AddToCollectionModal } from "@/4-shared/components/modals/collections/ui/AddToCollectionModal";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -28,6 +30,13 @@ export default function FavoritesList() {
   const { theme } = useTheme();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
+
+  // State for AddToCollectionModal
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [selectedImageId, setSelectedImageId] = useState<
+    string | number | null
+  >(null);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -53,7 +62,7 @@ export default function FavoritesList() {
             const { url } = getBestS3FolderForWidth(img, 100);
             return {
               ...img,
-              url, // Add the required 'url' property
+              url,
               thumbnailUrl: url,
             };
           })
@@ -63,6 +72,24 @@ export default function FavoritesList() {
     };
     fetchFavoriteImages();
   }, [favorites, isUserLoggedIn]);
+
+  const handleFavoritePress = (imageId: string | number) => {
+    if (!isUserLoggedIn()) {
+      router.push("/auth/login");
+      return;
+    }
+    toggleFavorite(imageId);
+  };
+
+  const handleAddToCollectionPress = (imageId: string | number) => {
+    setSelectedImageId(imageId);
+    setAddModalVisible(true);
+  };
+
+  const handleCloseAddModal = () => {
+    setAddModalVisible(false);
+    setSelectedImageId(null);
+  };
 
   if (!isUserLoggedIn()) {
     return (
@@ -99,14 +126,6 @@ export default function FavoritesList() {
     );
   }
 
-  const handleFavoritePress = (imageId: string | number) => {
-    if (!isUserLoggedIn()) {
-      router.push("/auth/login");
-      return;
-    }
-    toggleFavorite(imageId);
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
@@ -139,16 +158,34 @@ export default function FavoritesList() {
                 {item.year}
               </Text>
             </TouchableOpacity>
-            <FavoriteButton
-              imageId={item.id}
-              size={24}
-              color={theme.favoriteIcon}
-              onPressFavoriteIcon={() => handleFavoritePress(item.id)}
-              isFavorite={isFavorite}
-              loading={loading}
-            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <FavoriteButton
+                imageId={item.id}
+                size={24}
+                color={theme.favoriteIcon}
+                onPressFavoriteIcon={() => handleFavoritePress(item.id)}
+                isFavorite={isFavorite}
+                loading={loading}
+              />
+              <TouchableOpacity
+                style={{ marginLeft: 12 }}
+                onPress={() => handleAddToCollectionPress(item.id)}
+                accessibilityLabel="Add to Collection"
+              >
+                <Ionicons
+                  name="add-circle-outline"
+                  size={26}
+                  color={theme.favoriteIcon}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         )}
+      />
+      <AddToCollectionModal
+        imageId={selectedImageId}
+        visible={addModalVisible}
+        onClose={handleCloseAddModal}
       />
     </View>
   );
