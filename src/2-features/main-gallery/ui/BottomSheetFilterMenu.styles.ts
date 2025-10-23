@@ -65,26 +65,4 @@ export const styles = StyleSheet.create({
     marginTop: 18,
     gap: 24,
   },
-  resetButton: {
-    backgroundColor: "#e0e0e0",
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 22,
-  },
-  resetButtonText: {
-    color: "#313131",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  closeButton: {
-    backgroundColor: "#313131",
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 22,
-  },
-  closeButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
 });
