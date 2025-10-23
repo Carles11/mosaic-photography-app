@@ -1,8 +1,7 @@
+import { fetchFavoriteImages } from "@/2-features/favorites-list/api/fetchFavoritesImages";
 import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
-import { supabase } from "@/4-shared/api/supabaseClient";
 import { AddToCollectionModal } from "@/4-shared/components/modals/collections/ui/AddToCollectionModal";
 import { useFavorites } from "@/4-shared/context/favorites";
-import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types";
 import { Ionicons } from "@expo/vector-icons";
@@ -40,37 +39,13 @@ export default function FavoritesList() {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchFavoriteImages = async () => {
-      if (!isUserLoggedIn() || favorites.size === 0) {
-        setImages([]);
-        return;
-      }
+    const fetchImages = async () => {
       setLoadingImages(true);
-      const imageIds = Array.from(favorites);
-      const { data, error } = await supabase
-        .from("images_resize")
-        .select(
-          "id, base_url, filename, author, title, description, orientation, created_at, width, height, year, photographers (slug)"
-        )
-        .in("id", imageIds);
-
-      if (error) {
-        setImages([]);
-      } else {
-        setImages(
-          (data ?? []).map((img) => {
-            const { url } = getBestS3FolderForWidth(img, 100);
-            return {
-              ...img,
-              url,
-              thumbnailUrl: url,
-            };
-          })
-        );
-      }
+      const imgs = await fetchFavoriteImages(favorites, isUserLoggedIn());
+      setImages(imgs);
       setLoadingImages(false);
     };
-    fetchFavoriteImages();
+    fetchImages();
   }, [favorites, isUserLoggedIn]);
 
   const handleFavoritePress = (imageId: string | number) => {
