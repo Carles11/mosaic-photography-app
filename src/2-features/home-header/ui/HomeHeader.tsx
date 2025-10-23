@@ -94,30 +94,12 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
       <ThemedView style={styles.iconsRow}>
         <IconSymbol
           type="material"
-          name="favorite-border"
-          size={28}
-          color={theme.favoriteIcon}
-          style={styles.icon}
-          accessibilityLabel="Favorites"
-          onPress={() => router.push("/favorites-list")}
-        />
-        <IconSymbol
-          type="material"
           name="chat-bubble-outline"
           size={28}
           color={theme.icon ?? theme.text}
           style={styles.icon}
           accessibilityLabel="Messages"
           onPress={() => router.push("/comments-list")}
-        />
-        <IconSymbol
-          type="material"
-          name="collections-bookmark"
-          size={28}
-          color={theme.icon ?? theme.text}
-          style={styles.icon}
-          accessibilityLabel="Collections"
-          onPress={() => router.push("/collections/collections-list")}
         />
       </ThemedView>
     </ThemedView>
