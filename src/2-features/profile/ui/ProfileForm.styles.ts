@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#e7fbe7",
   },
   databaseSetup: {
-    backgroundColor: "#fff9e3",
     borderRadius: 10,
     padding: 14,
     marginBottom: 18,
@@ -43,13 +42,11 @@ const styles = StyleSheet.create({
   },
   code: {
     fontFamily: "monospace",
-    backgroundColor: "#eee",
     borderRadius: 3,
     paddingHorizontal: 4,
   },
   section: {
     marginBottom: 24,
-    backgroundColor: "#fff",
     borderRadius: 10,
     padding: 16,
     shadowColor: "#000",
@@ -91,7 +88,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   disabledForm: {
-    backgroundColor: "#eee",
     borderRadius: 8,
     padding: 10,
     marginBottom: 16,
