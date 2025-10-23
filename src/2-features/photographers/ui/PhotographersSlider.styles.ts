@@ -9,10 +9,8 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
     marginBottom: 8,
     paddingLeft: 6,
-    color: "#222",
   },
   listContent: {
     paddingRight: 10,

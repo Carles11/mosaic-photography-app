@@ -145,88 +145,93 @@ export const Home: React.FC = () => {
         <BottomSheetView
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          {selectedImage && (
-            <>
-              <ThemedText
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                  color: theme.text,
-                }}
-              >
-                {selectedImage.author}, {selectedImage.year}
-              </ThemedText>
-              <ThemedText style={{ marginBottom: 8, color: theme.text }}>
-                {selectedImage.description}
-              </ThemedText>
-              {/* Horizontal Line */}
-              <HrLine />
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 8,
-                  marginVertical: 8,
-                  width: "33%",
-                }}
-              >
-                <IconSymbol
-                  type="material"
-                  name="favorite-border"
-                  size={17}
-                  color={theme.favoriteIcon}
-                  accessibilityLabel="Favorites"
-                />
-                <ThemedText style={{ color: theme.text }}>
-                  Add to Favorites
+          <SafeAreaView
+            edges={["bottom"]}
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            {selectedImage && (
+              <>
+                <ThemedText
+                  style={{
+                    marginBottom: 8,
+                    fontWeight: "bold",
+                    color: theme.text,
+                  }}
+                >
+                  {selectedImage.author}, {selectedImage.year}
                 </ThemedText>
-              </View>
+                <ThemedText style={{ marginBottom: 8, color: theme.text }}>
+                  {selectedImage.description}
+                </ThemedText>
+                {/* Horizontal Line */}
+                <HrLine />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    marginVertical: 8,
+                    width: "33%",
+                  }}
+                >
+                  <IconSymbol
+                    type="material"
+                    name="favorite-border"
+                    size={17}
+                    color={theme.favoriteIcon}
+                    accessibilityLabel="Favorites"
+                  />
+                  <ThemedText style={{ color: theme.text }}>
+                    Add to Favorites
+                  </ThemedText>
+                </View>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 8,
-                  marginBottom: 8,
-                  width: "33%",
-                }}
-              >
-                <IconSymbol
-                  type="material"
-                  name="share"
-                  size={17}
-                  color={theme.shareIcon}
-                  accessibilityLabel="Share"
-                />
-                <ThemedText style={{ color: theme.text }}>
-                  Share this image
-                </ThemedText>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 8,
-                  marginBottom: 18,
-                  width: "33%",
-                }}
-              >
-                <IconSymbol
-                  type="material"
-                  name="download"
-                  color={theme.icon}
-                  size={17}
-                  accessibilityLabel="Download"
-                />
-                <ThemedText style={{ color: theme.text }}>
-                  Download image
-                </ThemedText>
-              </View>
-            </>
-          )}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    marginBottom: 8,
+                    width: "33%",
+                  }}
+                >
+                  <IconSymbol
+                    type="material"
+                    name="share"
+                    size={17}
+                    color={theme.shareIcon}
+                    accessibilityLabel="Share"
+                  />
+                  <ThemedText style={{ color: theme.text }}>
+                    Share this image
+                  </ThemedText>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 8,
+                    marginBottom: 18,
+                    width: "33%",
+                  }}
+                >
+                  <IconSymbol
+                    type="material"
+                    name="download"
+                    color={theme.icon}
+                    size={17}
+                    accessibilityLabel="Download"
+                  />
+                  <ThemedText style={{ color: theme.text }}>
+                    Download image
+                  </ThemedText>
+                </View>
+              </>
+            )}
+          </SafeAreaView>
         </BottomSheetView>
       </BottomSheetModal>
 
