@@ -63,6 +63,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 18,
+    gap: 24,
   },
   resetButton: {
     backgroundColor: "#e0e0e0",

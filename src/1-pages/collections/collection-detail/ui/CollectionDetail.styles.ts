@@ -5,58 +5,52 @@ export const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 18,
     paddingTop: 16,
-    paddingBottom: 18,
   },
   header: {
     marginBottom: 12,
+    alignItems: "flex-start",
   },
   title: {
     fontSize: 22,
     fontWeight: "bold",
+    marginBottom: 2,
+  },
+  description: {
+    fontSize: 15,
     marginBottom: 4,
   },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 12,
+  imageCount: {
+    fontSize: 13,
+    marginBottom: 6,
   },
-  listContent: {
-    paddingBottom: 40,
+  imagesGrid: {
+    paddingBottom: 36,
+    gap: 8,
   },
   imageCard: {
-    borderRadius: 16,
-    marginBottom: 16,
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  imageInfo: {
+    borderRadius: 12,
+    margin: 6,
     flex: 1,
-    marginRight: 12,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    padding: 10,
+    minWidth: 0,
+    maxWidth: "48%",
   },
-  imageAuthor: {
+  image: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  imageTitle: {
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 2,
   },
-  imageTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
-  imageDescription: {
-    fontSize: 14,
-    marginBottom: 2,
-  },
-  imageYear: {
+  imageAuthor: {
     fontSize: 12,
     marginBottom: 2,
-  },
-  thumbnail: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    marginRight: 12,
   },
   centered: {
     flex: 1,
@@ -70,15 +64,12 @@ export const styles = StyleSheet.create({
   emptyIcon: {
     fontSize: 40,
     marginBottom: 10,
+    textAlign: "center",
   },
   emptyTitle: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 6,
-  },
-  emptyText: {
-    fontSize: 16,
     textAlign: "center",
-    maxWidth: 260,
   },
 });

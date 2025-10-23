@@ -110,6 +110,15 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
           accessibilityLabel="Messages"
           onPress={() => router.push("/comments-list")}
         />
+        <IconSymbol
+          type="material"
+          name="collections-bookmark"
+          size={28}
+          color={theme.icon ?? theme.text}
+          style={styles.icon}
+          accessibilityLabel="Collections"
+          onPress={() => router.push("/collections/collections-list")}
+        />
       </ThemedView>
     </ThemedView>
   );
