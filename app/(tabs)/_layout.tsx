@@ -1,8 +1,7 @@
-import { Tabs } from "expo-router";
-
 import { HapticTab } from "@/4-shared/components/haptic-tab";
 import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   const { theme } = useTheme();
@@ -12,7 +11,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: theme.accent,
         tabBarStyle: {
-          backgroundColor: theme.background, // <--- This line makes your tab bar themed!
+          backgroundColor: theme.background,
         },
         headerShown: false,
         tabBarButton: HapticTab,
@@ -34,12 +33,42 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="favorites"
+        options={{
+          title: "Favorites",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol
+              type="material"
+              size={28}
+              name="favorite"
+              color={color}
+              accessibilityLabel="Favorites Tab"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="collections"
+        options={{
+          title: "Collections",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol
+              type="material"
+              size={28}
+              name="collections"
+              color={color}
+              accessibilityLabel="Collections Tab"
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
             <IconSymbol
-              type="sf"
+              type="material"
               size={28}
               name="person"
               color={color}
