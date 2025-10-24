@@ -447,7 +447,7 @@ export const Home: React.FC = () => {
           </SafeAreaView>
         </BottomSheetView>
       </ReusableBottomSheetModal>
-      <RevealOnScroll scrollY={scrollY} height={160}>
+      <RevealOnScroll scrollY={scrollY} height={160} threshold={32}>
         <PhotographersSlider />
       </RevealOnScroll>
 

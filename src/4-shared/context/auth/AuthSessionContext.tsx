@@ -29,8 +29,19 @@ export function AuthSessionProvider({
     // On mount, check for existing session (persistent login)
     const initAuth = async () => {
       setLoading(true);
-      // Get session from Supabase (AsyncStorage)
       const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        if (
+          error.message &&
+          error.message.toLowerCase().includes("invalid refresh token")
+        ) {
+          setUser(null);
+          await supabase.auth.signOut();
+        }
+        setLoading(false);
+        return;
+      }
 
       if (data?.session?.user) {
         setUser(data.session.user);
@@ -40,7 +51,6 @@ export function AuthSessionProvider({
       setLoading(false);
     };
 
-    // Listen for auth state changes (login, logout, token refresh)
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
@@ -49,7 +59,6 @@ export function AuthSessionProvider({
 
     initAuth();
 
-    // Cleanup listener
     return () => {
       listener.subscription.unsubscribe();
     };

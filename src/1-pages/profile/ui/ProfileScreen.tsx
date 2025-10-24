@@ -45,10 +45,17 @@ export default function ProfileScreen() {
     );
   }
 
+  // Only render ProfileForm if user is defined (prevents null errors)
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ThemedView style={styles.centered}>
-        <ProfileForm user={user} />
+        {user ? (
+          <ProfileForm user={user} />
+        ) : (
+          <ThemedText style={styles.loadingText}>
+            Please log in to view your profile.
+          </ThemedText>
+        )}
       </ThemedView>
       <ThemedView style={styles.profileMenuSection}>
         <ThemedView style={styles.menuItem}>
@@ -63,7 +70,11 @@ export default function ProfileScreen() {
             <ThemedText style={styles.menuItemLabel}>Toggle Theme</ThemedText>
           </ThemedView>
         </ThemedView>
-        <TouchableOpacity style={styles.menuItem} onPress={handleAuthAction}>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={handleAuthAction}
+          disabled={authLoading}
+        >
           <IconSymbol name="logout" size={20} color={theme.text} />
           <ThemedText style={styles.menuItemLabel}>Log out</ThemedText>
         </TouchableOpacity>

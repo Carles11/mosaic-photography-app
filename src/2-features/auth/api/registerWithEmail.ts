@@ -11,6 +11,9 @@ export async function registerWithEmail(
   const { error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      emailRedirectTo: "mosaicphotographyapp://auth/verify-email",
+    },
   });
 
   return {
