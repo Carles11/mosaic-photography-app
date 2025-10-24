@@ -1,5 +1,5 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { HapticTab } from "@/4-shared/components/haptic-tab";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { Tabs } from "expo-router";
 

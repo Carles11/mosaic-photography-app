@@ -1,6 +1,6 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { RoundMosaicLogo } from "@/4-shared/components/logo/MosaicLogoRound";
-import { ThemedTitle } from "@/4-shared/components/themed-title";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -14,9 +14,13 @@ export const ImageHeaderRow: React.FC<{
   return (
     <View style={styles.imageHeaderRow}>
       <RoundMosaicLogo size={33} />
-      <ThemedTitle style={styles.mosaicTitle} numberOfLines={1}>
+      <ThemedText
+        type="defaultSemiBold"
+        style={styles.mosaicTitle}
+        numberOfLines={1}
+      >
         Mosaic collection
-      </ThemedTitle>
+      </ThemedText>
       <TouchableOpacity
         onPress={onOpenMenu}
         style={{ marginLeft: "auto" }}

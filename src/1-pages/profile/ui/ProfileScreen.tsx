@@ -1,8 +1,8 @@
 import ProfileForm from "@/2-features/profile/ui/ProfileForm";
 import { SwitchButton } from "@/4-shared/components/buttons";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";

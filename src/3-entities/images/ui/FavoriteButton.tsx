@@ -1,4 +1,4 @@
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 
 type FavoriteButtonProps = {

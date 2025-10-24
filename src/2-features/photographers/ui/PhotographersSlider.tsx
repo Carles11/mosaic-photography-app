@@ -1,4 +1,4 @@
-import { ThemedTitle } from "@/4-shared/components/themed-title";
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -50,7 +50,9 @@ export const PhotographersSlider: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ThemedTitle style={styles.title}>Featured Photographers</ThemedTitle>
+      <ThemedText type="title" style={styles.title}>
+        Featured Photographers
+      </ThemedText>
       <FlatList
         data={photographers}
         horizontal

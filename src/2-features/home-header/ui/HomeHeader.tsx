@@ -1,5 +1,5 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useRouter } from "expo-router";

@@ -1,5 +1,5 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useComments } from "@/4-shared/context/comments";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";

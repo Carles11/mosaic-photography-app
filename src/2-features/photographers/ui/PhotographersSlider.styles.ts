@@ -8,7 +8,6 @@ export const styles = StyleSheet.create({
     paddingRight: 0,
   },
   title: {
-    fontSize: 18,
     marginBottom: 8,
     paddingLeft: 6,
   },
