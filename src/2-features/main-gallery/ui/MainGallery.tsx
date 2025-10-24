@@ -1,8 +1,8 @@
+import { Gallery } from "@/2-features/gallery/ui/Gallery";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
-import { FlatList } from "react-native";
 import { styles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 
@@ -44,10 +44,9 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   }
 
   return (
-    <FlatList
-      data={images}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
+    <Gallery
+      images={images}
+      renderItem={(item) => (
         <MainGalleryItem
           item={item}
           onOpenMenu={() => onOpenMenu(item)}
@@ -56,7 +55,6 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
           }
         />
       )}
-      contentContainerStyle={styles.galleryList}
     />
   );
 };

@@ -11,12 +11,14 @@ import { darkTheme, lightTheme } from "./globalTheme";
 type ThemeType = typeof lightTheme;
 
 type ThemeContextType = {
+  text: string;
   theme: ThemeType;
   mode: "light" | "dark";
   setMode: (mode: "light" | "dark") => void;
 };
 
 const ThemeContext = createContext<ThemeContextType>({
+  text: darkTheme.text,
   theme: darkTheme,
   mode: "dark",
   setMode: () => {},
@@ -50,9 +52,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     () => (mode === "light" ? lightTheme : darkTheme),
     [mode]
   );
-
   return (
-    <ThemeContext.Provider value={{ theme, mode, setMode }}>
+    <ThemeContext.Provider value={{ text: theme.text, theme, mode, setMode }}>
       {children}
     </ThemeContext.Provider>
   );

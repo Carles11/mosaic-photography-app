@@ -50,8 +50,6 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   name: {
-    fontSize: 13,
-    color: "#222",
     textAlign: "center",
     maxWidth: 70,
   },
