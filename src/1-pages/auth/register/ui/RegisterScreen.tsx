@@ -3,18 +3,15 @@ import {
   OnlyTextButton,
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { styles } from "./RegisterScreen.styles";
 
 export const RegisterScreen: React.FC = () => {
@@ -77,78 +74,48 @@ export const RegisterScreen: React.FC = () => {
       style={[styles.root, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.container}>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.text, fontFamily: theme.fontFamilyBold },
-          ]}
-        >
+      <ThemedView style={styles.container}>
+        <ThemedText type="title" style={[styles.title]}>
           Register
-        </Text>
+        </ThemedText>
 
-        <TextInput
+        <ThemedTextInput
           value={email}
           onChangeText={setEmail}
           placeholder="Email"
-          style={[
-            styles.input,
-            {
-              borderColor: theme.border,
-              color: theme.text,
-              fontFamily: theme.fontFamily,
-              backgroundColor: theme.buttonBackgroundColor,
-            },
-          ]}
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
           placeholderTextColor={theme.text}
         />
-        <TextInput
+        <ThemedTextInput
           value={password}
           onChangeText={setPassword}
           placeholder="Password"
-          style={[
-            styles.input,
-            {
-              borderColor: theme.border,
-              color: theme.text,
-              fontFamily: theme.fontFamily,
-              backgroundColor: theme.buttonBackgroundColor,
-            },
-          ]}
           secureTextEntry
           autoCapitalize="none"
           placeholderTextColor={theme.text}
         />
-        <TextInput
+        <ThemedTextInput
           value={repeatPassword}
           onChangeText={setRepeatPassword}
           placeholder="Repeat Password"
-          style={[
-            styles.input,
-            {
-              borderColor: theme.border,
-              color: theme.text,
-              fontFamily: theme.fontFamily,
-              backgroundColor: theme.buttonBackgroundColor,
-            },
-          ]}
           secureTextEntry
           autoCapitalize="none"
           placeholderTextColor={theme.text}
         />
 
         {error && (
-          <Text style={[styles.error, { color: theme.error }]}>{error}</Text>
+          <ThemedText style={[styles.error, { color: theme.error }]}>
+            {error}
+          </ThemedText>
         )}
 
         {success && (
-          <Text style={[styles.success, { color: theme.success }]}>
+          <ThemedText style={[styles.success, { color: theme.success }]}>
             Registration successful! Please check your email to verify your
             account.
-          </Text>
+          </ThemedText>
         )}
 
         <PrimaryButton
@@ -164,7 +131,7 @@ export const RegisterScreen: React.FC = () => {
             router.push("/auth/login");
           }}
         />
-      </View>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 };

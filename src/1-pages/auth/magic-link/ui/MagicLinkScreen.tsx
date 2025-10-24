@@ -1,5 +1,7 @@
 import { verifyMagicLink } from "@/2-features/auth/api/verifyMagicLink";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -8,8 +10,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Text,
-  View,
 } from "react-native";
 import { styles } from "./MagicLinkScreen.styles";
 
@@ -64,26 +64,10 @@ export function MagicLinkScreen() {
         style={[{ flex: 1, backgroundColor: theme.background }]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View
-          style={[
-            styles.container,
-            { justifyContent: "center", alignItems: "center" },
-          ]}
-        >
+        <ThemedView style={[styles.container]}>
           <ActivityIndicator size="large" color={theme.primary} />
-          <Text
-            style={[
-              styles.title,
-              {
-                color: theme.text,
-                fontFamily: theme.fontFamily,
-                marginTop: 20,
-              },
-            ]}
-          >
-            Signing you in...
-          </Text>
-        </View>
+          <ThemedText style={[styles.title]}>Signing you in...</ThemedText>
+        </ThemedView>
       </KeyboardAvoidingView>
     );
   }
@@ -93,32 +77,29 @@ export function MagicLinkScreen() {
       style={[{ flex: 1, backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.container}>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.text, fontFamily: theme.fontFamilyBold },
-          ]}
-        >
+      <ThemedView style={styles.container}>
+        <ThemedText type="title" style={[styles.title]}>
           Magic Link Login
-        </Text>
+        </ThemedText>
 
         {status === "success" ? (
           <>
-            <Text style={[styles.success, { color: theme.success }]}>
+            <ThemedText style={[styles.success, { color: theme.success }]}>
               Login successful! Redirecting to your account...
-            </Text>
+            </ThemedText>
           </>
         ) : (
           <>
-            <Text style={[styles.error, { color: theme.error }]}>{error}</Text>
+            <ThemedText style={[styles.error, { color: theme.error }]}>
+              {error}
+            </ThemedText>
             <PrimaryButton
               title="Go to Login"
               onPress={() => router.push("/auth/login")}
             />
           </>
         )}
-      </View>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 }

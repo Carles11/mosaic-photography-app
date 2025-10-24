@@ -46,6 +46,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         <ActivityIndicator color={theme.buttonTextColor} />
       ) : (
         <ThemedText
+          type="defaultSemiBold"
           style={[
             {
               color: theme.buttonTextColor,

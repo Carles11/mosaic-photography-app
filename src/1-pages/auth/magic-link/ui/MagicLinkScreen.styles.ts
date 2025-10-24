@@ -1,9 +1,6 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   container: {
     flex: 1,
     paddingHorizontal: 24,
@@ -11,9 +8,9 @@ export const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   title: {
-    fontSize: 28,
     marginBottom: 32,
     textAlign: "center",
+    marginTop: 20,
   },
   input: {
     height: 48,

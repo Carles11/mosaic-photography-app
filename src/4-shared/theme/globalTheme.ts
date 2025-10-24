@@ -62,7 +62,7 @@ export const lightTheme = {
   // Buttons
   buttonBorderColor: "#687076",
   buttonBackgroundColor: "#2c106a",
-  buttonTextColor: "red",
+  buttonTextColor: "#1d1d1d",
   buttonBorderWidth: 1,
   buttonBorderRadius: 4,
   buttonFontSize: 14,

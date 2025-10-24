@@ -37,6 +37,7 @@ export const SecondaryButton: React.FC<SecondaryButtonProps> = ({
       disabled={disabled}
     >
       <ThemedText
+        type="defaultSemiBold"
         style={[
           {
             color: theme.buttonTextColor,

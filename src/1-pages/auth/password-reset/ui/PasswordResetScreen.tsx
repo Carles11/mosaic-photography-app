@@ -3,17 +3,14 @@ import {
   OnlyTextButton,
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { styles } from "./PasswordResetScreen.styles";
 
 function validatePassword(password: string): boolean {
@@ -79,16 +76,11 @@ export function PasswordResetScreen() {
       style={[styles.root, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.container}>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.text, fontFamily: theme.fontFamilyBold },
-          ]}
-        >
+      <ThemedView style={styles.container}>
+        <ThemedText type="title" style={[styles.title]}>
           Reset Password
-        </Text>
-        <TextInput
+        </ThemedText>
+        <ThemedTextInput
           value={password}
           onChangeText={(text) => {
             setPassword(text);
@@ -96,21 +88,12 @@ export function PasswordResetScreen() {
             setSuccess(false);
           }}
           placeholder="New Password"
-          style={[
-            styles.input,
-            {
-              borderColor: theme.border,
-              color: theme.text,
-              fontFamily: theme.fontFamily,
-              backgroundColor: theme.buttonBackgroundColor,
-            },
-          ]}
           secureTextEntry
           autoCapitalize="none"
           textContentType="newPassword"
           placeholderTextColor={theme.text}
         />
-        <TextInput
+        <ThemedTextInput
           value={repeatPassword}
           onChangeText={(text) => {
             setRepeatPassword(text);
@@ -118,15 +101,6 @@ export function PasswordResetScreen() {
             setSuccess(false);
           }}
           placeholder="Repeat New Password"
-          style={[
-            styles.input,
-            {
-              borderColor: theme.border,
-              color: theme.text,
-              fontFamily: theme.fontFamily,
-              backgroundColor: theme.buttonBackgroundColor,
-            },
-          ]}
           secureTextEntry
           autoCapitalize="none"
           textContentType="newPassword"
@@ -134,13 +108,15 @@ export function PasswordResetScreen() {
         />
 
         {error ? (
-          <Text style={[styles.error, { color: theme.error }]}>{error}</Text>
+          <ThemedText style={[styles.error, { color: theme.error }]}>
+            {error}
+          </ThemedText>
         ) : null}
         {success ? (
-          <Text style={[styles.success, { color: theme.success }]}>
+          <ThemedText style={[styles.success, { color: theme.success }]}>
             Password reset successful! You can now log in with your new
             password.
-          </Text>
+          </ThemedText>
         ) : null}
 
         <PrimaryButton
@@ -156,7 +132,7 @@ export function PasswordResetScreen() {
             router.push("/auth/login");
           }}
         />
-      </View>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 }
