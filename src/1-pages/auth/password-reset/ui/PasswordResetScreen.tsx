@@ -4,6 +4,7 @@ import {
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -19,10 +20,10 @@ function validatePassword(password: string): boolean {
   return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
 }
 
-export function PasswordResetScreen({ route }: any) {
+export function PasswordResetScreen() {
   const { theme } = useTheme();
-  // You may receive the token as a param (depends on your navigation)
-  const token = route?.params?.token || "";
+  const router = useRouter();
+  const { token } = useLocalSearchParams<{ token: string }>();
 
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -143,7 +144,7 @@ export function PasswordResetScreen({ route }: any) {
         <OnlyTextButton
           title="Back to Login"
           onPress={() => {
-            // TODO: Navigate to LoginScreen
+            router.push("/auth/login");
           }}
         />
       </View>

@@ -1,5 +1,6 @@
 import React, { ReactNode, useRef } from "react";
 import Animated, {
+  Easing,
   interpolate,
   SharedValue,
   useAnimatedStyle,
@@ -12,6 +13,7 @@ type RevealOnScrollProps = {
   scrollY: SharedValue<number>;
   direction?: "up" | "down";
   height?: number;
+  threshold?: number;
 };
 
 export const RevealOnScroll: React.FC<RevealOnScrollProps> = ({
@@ -19,31 +21,57 @@ export const RevealOnScroll: React.FC<RevealOnScrollProps> = ({
   scrollY,
   direction = "up",
   height = 64,
+  threshold = 24,
 }) => {
-  const prevScrollY = useRef(0);
+  const hysteresisRef = useRef<{ lastAction: number; lastToggleY: number }>({
+    lastAction: 1,
+    lastToggleY: scrollY.value,
+  });
 
-  // Derived value: 1 = visible, 0 = hidden
   const revealed = useDerivedValue(() => {
-    const scrollingDown = scrollY.value > prevScrollY.current;
-    prevScrollY.current = scrollY.value;
+    const { lastAction, lastToggleY } = hysteresisRef.current;
+    const delta = scrollY.value - lastToggleY;
+
+    let newAction = lastAction;
+    let newToggleY = lastToggleY;
 
     if (direction === "up") {
-      return scrollingDown ? withTiming(0) : withTiming(1);
+      if (lastAction === 1 && delta > threshold) {
+        newAction = 0;
+        newToggleY = scrollY.value;
+      } else if (lastAction === 0 && delta < -threshold) {
+        newAction = 1;
+        newToggleY = scrollY.value;
+      }
     } else {
-      return scrollingDown ? withTiming(1) : withTiming(0);
+      if (lastAction === 0 && delta > threshold) {
+        newAction = 1;
+        newToggleY = scrollY.value;
+      } else if (lastAction === 1 && delta < -threshold) {
+        newAction = 0;
+        newToggleY = scrollY.value;
+      }
     }
-  }, [direction, scrollY]);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    const containerHeight = interpolate(revealed.value, [0, 1], [0, height]);
-    const translateY = interpolate(revealed.value, [0, 1], [-height, 0]);
-    return {
-      height: containerHeight,
-      overflow: "hidden",
-      transform: [{ translateY }],
+    if (newAction !== lastAction || newToggleY !== lastToggleY) {
+      hysteresisRef.current.lastAction = newAction;
+      hysteresisRef.current.lastToggleY = newToggleY;
+    }
+
+    return withTiming(newAction, {
+      duration: 350,
+      easing: Easing.out(Easing.cubic),
+    });
+  }, [direction, scrollY, threshold]);
+
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: interpolate(revealed.value, [0, 1], [0, height]),
       opacity: revealed.value,
-    };
-  }, [height]);
+      overflow: "hidden",
+    }),
+    [height]
+  );
 
   return <Animated.View style={animatedStyle}>{children}</Animated.View>;
 };
