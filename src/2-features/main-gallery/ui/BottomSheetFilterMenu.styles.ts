@@ -12,14 +12,11 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 18,
     textAlign: "left",
   },
   label: {
-    fontSize: 16,
-    fontWeight: "600",
     marginTop: 12,
     marginBottom: 4,
   },

@@ -1,12 +1,15 @@
-import { PropsWithChildren, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { PropsWithChildren, useState } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
-import { ThemedText } from '@/4-shared/components/themed-text';
-import { ThemedView } from '@/4-shared/components/themed-view';
-import { IconSymbol } from '@/4-shared/components/ui/icon-symbol';
-import { useTheme } from '@/4-shared/theme/ThemeProvider';
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 
-export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
+export function Collapsible({
+  children,
+  title,
+}: PropsWithChildren & { title: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme } = useTheme();
 
@@ -22,7 +25,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
           name="chevron.right"
           size={18}
           color={theme.icon}
-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
+          style={{ transform: [{ rotate: isOpen ? "90deg" : "0deg" }] }}
           accessibilityLabel={isOpen ? "Collapse section" : "Expand section"}
         />
 
@@ -35,8 +38,8 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
 
 const styles = StyleSheet.create({
   heading: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   content: {

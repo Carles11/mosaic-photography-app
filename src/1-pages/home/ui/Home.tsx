@@ -9,10 +9,10 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { HrLine } from "@/4-shared/components/elements/horizontal-line-hr";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { HrLine } from "@/4-shared/components/ui/horizontal-line-hr";
-import { IconSymbol } from "@/4-shared/components/ui/icon-symbol";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";

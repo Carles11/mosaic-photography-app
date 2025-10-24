@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     // fontWeight removed, handled by fontFamily
   },
   title: {
-    fontSize: 32,
+    fontSize: 26,
     lineHeight: 32,
     // fontWeight removed, handled by fontFamily
   },

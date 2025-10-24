@@ -8,8 +8,6 @@ export const styles = StyleSheet.create({
   },
   mosaicTitle: {
     marginLeft: 10,
-    fontWeight: "bold",
     flexShrink: 1,
-    fontSize: 14,
   },
 });

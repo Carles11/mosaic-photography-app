@@ -4,7 +4,6 @@ import {
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { ThemedTitle } from "@/4-shared/components/themed-title";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryFilter } from "@/4-shared/types";
@@ -95,11 +94,17 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             justifyContent: "center",
           }}
         >
-          <ThemedTitle style={[styles.title, { color: theme.text }]}>
+          <ThemedText
+            type="title"
+            style={[styles.title, { color: theme.text }]}
+          >
             Gallery Filters
-          </ThemedTitle>
+          </ThemedText>
           {/* Gender Filter */}
-          <ThemedText style={[styles.label, { color: theme.text }]}>
+          <ThemedText
+            type="subtitle"
+            style={[styles.label, { color: theme.text }]}
+          >
             Gender
           </ThemedText>
           <ThemedView
@@ -128,7 +133,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Orientation Filter */}
-          <ThemedText style={[styles.label, { color: theme.text }]}>
+          <ThemedText
+            type="subtitle"
+            style={[styles.label, { color: theme.text }]}
+          >
             Orientation
           </ThemedText>
           <ThemedView
@@ -157,7 +165,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Color Filter */}
-          <ThemedText style={[styles.label, { color: theme.text }]}>
+          <ThemedText
+            type="subtitle"
+            style={[styles.label, { color: theme.text }]}
+          >
             Color
           </ThemedText>
           <ThemedView
@@ -186,7 +197,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Print Quality Filter */}
-          <ThemedText style={[styles.label, { color: theme.text }]}>
+          <ThemedText
+            type="subtitle"
+            style={[styles.label, { color: theme.text }]}
+          >
             Print Quality
           </ThemedText>
           <ThemedView
@@ -215,7 +229,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Year Range Filter */}
-          <ThemedText style={[styles.label, { color: theme.text }]}>
+          <ThemedText
+            type="subtitle"
+            style={[styles.label, { color: theme.text }]}
+          >
             Year Range
           </ThemedText>
           <ThemedView
