@@ -1,8 +1,9 @@
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
-import { StyleProp, Text, TextStyle, TouchableOpacity } from "react-native";
+import { StyleProp, TextStyle, TouchableOpacity } from "react-native";
 import { styles } from "./SecondaryButton.styles";
 
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { ButtonProps } from "@/4-shared/types/buttons";
 
 type SecondaryButtonProps = ButtonProps & {
@@ -23,7 +24,7 @@ export const SecondaryButton: React.FC<SecondaryButtonProps> = ({
       style={[
         styles.button,
         {
-          backgroundColor: "transparent",
+          backgroundColor: theme.accent,
           borderColor: theme.buttonBorderColor,
           borderWidth: theme.buttonBorderWidth,
           borderRadius: theme.buttonBorderRadius,
@@ -35,19 +36,17 @@ export const SecondaryButton: React.FC<SecondaryButtonProps> = ({
       onPress={onPress}
       disabled={disabled}
     >
-      <Text
+      <ThemedText
         style={[
           {
-            color: theme.buttonBorderColor,
-            fontFamily: theme.fontFamily,
-            fontSize: theme.buttonFontSize,
+            color: theme.buttonTextColor,
             textAlign: "center",
           },
           textStyles,
         ]}
       >
         {title}
-      </Text>
+      </ThemedText>
     </TouchableOpacity>
   );
 };

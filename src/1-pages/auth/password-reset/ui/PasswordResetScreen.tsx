@@ -4,8 +4,9 @@ import {
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -23,6 +24,8 @@ function validatePassword(password: string): boolean {
 export function PasswordResetScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
+
   const { token } = useLocalSearchParams<{ token: string }>();
 
   const [password, setPassword] = useState("");
@@ -30,6 +33,12 @@ export function PasswordResetScreen() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Password Reset",
+    });
+  }, [navigation]);
 
   const handlePasswordReset = async () => {
     setError(null);

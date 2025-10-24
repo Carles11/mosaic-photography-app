@@ -5,6 +5,7 @@ import {
 } from "@/4-shared/components/buttons/variants";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -19,6 +20,7 @@ import { styles } from "./RegisterScreen.styles";
 export const RegisterScreen: React.FC = () => {
   const { theme } = useTheme();
   const { user, loading } = useAuthSession();
+  const navigation = useNavigation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +29,12 @@ export const RegisterScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Register",
+    });
+  }, [navigation]);
 
   // Redirect to home if already logged in
   useEffect(() => {

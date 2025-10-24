@@ -1,7 +1,8 @@
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { ButtonProps } from "@/4-shared/types/buttons";
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { styles } from "./OnlyTextButton.styles";
 
 export const OnlyTextButton: React.FC<ButtonProps> = ({
@@ -26,18 +27,17 @@ export const OnlyTextButton: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={disabled}
     >
-      <Text
+      <ThemedText
+        type="defaultSemiBold"
         style={[
           styles.text,
           {
             color: theme.buttonTextColor,
-            fontFamily: theme.fontFamily,
-            fontSize: theme.buttonFontSize,
           },
         ]}
       >
         {title}
-      </Text>
+      </ThemedText>
     </TouchableOpacity>
   );
 };

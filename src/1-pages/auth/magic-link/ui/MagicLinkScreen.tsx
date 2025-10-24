@@ -1,6 +1,7 @@
 import { verifyMagicLink } from "@/2-features/auth/api/verifyMagicLink";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,6 +16,8 @@ import { styles } from "./MagicLinkScreen.styles";
 export function MagicLinkScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
+
   const { token, type } = useLocalSearchParams<{
     token: string;
     type: string;
@@ -24,6 +27,12 @@ export function MagicLinkScreen() {
     "verifying"
   );
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Magic Link Login",
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (token && type) {

@@ -15,13 +15,7 @@ export const styles = StyleSheet.create({
     marginBottom: 32,
     textAlign: "center",
   },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 6,
-    marginBottom: 16,
-    paddingHorizontal: 12,
-  },
+
   error: {
     marginBottom: 8,
     fontSize: 14,

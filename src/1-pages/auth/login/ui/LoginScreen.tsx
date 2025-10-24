@@ -3,24 +3,24 @@ import { loginWithMagicLink } from "@/2-features/auth/api/loginWithMagicLink";
 import {
   OnlyTextButton,
   PrimaryButton,
+  SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, Text } from "react-native";
 import { styles } from "./LoginScreen.styles";
 
 export const LoginScreen: React.FC = () => {
   const { theme } = useTheme();
   const { user, loading } = useAuthSession();
   const router = useRouter();
+  const navigation = useNavigation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +28,12 @@ export const LoginScreen: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [useMagicLink, setUseMagicLink] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Login",
+    });
+  }, [navigation]);
 
   // Redirect to home if already logged in
   useEffect(() => {
@@ -65,18 +71,18 @@ export const LoginScreen: React.FC = () => {
         style={[styles.root, { backgroundColor: theme.background }]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={styles.container}>
-          <Text
+        <ThemedView style={styles.container}>
+          <ThemedText
             style={[
               styles.title,
               { color: theme.text, fontFamily: theme.fontFamilyBold },
             ]}
           >
             Magic Link Sent!
-          </Text>
-          <Text style={[styles.success, { color: theme.success }]}>
+          </ThemedText>
+          <ThemedText style={[styles.success, { color: theme.success }]}>
             Check your email for a magic link to sign in.
-          </Text>
+          </ThemedText>
           <OnlyTextButton
             title="Back to Login"
             onPress={() => {
@@ -84,7 +90,7 @@ export const LoginScreen: React.FC = () => {
               setUseMagicLink(false);
             }}
           />
-        </View>
+        </ThemedView>
       </KeyboardAvoidingView>
     );
   }
@@ -94,7 +100,7 @@ export const LoginScreen: React.FC = () => {
       style={[styles.root, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.container}>
+      <ThemedView style={styles.container}>
         <Text
           style={[
             styles.title,
@@ -104,19 +110,10 @@ export const LoginScreen: React.FC = () => {
           {useMagicLink ? "Sign in with Magic Link" : "Login to Mosaic"}
         </Text>
 
-        <TextInput
+        <ThemedTextInput
           value={email}
           onChangeText={setEmail}
           placeholder="Email"
-          style={[
-            styles.input,
-            {
-              borderColor: theme.border,
-              color: theme.text,
-              fontFamily: theme.fontFamily,
-              backgroundColor: theme.buttonBackgroundColor,
-            },
-          ]}
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
@@ -124,19 +121,10 @@ export const LoginScreen: React.FC = () => {
         />
 
         {!useMagicLink && (
-          <TextInput
+          <ThemedTextInput
             value={password}
             onChangeText={setPassword}
             placeholder="Password"
-            style={[
-              styles.input,
-              {
-                borderColor: theme.border,
-                color: theme.text,
-                fontFamily: theme.fontFamily,
-                backgroundColor: theme.buttonBackgroundColor,
-              },
-            ]}
             secureTextEntry
             autoCapitalize="none"
             placeholderTextColor={theme.text}
@@ -144,7 +132,9 @@ export const LoginScreen: React.FC = () => {
         )}
 
         {error && (
-          <Text style={[styles.error, { color: theme.error }]}>{error}</Text>
+          <ThemedText style={[styles.error, { color: theme.error }]}>
+            {error}
+          </ThemedText>
         )}
 
         <PrimaryButton
@@ -164,7 +154,7 @@ export const LoginScreen: React.FC = () => {
           }
         />
 
-        <OnlyTextButton
+        <SecondaryButton
           title={
             useMagicLink ? "Use password instead" : "Use magic link instead"
           }
@@ -186,7 +176,7 @@ export const LoginScreen: React.FC = () => {
             router.push("/auth/register");
           }}
         />
-      </View>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 };

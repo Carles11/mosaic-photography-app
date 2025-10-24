@@ -3,12 +3,12 @@ import React from "react";
 import {
   ActivityIndicator,
   StyleProp,
-  Text,
   TextStyle,
   TouchableOpacity,
 } from "react-native";
 import { styles } from "./PrimaryButton.styles";
 
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { ButtonProps } from "@/4-shared/types";
 
 type PrimaryButtonProps = ButtonProps & {
@@ -45,19 +45,17 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
       {loading ? (
         <ActivityIndicator color={theme.buttonTextColor} />
       ) : (
-        <Text
+        <ThemedText
           style={[
             {
               color: theme.buttonTextColor,
-              fontFamily: theme.fontFamilyBold,
-              fontSize: theme.buttonFontSize,
               textAlign: "center",
             },
             textStyles,
           ]}
         >
           {title}
-        </Text>
+        </ThemedText>
       )}
     </TouchableOpacity>
   );

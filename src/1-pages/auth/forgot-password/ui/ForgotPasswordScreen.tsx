@@ -4,8 +4,9 @@ import {
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -23,10 +24,18 @@ function validateEmail(email: string): boolean {
 export function ForgotPasswordScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
+
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Forgot Password",
+    });
+  }, [navigation]);
 
   const handleForgotPassword = async () => {
     setError(null);

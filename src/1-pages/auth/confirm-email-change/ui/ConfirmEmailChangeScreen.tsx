@@ -4,6 +4,7 @@ import {
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -18,6 +19,8 @@ import { styles } from "./ConfirmEmailChangeScreen.styles";
 export function ConfirmEmailChangeScreen() {
   const { theme } = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
+
   const { token, type } = useLocalSearchParams<{
     token: string;
     type: string;
@@ -27,6 +30,12 @@ export function ConfirmEmailChangeScreen() {
     "verifying"
   );
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Confirm Email Change",
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (token && type) {

@@ -15,9 +15,17 @@ export const darkTheme = {
   commentIcon: "#9BA1A6",
   link: "#1371d6",
 
+  // inputs
+  inputBackgroundColor: "#dedede",
+  inputTextColor: "#1d1d1d",
+  inputBorderColor: "#ccc",
+  inputPlaceholderColor: "#687076",
+  inputBorderRadius: 4,
+  inputPadding: 10,
+
   // Buttons
   buttonBorderColor: "#687076",
-  buttonBackgroundColor: "#687076",
+  buttonBackgroundColor: "#2c106a",
   buttonTextColor: "#fff",
   buttonBorderWidth: 1,
   buttonFontSize: 14,
@@ -42,10 +50,19 @@ export const lightTheme = {
   shareIcon: "#29bde6ff",
   commentIcon: "#9BA1A6",
   link: "#1371d6",
+
+  // inputs
+  inputBackgroundColor: "#dedede",
+  inputTextColor: "#1d1d1d",
+  inputBorderColor: "#ccc",
+  inputPlaceholderColor: "#687076",
+  inputBorderRadius: 4,
+  inputPadding: 10,
+
   // Buttons
   buttonBorderColor: "#687076",
-  buttonBackgroundColor: "#e0e0e0",
-  buttonTextColor: "#1d1d1d",
+  buttonBackgroundColor: "#2c106a",
+  buttonTextColor: "red",
   buttonBorderWidth: 1,
   buttonBorderRadius: 4,
   buttonFontSize: 14,
