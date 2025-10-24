@@ -70,6 +70,8 @@ export const styles = StyleSheet.create({
   },
   commentActions: {
     flexDirection: "row",
+    alignItems: "baseline",
+
     marginTop: 6,
     gap: 8,
   },

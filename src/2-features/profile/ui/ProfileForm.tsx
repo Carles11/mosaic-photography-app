@@ -1,10 +1,11 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
+import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, TextInput, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import styles from "./ProfileForm.styles";
 
 type UserType = {
@@ -295,7 +296,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
         <View style={styles.field}>
           <ThemedText style={styles.label}>Display Name</ThemedText>
-          <TextInput
+          <ThemedTextInput
             style={styles.input}
             value={formData.name}
             onChangeText={(v) => handleInputChange("name", v)}
@@ -307,7 +308,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         </View>
         <View style={styles.field}>
           <ThemedText style={styles.label}>Instagram</ThemedText>
-          <TextInput
+          <ThemedTextInput
             style={styles.input}
             value={formData.instagram}
             onChangeText={(v) =>
@@ -321,7 +322,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         </View>
         <View style={styles.field}>
           <ThemedText style={styles.label}>Website</ThemedText>
-          <TextInput
+          <ThemedTextInput
             style={styles.input}
             value={formData.website}
             onChangeText={(v) => handleInputChange("website", v)}
@@ -365,7 +366,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
           }
           onPress={handleSubmit}
           disabled={saving || databaseError || !formData.name.trim()}
-          style={styles.submitButton}
         />
       </ThemedView>
     </ScrollView>

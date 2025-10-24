@@ -83,10 +83,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginTop: 4,
   },
-  submitButton: {
-    marginTop: 12,
-    paddingVertical: 12,
-  },
+
   disabledForm: {
     borderRadius: 8,
     padding: 10,

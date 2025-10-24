@@ -98,7 +98,10 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
             }}
             showsVerticalScrollIndicator={false}
           >
-            <ThemedText type="title" style={{ marginBottom: 8 }}>
+            <ThemedText
+              type="subtitle"
+              style={{ marginBottom: 8, color: theme.text }}
+            >
               Create New Collection
             </ThemedText>
             {error ? (
@@ -130,12 +133,10 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
               <PrimaryButton
                 title={loading ? "Creating..." : "Create"}
                 onPress={handleCreate}
-                disabled={loading || !name.trim()}
+                disabled={loading}
                 style={{
                   flex: 1,
-                  backgroundColor: theme.buttonBackgroundColor,
                 }}
-                textStyles={{ color: theme.buttonTextColor }}
               />
               <SecondaryButton
                 title="Cancel"
@@ -143,9 +144,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
                 disabled={loading}
                 style={{
                   flex: 1,
-                  backgroundColor: theme.buttonBackgroundColor,
                 }}
-                textStyles={{ color: theme.buttonTextColor }}
               />
             </ThemedView>
           </ScrollView>
