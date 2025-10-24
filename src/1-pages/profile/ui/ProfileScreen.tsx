@@ -45,28 +45,6 @@ export default function ProfileScreen() {
     );
   }
 
-  if (!user) {
-    return (
-      <ThemedView style={styles.centered}>
-        <ThemedText style={styles.notLoggedInText}>
-          Please log in to view your profile.
-        </ThemedText>
-        <TouchableOpacity style={styles.menuItem} onPress={handleAuthAction}>
-          <IconSymbol name="login" size={20} color={theme.text} />
-          <ThemedText style={styles.menuItemLabel}>Login</ThemedText>
-        </TouchableOpacity>
-        <ThemedView style={styles.menuItem}>
-          <IconSymbol name="brightness-4" size={20} color={theme.text} />
-          <SwitchButton
-            value={mode === "dark"}
-            onValueChange={(value) => setMode(value ? "dark" : "light")}
-          />
-          <ThemedText style={styles.menuItemLabel}>Toggle Theme</ThemedText>
-        </ThemedView>
-      </ThemedView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
       <ThemedView style={styles.centered}>
