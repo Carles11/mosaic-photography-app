@@ -1,12 +1,11 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -21,8 +20,8 @@ export const PhotographersSlider: React.FC = () => {
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const navigation = useNavigation<any>();
   const router = useRouter();
+  const theme = useTheme();
   useEffect(() => {
     let mounted = true;
     fetchPhotographersList().then((data) => {
@@ -66,7 +65,9 @@ export const PhotographersSlider: React.FC = () => {
               activeOpacity={0.7}
               onPress={() => router.push(`/photographer/${item.slug}`)}
             >
-              <View style={styles.portraitWrapper}>
+              <View
+                style={[styles.portraitWrapper, { borderColor: theme.text }]}
+              >
                 {item.portrait ? (
                   <Image
                     source={{ uri: item.portrait }}
@@ -76,15 +77,15 @@ export const PhotographersSlider: React.FC = () => {
                   />
                 ) : (
                   <View style={styles.placeholderPortrait}>
-                    <Text style={styles.placeholderInitial}>
+                    <ThemedText style={styles.placeholderInitial}>
                       {item.name[0]}
-                    </Text>
+                    </ThemedText>
                   </View>
                 )}
               </View>
-              <Text style={styles.name} numberOfLines={2}>
+              <ThemedText style={styles.name} numberOfLines={2}>
                 {item.name} {item.surname}
-              </Text>
+              </ThemedText>
             </TouchableOpacity>
           );
         }}
