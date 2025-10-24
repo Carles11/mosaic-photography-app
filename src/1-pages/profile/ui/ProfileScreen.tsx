@@ -8,7 +8,7 @@ import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./ProfileScreen.styles";
@@ -19,6 +19,13 @@ export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   const theme = globalTheme[colorScheme];
   const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!authLoading && !user) {
+      router.replace("/auth/login");
+    }
+  }, [authLoading, user, router]);
 
   // Handler for login/logout menu action
   const handleAuthAction = async () => {
