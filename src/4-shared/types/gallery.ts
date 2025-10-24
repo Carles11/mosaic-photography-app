@@ -1,3 +1,5 @@
+import { SharedValue } from "react-native-reanimated";
+
 export type Photographer = {
   id: string | number;
   name: string;
@@ -43,14 +45,19 @@ export type GalleryImageWithPhotographer = GalleryImage & {
 };
 
 export type GalleryProps = {
+  galleryTitle?: string;
   images: GalleryImage[];
   renderItem: (item: GalleryImage) => React.ReactNode;
+  scrollY: SharedValue<number>;
 };
 
 export type MainGalleryProps = {
   images: GalleryImage[];
-  loading?: boolean;
-  error?: string;
+  loading: boolean;
+  error: string | null;
+  onOpenMenu: (image: GalleryImage) => void;
+  onPressComments?: (imageId: string) => void;
+  scrollY: SharedValue<number>;
 };
 
 // Types for filters (mirroring your web app, but omitting "nudity")

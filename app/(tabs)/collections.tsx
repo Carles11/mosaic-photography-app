@@ -1,11 +1,11 @@
 import CollectionsList from "@/1-pages/collections/collections-list/ui/CollectionsList";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CollectionsListScreen() {
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top"]}>
+    <ThemedView style={{ flex: 1 }}>
       <CollectionsList />
-    </SafeAreaView>
+    </ThemedView>
   );
 }

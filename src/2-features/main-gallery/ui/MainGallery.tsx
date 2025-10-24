@@ -1,18 +1,11 @@
 import { Gallery } from "@/2-features/gallery/ui/Gallery";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { GalleryImage } from "@/4-shared/types/gallery";
+import { MainGalleryProps } from "@/4-shared/types";
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import { styles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
-
-type MainGalleryProps = {
-  images: GalleryImage[];
-  loading: boolean;
-  error: string | null;
-  onOpenMenu: (image: GalleryImage) => void;
-  onPressComments?: (imageId: string) => void;
-};
 
 export const MainGallery: React.FC<MainGalleryProps> = ({
   images,
@@ -20,14 +13,10 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   error,
   onOpenMenu,
   onPressComments,
+  scrollY,
 }) => {
-  if (loading) {
-    return (
-      <ThemedView style={styles.centered}>
-        <ThemedText>Loading...</ThemedText>
-      </ThemedView>
-    );
-  }
+  if (loading) return <ActivityIndicator />;
+
   if (error) {
     return (
       <ThemedView style={styles.centered}>
@@ -45,6 +34,8 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 
   return (
     <Gallery
+      galleryTitle="Mosaic Gallery"
+      scrollY={scrollY}
       images={images}
       renderItem={(item) => (
         <MainGalleryItem

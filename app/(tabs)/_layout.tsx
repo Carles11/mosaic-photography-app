@@ -14,6 +14,12 @@ export default function TabLayout() {
           backgroundColor: theme.background,
         },
         headerShown: false,
+        headerStyle: {
+          backgroundColor: theme.background,
+          borderBottomWidth: 1,
+          borderBottomColor: theme.border + "20", // with 20 transparency
+        },
+        headerTintColor: theme.text,
         tabBarButton: HapticTab,
       }}
     >
@@ -35,7 +41,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="favorites"
         options={{
-          title: "Favorites",
+          title: "Favorites List",
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <IconSymbol
               type="material"
@@ -50,7 +57,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="collections"
         options={{
-          title: "Collections",
+          title: "Collections List",
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <IconSymbol
               type="material"
@@ -66,6 +74,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
+          headerShown: true,
           tabBarIcon: ({ color }) => (
             <IconSymbol
               type="material"
