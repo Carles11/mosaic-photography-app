@@ -12,7 +12,7 @@ export async function registerWithEmail(
     email,
     password,
     options: {
-      emailRedirectTo: "mosaicphotographyapp://auth/verify-email",
+      emailRedirectTo: "https://www.mosaic.photography/auth/verify-email",
     },
   });
 

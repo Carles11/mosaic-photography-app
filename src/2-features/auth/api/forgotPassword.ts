@@ -8,7 +8,7 @@ export async function forgotPassword(
   email: string
 ): Promise<ForgotPasswordResult> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "mosaicphotographyapp://auth/password-reset",
+    redirectTo: "https://www.mosaic.photography/auth/password-reset",
   });
 
   return {
