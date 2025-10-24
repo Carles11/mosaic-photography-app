@@ -24,6 +24,12 @@ const PhotographerDetailScreen: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    navigation.setOptions({
+      title: "Photographer Details",
+    });
+  }, [navigation]);
+
+  useEffect(() => {
     if (photographer) {
       navigation.setOptions({
         title: `${photographer.surname}'s Details`,

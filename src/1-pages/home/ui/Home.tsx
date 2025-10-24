@@ -11,6 +11,7 @@ import {
 } from "@/4-shared/components/buttons/variants";
 import { HrLine } from "@/4-shared/components/elements/horizontal-line-hr";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
@@ -20,15 +21,18 @@ import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, FlatList, TextInput, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated"; // Add this import
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
-
 export const Home: React.FC = () => {
   const { theme } = useTheme();
   const { user, loading: authLoading } = useAuthSession();
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+
+  // Handle RevealOnScroll for header
+  const scrollY = useSharedValue(0);
 
   // Comments logic
   const {
@@ -193,7 +197,9 @@ export const Home: React.FC = () => {
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
       edges={["top"]}
     >
-      <HomeHeader onOpenFilters={() => setFilterMenuOpen(true)} />
+      <RevealOnScroll scrollY={scrollY}>
+        <HomeHeader onOpenFilters={() => setFilterMenuOpen(true)} />
+      </RevealOnScroll>
 
       {/* Filters Bottom Sheet */}
       <BottomSheetFilterMenu
@@ -441,14 +447,17 @@ export const Home: React.FC = () => {
           </SafeAreaView>
         </BottomSheetView>
       </ReusableBottomSheetModal>
+      <RevealOnScroll scrollY={scrollY} height={160}>
+        <PhotographersSlider />
+      </RevealOnScroll>
 
-      <PhotographersSlider />
       <MainGallery
         images={filteredImages}
         loading={loading}
         error={error}
         onOpenMenu={handleOpenImageMenu}
         onPressComments={handleOpenComments}
+        scrollY={scrollY}
       />
     </SafeAreaView>
   );

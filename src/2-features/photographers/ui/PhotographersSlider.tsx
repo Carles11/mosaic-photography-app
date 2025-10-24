@@ -49,7 +49,7 @@ export const PhotographersSlider: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
+      <ThemedText type="subtitle" style={styles.title}>
         Featured Photographers
       </ThemedText>
       <FlatList

@@ -27,6 +27,7 @@ export default function FavoritesList() {
     loading,
   } = useFavorites();
   const { theme } = useTheme();
+
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
 
