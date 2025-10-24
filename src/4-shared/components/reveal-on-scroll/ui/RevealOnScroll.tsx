@@ -25,7 +25,7 @@ export const RevealOnScroll: React.FC<RevealOnScrollProps> = ({
 }) => {
   const hysteresisRef = useRef<{ lastAction: number; lastToggleY: number }>({
     lastAction: 1,
-    lastToggleY: scrollY.value,
+    lastToggleY: 0,
   });
 
   const revealed = useDerivedValue(() => {
