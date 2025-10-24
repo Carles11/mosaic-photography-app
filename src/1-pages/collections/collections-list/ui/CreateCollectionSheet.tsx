@@ -4,6 +4,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
@@ -15,7 +16,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Platform, ScrollView, TextInput } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { styles } from "./CreateCollectionSheet.styles";
 
 export type CreateCollectionSheetRef = {
@@ -105,37 +106,15 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
                 {error}
               </ThemedText>
             ) : null}
-            <TextInput
+            <ThemedTextInput
               placeholder="Collection name"
-              style={[
-                styles.sheetInput,
-                {
-                  borderColor: theme.border,
-                  color: theme.text,
-                  fontFamily: theme.fontFamily,
-                  backgroundColor: theme.buttonBackgroundColor,
-                  marginBottom: 12,
-                },
-              ]}
               value={name}
               onChangeText={setName}
               editable={!loading}
               returnKeyType="next"
             />
-            <TextInput
+            <ThemedTextInput
               placeholder="Description (optional)"
-              style={[
-                styles.sheetInput,
-                {
-                  borderColor: theme.border,
-                  color: theme.text,
-                  fontFamily: theme.fontFamily,
-                  backgroundColor: theme.buttonBackgroundColor,
-                  marginBottom: 12,
-                  minHeight: 40,
-                  textAlignVertical: "top",
-                },
-              ]}
               value={description}
               onChangeText={setDescription}
               editable={!loading}
