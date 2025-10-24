@@ -3,6 +3,8 @@ import {
   OnlyTextButton,
   PrimaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -11,8 +13,6 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Text,
-  View,
 } from "react-native";
 import { styles } from "./ConfirmEmailChangeScreen.styles";
 
@@ -65,26 +65,12 @@ export function ConfirmEmailChangeScreen() {
         style={[{ flex: 1, backgroundColor: theme.background }]}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View
-          style={[
-            styles.container,
-            { justifyContent: "center", alignItems: "center" },
-          ]}
-        >
+        <ThemedView style={[styles.container]}>
           <ActivityIndicator size="large" color={theme.primary} />
-          <Text
-            style={[
-              styles.title,
-              {
-                color: theme.text,
-                fontFamily: theme.fontFamily,
-                marginTop: 20,
-              },
-            ]}
-          >
+          <ThemedText style={[styles.title]}>
             Confirming email change...
-          </Text>
-        </View>
+          </ThemedText>
+        </ThemedView>
       </KeyboardAvoidingView>
     );
   }
@@ -94,21 +80,16 @@ export function ConfirmEmailChangeScreen() {
       style={[{ flex: 1, backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <View style={styles.container}>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.text, fontFamily: theme.fontFamilyBold },
-          ]}
-        >
+      <ThemedView style={styles.container}>
+        <ThemedText type="title" style={[styles.title]}>
           Email Change Confirmation
-        </Text>
+        </ThemedText>
 
         {status === "success" ? (
           <>
-            <Text style={[styles.success, { color: theme.success }]}>
+            <ThemedText style={[styles.success, { color: theme.success }]}>
               Email change confirmed successfully! Your new email is now active.
-            </Text>
+            </ThemedText>
             <PrimaryButton
               title="Go to Profile"
               onPress={() => router.push("/profile")}
@@ -116,7 +97,9 @@ export function ConfirmEmailChangeScreen() {
           </>
         ) : (
           <>
-            <Text style={[styles.error, { color: theme.error }]}>{error}</Text>
+            <ThemedText style={[styles.error, { color: theme.error }]}>
+              {error}
+            </ThemedText>
             <PrimaryButton
               title="Go to Profile"
               onPress={() => router.push("/profile")}
@@ -127,7 +110,7 @@ export function ConfirmEmailChangeScreen() {
             />
           </>
         )}
-      </View>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 }
