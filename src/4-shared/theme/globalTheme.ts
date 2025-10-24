@@ -25,8 +25,8 @@ export const darkTheme = {
 
   // Buttons
   buttonBorderColor: "#687076",
-  buttonBackgroundColor: "#2c106a",
-  buttonTextColor: "#fff",
+  buttonBackgroundColor: "rgba(44, 16, 106, 0.9)",
+  buttonTextColor: "#1d1d1d",
   buttonBorderWidth: 1,
   buttonFontSize: 14,
   buttonBorderRadius: 4,
@@ -61,7 +61,7 @@ export const lightTheme = {
 
   // Buttons
   buttonBorderColor: "#687076",
-  buttonBackgroundColor: "#2c106a",
+  buttonBackgroundColor: "rgba(44, 16, 106, 0.9)",
   buttonTextColor: "#1d1d1d",
   buttonBorderWidth: 1,
   buttonBorderRadius: 4,

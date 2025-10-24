@@ -94,7 +94,7 @@ export default function CollectionsList() {
               Organize your favorite images into themed collections.
             </ThemedText>
             <PrimaryButton
-              title="New Collection"
+              title="+ New Collection"
               onPress={handleOpenCreateSheet}
               style={styles.createButton}
             />

@@ -49,7 +49,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
           type="defaultSemiBold"
           style={[
             {
-              color: theme.buttonTextColor,
+              color: "#fff",
               textAlign: "center",
             },
             textStyles,

@@ -1,8 +1,10 @@
 import { fetchCommentsForUser } from "@/4-shared/api/commentsApi";
 import {
+  OnlyTextButton,
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
@@ -11,13 +13,7 @@ import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth"
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { UserCommentWithImage } from "@/4-shared/types/comments";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  TextInput,
-} from "react-native";
+import { ActivityIndicator, Alert, FlatList, Image } from "react-native";
 import { styles } from "./CommentsList.styles";
 
 export default function CommentsList() {
@@ -183,7 +179,7 @@ export default function CommentsList() {
                     <ThemedText style={[styles.editLabel, { marginTop: 8 }]}>
                       Editing:
                     </ThemedText>
-                    <TextInput
+                    <ThemedTextInput
                       value={editContent}
                       onChangeText={setEditContent}
                       style={styles.editTextArea}
@@ -217,7 +213,7 @@ export default function CommentsList() {
                       {new Date(item.created_at).toLocaleString()}
                     </ThemedText>
                     <ThemedView style={styles.commentActions}>
-                      <SecondaryButton
+                      <OnlyTextButton
                         title="Edit"
                         onPress={() => handleEdit(item)}
                         style={styles.editButton}
