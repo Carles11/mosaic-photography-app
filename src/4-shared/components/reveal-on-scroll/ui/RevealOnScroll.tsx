@@ -1,10 +1,11 @@
-import React, { ReactNode, useRef } from "react";
+import React, { ReactNode } from "react";
 import Animated, {
   Easing,
   interpolate,
   SharedValue,
   useAnimatedStyle,
   useDerivedValue,
+  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 
@@ -23,42 +24,54 @@ export const RevealOnScroll: React.FC<RevealOnScrollProps> = ({
   height = 64,
   threshold = 24,
 }) => {
-  const hysteresisRef = useRef<{ lastAction: number; lastToggleY: number }>({
-    lastAction: 1,
-    lastToggleY: 0,
-  });
+  // Track last scrollY and accumulated delta between direction changes
+  const lastScrollY = useSharedValue(scrollY.value);
+  const accumulatedDelta = useSharedValue(0);
+  const lastAction = useSharedValue(1); // 1 = revealed, 0 = hidden
 
   const revealed = useDerivedValue(() => {
-    const { lastAction, lastToggleY } = hysteresisRef.current;
-    const delta = scrollY.value - lastToggleY;
+    const currentY = scrollY.value;
+    const delta = currentY - lastScrollY.value;
 
-    let newAction = lastAction;
-    let newToggleY = lastToggleY;
+    // Determine if direction changed
+    const scrollingUp = delta < 0;
+    const scrollingDown = delta > 0;
+
+    // Reset accumulatedDelta on direction change
+    if (
+      (accumulatedDelta.value > 0 && scrollingUp) ||
+      (accumulatedDelta.value < 0 && scrollingDown)
+    ) {
+      accumulatedDelta.value = 0;
+    }
+
+    // Accumulate delta in the current direction
+    accumulatedDelta.value += delta;
+    lastScrollY.value = currentY;
 
     if (direction === "up") {
-      if (lastAction === 1 && delta > threshold) {
-        newAction = 0;
-        newToggleY = scrollY.value;
-      } else if (lastAction === 0 && delta < -threshold) {
-        newAction = 1;
-        newToggleY = scrollY.value;
+      // Reveal on scroll up, hide on scroll down
+      if (lastAction.value === 1 && accumulatedDelta.value > threshold) {
+        lastAction.value = 0;
+      } else if (
+        lastAction.value === 0 &&
+        accumulatedDelta.value < -threshold
+      ) {
+        lastAction.value = 1;
       }
     } else {
-      if (lastAction === 0 && delta > threshold) {
-        newAction = 1;
-        newToggleY = scrollY.value;
-      } else if (lastAction === 1 && delta < -threshold) {
-        newAction = 0;
-        newToggleY = scrollY.value;
+      // Reveal on scroll down, hide on scroll up (inverse)
+      if (lastAction.value === 0 && accumulatedDelta.value > threshold) {
+        lastAction.value = 1;
+      } else if (
+        lastAction.value === 1 &&
+        accumulatedDelta.value < -threshold
+      ) {
+        lastAction.value = 0;
       }
     }
 
-    if (newAction !== lastAction || newToggleY !== lastToggleY) {
-      hysteresisRef.current.lastAction = newAction;
-      hysteresisRef.current.lastToggleY = newToggleY;
-    }
-
-    return withTiming(newAction, {
+    return withTiming(lastAction.value, {
       duration: 350,
       easing: Easing.out(Easing.cubic),
     });
