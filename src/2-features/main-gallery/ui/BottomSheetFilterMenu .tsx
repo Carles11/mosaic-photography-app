@@ -115,7 +115,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 key={opt}
                 style={[
                   styles.option,
-                  { backgroundColor: theme.buttonBackgroundColor },
+
                   filters.gender === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("gender", opt)}
@@ -147,7 +147,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 key={opt}
                 style={[
                   styles.option,
-                  { backgroundColor: theme.buttonBackgroundColor },
+
                   filters.orientation === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("orientation", opt)}
@@ -179,7 +179,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 key={opt}
                 style={[
                   styles.option,
-                  { backgroundColor: theme.buttonBackgroundColor },
+
                   filters.color === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("color", opt)}
@@ -211,7 +211,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 key={opt}
                 style={[
                   styles.option,
-                  { backgroundColor: theme.buttonBackgroundColor },
+
                   filters.print_quality === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("print_quality", opt)}
@@ -275,7 +275,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
               />
               <SecondaryButton
                 title="Close"
-                onPress={() => handleClose}
+                onPress={handleClose}
                 style={{
                   paddingVertical: 2,
                   paddingHorizontal: 8,

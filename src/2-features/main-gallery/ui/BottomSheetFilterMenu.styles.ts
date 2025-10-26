@@ -28,6 +28,8 @@ export const styles = StyleSheet.create({
   },
   option: {
     borderRadius: 14,
+    borderWidth: 1,
+    borderColor: "#555555",
     paddingHorizontal: 14,
     paddingVertical: 8,
     marginRight: 10,
