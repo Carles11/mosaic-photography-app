@@ -6,6 +6,7 @@ import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetF
 import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
 import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
+  OnlyTextButton,
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
@@ -379,7 +380,7 @@ export const Home: React.FC = () => {
                           backgroundColor: theme.background,
                         }}
                       >
-                        <PrimaryButton
+                        <OnlyTextButton
                           title="Edit"
                           onPress={() => handleEdit(item.id, item.content)}
                           style={{
@@ -388,7 +389,7 @@ export const Home: React.FC = () => {
                             paddingHorizontal: 8,
                           }}
                         />
-                        <SecondaryButton
+                        <PrimaryButton
                           title="Delete"
                           onPress={() => handleDelete(item.id)}
                           style={{
@@ -439,7 +440,7 @@ export const Home: React.FC = () => {
                 Log in to write and manage your comments.
               </ThemedText>
             )}
-            <PrimaryButton
+            <SecondaryButton
               title="Close"
               onPress={handleCloseComments}
               style={{ marginTop: 24 }}
