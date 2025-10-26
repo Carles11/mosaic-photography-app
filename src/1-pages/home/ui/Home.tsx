@@ -198,9 +198,7 @@ export const Home: React.FC = () => {
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
       edges={["top"]}
     >
-      <RevealOnScroll scrollY={scrollY}>
-        <HomeHeader onOpenFilters={() => setFilterMenuOpen(true)} />
-      </RevealOnScroll>
+      <HomeHeader onOpenFilters={() => setFilterMenuOpen(true)} />
 
       {/* Filters Bottom Sheet */}
       <BottomSheetFilterMenu
