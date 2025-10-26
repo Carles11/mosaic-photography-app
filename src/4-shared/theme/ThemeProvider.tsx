@@ -9,16 +9,13 @@ import { Appearance } from "react-native";
 import { darkTheme, lightTheme } from "./globalTheme";
 
 type ThemeType = typeof lightTheme;
-
 type ThemeContextType = {
-  text: string;
   theme: ThemeType;
   mode: "light" | "dark";
   setMode: (mode: "light" | "dark") => void;
 };
 
 const ThemeContext = createContext<ThemeContextType>({
-  text: darkTheme.text,
   theme: darkTheme,
   mode: "dark",
   setMode: () => {},
@@ -29,23 +26,23 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // Detect system theme, default to system
   const systemColorScheme = Appearance.getColorScheme();
   const [mode, setMode] = useState<"light" | "dark">(
-    systemColorScheme === "light" ? "light" : "dark"
+    systemColorScheme === "dark" ? "dark" : "light"
   );
 
-  // Update on system preference change
   useEffect(() => {
-    const listener = Appearance.addChangeListener(({ colorScheme }) => {
+    const callback = ({
+      colorScheme,
+    }: {
+      colorScheme: "light" | "dark" | null | undefined;
+    }) => {
       if (colorScheme === "light" || colorScheme === "dark") {
         setMode(colorScheme);
       }
-    });
-    return () => {
-      // @ts-ignore
-      if (listener?.remove) listener.remove();
     };
+    const subscription = Appearance.addChangeListener(callback);
+    return () => subscription.remove();
   }, []);
 
   const theme = useMemo(
@@ -53,7 +50,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     [mode]
   );
   return (
-    <ThemeContext.Provider value={{ text: theme.text, theme, mode, setMode }}>
+    <ThemeContext.Provider value={{ theme, mode, setMode }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -10,8 +10,6 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
-    fontSize: 22,
-    fontWeight: "bold",
     marginBottom: 4,
   },
   subtitle: {

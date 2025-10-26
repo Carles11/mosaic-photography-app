@@ -229,3 +229,19 @@ export async function fetchCollectionDetail(
 
   return { ...collection, images };
 }
+
+/**
+ * Fetch basic collection info for a user (id, name only).
+ */
+export async function fetchCollectionsBasicForUser(
+  userId: string
+): Promise<{ id: string; name: string }[]> {
+  const { data, error } = await supabase
+    .from("collections")
+    .select("id, name")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data ?? [];
+}

@@ -1,17 +1,20 @@
 import { fetchFavoriteImages } from "@/2-features/favorites-list/api/fetchFavoritesImages";
+import AddToCollectionSheet, {
+  AddToCollectionSheetRef,
+} from "@/2-features/favorites-list/ui/AddToCollectionSheet";
 import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
-import { AddToCollectionModal } from "@/4-shared/components/modals/collections/ui/AddToCollectionModal";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -31,12 +34,7 @@ export default function FavoritesList() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
 
-  // State for AddToCollectionModal
-  const [addModalVisible, setAddModalVisible] = useState(false);
-  const [selectedImageId, setSelectedImageId] = useState<
-    string | number | null
-  >(null);
-
+  const addCollectionSheetRef = useRef<AddToCollectionSheetRef>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -58,21 +56,15 @@ export default function FavoritesList() {
   };
 
   const handleAddToCollectionPress = (imageId: string | number) => {
-    setSelectedImageId(imageId);
-    setAddModalVisible(true);
-  };
-
-  const handleCloseAddModal = () => {
-    setAddModalVisible(false);
-    setSelectedImageId(null);
+    addCollectionSheetRef.current?.open(imageId);
   };
 
   if (!isUserLoggedIn()) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.background }]}>
-        <Text style={[styles.emptyText, { color: theme.text }]}>
+        <ThemedText style={[styles.emptyText]}>
           Please log in to view your favorites.
-        </Text>
+        </ThemedText>
       </View>
     );
   }
@@ -81,9 +73,9 @@ export default function FavoritesList() {
     return (
       <View style={[styles.centered, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" color={theme.favoriteIcon} />
-        <Text style={[styles.loadingText, { color: theme.text }]}>
+        <ThemedText style={[styles.loadingText]}>
           Loading favorites...
-        </Text>
+        </ThemedText>
       </View>
     );
   }
@@ -91,50 +83,48 @@ export default function FavoritesList() {
   if (images.length === 0) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.background }]}>
-        <Text style={[styles.emptyIcon, { color: theme.favoriteIcon }]}>♡</Text>
-        <Text style={[styles.emptyTitle, { color: theme.text }]}>
-          No favorites yet
-        </Text>
-        <Text style={[styles.emptyText, { color: theme.text }]}>
+        <ThemedText style={[styles.emptyIcon, { color: theme.favoriteIcon }]}>
+          ♡
+        </ThemedText>
+        <ThemedText style={[styles.emptyTitle]}>No favorites yet</ThemedText>
+        <ThemedText style={[styles.emptyText]}>
           Start exploring the gallery and heart the images you love!
-        </Text>
+        </ThemedText>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}>
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.text }]}>
+    <ThemedView style={[styles.container]}>
+      <ThemedView style={styles.header}>
+        <ThemedText type="title" style={[styles.title]}>
           Your Favorites ({images.length})
-        </Text>
-        <Text style={[styles.subtitle, { color: theme.text }]}>
+        </ThemedText>
+        <ThemedText style={[styles.subtitle]}>
           Images you've saved to your favorites list.
-        </Text>
-      </View>
+        </ThemedText>
+      </ThemedView>
       <FlatList
         data={images}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => (
-          <View style={styles.imageCard}>
+          <ThemedView style={styles.imageCard}>
             <Image
               source={{ uri: item.thumbnailUrl }}
               style={styles.thumbnail}
               resizeMode="cover"
             />
             <TouchableOpacity style={styles.imageInfo}>
-              <Text style={[styles.imageAuthor, { color: theme.text }]}>
+              <ThemedText style={[styles.imageAuthor]}>
                 {item.author}
-              </Text>
-              <Text style={[styles.imageDescription, { color: theme.text }]}>
+              </ThemedText>
+              <ThemedText style={[styles.imageDescription]}>
                 {item.description}
-              </Text>
-              <Text style={[styles.imageYear, { color: theme.text }]}>
-                {item.year}
-              </Text>
+              </ThemedText>
+              <ThemedText style={[styles.imageYear]}>{item.year}</ThemedText>
             </TouchableOpacity>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <ThemedView style={{ flexDirection: "row", alignItems: "center" }}>
               <FavoriteButton
                 imageId={item.id}
                 size={24}
@@ -154,15 +144,11 @@ export default function FavoritesList() {
                   color={theme.favoriteIcon}
                 />
               </TouchableOpacity>
-            </View>
-          </View>
+            </ThemedView>
+          </ThemedView>
         )}
       />
-      <AddToCollectionModal
-        imageId={selectedImageId}
-        visible={addModalVisible}
-        onClose={handleCloseAddModal}
-      />
-    </View>
+      <AddToCollectionSheet ref={addCollectionSheetRef} />
+    </ThemedView>
   );
 }
