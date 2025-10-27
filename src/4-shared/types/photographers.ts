@@ -16,6 +16,7 @@ export interface PhotographerSlug {
   name: string;
   surname: string;
   slug: string;
+  author: string;
   origin?: string;
   biography?: string;
   birthdate?: string;

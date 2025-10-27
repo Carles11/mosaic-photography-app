@@ -149,7 +149,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
             style={{
               backgroundColor: "rgba(30,30,30,0.85)",
               color: "#fff",
-              fontSize: 16,
               fontWeight: "600",
               borderRadius: 14,
               paddingHorizontal: 14,
@@ -186,7 +185,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
             style={{
               backgroundColor: "rgba(30,30,30,0.8)",
               color: "#fff",
-              fontSize: 15,
+
               borderRadius: 12,
               paddingHorizontal: 12,
               paddingVertical: 5,

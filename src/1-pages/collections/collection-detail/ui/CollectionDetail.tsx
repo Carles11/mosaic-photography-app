@@ -1,4 +1,5 @@
 import { fetchCollectionDetail } from "@/4-shared/api/collectionsApi";
+import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
@@ -10,6 +11,7 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
 import { styles } from "./CollectionDetail.styles";
@@ -18,6 +20,9 @@ export default function CollectionDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [collection, setCollection] = useState<CollectionDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [zoomVisible, setZoomVisible] = useState(false);
+  const [zoomIndex, setZoomIndex] = useState(0);
+
   const { width: screenWidth } = useWindowDimensions();
 
   // Adjust the thumbnail width for your grid; 180 is a common mobile grid size
@@ -86,10 +91,9 @@ export default function CollectionDetailScreen() {
         }
         numColumns={numColumns}
         contentContainerStyle={styles.imagesGrid}
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
           let imageUrl = "";
           if (item.base_url && item.filename) {
-            // Use robust helper to get the best S3 url for current grid width
             const best = getBestS3FolderForWidth(
               {
                 width: item.width,
@@ -102,11 +106,18 @@ export default function CollectionDetailScreen() {
           }
           return (
             <ThemedView style={styles.imageCard}>
-              <Image
-                source={imageUrl ? { uri: imageUrl } : undefined}
-                style={styles.image}
-                resizeMode="cover"
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  setZoomIndex(index);
+                  setZoomVisible(true);
+                }}
+              >
+                <Image
+                  source={imageUrl ? { uri: imageUrl } : undefined}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              </TouchableOpacity>
               <ThemedText style={styles.imageTitle} numberOfLines={1}>
                 {item.title}
               </ThemedText>
@@ -124,6 +135,25 @@ export default function CollectionDetailScreen() {
             </ThemedText>
           </ThemedView>
         }
+      />
+      <ZoomGalleryModal
+        images={collection.images.map((img) => ({
+          ...img,
+          id: String(img.id),
+          base_url: img.base_url ?? "",
+          filename: img.filename ?? "",
+          author: img.author ?? "",
+          title: img.title ?? "",
+          description: img.description ?? "",
+          created_at: img.created_at ?? "",
+          orientation: img.orientation ?? "",
+          width: img.width ?? 0,
+          height: img.height ?? 0,
+          // You do not need to assign url or favorite_id if not required by GalleryImage
+        }))}
+        visible={zoomVisible}
+        initialIndex={zoomIndex}
+        onClose={() => setZoomVisible(false)}
       />
     </ThemedView>
   );

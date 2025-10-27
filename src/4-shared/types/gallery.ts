@@ -47,7 +47,8 @@ export type GalleryProps = {
   galleryTitle?: string;
   images: GalleryImage[];
   renderItem: (item: GalleryImage, index: number) => React.ReactNode;
-  scrollY: any; // or the more specific type you use
+  scrollY: any;
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
 };
 
 export type MainGalleryProps = {
@@ -73,4 +74,11 @@ export type UseGalleryFiltersReturn = {
   setFilters: (filters: GalleryFilter) => void;
   resetFilters: () => void;
   filtersActive: boolean | undefined;
+};
+
+export type ZoomGalleryModalProps = {
+  images: GalleryImage[];
+  visible: boolean;
+  initialIndex?: number;
+  onClose: () => void;
 };

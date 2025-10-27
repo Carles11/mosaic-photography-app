@@ -1,19 +1,25 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { GalleryProps } from "@/4-shared/types";
+import { GalleryImage } from "@/4-shared/types";
+import React from "react";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { styles } from "./Gallery.styles";
 
-/**
- * Gallery component renders a FlatList of images using a renderItem function.
- * The renderItem prop allows the parent (feature) to fully control each card's layout.
- */
+export type GalleryProps = {
+  galleryTitle?: string;
+  images: GalleryImage[];
+  renderItem: (item: GalleryImage, index: number) => React.ReactNode;
+  scrollY: any;
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+};
+
 export const Gallery: React.FC<GalleryProps> = ({
   galleryTitle,
   images,
   renderItem,
   scrollY,
+  ListHeaderComponent,
 }) => {
   const { theme } = useTheme();
   const scrollHandler = useAnimatedScrollHandler({
@@ -41,6 +47,7 @@ export const Gallery: React.FC<GalleryProps> = ({
             {renderItem(item, index)}
           </ThemedView>
         )}
+        ListHeaderComponent={ListHeaderComponent}
         onScroll={scrollHandler}
         scrollEventThrottle={16}
       />

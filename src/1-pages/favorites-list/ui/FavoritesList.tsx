@@ -3,6 +3,7 @@ import AddToCollectionSheet, {
   AddToCollectionSheetRef,
 } from "@/2-features/favorites-list/ui/AddToCollectionSheet";
 import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
+import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
@@ -34,6 +35,9 @@ export default function FavoritesList() {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
 
+  const [zoomVisible, setZoomVisible] = useState(false);
+  const [zoomIndex, setZoomIndex] = useState(0);
+
   const addCollectionSheetRef = useRef<AddToCollectionSheetRef>(null);
   const router = useRouter();
 
@@ -57,6 +61,11 @@ export default function FavoritesList() {
 
   const handleAddToCollectionPress = (imageId: string | number) => {
     addCollectionSheetRef.current?.open(imageId);
+  };
+
+  const handlePressZoom = (index: number) => {
+    setZoomIndex(index);
+    setZoomVisible(true);
   };
 
   if (!isUserLoggedIn()) {
@@ -108,13 +117,15 @@ export default function FavoritesList() {
         data={images}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <ThemedView style={styles.imageCard}>
-            <Image
-              source={{ uri: item.thumbnailUrl }}
-              style={styles.thumbnail}
-              resizeMode="cover"
-            />
+            <TouchableOpacity onPress={() => handlePressZoom(index)}>
+              <Image
+                source={{ uri: item.thumbnailUrl }}
+                style={styles.thumbnail}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.imageInfo}>
               <ThemedText style={[styles.imageAuthor]}>
                 {item.author}
@@ -149,6 +160,12 @@ export default function FavoritesList() {
         )}
       />
       <AddToCollectionSheet ref={addCollectionSheetRef} />
+      <ZoomGalleryModal
+        visible={zoomVisible}
+        images={images}
+        initialIndex={zoomIndex}
+        onClose={() => setZoomVisible(false)}
+      />
     </ThemedView>
   );
 }

@@ -1,6 +1,6 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
-import type { PhotographerImage, PhotographerSlug } from "@/4-shared/types";
+import type { PhotographerSlug } from "@/4-shared/types";
 import { Dimensions } from "react-native";
 
 export async function fetchPhotographerBySlug(
@@ -30,7 +30,7 @@ export async function fetchPhotographerBySlug(
   const deviceWidth = Dimensions.get("window").width;
 
   // 3. Map images to use the best available resolution in the CDN
-  const processedImages = (images ?? []).map((img: PhotographerImage) => {
+  const processedImages = (images ?? []).map((img) => {
     const best = getBestS3FolderForWidth(
       {
         filename: img.filename,
