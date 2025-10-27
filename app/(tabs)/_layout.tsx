@@ -46,7 +46,7 @@ export default function TabLayout() {
 
       <NativeTabs.Trigger name="favorites">
         {Platform.select({
-          ios: <Icon sf={{ default: "favorite", selected: "house.fill" }} />,
+          ios: <Icon sf={{ default: "heart", selected: "heart.fill" }} />,
           android: (
             <Icon src={<VectorIcon family={MaterialIcons} name="favorite" />} />
           ),
@@ -56,7 +56,14 @@ export default function TabLayout() {
 
       <NativeTabs.Trigger name="collections">
         {Platform.select({
-          ios: <Icon sf={{ default: "collections", selected: "house.fill" }} />,
+          ios: (
+            <Icon
+              sf={{
+                default: "square.grid.2x2",
+                selected: "square.grid.2x2.fill",
+              }}
+            />
+          ),
           android: (
             <Icon
               src={<VectorIcon family={MaterialIcons} name="collections" />}
@@ -68,9 +75,7 @@ export default function TabLayout() {
 
       <NativeTabs.Trigger name="profile">
         {Platform.select({
-          ios: (
-            <Icon sf={{ default: "account-circle", selected: "house.fill" }} />
-          ),
+          ios: <Icon sf={{ default: "person", selected: "person.fill" }} />,
           android: (
             <Icon
               src={<VectorIcon family={MaterialIcons} name="account-circle" />}

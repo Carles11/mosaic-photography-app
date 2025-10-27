@@ -6,6 +6,7 @@ import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useMemo } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -38,15 +39,21 @@ export default function RootLayout() {
 
 function InnerLayout() {
   const { mode, theme } = useTheme();
-
+  const defaultScreenOptions = useMemo(
+    () => ({
+      headerStyle: { backgroundColor: theme.background },
+      headerTintColor: theme.text,
+      headerTitleStyle: {
+        fontFamily: "TradeGothic-Bold",
+        fontSize: 18,
+      },
+      headerShadowVisible: false,
+    }),
+    [theme]
+  );
   return (
     <>
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: theme.background },
-          headerTintColor: theme.text,
-        }}
-      >
+      <Stack screenOptions={defaultScreenOptions}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="comments-list"
