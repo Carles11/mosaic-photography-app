@@ -31,6 +31,9 @@ export const darkTheme = {
   buttonFontSize: 14,
   buttonBorderRadius: 4,
 
+  // secondary button
+  buttonTextColorSecondary: "#dedede",
+
   // Typography
   fontFamily: fonts.regular,
   fontFamilyBold: fonts.bold,
@@ -60,12 +63,17 @@ export const lightTheme = {
   inputPadding: 10,
 
   // Buttons
+  // primary button
   buttonBorderColor: "#687076",
   buttonBackgroundColor: "rgba(44, 16, 106, 0.9)",
   buttonTextColor: "#1d1d1d",
   buttonBorderWidth: 1,
   buttonBorderRadius: 4,
   buttonFontSize: 14,
+
+  // secondary button
+  buttonTextColorSecondary: "#1d1d1d",
+
   // Typography
   fontFamily: fonts.regular,
   fontFamilyBold: fonts.bold,

@@ -78,7 +78,6 @@ export const styles = StyleSheet.create({
   editButton: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    backgroundColor: "transparent",
     borderRadius: 8,
     marginRight: 8,
   },

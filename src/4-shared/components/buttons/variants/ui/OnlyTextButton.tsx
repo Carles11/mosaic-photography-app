@@ -32,7 +32,7 @@ export const OnlyTextButton: React.FC<ButtonProps> = ({
         style={[
           styles.text,
           {
-            color: theme.buttonTextColor,
+            color: theme.buttonTextColorSecondary,
           },
         ]}
       >

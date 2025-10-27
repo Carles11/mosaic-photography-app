@@ -1,11 +1,6 @@
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { MaterialIcons } from "@expo/vector-icons";
-import {
-  Icon,
-  Label,
-  NativeTabs,
-  VectorIcon,
-} from "expo-router/unstable-native-tabs";
+import { Icon, NativeTabs, VectorIcon } from "expo-router/unstable-native-tabs";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
@@ -24,19 +19,19 @@ export default function TabLayout() {
     tintColor: theme.primary,
     iconColor: iconColor,
     labelStyle: labelStyle,
-    // badgeBackgroundColor: theme.text,
-    // badgeTextColor: theme.background,
-    // ...(Platform.OS === "android"
-    //   ? { labelVisibilityMode: "labeled" as "labeled" }
-    //   : {}),
-    // ...(Platform.OS === "ios"
-    //   ? {
-    //       blurEffect: "systemMaterial" as const,
-    //       disableTransparentOnScrollEdge: Platform.OS === "ios",
-    //       minimizeBehavior: "onScrollDown" as "onScrollDown",
-    //       shadowColor: theme.border,
-    //     }
-    //   : {}),
+    badgeBackgroundColor: theme.text,
+    badgeTextColor: theme.background,
+    ...(Platform.OS === "android"
+      ? { labelVisibilityMode: "unlabeled" as "unlabeled" }
+      : {}),
+    ...(Platform.OS === "ios"
+      ? {
+          blurEffect: "systemMaterial" as const,
+          disableTransparentOnScrollEdge: Platform.OS === "ios",
+          minimizeBehavior: "onScrollDown" as "onScrollDown",
+          shadowColor: theme.border,
+        }
+      : {}),
   };
 
   return (
@@ -47,7 +42,7 @@ export default function TabLayout() {
         ) : (
           <Icon src={<VectorIcon family={MaterialIcons} name="home" />} />
         )}
-        <Label>Home</Label>
+        {/* Label removed */}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="favorites">
@@ -56,7 +51,7 @@ export default function TabLayout() {
         ) : (
           <Icon src={<VectorIcon family={MaterialIcons} name="favorite" />} />
         )}
-        <Label>Favorites</Label>
+        {/* Label removed */}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="collections">
@@ -72,7 +67,7 @@ export default function TabLayout() {
             src={<VectorIcon family={MaterialIcons} name="collections" />}
           />
         )}
-        <Label>Collections</Label>
+        {/* Label removed */}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
@@ -83,7 +78,7 @@ export default function TabLayout() {
             src={<VectorIcon family={MaterialIcons} name="account-circle" />}
           />
         )}
-        <Label>Profile</Label>
+        {/* Label removed */}
       </NativeTabs.Trigger>
     </NativeTabs>
   );
