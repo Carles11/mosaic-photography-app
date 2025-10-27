@@ -5,17 +5,18 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
-import { Image } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import { styles } from "./MainGalleryItem.styles";
 
 type MainGalleryItemProps = {
   item: GalleryImage;
   onOpenMenu: () => void;
   onPressComments?: () => void;
+  onPressZoom?: () => void;
 };
 
 export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
-  ({ item, onOpenMenu, onPressComments }) => {
+  ({ item, onOpenMenu, onPressComments, onPressZoom }) => {
     const { theme } = useTheme();
 
     return (
@@ -23,11 +24,13 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
         style={[styles.itemContainer, { backgroundColor: theme.background }]}
       >
         <ImageHeaderRow onOpenMenu={onOpenMenu} />
-        <Image
-          source={{ uri: item.url }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+        <TouchableOpacity activeOpacity={0.85} onPress={onPressZoom}>
+          <Image
+            source={{ uri: item.url }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+        </TouchableOpacity>
         <ThemedText style={styles.title} numberOfLines={2}>
           {item.author}, {item.year}
         </ThemedText>

@@ -34,11 +34,11 @@ export const Gallery: React.FC<GalleryProps> = ({
         keyExtractor={(item) => item.id}
         numColumns={1}
         contentContainerStyle={styles.container}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <ThemedView
             style={[styles.item, { backgroundColor: theme.background }]}
           >
-            {renderItem(item)}
+            {renderItem(item, index)}
           </ThemedView>
         )}
         onScroll={scrollHandler}
