@@ -1,15 +1,23 @@
+import { Gallery } from "@/2-features/gallery/ui/Gallery";
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
 import { PhotographerTimeline } from "@/2-features/photographers/ui/Timeline";
+import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { formatLifespan } from "@/4-shared/lib/formatLifespan";
-import { PhotographerImage, PhotographerSlug } from "@/4-shared/types";
+import { mapPhotographerImagesToGalleryImages } from "@/4-shared/lib/mapPhotographerImageToGalleryImage";
+import { PhotographerSlug } from "@/4-shared/types";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, FlatList, Image } from "react-native";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { styles } from "./PhotographerDetailScreen.styles";
 
 const { width: deviceWidth } = Dimensions.get("window");
@@ -22,6 +30,8 @@ const PhotographerDetailScreen: React.FC = () => {
   );
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [zoomVisible, setZoomVisible] = useState(false);
+  const [zoomIndex, setZoomIndex] = useState(0);
 
   useEffect(() => {
     navigation.setOptions({
@@ -63,11 +73,28 @@ const PhotographerDetailScreen: React.FC = () => {
       active = false;
     };
   }, [slug]);
+
   const timelineEvents = photographer
     ? getTimelineBySlug(photographer.slug) || []
     : [];
 
-  const renderHeader = useCallback(() => {
+  // Use useMemo to avoid recalculating on every render
+  const galleryImages = useMemo(
+    () =>
+      mapPhotographerImagesToGalleryImages(
+        photographer?.images || [],
+        photographer?.author || ""
+      ),
+    [photographer]
+  );
+
+  const handlePressZoom = useCallback((index: number) => {
+    setZoomIndex(index);
+    setZoomVisible(true);
+  }, []);
+
+  // Must be a function/component for FlatList ListHeaderComponent
+  const ListHeaderComponent = useCallback(() => {
     if (!photographer) return null;
     return (
       <ThemedView style={styles.container}>
@@ -110,30 +137,6 @@ const PhotographerDetailScreen: React.FC = () => {
     );
   }, [photographer, timelineEvents]);
 
-  const renderImage = useCallback(
-    ({ item }: { item: PhotographerImage }) => (
-      <ThemedView style={styles.galleryImageWrapper}>
-        <Image
-          source={{ uri: item.url }}
-          style={[
-            styles.galleryImage,
-            { width: deviceWidth, height: deviceWidth * 0.7 },
-          ]}
-          resizeMode="cover"
-        />
-        {item.year ? (
-          <ThemedText style={styles.imageYear}>{item.year}</ThemedText>
-        ) : null}
-        {item.description ? (
-          <ThemedText style={styles.imageDescription}>
-            {item.description}
-          </ThemedText>
-        ) : null}
-      </ThemedView>
-    ),
-    []
-  );
-
   if (loading) {
     return (
       <ThemedView style={styles.centered}>
@@ -153,17 +156,45 @@ const PhotographerDetailScreen: React.FC = () => {
   }
 
   return (
-    <FlatList
-      data={photographer.images || []}
-      keyExtractor={(item, idx) => `${item.id}-${idx}`}
-      renderItem={renderImage}
-      ListHeaderComponent={renderHeader}
-      contentContainerStyle={styles.flatListContent}
-      initialNumToRender={6}
-      maxToRenderPerBatch={10}
-      windowSize={15}
-      removeClippedSubviews
-    />
+    <>
+      <Gallery
+        galleryTitle={undefined}
+        images={galleryImages}
+        scrollY={{ value: 0 }}
+        renderItem={(item, index) => (
+          <ThemedView style={styles.galleryImageWrapper}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => handlePressZoom(index)}
+            >
+              <Image
+                source={{ uri: item.url }}
+                style={[
+                  styles.galleryImage,
+                  { width: deviceWidth, height: deviceWidth * 0.7 },
+                ]}
+                resizeMode="cover"
+              />
+              {item.year ? (
+                <ThemedText style={styles.imageYear}>{item.year}</ThemedText>
+              ) : null}
+              {item.description ? (
+                <ThemedText style={styles.imageDescription}>
+                  {item.description}
+                </ThemedText>
+              ) : null}
+            </TouchableOpacity>
+          </ThemedView>
+        )}
+        ListHeaderComponent={ListHeaderComponent}
+      />
+      <ZoomGalleryModal
+        visible={zoomVisible}
+        images={galleryImages}
+        initialIndex={zoomIndex}
+        onClose={() => setZoomVisible(false)}
+      />
+    </>
   );
 };
 

@@ -95,7 +95,9 @@ export const ZoomScaleBadge: React.FC<ZoomScaleBadgeProps> = ({
           strokeLinecap="round"
         />
       </Svg>
-      <ThemedText style={[styles.badgeText, { fontSize: 11, padding: 6 }]}>
+      <ThemedText
+        style={[styles.badgeText, { fontSize: 11, padding: 6, color: "#fff" }]}
+      >
         {scale.toFixed(2)}x
       </ThemedText>
     </Animated.View>

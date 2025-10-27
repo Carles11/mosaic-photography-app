@@ -1,25 +1,14 @@
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { ZoomGalleryModalProps } from "@/4-shared/types/gallery";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useRef } from "react";
-import { Dimensions, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Modal, TouchableOpacity } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { ZoomImage } from "./ImageZoom";
 import { styles } from "./ZoomGalleryModal.styles";
 
 const { width, height } = Dimensions.get("window");
-
-type GalleryImage = {
-  width?: number;
-  filename: string;
-  base_url: string;
-  [key: string]: any; // allow extra fields (id, author, etc.)
-};
-
-type ZoomGalleryModalProps = {
-  images: GalleryImage[];
-  visible: boolean;
-  initialIndex?: number;
-  onClose: () => void;
-};
 
 export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
   images,
@@ -45,7 +34,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
       hardwareAccelerated
       statusBarTranslucent
     >
-      <View style={styles.modalBackground}>
+      <ThemedView style={styles.modalBackground}>
         {/* Close button */}
         <TouchableOpacity
           style={styles.closeButton}
@@ -55,11 +44,11 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
           <Ionicons name="close" size={32} color="#fff" />
         </TouchableOpacity>
         {/* Index indicator */}
-        <View style={styles.indexIndicator}>
-          <Text style={styles.indexText}>
+        <ThemedView style={styles.indexIndicator}>
+          <ThemedText style={styles.indexText}>
             {currentIndex + 1} / {images.length}
-          </Text>
-        </View>
+          </ThemedText>
+        </ThemedView>
         <Carousel
           ref={carouselRef}
           data={images}
@@ -73,7 +62,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
           defaultIndex={initialIndex}
           onSnapToItem={setCurrentIndex}
           renderItem={({ item }) => (
-            <View style={styles.imageWrapper}>
+            <ThemedView style={styles.imageWrapper}>
               <ZoomImage
                 image={item}
                 minScale={1}
@@ -82,11 +71,11 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                 style={{ width, height }}
                 imageStyle={{ width, height }}
               />
-            </View>
+            </ThemedView>
           )}
           windowSize={5}
         />
-      </View>
+      </ThemedView>
     </Modal>
   );
 };
