@@ -48,6 +48,10 @@ function InnerLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="comments-list"
+          options={{ headerShown: true, title: "Comments List" }}
+        />
       </Stack>
       <StatusBar style={mode === "light" ? "dark" : "light"} />
     </>

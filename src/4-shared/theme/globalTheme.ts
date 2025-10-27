@@ -39,7 +39,7 @@ export const darkTheme = {
 export const lightTheme = {
   background: "#fff",
   text: "#1d1d1d",
-  primary: "#cccaca",
+  primary: "#2c106a",
   accent: "#f4d35e",
   border: "#e0e0e0",
   warning: "#29bde6ff",
