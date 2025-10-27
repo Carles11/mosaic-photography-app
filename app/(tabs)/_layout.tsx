@@ -1,91 +1,84 @@
-import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
-import { HapticTab } from "@/4-shared/components/haptic-tab";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { Tabs } from "expo-router";
+import { MaterialIcons } from "@expo/vector-icons";
+import {
+  Icon,
+  Label,
+  NativeTabs,
+  VectorIcon,
+} from "expo-router/unstable-native-tabs";
+import { Platform } from "react-native";
 
 export default function TabLayout() {
   const { theme } = useTheme();
 
+  const iconColor = theme.text;
+  const labelStyle = {
+    color: theme.text,
+    fontFamily: "TradeGothic-Bold",
+    fontSize: 12,
+  };
+
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: theme.accent,
-        tabBarStyle: {
-          backgroundColor: theme.background,
-        },
-        headerShown: false,
-        headerStyle: {
-          backgroundColor: theme.background,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.border + "20", // with 20 transparency
-        },
-        headerTintColor: theme.text,
-        tabBarButton: HapticTab,
-      }}
+    <NativeTabs
+      backgroundColor={theme.background}
+      tintColor={theme.primary}
+      iconColor={iconColor}
+      labelStyle={labelStyle}
+      // Android only: to always show labels
+      labelVisibilityMode={Platform.OS === "android" ? "labeled" : undefined}
+      // iOS only props
+      blurEffect={Platform.OS === "ios" ? "systemMaterial" : undefined}
+      disableTransparentOnScrollEdge={Platform.OS === "ios" ? true : undefined}
+      minimizeBehavior={Platform.OS === "ios" ? "onScrollDown" : undefined}
+      badgeBackgroundColor={theme.text}
+      badgeTextColor={theme.background}
+      shadowColor={Platform.OS === "ios" ? theme.border : undefined}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol
-              type="sf"
-              size={28}
-              name="house.fill"
-              color={color}
-              accessibilityLabel="Home Tab"
+      <NativeTabs.Trigger name="index">
+        {Platform.select({
+          ios: <Icon sf={{ default: "house", selected: "house.fill" }} />,
+          android: (
+            <Icon src={<VectorIcon family={MaterialIcons} name="home" />} />
+          ),
+        })}
+        <Label>Home</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="favorites">
+        {Platform.select({
+          ios: <Icon sf={{ default: "favorite", selected: "house.fill" }} />,
+          android: (
+            <Icon src={<VectorIcon family={MaterialIcons} name="favorite" />} />
+          ),
+        })}
+        <Label>Favorites</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="collections">
+        {Platform.select({
+          ios: <Icon sf={{ default: "collections", selected: "house.fill" }} />,
+          android: (
+            <Icon
+              src={<VectorIcon family={MaterialIcons} name="collections" />}
             />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="favorites"
-        options={{
-          title: "Favorites List",
-          headerShown: true,
-          tabBarIcon: ({ color }) => (
-            <IconSymbol
-              type="material"
-              size={28}
-              name="favorite"
-              color={color}
-              accessibilityLabel="Favorites Tab"
+        })}
+        <Label>Collections</Label>
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="profile">
+        {Platform.select({
+          ios: (
+            <Icon sf={{ default: "account-circle", selected: "house.fill" }} />
+          ),
+          android: (
+            <Icon
+              src={<VectorIcon family={MaterialIcons} name="account-circle" />}
             />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="collections"
-        options={{
-          title: "Collections List",
-          headerShown: true,
-          tabBarIcon: ({ color }) => (
-            <IconSymbol
-              type="material"
-              size={28}
-              name="collections"
-              color={color}
-              accessibilityLabel="Collections Tab"
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          headerShown: true,
-          tabBarIcon: ({ color }) => (
-            <IconSymbol
-              type="material"
-              size={28}
-              name="person"
-              color={color}
-              accessibilityLabel="Profile Tab"
-            />
-          ),
-        }}
-      />
-    </Tabs>
+        })}
+        <Label>Profile</Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }
