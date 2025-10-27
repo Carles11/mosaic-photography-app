@@ -2,6 +2,8 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import React, { useState } from "react";
+import { ZoomScaleBadge } from "./ZoomScaleBadge";
+
 import {
   ActivityIndicator,
   Image as RNImage,
@@ -203,8 +205,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
             position: "absolute",
             bottom: "13%",
             right: 16,
-            backgroundColor: "rgba(30,30,30,0.70)",
-            borderRadius: 16,
+
             paddingVertical: 4,
             paddingHorizontal: 10,
             zIndex: 10,
@@ -213,15 +214,13 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
         ]}
         pointerEvents="none"
       >
-        <Animated.Text
-          style={{
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: 14,
-            letterSpacing: 1,
-          }}
-        >
-          {displayScale.toFixed(2)}x
+        <Animated.Text>
+          <ZoomScaleBadge
+            scale={displayScale}
+            minScale={1}
+            maxScale={5}
+            visible={overlaysVisible && zoomLoaded}
+          />
         </Animated.Text>
       </Animated.View>
       {/* Show spinner while loading high-res zoom image */}
