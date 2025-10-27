@@ -88,7 +88,7 @@ export default function CollectionsList() {
         <>
           <ThemedView style={styles.header}>
             <ThemedText type="title" style={styles.title}>
-              My Collections ({collections.length})
+              Your Collections ({collections.length})
             </ThemedText>
             <ThemedText style={styles.subtitle}>
               Organize your favorite images into themed collections.

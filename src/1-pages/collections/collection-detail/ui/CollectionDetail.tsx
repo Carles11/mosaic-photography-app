@@ -3,6 +3,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { CollectionDetail } from "@/4-shared/types/collections";
+import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -22,6 +23,14 @@ export default function CollectionDetailScreen() {
   // Adjust the thumbnail width for your grid; 180 is a common mobile grid size
   const thumbWidth = 180;
   const numColumns = Math.floor(screenWidth / thumbWidth) || 2;
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: collection?.name || "Collection Details",
+    });
+  }, [navigation, collection]);
 
   useEffect(() => {
     if (!id) return;
@@ -56,9 +65,6 @@ export default function CollectionDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          {collection.name}
-        </ThemedText>
         {collection.description ? (
           <ThemedText style={styles.description}>
             {collection.description}
