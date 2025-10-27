@@ -1,7 +1,7 @@
-import { supabase } from '@/4-shared/api/supabaseClient';
-import { getBestS3FolderForWidth } from '@/4-shared/lib/getBestS3FolderForWidth';
+import { supabase } from "@/4-shared/api/supabaseClient";
+import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 
-import { GalleryImage } from '@/4-shared/types/gallery';
+import { GalleryImage } from "@/4-shared/types/gallery";
 
 // Author display name to S3 folder mapping
 const authorMap: Record<string, string> = {
@@ -23,12 +23,12 @@ const authorMap: Record<string, string> = {
 function slugify(text: string): string {
   // Remove accents, convert to ASCII, lowercase and replace spaces with hyphens
   return text
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-zA-Z0-9 ]/g, '') // Remove non-alphanumeric except spaces
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+    .replace(/[^a-zA-Z0-9 ]/g, "") // Remove non-alphanumeric except spaces
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-');
+    .replace(/\s+/g, "-");
 }
 
 function authorToFolder(author: string): string {
@@ -40,8 +40,9 @@ function authorToFolder(author: string): string {
 
 export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
   const { data: images, error } = await supabase
-    .from('images_resize')
-    .select(`
+    .from("images_resize")
+    .select(
+      `
       id,
       base_url,
       filename,
@@ -57,18 +58,19 @@ export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
       color,
       nudity,
       year
-    `)
-    .eq('nudity', 'not-nude');
+    `
+    )
+    .eq("nudity", "not-nude");
 
   if (error || !images) {
-    console.log('Error fetching images:', error);
+    console.log("Error fetching images:", error);
     return [];
   }
 
   // Use device screen width for optimal image size selection
   // If you want to use actual rendered width, pass it in from your component instead of using screenWidth here.
-  const screenWidth = require('react-native').Dimensions.get('window').width;
-  const pixelDensity = require('react-native').PixelRatio.get();
+  const screenWidth = require("react-native").Dimensions.get("window").width;
+  const pixelDensity = require("react-native").PixelRatio.get();
   const effectiveWidth = screenWidth * pixelDensity;
 
   // Synchronous, performant mapping using S3 logic

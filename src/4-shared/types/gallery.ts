@@ -35,8 +35,7 @@ export type GalleryImage = {
   nudity?: string;
   year?: number;
   url: string;
-  thumbnailUrl: string;
-
+  thumbnailUrl?: string;
   mosaicType?: "normal" | "large" | "wide" | "tall";
 };
 
@@ -47,8 +46,8 @@ export type GalleryImageWithPhotographer = GalleryImage & {
 export type GalleryProps = {
   galleryTitle?: string;
   images: GalleryImage[];
-  renderItem: (item: GalleryImage) => React.ReactNode;
-  scrollY: SharedValue<number>;
+  renderItem: (item: GalleryImage, index: number) => React.ReactNode;
+  scrollY: any; // or the more specific type you use
 };
 
 export type MainGalleryProps = {
