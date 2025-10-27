@@ -6,8 +6,8 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import styles from "./ProfileForm.styles";
-
 type UserType = {
   id: string;
   email: string;
@@ -293,44 +293,49 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             </ThemedText>
           </ThemedView>
         )}
-
-        <View style={styles.field}>
-          <ThemedText style={styles.label}>Display Name</ThemedText>
-          <ThemedTextInput
-            style={styles.input}
-            value={formData.name}
-            onChangeText={(v) => handleInputChange("name", v)}
-            placeholder="Enter your display name"
-            maxLength={100}
-            editable={!databaseError && !saving}
-            accessibilityLabel="Display Name"
-          />
-        </View>
-        <View style={styles.field}>
-          <ThemedText style={styles.label}>Instagram</ThemedText>
-          <ThemedTextInput
-            style={styles.input}
-            value={formData.instagram}
-            onChangeText={(v) =>
-              handleInputChange("instagram", v.replace("@", ""))
-            }
-            placeholder="your_username"
-            maxLength={30}
-            editable={!databaseError && !saving}
-            accessibilityLabel="Instagram"
-          />
-        </View>
-        <View style={styles.field}>
-          <ThemedText style={styles.label}>Website</ThemedText>
-          <ThemedTextInput
-            style={styles.input}
-            value={formData.website}
-            onChangeText={(v) => handleInputChange("website", v)}
-            placeholder="https://yourwebsite.com"
-            editable={!databaseError && !saving}
-            accessibilityLabel="Website"
-          />
-        </View>
+        <KeyboardAwareScrollView
+          bottomOffset={62}
+          contentContainerStyle={styles.container}
+        >
+          <View style={styles.field}>
+            <ThemedText style={styles.label}>Display Name</ThemedText>
+            <ThemedTextInput
+              style={styles.input}
+              value={formData.name}
+              onChangeText={(v) => handleInputChange("name", v)}
+              placeholder="Enter your display name"
+              maxLength={100}
+              editable={!databaseError && !saving}
+              accessibilityLabel="Display Name"
+            />
+          </View>
+          <View style={styles.field}>
+            <ThemedText style={styles.label}>Instagram</ThemedText>
+            <ThemedTextInput
+              style={styles.input}
+              value={formData.instagram}
+              onChangeText={(v) =>
+                handleInputChange("instagram", v.replace("@", ""))
+              }
+              placeholder="your_username"
+              maxLength={30}
+              editable={!databaseError && !saving}
+              accessibilityLabel="Instagram"
+            />
+          </View>
+          <View style={styles.field}>
+            <ThemedText style={styles.label}>Website</ThemedText>
+            <ThemedTextInput
+              style={styles.input}
+              value={formData.website}
+              onChangeText={(v) => handleInputChange("website", v)}
+              placeholder="https://yourwebsite.com"
+              editable={!databaseError && !saving}
+              accessibilityLabel="Website"
+            />
+          </View>
+          {/* <KeyboardToolbar /> */}
+        </KeyboardAwareScrollView>
         {/* Uncomment if you want to enable store fields
         <View style={styles.field}>
           <ThemedText style={styles.label}>Store Name</ThemedText>

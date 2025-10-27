@@ -10,11 +10,7 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
     alignItems: "flex-start",
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 2,
-  },
+
   description: {
     fontSize: 15,
     marginBottom: 4,

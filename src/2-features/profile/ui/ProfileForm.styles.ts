@@ -5,6 +5,10 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 40,
   },
+  container: {
+    gap: 16,
+    padding: 16,
+  },
   loadingContainer: {
     flex: 1,
     alignItems: "center",

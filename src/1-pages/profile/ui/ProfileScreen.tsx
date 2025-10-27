@@ -9,7 +9,8 @@ import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import React, { useEffect } from "react";
-import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./ProfileScreen.styles";
 
@@ -21,13 +22,11 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to login if not authenticated
     if (!authLoading && !user) {
       router.replace("/auth/login");
     }
   }, [authLoading, user, router]);
 
-  // Handler for login/logout menu action
   const handleAuthAction = async () => {
     if (user) {
       await signOut();
@@ -45,40 +44,50 @@ export default function ProfileScreen() {
     );
   }
 
-  // Only render ProfileForm if user is defined (prevents null errors)
   return (
-    <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <ThemedView style={styles.centered}>
-        {user ? (
-          <ProfileForm user={user} />
-        ) : (
-          <ThemedText style={styles.loadingText}>
-            Please log in to view your profile.
-          </ThemedText>
-        )}
-      </ThemedView>
-      <ThemedView style={styles.profileMenuSection}>
-        <ThemedView style={styles.menuItem}>
-          <IconSymbol name="brightness-4" size={20} color={theme.text} />
-          <ThemedView
-            style={[styles.menuItemSlider, { backgroundColor: "transparent" }]}
-          >
-            <SwitchButton
-              value={mode === "dark"}
-              onValueChange={(value) => setMode(value ? "dark" : "light")}
-            />
-            <ThemedText style={styles.menuItemLabel}>Toggle Theme</ThemedText>
-          </ThemedView>
+    <SafeAreaView style={[styles.safeArea, { flex: 1 }]} edges={["top"]}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <ThemedView style={styles.centered}>
+          {user ? (
+            <ProfileForm user={user} />
+          ) : (
+            <ThemedText style={styles.loadingText}>
+              Please log in to view your profile.
+            </ThemedText>
+          )}
         </ThemedView>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={handleAuthAction}
-          disabled={authLoading}
-        >
-          <IconSymbol name="logout" size={20} color={theme.text} />
-          <ThemedText style={styles.menuItemLabel}>Log out</ThemedText>
-        </TouchableOpacity>
-      </ThemedView>
+
+        <ThemedView style={styles.profileMenuSection}>
+          <ThemedView style={styles.menuItem}>
+            <IconSymbol name="brightness-4" size={20} color={theme.text} />
+            <ThemedView
+              style={[
+                styles.menuItemSlider,
+                { backgroundColor: "transparent" },
+              ]}
+            >
+              <SwitchButton
+                value={mode === "dark"}
+                onValueChange={(value) => setMode(value ? "dark" : "light")}
+              />
+              <ThemedText style={styles.menuItemLabel}>Toggle Theme</ThemedText>
+            </ThemedView>
+          </ThemedView>
+
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={handleAuthAction}
+            disabled={authLoading}
+          >
+            <IconSymbol name="logout" size={20} color={theme.text} />
+            <ThemedText style={styles.menuItemLabel}>Log out</ThemedText>
+          </TouchableOpacity>
+        </ThemedView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
