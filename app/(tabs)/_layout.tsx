@@ -11,7 +11,7 @@ import { Platform } from "react-native";
 export default function TabLayout() {
   const { theme } = useTheme();
 
-  const iconColor = theme.text;
+  const iconColor = theme.primary;
   const labelStyle = {
     color: theme.text,
     fontFamily: "TradeGothic-Bold",
@@ -21,11 +21,11 @@ export default function TabLayout() {
   return (
     <NativeTabs
       backgroundColor={theme.background}
-      tintColor={theme.primary}
+      tintColor={"white"}
       iconColor={iconColor}
       labelStyle={labelStyle}
       // Android only: to always show labels
-      labelVisibilityMode={Platform.OS === "android" ? "labeled" : undefined}
+      labelVisibilityMode={Platform.OS === "android" ? "unlabeled" : undefined}
       // iOS only props
       blurEffect={Platform.OS === "ios" ? "systemMaterial" : undefined}
       disableTransparentOnScrollEdge={Platform.OS === "ios" ? true : undefined}
@@ -33,8 +33,14 @@ export default function TabLayout() {
       badgeBackgroundColor={theme.text}
       badgeTextColor={theme.background}
       shadowColor={Platform.OS === "ios" ? theme.border : undefined}
+      // tabBarStyle={{
+      //   height: 70, // <– custom height
+      //   paddingBottom: 8, // <– adjust Safe Area spacing
+      //   paddingTop: 6,
+      // }}
     >
       <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.TabBar shadowColor="red" />
         {Platform.select({
           ios: <Icon sf={{ default: "house", selected: "house.fill" }} />,
           android: (
