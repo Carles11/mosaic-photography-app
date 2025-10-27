@@ -33,11 +33,11 @@ export default function TabLayout() {
       badgeBackgroundColor={theme.text}
       badgeTextColor={theme.background}
       shadowColor={Platform.OS === "ios" ? theme.border : undefined}
-      // tabBarStyle={{
-      //   height: 70, // <– custom height
-      //   paddingBottom: 8, // <– adjust Safe Area spacing
-      //   paddingTop: 6,
-      // }}
+      // tabBarHeight={Platform.select({
+      //   ios: 70,
+      //   android: 90,
+      //   default: 70,
+      // })}
     >
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.TabBar shadowColor="red" />
