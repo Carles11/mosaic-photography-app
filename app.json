@@ -46,7 +46,7 @@
           "image": "./src/4-shared/assets/expo-icons/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#202030",
+          "backgroundColor": "#1d1d1d",
           "dark": {
             "backgroundColor": "#1d1d1d"
           }
