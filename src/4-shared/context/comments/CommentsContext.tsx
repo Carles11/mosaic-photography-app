@@ -5,7 +5,7 @@ import {
   fetchCommentCountsBatch,
   fetchCommentsForImage,
 } from "@/4-shared/api/commentsApi";
-import { Comment } from "@/4-shared/types/comments";
+import { Comment } from "@/4-shared/types";
 
 import type { ReactNode } from "react";
 import React, {
