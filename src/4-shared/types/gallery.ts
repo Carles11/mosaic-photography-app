@@ -9,7 +9,7 @@ export type Photographer = {
   deceasedate?: string;
   equipment?: string[];
   biography?: string;
-  author: string;
+  author?: string;
   website?: string;
   store?: string[];
   instagram?: string;
