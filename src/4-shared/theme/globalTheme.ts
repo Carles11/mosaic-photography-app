@@ -32,7 +32,7 @@ export const darkTheme = {
   buttonBorderRadius: 4,
 
   // secondary button
-  buttonTextColorSecondary: "#dedede",
+  buttonTextColorSecondary: "#1d1d1d",
 
   // Typography
   fontFamily: fonts.regular,
