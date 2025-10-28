@@ -9,6 +9,8 @@ export interface PhotographerImage {
   url: string;
   title?: string;
   description?: string;
+  author?: string;
+  slug?: string;
 }
 
 export interface PhotographerSlug {

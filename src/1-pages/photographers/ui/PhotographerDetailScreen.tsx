@@ -2,11 +2,13 @@ import { Gallery } from "@/2-features/gallery/ui/Gallery";
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
+import { PhotographerPortraitHeader } from "@/2-features/photographers/ui/PhotographerPortraitHeader";
 import { PhotographerTimeline } from "@/2-features/photographers/ui/Timeline";
+import { WebGalleryMessage } from "@/2-features/photographers/ui/WebGalleryMessage";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
+import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { formatLifespan } from "@/4-shared/lib/formatLifespan";
 import { mapPhotographerImagesToGalleryImages } from "@/4-shared/lib/mapPhotographerImageToGalleryImage";
 import { PhotographerSlug } from "@/4-shared/types";
 import { useNavigation } from "@react-navigation/native";
@@ -18,9 +20,11 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import { styles } from "./PhotographerDetailScreen.styles";
 
-const { width: deviceWidth } = Dimensions.get("window");
+const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
+const HEADER_HEIGHT = deviceHeight * 0.5;
 
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -32,6 +36,9 @@ const PhotographerDetailScreen: React.FC = () => {
   const [notFound, setNotFound] = useState(false);
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
+
+  // ScrollY for RevealOnScroll and Gallery scroll tracking
+  const scrollY = useSharedValue(0);
 
   useEffect(() => {
     navigation.setOptions({
@@ -78,12 +85,11 @@ const PhotographerDetailScreen: React.FC = () => {
     ? getTimelineBySlug(photographer.slug) || []
     : [];
 
-  // Use useMemo to avoid recalculating on every render
   const galleryImages = useMemo(
     () =>
       mapPhotographerImagesToGalleryImages(
         photographer?.images || [],
-        photographer?.author || ""
+        photographer?.slug || ""
       ),
     [photographer]
   );
@@ -93,49 +99,51 @@ const PhotographerDetailScreen: React.FC = () => {
     setZoomVisible(true);
   }, []);
 
-  // Must be a function/component for FlatList ListHeaderComponent
+  // Appealing web version message if few images
+  const showWebMsg = photographer && (photographer.images?.length ?? 0) < 5;
+
   const ListHeaderComponent = useCallback(() => {
     if (!photographer) return null;
     return (
-      <ThemedView style={styles.container}>
-        <ThemedText style={styles.title}>
-          {photographer.name} {photographer.surname}
-        </ThemedText>
-        <ThemedText style={styles.lifespan}>
-          {formatLifespan(photographer.birthdate, photographer.deceasedate)}
-        </ThemedText>
-        <ThemedText style={styles.sectionTitle}>A Life in Focus</ThemedText>
-        <ThemedText style={styles.sectionSubtitle}>
-          Personal & Historical Milestones in {photographer.name}{" "}
-          {photographer.surname}'s life.
-        </ThemedText>
-        <ThemedView style={styles.timelineContainer}>
-          <PhotographerTimeline events={timelineEvents} />
-        </ThemedView>
-        <ThemedText style={styles.sectionTitle}>
-          About the Photographer
-        </ThemedText>
-        <ThemedText style={styles.sectionLabel}>Born in:</ThemedText>
-        <ThemedText style={styles.sectionContent}>
-          {photographer.origin}
-        </ThemedText>
-        <ThemedText style={styles.sectionLabel}>Biography:</ThemedText>
-        <ThemedText style={styles.biography}>
-          {photographer.biography}
-        </ThemedText>
-        <PhotographerLinks
-          stores={photographer.store}
-          website={photographer.website}
-        />
-        <ThemedText style={styles.sectionTitle}>
-          {photographer.surname}'s Gallery{" "}
-          <ThemedText style={styles.galleryCount}>
-            ({photographer.images?.length || 0})
+      <>
+        <RevealOnScroll scrollY={scrollY} height={HEADER_HEIGHT} threshold={32}>
+          <PhotographerPortraitHeader photographer={photographer} />
+        </RevealOnScroll>
+        {showWebMsg && <WebGalleryMessage photographer={photographer} />}
+        <ThemedView style={styles.container}>
+          <ThemedText style={styles.sectionTitle}>A Life in Focus</ThemedText>
+          <ThemedText style={styles.sectionSubtitle}>
+            Personal & Historical Milestones in {photographer.name}{" "}
+            {photographer.surname}'s life.
           </ThemedText>
-        </ThemedText>
-      </ThemedView>
+          <ThemedView style={styles.timelineContainer}>
+            <PhotographerTimeline events={timelineEvents} />
+          </ThemedView>
+          <ThemedText style={styles.sectionTitle}>
+            About the Photographer
+          </ThemedText>
+          <ThemedText style={styles.sectionLabel}>Born in:</ThemedText>
+          <ThemedText style={styles.sectionContent}>
+            {photographer.origin}
+          </ThemedText>
+          <ThemedText style={styles.sectionLabel}>Biography:</ThemedText>
+          <ThemedText style={styles.biography}>
+            {photographer.biography}
+          </ThemedText>
+          <PhotographerLinks
+            stores={photographer.store}
+            website={photographer.website}
+          />
+          <ThemedText style={styles.sectionTitle}>
+            {photographer.surname}'s Gallery{" "}
+            <ThemedText style={styles.galleryCount}>
+              ({photographer.images?.length || 0})
+            </ThemedText>
+          </ThemedText>
+        </ThemedView>
+      </>
     );
-  }, [photographer, timelineEvents]);
+  }, [photographer, timelineEvents, scrollY, showWebMsg]);
 
   if (loading) {
     return (
@@ -160,7 +168,7 @@ const PhotographerDetailScreen: React.FC = () => {
       <Gallery
         galleryTitle={undefined}
         images={galleryImages}
-        scrollY={{ value: 0 }}
+        scrollY={scrollY}
         renderItem={(item, index) => (
           <ThemedView style={styles.galleryImageWrapper}>
             <TouchableOpacity

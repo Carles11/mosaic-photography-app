@@ -14,6 +14,7 @@ const authorMap: Record<string, string> = {
   "Fred Holland Day": "fred-holland-day",
   "Robert Demachy": "robert-demachy",
   "Wilhelm Von Plueschow": "wilhelm-von-plueschow",
+  "Jane de La Vaudère": "jane-de-la-vaudere", // alternate accent spelling
   "Jane de La Vaudere": "jane-de-la-vaudere",
   "Anne Brigman": "anne-brigman",
   "Mario von Bucovich": "mario-von-bucovich",
