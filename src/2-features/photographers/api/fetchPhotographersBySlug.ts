@@ -25,7 +25,8 @@ export async function fetchPhotographerBySlug(
     .select(
       "id, filename, base_url, width, orientation, title, year, description"
     )
-    .eq("author", photographer.author);
+    .eq("author", photographer.author)
+    .eq("nudity", "not-nude");
 
   const deviceWidth = Dimensions.get("window").width;
 
