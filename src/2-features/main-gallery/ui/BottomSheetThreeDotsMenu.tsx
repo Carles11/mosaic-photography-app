@@ -1,11 +1,14 @@
 import { BottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
+import { OnlyTextButton } from "@/4-shared/components/buttons/variants";
 import { HrLine } from "@/4-shared/components/elements/horizontal-line-hr";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import React, { forwardRef } from "react";
+import React, { forwardRef, useState } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetThreeDotsMenu.styles";
 
@@ -17,6 +20,8 @@ type BottomSheetThreeDotsMenuProps = {
   isFavorite?: (imageId: string | number) => void;
   onShare?: () => void;
   onDownload?: () => void;
+  downloadOptions?: DownloadOption[];
+  onDownloadOption?: (option: DownloadOption) => void;
 };
 
 export const BottomSheetThreeDotsMenu = forwardRef<
@@ -32,15 +37,22 @@ export const BottomSheetThreeDotsMenu = forwardRef<
       isFavorite,
       onShare,
       onDownload,
+      downloadOptions = [],
+      onDownloadOption,
     },
     ref
   ) => {
     const { theme } = useTheme();
+    const [showDownloadOptions, setShowDownloadOptions] = useState(false);
+
+    // Separate original from webp options
+    const originalOption = downloadOptions.find((opt) => opt.isOriginal);
+    const webpOptions = downloadOptions.filter((opt) => !opt.isOriginal);
 
     return (
       <BottomSheetModal
         ref={ref}
-        snapPoints={["40%"]}
+        snapPoints={["70%"]}
         onDismiss={onClose}
         enablePanDownToClose
       >
@@ -71,13 +83,54 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                   onPress={onShare}
                   textColor={theme.text}
                 />
+                {/* Download options */}
                 <ActionRow
                   icon="download"
-                  label="Download image"
+                  label="Download options"
                   color={theme.icon}
-                  onPress={onDownload}
+                  onPress={() => setShowDownloadOptions((show) => !show)}
                   textColor={theme.text}
                 />
+                {showDownloadOptions && (
+                  <View style={{ marginTop: 8, marginBottom: 8 }}>
+                    {originalOption && (
+                      <OnlyTextButton
+                        title={`Original file (${selectedImage.width}px/${selectedImage.height}px)`}
+                        onPress={() =>
+                          onDownloadOption && onDownloadOption(originalOption)
+                        }
+                        style={{ marginBottom: 6 }}
+                      />
+                    )}
+                    <ThemedText
+                      style={[
+                        styles.downloadOptionsTitle,
+                        { color: theme.text },
+                      ]}
+                    >
+                      Download resized versions in .webp format:
+                    </ThemedText>
+                    <View style={styles.downloadOptionRow}>
+                      {webpOptions.map((option) => (
+                        <OnlyTextButton
+                          key={option.url}
+                          title={`${option.width}px`}
+                          onPress={() =>
+                            onDownloadOption && onDownloadOption(option)
+                          }
+                          style={styles.downloadOptionButton}
+                          textStyle={{
+                            minWidth: 45,
+                            maxWidth: 70,
+                            paddingHorizontal: 0,
+                          }}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                        />
+                      ))}
+                    </View>
+                  </View>
+                )}
               </>
             )}
           </SafeAreaView>

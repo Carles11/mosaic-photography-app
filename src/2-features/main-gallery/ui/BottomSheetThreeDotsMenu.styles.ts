@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 22,
   },
   safeArea: {
     flex: 1,
@@ -26,5 +27,27 @@ export const styles = StyleSheet.create({
     width: "50%",
     paddingVertical: 6,
     paddingHorizontal: 12,
+  },
+  downloadOptionsTitle: {
+    paddingHorizontal: 8,
+    marginTop: 12,
+  },
+  downloadOptionButton: {
+    minWidth: 56,
+    maxWidth: 78,
+    flexGrow: 0,
+    flexShrink: 1,
+    marginHorizontal: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  downloadOptionRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: 6,
   },
 });
