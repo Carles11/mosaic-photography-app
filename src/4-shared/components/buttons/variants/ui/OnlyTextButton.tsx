@@ -5,11 +5,20 @@ import React from "react";
 import { TouchableOpacity } from "react-native";
 import { styles } from "./OnlyTextButton.styles";
 
-export const OnlyTextButton: React.FC<ButtonProps> = ({
+type OnlyTextButtonProps = ButtonProps & {
+  textStyle?: any;
+  numberOfLines?: number;
+  ellipsizeMode?: "head" | "middle" | "tail" | "clip";
+};
+
+export const OnlyTextButton: React.FC<OnlyTextButtonProps> = ({
   title,
   onPress,
   disabled = false,
   style,
+  textStyle,
+  numberOfLines = 1,
+  ellipsizeMode = "tail",
 }) => {
   const { theme } = useTheme();
 
@@ -33,8 +42,13 @@ export const OnlyTextButton: React.FC<ButtonProps> = ({
           styles.text,
           {
             color: theme.buttonTextColorSecondary,
+            textAlign: "center",
+            fontVariant: ["tabular-nums"], // helps with numbers
           },
+          textStyle,
         ]}
+        numberOfLines={numberOfLines}
+        ellipsizeMode={ellipsizeMode}
       >
         {title}
       </ThemedText>

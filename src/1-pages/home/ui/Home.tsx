@@ -10,6 +10,10 @@ import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/Reveal
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
 import { useFavorites } from "@/4-shared/context/favorites";
+import {
+  DownloadOption,
+  getAvailableDownloadOptionsForImage,
+} from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { useRouter } from "expo-router";
@@ -18,13 +22,14 @@ import { Linking, Share } from "react-native";
 import { useSharedValue } from "react-native-reanimated"; // Add this import
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
-
 export const Home: React.FC = () => {
   const { theme } = useTheme();
   const { user, loading: authLoading } = useAuthSession();
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [downloadOptions, setDownloadOptions] = useState<DownloadOption[]>([]);
+
   const { isUserLoggedIn, toggleFavorite, isFavorite } = useFavorites();
   const router = useRouter();
   // Handle RevealOnScroll for header
@@ -133,6 +138,7 @@ export const Home: React.FC = () => {
   // Handler for opening the image menu sheet
   const handleOpenImageMenu = (image: GalleryImage) => {
     setSelectedImage(image);
+    setDownloadOptions(getAvailableDownloadOptionsForImage(image));
     setImageMenuOpen(!isImageMenuOpen);
   };
 
@@ -180,12 +186,36 @@ export const Home: React.FC = () => {
       router.push("/auth/login");
       return;
     }
-    try {
-      if (selectedImage.base_url) {
-        await Linking.openURL(selectedImage.base_url);
+    // Use originalsWEBP if available, else largest webp size, else original
+    const options = getAvailableDownloadOptionsForImage(selectedImage);
+    // Prefer originalsWEBP, else highest width webp, else original
+    let defaultOption =
+      options.find((opt) => opt.folder === "originalsWEBP") ||
+      options
+        .filter((opt) => !opt.isOriginal)
+        .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0] ||
+      options.find((opt) => opt.isOriginal);
+
+    if (defaultOption) {
+      try {
+        await Linking.openURL(defaultOption.url);
+      } catch (error) {
+        console.log("Error opening image URL:", error);
       }
+    }
+  };
+
+  const handleDownloadOption = async (option: DownloadOption) => {
+    if (!selectedImage) return;
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    try {
+      // Use Expo's Linking API to open the download URL
+      await Linking.openURL(option.url);
     } catch (error) {
-      console.log("Error opening image URL:", error);
+      console.log("Error downloading image:", error);
     }
   };
 
@@ -263,6 +293,8 @@ export const Home: React.FC = () => {
         isFavorite={isFavorite}
         onShare={handleShare}
         onDownload={handleDownload}
+        downloadOptions={downloadOptions}
+        onDownloadOption={handleDownloadOption}
       />
 
       {/* Comments Bottom Sheet */}
