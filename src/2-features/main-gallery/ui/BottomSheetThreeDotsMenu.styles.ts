@@ -21,14 +21,10 @@ export const styles = StyleSheet.create({
   actionRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    gap: 8,
+    justifyContent: "space-around",
     marginVertical: 8,
-    width: "60%",
+    width: "50%",
     paddingVertical: 6,
     paddingHorizontal: 12,
-  },
-  actionText: {
-    fontSize: 16,
   },
 });
