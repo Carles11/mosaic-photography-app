@@ -1,5 +1,8 @@
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetModal as GorhomBottomSheetModal } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal as GorhomBottomSheetModal,
+} from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   ReactNode,
@@ -85,7 +88,14 @@ export const BottomSheetModal = forwardRef<
           backgroundStyle,
         ]}
         onDismiss={onDismiss}
-        style={flattenedStyle} // <-- Always a single object now
+        style={flattenedStyle}
+        backdropComponent={(props) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+          />
+        )}
       >
         {children}
       </GorhomBottomSheetModal>
