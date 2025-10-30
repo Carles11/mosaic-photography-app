@@ -14,6 +14,7 @@ type BottomSheetThreeDotsMenuProps = {
   onClose: () => void;
   selectedImage: GalleryImage | null;
   onAddToFavorites?: () => void;
+  isFavorite?: (imageId: string | number) => void;
   onShare?: () => void;
   onDownload?: () => void;
 };
@@ -23,7 +24,15 @@ export const BottomSheetThreeDotsMenu = forwardRef<
   BottomSheetThreeDotsMenuProps
 >(
   (
-    { isOpen, onClose, selectedImage, onAddToFavorites, onShare, onDownload },
+    {
+      isOpen,
+      onClose,
+      selectedImage,
+      onAddToFavorites,
+      isFavorite,
+      onShare,
+      onDownload,
+    },
     ref
   ) => {
     const { theme } = useTheme();
@@ -48,7 +57,9 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                 <HrLine />
                 <ActionRow
                   icon="favorite-border"
-                  label="Add to Favorites"
+                  label={
+                    isFavorite ? "Remove from Favorites" : "Add to Favorites"
+                  }
                   color={theme.favoriteIcon}
                   onPress={onAddToFavorites}
                   textColor={theme.text}
@@ -102,9 +113,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
       accessibilityLabel={label}
     >
       <IconSymbol type="material" name={icon} size={17} color={color} />
-      <ThemedText style={[styles.actionText, { color: textColor }]}>
-        {label}
-      </ThemedText>
+      <ThemedText style={{ color: textColor }}>{label}</ThemedText>
     </SafeAreaView>
   </React.Fragment>
 );

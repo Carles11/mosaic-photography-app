@@ -9,9 +9,12 @@ import { PhotographersSlider } from "@/2-features/photographers/ui/Photographers
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
+import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
+import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Linking, Share } from "react-native";
 import { useSharedValue } from "react-native-reanimated"; // Add this import
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
@@ -22,7 +25,8 @@ export const Home: React.FC = () => {
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
-
+  const { isUserLoggedIn, toggleFavorite, isFavorite } = useFavorites();
+  const router = useRouter();
   // Handle RevealOnScroll for header
   const scrollY = useSharedValue(0);
 
@@ -148,6 +152,43 @@ export const Home: React.FC = () => {
     setCommentsImageId(null);
   }, []);
 
+  const handleAddToFavorites = async () => {
+    if (!selectedImage) return;
+    if (!isUserLoggedIn()) {
+      router.push("/auth/login");
+      return;
+    }
+    await toggleFavorite(selectedImage.id);
+  };
+
+  const handleShare = async () => {
+    if (!selectedImage) return;
+    try {
+      await Share.share({
+        message: selectedImage.title
+          ? `${selectedImage.title}\n${selectedImage.url}`
+          : selectedImage.url,
+      });
+    } catch (error) {
+      console.log("Error sharing image:", error);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!selectedImage) return;
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    try {
+      if (selectedImage.base_url) {
+        await Linking.openURL(selectedImage.base_url);
+      }
+    } catch (error) {
+      console.log("Error opening image URL:", error);
+    }
+  };
+
   // Load comments for the image when the bottom sheet opens
   useEffect(() => {
     if (commentsImageId) {
@@ -218,15 +259,10 @@ export const Home: React.FC = () => {
         isOpen={isImageMenuOpen}
         onClose={handleCloseImageMenu}
         selectedImage={selectedImage}
-        onAddToFavorites={() => {
-          // Implement add to favorites functionality here
-        }}
-        onShare={() => {
-          // Implement share functionality here
-        }}
-        onDownload={() => {
-          // Implement download functionality here
-        }}
+        onAddToFavorites={handleAddToFavorites}
+        isFavorite={isFavorite}
+        onShare={handleShare}
+        onDownload={handleDownload}
       />
 
       {/* Comments Bottom Sheet */}
