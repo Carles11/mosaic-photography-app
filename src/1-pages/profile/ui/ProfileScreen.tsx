@@ -48,7 +48,7 @@ export default function ProfileScreen() {
     <SafeAreaView style={[styles.safeArea, { flex: 1 }]} edges={["top"]}>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
         showsVerticalScrollIndicator={false}
       >
         <ThemedView style={styles.centered}>

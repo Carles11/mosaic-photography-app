@@ -4,10 +4,12 @@ import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedText
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
+import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import styles from "./ProfileForm.styles";
+
 type UserType = {
   id: string;
   email: string;
@@ -48,6 +50,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
   // Defensive: Don't run any fetch if no user
   const canUseProfile = !!user && !!user.id && !!user.email;
+
+  const router = useRouter();
 
   const createInitialProfile = useCallback(async () => {
     if (!canUseProfile || databaseError) return;
@@ -219,12 +223,21 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         <ThemedText style={styles.loadingText}>
           No user found. Please log in.
         </ThemedText>
+        <PrimaryButton
+          title="Go to Login"
+          onPress={() => router.push("/auth/login")}
+        />
       </ThemedView>
     );
   }
 
+  // Only one top-level scroll view: KeyboardAwareScrollView
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <KeyboardAwareScrollView
+      bottomOffset={80}
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
       {message && (
         <ThemedView
           style={[
@@ -293,10 +306,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
             </ThemedText>
           </ThemedView>
         )}
-        <KeyboardAwareScrollView
-          bottomOffset={62}
-          contentContainerStyle={styles.container}
-        >
+        <View style={styles.container}>
           <View style={styles.field}>
             <ThemedText style={styles.label}>Display Name</ThemedText>
             <ThemedTextInput
@@ -334,45 +344,45 @@ export default function ProfileForm({ user }: ProfileFormProps) {
               accessibilityLabel="Website"
             />
           </View>
-          {/* <KeyboardToolbar /> */}
-        </KeyboardAwareScrollView>
-        {/* Uncomment if you want to enable store fields
-        <View style={styles.field}>
-          <ThemedText style={styles.label}>Store Name</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={formData.own_store_name}
-            onChangeText={(v) => handleInputChange("own_store_name", v)}
-            placeholder="Enter your store name"
-            maxLength={100}
-            editable={!databaseError && !saving}
-            accessibilityLabel="Store Name"
+          {/* Store fields can be enabled if needed */}
+          {/* 
+          <View style={styles.field}>
+            <ThemedText style={styles.label}>Store Name</ThemedText>
+            <TextInput
+              style={styles.input}
+              value={formData.own_store_name}
+              onChangeText={(v) => handleInputChange("own_store_name", v)}
+              placeholder="Enter your store name"
+              maxLength={100}
+              editable={!databaseError && !saving}
+              accessibilityLabel="Store Name"
+            />
+          </View>
+          <View style={styles.field}>
+            <ThemedText style={styles.label}>Store URL</ThemedText>
+            <TextInput
+              style={styles.input}
+              value={formData.own_store_url}
+              onChangeText={(v) => handleInputChange("own_store_url", v)}
+              placeholder="https://yourstore.com"
+              editable={!databaseError && !saving}
+              accessibilityLabel="Store URL"
+            />
+          </View>
+          */}
+          <PrimaryButton
+            title={
+              saving
+                ? "Saving..."
+                : databaseError
+                ? "Database Setup Required"
+                : "Update Profile"
+            }
+            onPress={handleSubmit}
+            disabled={saving || databaseError || !formData.name.trim()}
           />
         </View>
-        <View style={styles.field}>
-          <ThemedText style={styles.label}>Store URL</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={formData.own_store_url}
-            onChangeText={(v) => handleInputChange("own_store_url", v)}
-            placeholder="https://yourstore.com"
-            editable={!databaseError && !saving}
-            accessibilityLabel="Store URL"
-          />
-        </View>
-        */}
-        <PrimaryButton
-          title={
-            saving
-              ? "Saving..."
-              : databaseError
-              ? "Database Setup Required"
-              : "Update Profile"
-          }
-          onPress={handleSubmit}
-          disabled={saving || databaseError || !formData.name.trim()}
-        />
       </ThemedView>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
