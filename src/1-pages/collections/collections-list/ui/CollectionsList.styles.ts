@@ -22,8 +22,8 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   createButton: {
-    alignSelf: "flex-start",
-    marginTop: 6,
+    alignSelf: "center",
+    marginTop: 12,
     marginBottom: 2,
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -80,6 +80,7 @@ export const styles = StyleSheet.create({
   },
   centered: {
     flex: 1,
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
   },

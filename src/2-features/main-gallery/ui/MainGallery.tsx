@@ -1,12 +1,12 @@
-import { Gallery } from "@/2-features/gallery/ui/Gallery";
-import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
-import { ThemedText } from "@/4-shared/components/themed-text";
-import { ThemedView } from "@/4-shared/components/themed-view";
-import { MainGalleryProps } from "@/4-shared/types";
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { styles } from "./MainGallery.styles";
-import { MainGalleryItem } from "./MainGalleryItem";
+import { ZoomGalleryModal } from "../../../4-shared/components/image-zoom/ui/ZoomGalleryModal.tsx";
+import { ThemedText } from "../../../4-shared/components/themed-text.tsx";
+import { ThemedView } from "../../../4-shared/components/themed-view.tsx";
+import { MainGalleryProps } from "../../../4-shared/types/index.ts";
+import { Gallery } from "../../gallery/ui/Gallery.tsx";
+import { styles } from "./MainGallery.styles.ts";
+import { MainGalleryItem } from "./MainGalleryItem.tsx";
 
 export const MainGallery: React.FC<MainGalleryProps> = ({
   images,
@@ -18,7 +18,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 }) => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
-  console.log("Images in MainGallery:", images[0]);
+
   const handlePressZoom = useCallback((index: number) => {
     setZoomIndex(index);
     setZoomVisible(true);

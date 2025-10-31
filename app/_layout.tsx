@@ -1,15 +1,19 @@
-import FontLoader from "@/4-shared/components/FontLoader";
-import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext";
-import { CommentsProvider } from "@/4-shared/context/comments";
-import { FavoritesProvider } from "@/4-shared/context/favorites";
-import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useMemo } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import FontLoader from "../src/4-shared/components/FontLoader.tsx";
+import { AuthSessionProvider } from "../src/4-shared/context/auth/AuthSessionContext.tsx";
+import { CommentsProvider } from "../src/4-shared/context/comments/index.ts";
+import { FavoritesProvider } from "../src/4-shared/context/favorites/index.ts";
+import {
+  ThemeProvider,
+  useTheme,
+} from "../src/4-shared/theme/ThemeProvider.tsx";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -21,15 +25,17 @@ export default function RootLayout() {
       <GestureHandlerRootView>
         <AuthSessionProvider>
           <BottomSheetModalProvider>
-            <FontLoader>
-              <ThemeProvider>
-                <CommentsProvider>
-                  <FavoritesProvider>
-                    <InnerLayout />
-                  </FavoritesProvider>
-                </CommentsProvider>
-              </ThemeProvider>
-            </FontLoader>
+            <KeyboardProvider>
+              <FontLoader>
+                <ThemeProvider>
+                  <CommentsProvider>
+                    <FavoritesProvider>
+                      <InnerLayout />
+                    </FavoritesProvider>
+                  </CommentsProvider>
+                </ThemeProvider>
+              </FontLoader>
+            </KeyboardProvider>
           </BottomSheetModalProvider>
         </AuthSessionProvider>
       </GestureHandlerRootView>

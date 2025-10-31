@@ -10,9 +10,13 @@
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "deno.enable": true,
+  "deno.unstable": true,
+  "deno.importMap": "./supabase/functions/import_map.json",
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

@@ -1,10 +1,3 @@
-import { fetchCollectionsForUser } from "@/4-shared/api/collectionsApi";
-import { PrimaryButton } from "@/4-shared/components/buttons/variants";
-import { ThemedText } from "@/4-shared/components/themed-text";
-import { ThemedView } from "@/4-shared/components/themed-view";
-import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { CollectionWithPreview } from "@/4-shared/types/collections";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -13,10 +6,17 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { styles } from "./CollectionsList.styles";
+import { fetchCollectionsForUser } from "../../../../4-shared/api/collectionsApi.ts";
+import { PrimaryButton } from "../../../../4-shared/components/buttons/variants/index.ts";
+import { ThemedText } from "../../../../4-shared/components/themed-text.tsx";
+import { ThemedView } from "../../../../4-shared/components/themed-view.tsx";
+import { useAuthSession } from "../../../../4-shared/context/auth/AuthSessionContext.tsx";
+import { useTheme } from "../../../../4-shared/theme/ThemeProvider.tsx";
+import { CollectionWithPreview } from "../../../../4-shared/types/collections.ts";
+import { styles } from "./CollectionsList.styles.ts";
 import CreateCollectionSheet, {
   CreateCollectionSheetRef,
-} from "./CreateCollectionSheet";
+} from "./CreateCollectionSheet.tsx";
 
 export default function CollectionsList() {
   const { theme } = useTheme();

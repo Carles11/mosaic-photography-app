@@ -50,8 +50,7 @@ export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
         }}
       >
         We found few or no images for {name} {surname}. Would you like to see
-        the complete, uncensored collection? . Would you like to see the
-        complete, uncensored collection?
+        the complete, uncensored collection?
       </ThemedText>
       <ThemedText
         style={{

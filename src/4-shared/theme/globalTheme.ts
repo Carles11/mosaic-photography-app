@@ -7,7 +7,7 @@ export const darkTheme = {
   accent: "#f4d35e",
   border: "#444",
   warning: "#29bde6ff",
-  success: "#3de382ff",
+  success: "#49c37cff",
   error: "#d10101ff",
   icon: "#9BA1A6",
   favoriteIcon: "#ff4081",
@@ -46,7 +46,7 @@ export const lightTheme = {
   accent: "#f4d35e",
   border: "#e0e0e0",
   warning: "#29bde6ff",
-  success: "#3de382ff",
+  success: "#49c37cff",
   error: "#d10101ff",
   icon: "#687076", // add icon color if not present
   favoriteIcon: "#ff4081",

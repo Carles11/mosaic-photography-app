@@ -10,7 +10,9 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "associatedDomains": ["applinks:www.mosaic.photography"]
+      "associatedDomains": [
+        "applinks:www.mosaic.photography"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -30,9 +32,13 @@
               "pathPrefix": "/auth"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
-      ]
+      ],
+      "package": "com.carlos_delrio.mosaicphotographyapp"
     },
     "web": {
       "output": "static",
@@ -56,6 +62,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2989e5c6-09a8-4746-ba94-44b2ec60b552"
+      }
+    },
+    "owner": "carles-at-notjustdev"
   }
 }

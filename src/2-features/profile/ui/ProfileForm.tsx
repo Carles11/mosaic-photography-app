@@ -1,4 +1,3 @@
-import { supabase } from "@/4-shared/api/supabaseClient";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
@@ -8,6 +7,12 @@ import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import {
+  createProfile,
+  getProfile,
+  ProfileData,
+  updateProfile,
+} from "../api/profileApi";
 import styles from "./ProfileForm.styles";
 
 type UserType = {
@@ -17,17 +22,6 @@ type UserType = {
 
 type ProfileFormProps = {
   user?: UserType | null;
-};
-
-type ProfileData = {
-  id: string;
-  name: string;
-  instagram: string;
-  website: string;
-  own_store_name: string;
-  own_store_url: string;
-  created_at: string;
-  updated_at: string;
 };
 
 export default function ProfileForm({ user }: ProfileFormProps) {
@@ -48,14 +42,11 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   });
   const [databaseError, setDatabaseError] = useState(false);
 
-  // Defensive: Don't run any fetch if no user
   const canUseProfile = !!user && !!user.id && !!user.email;
-
   const router = useRouter();
 
   const createInitialProfile = useCallback(async () => {
     if (!canUseProfile || databaseError) return;
-
     try {
       const newProfile: ProfileData = {
         id: user.id,
@@ -67,29 +58,8 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
-
-      const { data, error } = await supabase
-        .from("user_profiles")
-        .insert([newProfile])
-        .select()
-        .single();
-
-      if (error) {
-        if (error.code === "42P01") {
-          setDatabaseError(true);
-          setMessage({
-            type: "error",
-            text: "Database setup required. Please see instructions below.",
-          });
-        } else {
-          setMessage({
-            type: "error",
-            text: `Failed to create profile: ${error.message}`,
-          });
-        }
-      } else if (data) {
-        setProfile(data as ProfileData);
-      }
+      const data = await createProfile(newProfile);
+      setProfile(data);
     } catch (error: any) {
       setMessage({ type: "error", text: "Failed to create initial profile" });
     }
@@ -102,27 +72,9 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     }
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("user_profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (error && error.code !== "PGRST116") {
-        if (error.code === "42P01") {
-          setDatabaseError(true);
-          setMessage({
-            type: "error",
-            text: "Database setup required. Please see instructions below.",
-          });
-        } else {
-          setMessage({
-            type: "error",
-            text: `Failed to load profile: ${error.message}`,
-          });
-        }
-      } else if (data) {
-        setProfile(data as ProfileData);
+      const data = await getProfile(user.id);
+      if (data) {
+        setProfile(data);
         setFormData({
           name: data.name || "",
           instagram: data.instagram || "",
@@ -177,28 +129,9 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         ...formData,
         updated_at: new Date().toISOString(),
       };
-
-      const { error } = await supabase
-        .from("user_profiles")
-        .upsert([{ id: user.id, ...updatedProfile }], { onConflict: "id" });
-
-      if (error) {
-        if (error.code === "42P01") {
-          setDatabaseError(true);
-          setMessage({
-            type: "error",
-            text: "Database setup required. Please see instructions below.",
-          });
-        } else {
-          setMessage({
-            type: "error",
-            text: `Failed to update profile: ${error.message}`,
-          });
-        }
-      } else {
-        setMessage({ type: "success", text: "Profile updated successfully!" });
-        await loadProfile();
-      }
+      await updateProfile(user.id, updatedProfile);
+      setMessage({ type: "success", text: "Profile updated successfully!" });
+      await loadProfile();
     } catch (error: any) {
       setMessage({ type: "error", text: "Failed to update profile" });
     } finally {
@@ -206,7 +139,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     }
   };
 
-  // Loading state: show spinner
   if (loading) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -216,7 +148,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     );
   }
 
-  // Defensive: no user, no profile UI
   if (!canUseProfile) {
     return (
       <ThemedView style={styles.loadingContainer}>
@@ -231,7 +162,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     );
   }
 
-  // Only one top-level scroll view: KeyboardAwareScrollView
   return (
     <KeyboardAwareScrollView
       bottomOffset={80}
@@ -344,32 +274,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
               accessibilityLabel="Website"
             />
           </View>
-          {/* Store fields can be enabled if needed */}
-          {/* 
-          <View style={styles.field}>
-            <ThemedText style={styles.label}>Store Name</ThemedText>
-            <TextInput
-              style={styles.input}
-              value={formData.own_store_name}
-              onChangeText={(v) => handleInputChange("own_store_name", v)}
-              placeholder="Enter your store name"
-              maxLength={100}
-              editable={!databaseError && !saving}
-              accessibilityLabel="Store Name"
-            />
-          </View>
-          <View style={styles.field}>
-            <ThemedText style={styles.label}>Store URL</ThemedText>
-            <TextInput
-              style={styles.input}
-              value={formData.own_store_url}
-              onChangeText={(v) => handleInputChange("own_store_url", v)}
-              placeholder="https://yourstore.com"
-              editable={!databaseError && !saving}
-              accessibilityLabel="Store URL"
-            />
-          </View>
-          */}
           <PrimaryButton
             title={
               saving
