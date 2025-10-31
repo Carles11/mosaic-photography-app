@@ -42,9 +42,7 @@ export const PhotographerPortraitHeader: React.FC<
         <LinearGradient
           colors={[
             hexToRgba(theme.background, 0), // transparent
-            hexToRgba(theme.background, 0.2), // slight
-            hexToRgba(theme.background, 0.6), // strong
-            theme.background, // solid
+            theme.background,
           ]}
           style={styles.gradient}
           start={{ x: 0.5, y: 0 }}
