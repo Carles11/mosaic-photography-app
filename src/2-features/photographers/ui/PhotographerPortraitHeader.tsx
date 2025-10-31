@@ -1,11 +1,11 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { formatLifespan } from "@/4-shared/lib/formatLifespan";
-import { BlurView } from "expo-blur";
+import { hexToRgba } from "@/4-shared/lib/hexToRgba";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { Dimensions, Image, StyleSheet, View } from "react-native";
-
-const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
+import { Image, View } from "react-native";
+import { styles } from "./PhotographerPortraitHeader.styles";
 
 type Photographer = {
   name: string;
@@ -22,7 +22,7 @@ type PhotographerPortraitHeaderProps = {
 export const PhotographerPortraitHeader: React.FC<
   PhotographerPortraitHeaderProps
 > = ({ photographer }) => {
-  // Find portrait image (filename starts with "000_aaa_")
+  const { theme } = useTheme();
   const portrait =
     photographer.images?.find((img) =>
       img.filename?.toLowerCase().startsWith("000_aaa_")
@@ -30,79 +30,33 @@ export const PhotographerPortraitHeader: React.FC<
 
   if (!portrait) return null;
 
-  const HEADER_HEIGHT = deviceHeight * 0.5;
-  const BLUR_HEIGHT = HEADER_HEIGHT / 3; // Bottom 1/3
-
   return (
-    <View style={{ width: deviceWidth, height: HEADER_HEIGHT }}>
+    <View style={styles.root}>
       <Image
         source={{ uri: portrait.url }}
-        style={StyleSheet.absoluteFill}
+        style={styles.image}
         resizeMode="cover"
       />
-      {/* Blur and gradient at the bottom for smooth transition */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          width: deviceWidth,
-          height: BLUR_HEIGHT,
-          overflow: "hidden",
-        }}
-        pointerEvents="none"
-      >
+      {/* Fading gradient for smooth transition into content */}
+      <View style={styles.gradientContainer} pointerEvents="none">
         <LinearGradient
-          // Fade from transparent to background color (dark for effect)
           colors={[
-            "rgba(0,0,0,0)", // transparent
-            "rgba(0,0,0,0.08)", // light shadow
-            "rgba(0,0,0,0.18)",
-            "rgba(0,0,0,0.38)",
-            "rgba(0,0,0,0.6)", // strong fade at very bottom
+            hexToRgba(theme.background, 0), // transparent
+            hexToRgba(theme.background, 0.2), // slight
+            hexToRgba(theme.background, 0.6), // strong
+            theme.background, // solid
           ]}
-          style={StyleSheet.absoluteFill}
-          start={{ x: 0.5, y: 0.2 }}
+          style={styles.gradient}
+          start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
         />
-        <BlurView
-          intensity={38}
-          style={StyleSheet.absoluteFill}
-          tint="default"
-        />
       </View>
-      {/* Overlayed text on blurred/gradient area */}
-      <View
-        style={{
-          position: "absolute",
-          bottom: BLUR_HEIGHT * 0.4,
-          width: deviceWidth,
-          alignItems: "center",
-        }}
-        pointerEvents="box-none"
-      >
-        <ThemedText
-          style={{
-            color: "#fff",
-            fontSize: 32,
-            fontWeight: "bold",
-            textShadowColor: "rgba(0,0,0,0.65)",
-            textShadowOffset: { width: 0, height: 2 },
-            textShadowRadius: 8,
-          }}
-        >
+      {/* Overlayed text with no background */}
+      <View style={styles.overlayContent} pointerEvents="box-none">
+        <ThemedText type="title" style={styles.name}>
           {photographer.name} {photographer.surname}
         </ThemedText>
-        <ThemedText
-          style={{
-            color: "#eee",
-            fontSize: 18,
-            marginTop: 4,
-            textShadowColor: "rgba(0,0,0,0.4)",
-            textShadowOffset: { width: 0, height: 1 },
-            textShadowRadius: 4,
-          }}
-        >
+        <ThemedText type="subtitle" style={styles.lifespan}>
           {formatLifespan(
             photographer.birthdate ?? undefined,
             photographer.deceasedate ?? undefined

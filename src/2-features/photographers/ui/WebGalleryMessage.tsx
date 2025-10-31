@@ -5,18 +5,21 @@ import { Linking, TouchableOpacity } from "react-native";
 
 type WebGalleryMessageProps = {
   style?: object;
-  photographer: {
-    name: string;
-    surname: string;
-  };
+  slug: string;
+  name: string;
+  surname: string;
 };
 
 export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
-  photographer,
+  name,
+  surname,
+  slug,
   style,
 }) => {
   const handlePressWeb = () => {
-    Linking.openURL("https://www.mosaic.photography/").catch(() => {});
+    Linking.openURL(
+      `https://www.mosaic.photography/photographers/${slug}`
+    ).catch(() => {});
   };
 
   return (
@@ -46,8 +49,9 @@ export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
           marginBottom: 8,
         }}
       >
-        We found few or no images for {photographer.name} {photographer.surname}
-        . Would you like to see the complete, uncensored collection?
+        We found few or no images for {name} {surname}. Would you like to see
+        the complete, uncensored collection? . Would you like to see the
+        complete, uncensored collection?
       </ThemedText>
       <ThemedText
         style={{
@@ -57,13 +61,13 @@ export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
           marginBottom: 12,
         }}
       >
-        For legal reasons, we only show a selection of non-nude images in the
-        mobile app. Visit the full gallery, including all nudes, on our website.
+        We only show a selection of non-nude images in the mobile app. Visit the
+        full gallery, including all nudes, on our website.
       </ThemedText>
       <TouchableOpacity
         onPress={handlePressWeb}
         style={{
-          backgroundColor: "#d1002f",
+          backgroundColor: "#2c106a",
           paddingVertical: 10,
           paddingHorizontal: 28,
           borderRadius: 20,

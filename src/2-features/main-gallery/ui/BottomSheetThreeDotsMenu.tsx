@@ -95,7 +95,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                   <View style={{ marginTop: 8, marginBottom: 8 }}>
                     {originalOption && (
                       <OnlyTextButton
-                        title={`Original file (${selectedImage.width}px/${selectedImage.height}px)`}
+                        title={`Print file (${selectedImage.width}px/${selectedImage.height}px)`}
                         onPress={() =>
                           onDownloadOption && onDownloadOption(originalOption)
                         }

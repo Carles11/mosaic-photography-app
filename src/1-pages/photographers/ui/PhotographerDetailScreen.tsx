@@ -109,7 +109,13 @@ const PhotographerDetailScreen: React.FC = () => {
         <RevealOnScroll scrollY={scrollY} height={HEADER_HEIGHT} threshold={32}>
           <PhotographerPortraitHeader photographer={photographer} />
         </RevealOnScroll>
-        {showWebMsg && <WebGalleryMessage photographer={photographer} />}
+        {showWebMsg && (
+          <WebGalleryMessage
+            name={photographer.name}
+            surname={photographer.surname}
+            slug={Array.isArray(slug) ? slug[0] : slug}
+          />
+        )}
         <ThemedView style={styles.container}>
           <ThemedText style={styles.sectionTitle}>A Life in Focus</ThemedText>
           <ThemedText style={styles.sectionSubtitle}>
