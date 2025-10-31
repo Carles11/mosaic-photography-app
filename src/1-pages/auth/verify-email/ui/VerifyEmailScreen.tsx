@@ -1,12 +1,6 @@
-import { verifyEmail } from "@/2-features/auth/api/verifyEmail";
-import {
-  OnlyTextButton,
-  PrimaryButton,
-} from "@/4-shared/components/buttons/variants";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -14,7 +8,13 @@ import {
   Text,
   View,
 } from "react-native";
-import { styles } from "./VerifyEmailScreen.styles"; // Reuse existing styles
+import { verifyEmail } from "../../../../2-features/auth/api/verifyEmail.ts";
+import {
+  OnlyTextButton,
+  PrimaryButton,
+} from "../../../../4-shared/components/buttons/variants/index.ts";
+import { useTheme } from "../../../../4-shared/theme/ThemeProvider.tsx";
+import { styles } from "./VerifyEmailScreen.styles.tsx"; // Reuse existing styles
 
 export function VerifyEmailScreen() {
   const { theme } = useTheme();
