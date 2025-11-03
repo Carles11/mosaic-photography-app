@@ -34,7 +34,10 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
         <ThemedText style={styles.title} numberOfLines={2}>
           {item.author}, {item.year}
         </ThemedText>
-        <ImageFooterRow imageId={item.id} onPressComments={onPressComments} />
+        <ImageFooterRow
+          imageId={String(item.id)}
+          onPressComments={onPressComments}
+        />
       </ThemedView>
     );
   }

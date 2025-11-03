@@ -10,21 +10,16 @@ export async function submitReport(
   newReport: NewReport
 ): Promise<SubmitReportResult> {
   // Get the current session and access token
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const accessToken = session?.access_token;
+  const session = await supabase.auth.getSession();
 
-  if (!accessToken) {
+  const access_token = session.data.session?.access_token;
+
+  if (!access_token) {
     return { data: null, error: "User is not authenticated." };
   }
 
   // Make the request with the access token in the Authorization header
-  const { data, error } = await supabase
-    .from("reports")
-    .insert([newReport])
-    .select()
-    .single();
+  const { data, error } = await supabase.from("reports").insert([newReport]);
 
   if (error) {
     return { data: null, error: error.message };

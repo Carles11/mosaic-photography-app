@@ -34,6 +34,8 @@ export const styles = StyleSheet.create({
   },
   editActions: {
     flexDirection: "row",
+
+    alignSelf: "flex-start",
   },
   editButton: {
     marginRight: 8,

@@ -3,7 +3,7 @@ import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
 import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetComments";
-import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu ";
+import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
 import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
 import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
 import {

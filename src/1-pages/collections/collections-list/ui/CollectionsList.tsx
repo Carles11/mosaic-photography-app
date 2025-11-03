@@ -1,10 +1,10 @@
-import { fetchCollectionsForUser } from "@/4-shared/api/collectionsApi ";
-import { PrimaryButton } from "@/4-shared/components/buttons/variants/index ";
-import { ThemedText } from "@/4-shared/components/themed-text ";
-import { ThemedView } from "@/4-shared/components/themed-view ";
-import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext ";
-import { useTheme } from "@/4-shared/theme/ThemeProvider ";
-import { CollectionWithPreview } from "@/4-shared/types/collections ";
+import { fetchCollectionsForUser } from "@/4-shared/api/collectionsApi";
+import { PrimaryButton } from "@/4-shared/components/buttons/variants/index";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { CollectionWithPreview } from "@/4-shared/types/collections";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -13,10 +13,10 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { styles } from "./CollectionsList.styles ";
+import { styles } from "./CollectionsList.styles";
 import CreateCollectionSheet, {
   CreateCollectionSheetRef,
-} from "./CreateCollectionSheet ";
+} from "./CreateCollectionSheet";
 
 export default function CollectionsList() {
   const { theme } = useTheme();

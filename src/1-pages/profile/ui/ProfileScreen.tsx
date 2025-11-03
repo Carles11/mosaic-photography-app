@@ -1,14 +1,14 @@
-import { deleteProfile } from "@/2-features/profile/api/profileApi ";
-import ProfileForm from "@/2-features/profile/ui/ProfileForm ";
-import { SwitchButton } from "@/4-shared/components/buttons/index ";
-import { PrimaryButton } from "@/4-shared/components/buttons/variants/index ";
-import { IconSymbol } from "@/4-shared/components/elements/icon-symbol ";
-import { ThemedText } from "@/4-shared/components/themed-text ";
-import { ThemedView } from "@/4-shared/components/themed-view ";
-import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext ";
-import { useColorScheme } from "@/4-shared/hooks/use-color-scheme ";
-import { globalTheme } from "@/4-shared/theme/globalTheme ";
-import { useTheme } from "@/4-shared/theme/ThemeProvider ";
+import { deleteProfile } from "@/2-features/profile/api/profileApi";
+import ProfileForm from "@/2-features/profile/ui/ProfileForm";
+import { SwitchButton } from "@/4-shared/components/buttons/index";
+import { PrimaryButton } from "@/4-shared/components/buttons/variants/index";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
+import { globalTheme } from "@/4-shared/theme/globalTheme";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -18,7 +18,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styles } from "./ProfileScreen.styles ";
+import { styles } from "./ProfileScreen.styles";
 
 export default function ProfileScreen() {
   const { user, loading: authLoading, signOut } = useAuthSession();
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
                   onPress: async () => {
                     setDeleting(true);
                     try {
-                      await deleteProfile(user.id);
+                      await deleteProfile();
                       // Optionally, also delete the user from Supabase Auth here if required
                       await signOut();
                       router.replace("/auth/login");

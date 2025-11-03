@@ -1,4 +1,4 @@
-,import { StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   sheet: {
@@ -44,13 +44,7 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     color: "#333",
   },
-  feedback: (feedback: string) => ({
-    color: feedback.toLowerCase().includes("thank") ? "green" : "red",
-    marginTop: 4,
-    marginBottom: 4,
-    fontSize: 14,
-    textAlign: "center",
-  }),
+
   loadingIndicator: {
     marginVertical: 12,
   },
