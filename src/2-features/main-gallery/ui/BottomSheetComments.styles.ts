@@ -60,7 +60,7 @@ export const styles = StyleSheet.create({
   },
   inputRow: {
     flexDirection: "row",
-    marginTop: 12,
+    marginTop: 33,
   },
   textInput: {
     flex: 1,

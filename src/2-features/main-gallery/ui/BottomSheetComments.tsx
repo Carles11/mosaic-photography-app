@@ -140,6 +140,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                               title="Edit"
                               onPress={() => handleEdit(item.id, item.content)}
                               style={styles.editButton}
+                              textStyle={{ color: theme.text }}
                             />
                             <PrimaryButton
                               title="Delete"
