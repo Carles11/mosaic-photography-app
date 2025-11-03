@@ -28,8 +28,9 @@ yarn-error.*
 
 # certificates
 cert_extract/
-base.apk
-base-2.apk
+*.apk
+mosaic-photography-app.git
+mosaic-photography-app.git.bfg-report
 
 # macOS
 .DS_Store
