@@ -57,6 +57,14 @@
             "backgroundColor": "#1d1d1d"
           }
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "mosaic-photography",
+          "organization": "carles-del-rio-frances"
+        }
       ]
     ],
     "experiments": {

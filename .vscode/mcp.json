@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "Sentry": {
+      "url": "https://mcp.sentry.dev/mcp/carles-del-rio-frances/mosaic-photography",
+      "type": "http"
+    }
+  }
+}
