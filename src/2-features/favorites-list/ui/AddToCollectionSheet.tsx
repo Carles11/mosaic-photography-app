@@ -255,7 +255,9 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                     data={collections}
                     keyExtractor={(item) => item.id}
                     ListEmptyComponent={
-                      <ThemedText style={styles.emptyText}>
+                      <ThemedText
+                        style={[styles.emptyText, { color: theme.text }]}
+                      >
                         You have no collections yet.
                       </ThemedText>
                     }
@@ -264,6 +266,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                         title={item.name}
                         onPress={() => handleAdd(item.id)}
                         disabled={adding || creatingCollection}
+                        textStyle={{ color: theme.text }}
                       />
                     )}
                     contentContainerStyle={[

@@ -5,8 +5,9 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { CollectionWithPreview } from "@/4-shared/types/collections";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -39,9 +40,11 @@ export default function CollectionsList() {
     setLoading(false);
   }, [user?.id]);
 
-  useEffect(() => {
-    loadCollections();
-  }, [loadCollections]);
+  useFocusEffect(
+    useCallback(() => {
+      loadCollections();
+    }, [loadCollections])
+  );
 
   const handleOpenCreateSheet = () => {
     if (sheetRef.current) {

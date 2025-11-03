@@ -17,7 +17,7 @@ export const styles = {
 
   feedback: (feedback: string) => ({
     color: feedback.includes("Failed") ? "red" : "green",
-    marginTop: 12,
+    marginVertical: 12,
     textAlign: "center" as const,
   }),
   closeButton: {
