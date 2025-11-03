@@ -28,6 +28,8 @@ yarn-error.*
 
 # certificates
 cert_extract/
+base.apk
+base-2.apk
 
 # macOS
 .DS_Store
