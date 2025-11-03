@@ -40,7 +40,7 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
     <ThemedView>
       <ThemedView style={styles.sectionHeader}>
         <ThemedText style={styles.sectionTitle}>
-          Where to find prints and books
+          Make it Yours: Prints and Books
         </ThemedText>
         <ThemedText style={styles.sectionStoresContent}>
           Shop stunning prints and books at these trusted retailers, carefully
@@ -75,6 +75,7 @@ const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
                 ? "Wikipedia"
                 : "Official website"
             }
+            style={styles.linkItem}
           >
             <ThemedText style={styles.link}>
               {website.toLowerCase().includes("wikipedia")
