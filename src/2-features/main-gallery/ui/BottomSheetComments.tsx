@@ -5,6 +5,7 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
@@ -118,26 +119,43 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                     <ThemedView
                       style={[
                         styles.editActions,
-                        { backgroundColor: theme.background },
+                        {
+                          backgroundColor: theme.background,
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        },
                       ]}
                     >
-                      {user && user.id === item.user_id && (
-                        <>
-                          <OnlyTextButton
-                            title="Edit"
-                            onPress={() => handleEdit(item.id, item.content)}
-                            style={styles.editButton}
-                          />
-                          <PrimaryButton
-                            title="Delete"
-                            onPress={() => handleDelete(item.id)}
-                            style={styles.deleteButton}
-                          />
-                        </>
-                      )}
-                      {/* REPORT BUTTON: Always visible */}
-                      <OnlyTextButton
-                        title="Report"
+                      {/* LEFT GROUP: Edit & Delete (and any others) */}
+                      <ThemedView
+                        style={[
+                          styles.editActionsLeft,
+                          { backgroundColor: theme.background },
+                        ]}
+                      >
+                        {user && user.id === item.user_id && (
+                          <>
+                            <OnlyTextButton
+                              title="Edit"
+                              onPress={() => handleEdit(item.id, item.content)}
+                              style={styles.editButton}
+                            />
+                            <PrimaryButton
+                              title="Delete"
+                              onPress={() => handleDelete(item.id)}
+                              style={styles.deleteButton}
+                            />
+                          </>
+                        )}
+                      </ThemedView>
+                      {/* RIGHT: Report Icon always visible */}
+                      <IconSymbol
+                        name="flag"
+                        type="material"
+                        size={11}
+                        color={theme?.error ?? "#E74C3C"}
+                        accessibilityLabel="Report"
                         onPress={() => {
                           if (!user) {
                             router.push("/auth/login");
@@ -148,7 +166,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                             });
                           }
                         }}
-                        style={styles.reportButton}
+                        style={styles.reportButtonIcon}
                       />
                     </ThemedView>
                   </ThemedView>

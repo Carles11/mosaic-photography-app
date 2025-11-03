@@ -155,15 +155,29 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                   accessibilityRole="button"
                   accessibilityLabel="Report image"
                 >
-                  <IconSymbol
-                    type="material"
-                    name="flag"
-                    size={17}
-                    color={theme.warning}
-                  />
-                  <ThemedText style={{ color: theme.warning, marginLeft: 5 }}>
+                  <ThemedText
+                    style={{
+                      color: theme.favoriteIcon,
+                      marginLeft: 5,
+                    }}
+                  >
                     Report this image
                   </ThemedText>
+                  <IconSymbol
+                    name="flag"
+                    type="material"
+                    size={11}
+                    color={theme?.error ?? "#E74C3C"}
+                    accessibilityLabel="Report"
+                    onPress={() => {
+                      if (!user) {
+                        router?.push("/auth/login");
+                      } else if (onReport) {
+                        onReport();
+                      }
+                    }}
+                    style={styles.reportButtonIcon}
+                  />
                 </SafeAreaView>
               </>
             )}

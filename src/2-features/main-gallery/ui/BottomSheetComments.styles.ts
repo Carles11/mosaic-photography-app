@@ -34,8 +34,13 @@ export const styles = StyleSheet.create({
   },
   editActions: {
     flexDirection: "row",
-
     alignSelf: "flex-start",
+    alignItems: "center",
+  },
+  editActionsLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
   },
   editButton: {
     marginRight: 8,
@@ -46,7 +51,10 @@ export const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
   },
-  reportButton: {
+  reportButtonIcon: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
     paddingVertical: 2,
     paddingHorizontal: 8,
   },

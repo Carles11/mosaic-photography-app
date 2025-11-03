@@ -32,6 +32,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     marginTop: 12,
   },
+  reportButtonIcon: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+  },
   downloadOptionButton: {
     minWidth: 56,
     maxWidth: 78,

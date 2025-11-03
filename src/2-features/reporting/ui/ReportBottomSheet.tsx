@@ -4,6 +4,7 @@ import {
   BottomSheetModalRef,
 } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
+  OnlyTextButton,
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
@@ -132,33 +133,40 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
         <BottomSheetView
           style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 }}
         >
-          <ThemedText type="title" style={{ marginBottom: 8 }}>
+          <ThemedText
+            type="title"
+            style={{ marginBottom: 8, color: theme.text }}
+          >
             Report {target?.commentId ? "Comment" : "Image"}
           </ThemedText>
-          <ThemedText type="subtitle" style={{ marginBottom: 10 }}>
+          <ThemedText
+            type="subtitle"
+            style={{ marginBottom: 10, color: theme.text }}
+          >
             Please select a reason:
           </ThemedText>
-          <ThemedView style={{ marginBottom: 12 }}>
+          <ThemedView
+            style={{
+              marginBottom: 12,
+              flex: 1,
+              alignSelf: "center",
+              backgroundColor: theme.background,
+            }}
+          >
             {REPORT_REASONS.map((reason) => (
-              <PrimaryButton
+              <OnlyTextButton
                 key={reason}
                 title={reason}
                 style={{
                   marginBottom: 8,
-                  backgroundColor:
-                    selectedReason === reason
-                      ? theme.accent
-                      : theme.buttonBackgroundColor,
+                  backgroundColor: "transparent",
                   borderColor: theme.buttonBorderColor,
-                  borderWidth: theme.buttonBorderWidth,
+                  borderWidth:
+                    selectedReason === reason ? theme.buttonBorderWidth : 0,
                   borderRadius: theme.buttonBorderRadius,
                 }}
-                textStyles={{
-                  color:
-                    selectedReason === reason
-                      ? theme.buttonTextColorSecondary
-                      : "#fff",
-                  fontFamily: theme.fontFamily,
+                textStyle={{
+                  color: theme.text,
                 }}
                 onPress={() => setSelectedReason(reason)}
                 disabled={loading}
