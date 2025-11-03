@@ -19,7 +19,7 @@ export type Photographer = {
 };
 
 export type GalleryImage = {
-  id: string;
+  id: number;
   base_url: string;
   filename: string;
   author: string;

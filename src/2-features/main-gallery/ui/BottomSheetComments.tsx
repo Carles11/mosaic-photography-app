@@ -1,3 +1,4 @@
+import { ReportBottomSheetRef } from "@/2-features/reporting/ui/ReportBottomSheet";
 import { BottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
   OnlyTextButton,
@@ -9,6 +10,7 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { Comment } from "@/4-shared/types";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { Router } from "expo-router";
 import React, { forwardRef } from "react";
 import { ActivityIndicator, FlatList, TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -29,6 +31,8 @@ type BottomSheetCommentsProps = {
   editMode: EditMode;
   user: { id: string } | null;
   authLoading: boolean;
+  reportSheetRef: React.RefObject<ReportBottomSheetRef | null>;
+  router: Router;
 };
 
 export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
@@ -46,6 +50,8 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
       editMode,
       user,
       authLoading,
+      reportSheetRef,
+      router,
     },
     ref
   ) => {
@@ -109,25 +115,42 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                           : ""}
                       </ThemedText>
                     </ThemedView>
-                    {user && user.id === item.user_id && (
-                      <ThemedView
-                        style={[
-                          styles.editActions,
-                          { backgroundColor: theme.background },
-                        ]}
-                      >
-                        <OnlyTextButton
-                          title="Edit"
-                          onPress={() => handleEdit(item.id, item.content)}
-                          style={styles.editButton}
-                        />
-                        <PrimaryButton
-                          title="Delete"
-                          onPress={() => handleDelete(item.id)}
-                          style={styles.deleteButton}
-                        />
-                      </ThemedView>
-                    )}
+                    <ThemedView
+                      style={[
+                        styles.editActions,
+                        { backgroundColor: theme.background },
+                      ]}
+                    >
+                      {user && user.id === item.user_id && (
+                        <>
+                          <OnlyTextButton
+                            title="Edit"
+                            onPress={() => handleEdit(item.id, item.content)}
+                            style={styles.editButton}
+                          />
+                          <PrimaryButton
+                            title="Delete"
+                            onPress={() => handleDelete(item.id)}
+                            style={styles.deleteButton}
+                          />
+                        </>
+                      )}
+                      {/* REPORT BUTTON: Always visible */}
+                      <OnlyTextButton
+                        title="Report"
+                        onPress={() => {
+                          if (!user) {
+                            router.push("/auth/login");
+                          } else {
+                            reportSheetRef.current?.open({
+                              commentId: item.id,
+                              reportedUserId: item.user_id,
+                            });
+                          }
+                        }}
+                        style={styles.reportButton}
+                      />
+                    </ThemedView>
                   </ThemedView>
                 )}
               />

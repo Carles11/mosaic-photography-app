@@ -1,9 +1,9 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { TimelineItemModelProps } from "@/4-shared/types";
 import React from "react";
 import Timeline from "react-native-timeline-flatlist";
-import { TimelineItemModelProps } from "../../../4-shared/types";
 import { styles } from "./Timeline.styles";
 
 interface TimelineProps {

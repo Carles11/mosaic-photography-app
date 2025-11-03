@@ -1,4 +1,4 @@
-import { supabase } from "../../../4-shared/api/supabaseClient.ts";
+import { supabase } from "@/4-shared/api/supabaseClient";
 
 export type ProfileData = {
   id: string;

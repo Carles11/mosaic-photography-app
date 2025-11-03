@@ -7,6 +7,7 @@ import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForIma
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { Router } from "expo-router";
 import React, { forwardRef, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,6 +23,10 @@ type BottomSheetThreeDotsMenuProps = {
   onDownload?: () => void;
   downloadOptions?: DownloadOption[];
   onDownloadOption?: (option: DownloadOption) => void;
+  // NEW props for reporting
+  onReport?: () => void;
+  user?: { id: string } | null;
+  router?: Router;
 };
 
 export const BottomSheetThreeDotsMenu = forwardRef<
@@ -39,13 +44,16 @@ export const BottomSheetThreeDotsMenu = forwardRef<
       onDownload,
       downloadOptions = [],
       onDownloadOption,
+      // NEW
+      onReport,
+      user,
+      router,
     },
     ref
   ) => {
     const { theme } = useTheme();
     const [showDownloadOptions, setShowDownloadOptions] = useState(false);
 
-    // Separate original from webp options
     const originalOption = downloadOptions.find((opt) => opt.isOriginal);
     const webpOptions = downloadOptions.filter((opt) => !opt.isOriginal);
 
@@ -131,6 +139,32 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                     </View>
                   </View>
                 )}
+                {/* NEW: Report Image Button */}
+                <HrLine />
+                <SafeAreaView
+                  style={[styles.actionRow]}
+                  edges={[]}
+                  onTouchEnd={() => {
+                    if (!user) {
+                      router?.push("/auth/login");
+                    } else if (onReport) {
+                      onReport();
+                    }
+                  }}
+                  accessible
+                  accessibilityRole="button"
+                  accessibilityLabel="Report image"
+                >
+                  <IconSymbol
+                    type="material"
+                    name="flag"
+                    size={17}
+                    color={theme.warning}
+                  />
+                  <ThemedText style={{ color: theme.warning, marginLeft: 5 }}>
+                    Report this image
+                  </ThemedText>
+                </SafeAreaView>
               </>
             )}
           </SafeAreaView>
@@ -166,7 +200,9 @@ const ActionRow: React.FC<ActionRowProps> = ({
       accessibilityLabel={label}
     >
       <IconSymbol type="material" name={icon} size={17} color={color} />
-      <ThemedText style={{ color: textColor }}>{label}</ThemedText>
+      <ThemedText style={{ color: textColor, marginLeft: 5 }}>
+        {label}
+      </ThemedText>
     </SafeAreaView>
   </React.Fragment>
 );

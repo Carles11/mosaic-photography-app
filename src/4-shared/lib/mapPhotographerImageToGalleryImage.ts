@@ -5,7 +5,7 @@ export function mapPhotographerImageToGalleryImage(
   slug: string = ""
 ): GalleryImage {
   return {
-    id: image.id,
+    id: Number(image.id),
     base_url: image.base_url,
     filename: image.filename,
     author: image.author ?? "", // You can pass photographer.author here

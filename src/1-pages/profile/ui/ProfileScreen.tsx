@@ -1,3 +1,14 @@
+import { deleteProfile } from "@/2-features/profile/api/profileApi ";
+import ProfileForm from "@/2-features/profile/ui/ProfileForm ";
+import { SwitchButton } from "@/4-shared/components/buttons/index ";
+import { PrimaryButton } from "@/4-shared/components/buttons/variants/index ";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol ";
+import { ThemedText } from "@/4-shared/components/themed-text ";
+import { ThemedView } from "@/4-shared/components/themed-view ";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext ";
+import { useColorScheme } from "@/4-shared/hooks/use-color-scheme ";
+import { globalTheme } from "@/4-shared/theme/globalTheme ";
+import { useTheme } from "@/4-shared/theme/ThemeProvider ";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -7,18 +18,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { deleteProfile } from "../../../2-features/profile/api/profileApi.ts";
-import ProfileForm from "../../../2-features/profile/ui/ProfileForm.tsx";
-import { SwitchButton } from "../../../4-shared/components/buttons/index.ts";
-import { PrimaryButton } from "../../../4-shared/components/buttons/variants/index.ts";
-import { IconSymbol } from "../../../4-shared/components/elements/icon-symbol.tsx";
-import { ThemedText } from "../../../4-shared/components/themed-text.tsx";
-import { ThemedView } from "../../../4-shared/components/themed-view.tsx";
-import { useAuthSession } from "../../../4-shared/context/auth/AuthSessionContext.tsx";
-import { useColorScheme } from "../../../4-shared/hooks/use-color-scheme.ts";
-import { globalTheme } from "../../../4-shared/theme/globalTheme.ts";
-import { useTheme } from "../../../4-shared/theme/ThemeProvider.tsx";
-import { styles } from "./ProfileScreen.styles.ts";
+import { styles } from "./ProfileScreen.styles ";
 
 export default function ProfileScreen() {
   const { user, loading: authLoading, signOut } = useAuthSession();

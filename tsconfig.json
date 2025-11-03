@@ -4,14 +4,9 @@
     "strict": true,
     "baseUrl": ".",
     "jsx": "react-native",
-    "types": [
-      "react",
-      "react-native"
-    ],
+    "types": ["react", "react-native"],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"]
     }
   },
   "include": [

@@ -65,9 +65,7 @@ export const PhotographersSlider: React.FC = () => {
               activeOpacity={0.7}
               onPress={() => router.push(`/photographer/${item.slug}`)}
             >
-              <View
-                style={[styles.portraitWrapper, { borderColor: theme.text }]}
-              >
+              <View style={[styles.portraitWrapper]}>
                 {item.portrait ? (
                   <Image
                     source={{ uri: item.portrait }}

@@ -37,7 +37,7 @@ export const Gallery: React.FC<GalleryProps> = ({
       )}
       <Animated.FlatList
         data={images}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         numColumns={1}
         contentContainerStyle={styles.container}
         renderItem={({ item, index }) => (

@@ -6,6 +6,10 @@ import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetCom
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu ";
 import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
 import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
+import {
+  ReportBottomSheet,
+  ReportBottomSheetRef,
+} from "@/2-features/reporting/ui/ReportBottomSheet";
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
@@ -19,9 +23,10 @@ import { GalleryImage } from "@/4-shared/types/gallery";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Linking, Share } from "react-native";
-import { useSharedValue } from "react-native-reanimated"; // Add this import
+import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
+
 export const Home: React.FC = () => {
   const { theme } = useTheme();
   const { user, loading: authLoading } = useAuthSession();
@@ -32,10 +37,8 @@ export const Home: React.FC = () => {
 
   const { isUserLoggedIn, toggleFavorite, isFavorite } = useFavorites();
   const router = useRouter();
-  // Handle RevealOnScroll for header
   const scrollY = useSharedValue(0);
 
-  // Comments logic
   const {
     comments,
     loading: commentsLoading,
@@ -46,23 +49,19 @@ export const Home: React.FC = () => {
     loadCommentCountsBatch,
   } = useComments();
 
-  // Comments bottom sheet state
   const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
   const commentsSheetRef = useRef<any>(null);
-
-  // Ref for image menu bottom sheet
   const imageMenuSheetRef = useRef<any>(null);
 
-  // Filters state lifted to Home
-  // Filtering options are set in BottomSheetFilterMenu
+  // Report bottom sheet ref
+  const reportSheetRef = useRef<ReportBottomSheetRef>(null);
+
   const { filters, setFilters, resetFilters } = useGalleryFilters();
 
-  // MainGallery image loading logic moved here
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Comments UI state
   const [commentText, setCommentText] = useState("");
   const [editMode, setEditMode] = useState<{
     id: string;
@@ -84,7 +83,6 @@ export const Home: React.FC = () => {
     })();
   }, []);
 
-  // Filtering logic
   const filteredImages = useMemo(() => {
     return images.filter((img) => {
       if (filters.gender && img.gender !== filters.gender) return false;
@@ -105,17 +103,15 @@ export const Home: React.FC = () => {
     });
   }, [images, filters]);
 
-  // Batch load comment counts for all visible images
   useEffect(() => {
     if (filteredImages.length > 0) {
       const imageIds = filteredImages.map((img) =>
         typeof img.id === "string" ? img.id : String(img.id)
       );
-      loadCommentCountsBatch(imageIds); // ✅
+      loadCommentCountsBatch(imageIds);
     }
   }, [filteredImages, loadCommentCountsBatch]);
 
-  // Present/dismiss image menu bottom sheet
   useEffect(() => {
     if (isImageMenuOpen) {
       imageMenuSheetRef.current?.present();
@@ -124,7 +120,6 @@ export const Home: React.FC = () => {
     }
   }, [isImageMenuOpen]);
 
-  // Present/dismiss comments bottom sheet
   useEffect(() => {
     if (commentsImageId) {
       commentsSheetRef.current?.present();
@@ -135,25 +130,21 @@ export const Home: React.FC = () => {
     }
   }, [commentsImageId]);
 
-  // Handler for opening the image menu sheet
   const handleOpenImageMenu = (image: GalleryImage) => {
     setSelectedImage(image);
     setDownloadOptions(getAvailableDownloadOptionsForImage(image));
     setImageMenuOpen(!isImageMenuOpen);
   };
 
-  // Handler for closing the image menu sheet
   const handleCloseImageMenu = () => {
     setImageMenuOpen(false);
     setSelectedImage(null);
   };
 
-  // Handler for opening comments bottom sheet
   const handleOpenComments = useCallback((imageId: string) => {
     setCommentsImageId(imageId);
   }, []);
 
-  // Handler for closing comments bottom sheet
   const handleCloseComments = useCallback(() => {
     setCommentsImageId(null);
   }, []);
@@ -186,9 +177,7 @@ export const Home: React.FC = () => {
       router.push("/auth/login");
       return;
     }
-    // Use originalsWEBP if available, else largest webp size, else original
     const options = getAvailableDownloadOptionsForImage(selectedImage);
-    // Prefer originalsWEBP, else highest width webp, else original
     let defaultOption =
       options.find((opt) => opt.folder === "originalsWEBP") ||
       options
@@ -212,23 +201,18 @@ export const Home: React.FC = () => {
       return;
     }
     try {
-      // Use Expo's Linking API to open the download URL
       await Linking.openURL(option.url);
     } catch (error) {
       console.log("Error downloading image:", error);
     }
   };
 
-  // Load comments for the image when the bottom sheet opens
   useEffect(() => {
     if (commentsImageId) {
       loadCommentsForImage(commentsImageId);
     }
-    // We intentionally do not include loadCommentsForImage in deps to avoid infinite loop
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commentsImageId]);
 
-  // Comments logic
   const imageComments = commentsImageId ? comments[commentsImageId] || [] : [];
   const isCommentsLoading = commentsImageId
     ? commentsLoading[commentsImageId]
@@ -253,6 +237,19 @@ export const Home: React.FC = () => {
   const handleDelete = (commentId: string) => {
     if (!user || !commentsImageId) return;
     deleteComment(commentsImageId, commentId, user.id);
+  };
+
+  // NEW: handleReportImage
+  const handleReportImage = () => {
+    if (!selectedImage) return;
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    reportSheetRef.current?.open({
+      imageId: selectedImage ? Number(selectedImage.id) : undefined,
+      // reportedUserId: selectedImage.user_id,
+    });
   };
 
   return (
@@ -295,6 +292,10 @@ export const Home: React.FC = () => {
         onDownload={handleDownload}
         downloadOptions={downloadOptions}
         onDownloadOption={handleDownloadOption}
+        // NEW PROPS:
+        onReport={handleReportImage}
+        user={user}
+        router={router}
       />
 
       {/* Comments Bottom Sheet */}
@@ -312,7 +313,12 @@ export const Home: React.FC = () => {
         editMode={editMode}
         user={user}
         authLoading={authLoading}
+        reportSheetRef={reportSheetRef}
+        router={router}
       />
+
+      {/* Report Bottom Sheet */}
+      <ReportBottomSheet ref={reportSheetRef} />
     </SafeAreaView>
   );
 };

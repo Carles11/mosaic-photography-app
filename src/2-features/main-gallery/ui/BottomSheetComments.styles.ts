@@ -44,6 +44,10 @@ export const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
   },
+  reportButton: {
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+  },
   inputRow: {
     flexDirection: "row",
     marginTop: 12,
