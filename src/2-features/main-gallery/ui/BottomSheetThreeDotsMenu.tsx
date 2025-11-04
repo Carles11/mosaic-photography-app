@@ -1,5 +1,5 @@
 import { BottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
-import { OnlyTextButton } from "@/4-shared/components/buttons/variants";
+import { DownloadOptionsPanel } from "@/4-shared/components/download-options/ui/DownloadOptionsPanel";
 import { HrLine } from "@/4-shared/components/elements/horizontal-line-hr";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
@@ -44,7 +44,6 @@ export const BottomSheetThreeDotsMenu = forwardRef<
       onDownload,
       downloadOptions = [],
       onDownloadOption,
-      // NEW
       onReport,
       user,
       router,
@@ -101,42 +100,12 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                 />
                 {showDownloadOptions && (
                   <View style={{ marginTop: 8, marginBottom: 8 }}>
-                    {originalOption && (
-                      <OnlyTextButton
-                        title={`Print file (${selectedImage.width}px/${selectedImage.height}px)`}
-                        onPress={() =>
-                          onDownloadOption && onDownloadOption(originalOption)
-                        }
-                        style={{ marginBottom: 6 }}
-                      />
-                    )}
-                    <ThemedText
-                      style={[
-                        styles.downloadOptionsTitle,
-                        { color: theme.text },
-                      ]}
-                    >
-                      Download resized versions in .webp format:
-                    </ThemedText>
-                    <View style={styles.downloadOptionRow}>
-                      {webpOptions.map((option) => (
-                        <OnlyTextButton
-                          key={option.url}
-                          title={`${option.width}px`}
-                          onPress={() =>
-                            onDownloadOption && onDownloadOption(option)
-                          }
-                          style={styles.downloadOptionButton}
-                          textStyle={{
-                            minWidth: 45,
-                            maxWidth: 70,
-                            paddingHorizontal: 0,
-                          }}
-                          numberOfLines={1}
-                          ellipsizeMode="tail"
-                        />
-                      ))}
-                    </View>
+                    <DownloadOptionsPanel
+                      originalOption={originalOption}
+                      webpOptions={webpOptions}
+                      selectedImage={selectedImage}
+                      onDownloadOption={onDownloadOption ?? (() => {})}
+                    />
                   </View>
                 )}
                 {/* NEW: Report Image Button */}
@@ -203,7 +172,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
   onPress,
   textColor,
 }) => (
-  <React.Fragment>
+  <>
     <HrLine />
     <SafeAreaView
       style={[styles.actionRow]}
@@ -218,5 +187,5 @@ const ActionRow: React.FC<ActionRowProps> = ({
         {label}
       </ThemedText>
     </SafeAreaView>
-  </React.Fragment>
+  </>
 );

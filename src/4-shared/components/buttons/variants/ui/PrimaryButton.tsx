@@ -1,18 +1,34 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { ButtonProps } from "@/4-shared/types";
 import React from "react";
 import {
   ActivityIndicator,
   StyleProp,
   TextStyle,
   TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
 import { styles } from "./PrimaryButton.styles";
 
-import { ThemedText } from "@/4-shared/components/themed-text";
-import { ButtonProps } from "@/4-shared/types";
-
 type PrimaryButtonProps = ButtonProps & {
   textStyles?: StyleProp<TextStyle>;
+  iconLeft?: {
+    name: string;
+    type: "material" | "ion" | "fontawesome" | "svg" | "sf";
+    size?: number;
+    color?: string;
+  };
+  iconRight?: {
+    name: string;
+    type: "material" | "ion" | "fontawesome" | "svg" | "sf";
+    size?: number;
+    color?: string;
+  };
+  iconLeftStyle?: StyleProp<ViewStyle>;
+  iconRightStyle?: StyleProp<ViewStyle>;
 };
 
 export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
@@ -22,6 +38,10 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   loading = false,
   style,
   textStyles,
+  iconLeft,
+  iconRight,
+  iconLeftStyle,
+  iconRightStyle,
 }) => {
   const { theme } = useTheme();
 
@@ -45,18 +65,36 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
       {loading ? (
         <ActivityIndicator color={theme.buttonTextColor} />
       ) : (
-        <ThemedText
-          type="defaultSemiBold"
-          style={[
-            {
-              color: "#fff",
-              textAlign: "center",
-            },
-            textStyles,
-          ]}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          {title}
-        </ThemedText>
+          {iconLeft && (
+            <View style={[{ marginRight: 7 }, iconLeftStyle]}>
+              <IconSymbol {...iconLeft} />
+            </View>
+          )}
+          <ThemedText
+            type="defaultSemiBold"
+            style={[
+              {
+                color: "#fff",
+                textAlign: "center",
+              },
+              textStyles,
+            ]}
+          >
+            {title}
+          </ThemedText>
+          {iconRight && (
+            <View style={[{ marginLeft: 7 }, iconRightStyle]}>
+              <IconSymbol {...iconRight} />
+            </View>
+          )}
+        </View>
       )}
     </TouchableOpacity>
   );

@@ -16,11 +16,6 @@ export const styles = {
     marginTop: 16,
   },
 
-  feedback: (feedback: string) => ({
-    color: feedback.includes("Failed") ? "red" : "green",
-    marginVertical: 12,
-    textAlign: "center" as const,
-  }),
   closeButton: {
     marginTop: 18,
   },
