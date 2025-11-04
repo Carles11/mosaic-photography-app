@@ -139,7 +139,7 @@ export default function CollectionDetailScreen() {
       <ZoomGalleryModal
         images={collection.images.map((img) => ({
           ...img,
-          id: String(img.id),
+          id: Number(img.id),
           base_url: img.base_url ?? "",
           filename: img.filename ?? "",
           author: img.author ?? "",
