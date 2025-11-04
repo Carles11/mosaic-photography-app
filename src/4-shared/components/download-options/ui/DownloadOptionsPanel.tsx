@@ -28,7 +28,7 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
   return (
     <ThemedView style={[styles.panelContainer, style]}>
       {originalOption && (
-        <ThemedView style={styles.originalBlock}>
+        <ThemedView style={[styles.originalBlock]}>
           <ThemedView style={styles.originalTitleRow}>
             <ThemedText type="defaultSemiBold">Original Masterpiece</ThemedText>
             <ThemedView style={styles.bestQualityBadge}>

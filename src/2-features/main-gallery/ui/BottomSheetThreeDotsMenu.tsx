@@ -9,7 +9,6 @@ import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Router } from "expo-router";
 import React, { forwardRef, useState } from "react";
-import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetThreeDotsMenu.styles";
 
@@ -99,14 +98,13 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                   textColor={theme.text}
                 />
                 {showDownloadOptions && (
-                  <View style={{ marginTop: 8, marginBottom: 8 }}>
-                    <DownloadOptionsPanel
-                      originalOption={originalOption}
-                      webpOptions={webpOptions}
-                      selectedImage={selectedImage}
-                      onDownloadOption={onDownloadOption ?? (() => {})}
-                    />
-                  </View>
+                  <DownloadOptionsPanel
+                    originalOption={originalOption}
+                    webpOptions={webpOptions}
+                    selectedImage={selectedImage}
+                    onDownloadOption={onDownloadOption ?? (() => {})}
+                    style={{ backgroundColor: theme.background }}
+                  />
                 )}
                 {/* NEW: Report Image Button */}
                 <HrLine />

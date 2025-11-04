@@ -124,7 +124,7 @@ export default function ProfileScreen() {
             >
               <SwitchButton
                 value={mode === "dark"}
-                onValueChange={(value) => setMode(value ? "dark" : "light")}
+                onValueChange={(v) => setMode(v ? "dark" : "light")}
               />
               <ThemedText style={styles.menuItemLabel}>Toggle Theme</ThemedText>
             </ThemedView>
