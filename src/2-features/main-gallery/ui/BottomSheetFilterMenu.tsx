@@ -162,9 +162,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
           <ThemedText type="subtitle" style={styles.label}>
             Print Quality
           </ThemedText>
-          <ThemedView
-            style={[styles.row, { backgroundColor: theme.background }]}
-          >
+          <ThemedView style={styles.row}>
             {["standard", "good", "excellent", "professional"].map((opt) => (
               <TouchableOpacity
                 key={opt}
@@ -210,13 +208,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             />
           </ThemedView>
           {/* Actions */}
-          <ThemedView
-            style={[styles.actionsRow, { backgroundColor: theme.background }]}
-          >
+          <ThemedView style={styles.actionsRow}>
             <ThemedView
               style={{
                 flexDirection: "row",
-                backgroundColor: theme.background,
               }}
             >
               <PrimaryButton

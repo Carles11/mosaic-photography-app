@@ -142,12 +142,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
               }}
               placeholderTextColor={theme.inputPlaceholderColor}
             />
-            <ThemedView
-              style={[
-                styles.editActions,
-                { backgroundColor: theme.background },
-              ]}
-            >
+            <ThemedView style={styles.editActions}>
               <PrimaryButton
                 title={loading ? "Creating..." : "Create"}
                 onPress={handleCreate}

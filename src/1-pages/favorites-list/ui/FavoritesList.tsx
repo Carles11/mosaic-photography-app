@@ -17,7 +17,6 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  View,
 } from "react-native";
 import { styles } from "./FavoritesList.styles";
 
@@ -70,28 +69,28 @@ export default function FavoritesList() {
 
   if (!isUserLoggedIn()) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.background }]}>
+      <ThemedView style={styles.centered}>
         <ThemedText style={[styles.emptyText]}>
           Please log in to view your favorites.
         </ThemedText>
-      </View>
+      </ThemedView>
     );
   }
 
   if (favoritesLoading || loadingImages) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.background }]}>
+      <ThemedView style={styles.centered}>
         <ActivityIndicator size="large" color={theme.favoriteIcon} />
         <ThemedText style={[styles.loadingText]}>
           Loading favorites...
         </ThemedText>
-      </View>
+      </ThemedView>
     );
   }
 
   if (images.length === 0) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.background }]}>
+      <ThemedView style={styles.centered}>
         <ThemedText style={[styles.emptyIcon, { color: theme.favoriteIcon }]}>
           ♡
         </ThemedText>
@@ -99,7 +98,7 @@ export default function FavoritesList() {
         <ThemedText style={[styles.emptyText]}>
           Start exploring the gallery and heart the images you love!
         </ThemedText>
-      </View>
+      </ThemedView>
     );
   }
 

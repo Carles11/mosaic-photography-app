@@ -83,18 +83,8 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                 }
                 contentContainerStyle={styles.commentsList}
                 renderItem={({ item }) => (
-                  <ThemedView
-                    style={[
-                      styles.commentItem,
-                      { backgroundColor: theme.background },
-                    ]}
-                  >
-                    <ThemedView
-                      style={[
-                        styles.commentInfo,
-                        { backgroundColor: theme.background },
-                      ]}
-                    >
+                  <ThemedView style={styles.commentItem}>
+                    <ThemedView style={styles.commentInfo}>
                       <ThemedText type="defaultSemiBold">
                         {item.user_id === user?.id
                           ? "You"
@@ -150,9 +140,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
               />
             )}
             {user ? (
-              <ThemedView
-                style={[styles.inputRow, { backgroundColor: theme.background }]}
-              >
+              <ThemedView style={styles.inputRow}>
                 <TextInput
                   style={styles.textInput}
                   placeholder="Write a comment..."

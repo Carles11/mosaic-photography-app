@@ -109,7 +109,6 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                     webpOptions={webpOptions}
                     selectedImage={selectedImage}
                     onDownloadOption={onDownloadOption ?? (() => {})}
-                    style={{ backgroundColor: theme.background }}
                   />
                 )}
                 {/* NEW: Report Image Button */}

@@ -66,7 +66,6 @@ export const styles = StyleSheet.create({
   },
   webpBlock: {
     marginBottom: 10,
-    padding: 11,
   },
   webpTitleRow: {
     flexDirection: "row",
@@ -95,6 +94,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: 6,
+    width: "100%",
   },
   downloadWebpButton: {
     minWidth: 66,

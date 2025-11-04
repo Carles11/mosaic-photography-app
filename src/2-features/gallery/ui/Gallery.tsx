@@ -41,11 +41,7 @@ export const Gallery: React.FC<GalleryProps> = ({
         numColumns={1}
         contentContainerStyle={styles.container}
         renderItem={({ item, index }) => (
-          <ThemedView
-            style={[styles.item, { backgroundColor: theme.background }]}
-          >
-            {renderItem(item, index)}
-          </ThemedView>
+          <ThemedView style={styles.item}>{renderItem(item, index)}</ThemedView>
         )}
         ListHeaderComponent={ListHeaderComponent}
         onScroll={scrollHandler}

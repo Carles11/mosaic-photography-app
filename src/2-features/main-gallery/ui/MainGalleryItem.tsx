@@ -20,9 +20,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
     const { theme } = useTheme();
 
     return (
-      <ThemedView
-        style={[styles.itemContainer, { backgroundColor: theme.background }]}
-      >
+      <ThemedView style={styles.itemContainer}>
         <ImageHeaderRow onOpenMenu={onOpenMenu} />
         <TouchableOpacity activeOpacity={0.85} onPress={onPressZoom}>
           <Image

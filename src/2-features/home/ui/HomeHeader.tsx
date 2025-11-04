@@ -16,7 +16,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
   const router = useRouter();
 
   return (
-    <ThemedView style={[styles.header, { backgroundColor: theme.background }]}>
+    <ThemedView style={styles.header}>
       <ThemedView style={styles.iconsRow}>
         <IconSymbol
           type="ion"

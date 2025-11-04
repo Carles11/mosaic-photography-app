@@ -95,9 +95,7 @@ export default function CommentsList() {
 
   if (!user?.id) {
     return (
-      <ThemedView
-        style={[styles.centered, { backgroundColor: theme.background }]}
-      >
+      <ThemedView style={styles.centered}>
         <ThemedText style={styles.emptyText}>
           Please log in to view your comments.
         </ThemedText>
@@ -107,9 +105,7 @@ export default function CommentsList() {
 
   if (loading) {
     return (
-      <ThemedView
-        style={[styles.centered, { backgroundColor: theme.background }]}
-      >
+      <ThemedView style={styles.centered}>
         <ActivityIndicator size="large" color={theme.favoriteIcon} />
         <ThemedText style={styles.loadingText}>Loading comments...</ThemedText>
       </ThemedView>

@@ -23,7 +23,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { styles } from "./AddToCollectionSheet.styles";
 
 export type AddToCollectionSheetRef = {
@@ -276,12 +276,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                   />
                 </>
               ) : (
-                <View
-                  style={[
-                    styles.createForm,
-                    { backgroundColor: theme.background, flex: 1 },
-                  ]}
-                >
+                <ThemedView style={styles.createForm}>
                   <ThemedText style={styles.title}>
                     Create a new Collection and add this image to it.
                   </ThemedText>
@@ -320,7 +315,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                     onPress={() => setShowCreateForm(false)}
                     disabled={creatingCollection}
                   />
-                </View>
+                </ThemedView>
               )}
             </ThemedView>
           )}

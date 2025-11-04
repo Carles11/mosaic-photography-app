@@ -2,7 +2,6 @@ import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
@@ -23,37 +22,29 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
   onDownloadOption,
   style,
 }) => {
-  const { theme, mode } = useTheme();
-  console.log("DownloadOptionsPanel render with mode:", mode);
-
   return (
     <ThemedView style={[styles.panelContainer, style]}>
       {originalOption && (
         <ThemedView style={[styles.originalBlock]}>
           <ThemedView style={styles.originalTitleRow}>
-            <ThemedText
-              type="defaultSemiBold"
-              style={{ backgroundColor: theme.background }}
-            >
-              Original Masterpiece
-            </ThemedText>
+            <ThemedText type="defaultSemiBold">Choose your option</ThemedText>
             <ThemedView style={styles.bestQualityBadge}>
               <ThemedText style={styles.bestQualityBadgeText}>
-                BEST QUALITY
+                PRINT QUALITY:{" "}
+                {selectedImage.print_quality?.toUpperCase() ?? "UNKNOWN"}
               </ThemedText>
             </ThemedView>
           </ThemedView>
           <ThemedText style={styles.qualityLine}>
-            Best available printing quality:{" "}
-            {selectedImage.print_quality?.toUpperCase() ?? "UNKNOWN"} (
-            {selectedImage.width}px x {selectedImage.height}px)
+            Best available printing quality: ({selectedImage.width}px x{" "}
+            {selectedImage.height}px)
           </ThemedText>
 
           <ThemedText style={styles.collectorsNote}>
             Limited-time free download • Official Mosaic collection
           </ThemedText>
           <PrimaryButton
-            title={`Download Original`}
+            title={`Download For Print`}
             onPress={() => onDownloadOption(originalOption)}
             style={styles.downloadOriginalButton}
             textStyles={styles.downloadOriginalButtonText}
@@ -67,9 +58,7 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
         </ThemedView>
       )}
 
-      <ThemedView
-        style={[styles.webpBlock, { backgroundColor: theme.background }]}
-      >
+      <ThemedView style={styles.webpBlock}>
         <ThemedView style={styles.webpTitleRow}>
           <ThemedText>Fast & Free (for Devices)</ThemedText>
           <ThemedView style={styles.webpBadge}>
@@ -97,9 +86,6 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
           ))}
         </ThemedView>
       </ThemedView>
-      <ThemedText style={styles.customRequestText}>
-        Need another size or custom use? Contact us for special requests!
-      </ThemedText>
     </ThemedView>
   );
 };
