@@ -10,7 +10,9 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "associatedDomains": ["applinks:www.mosaic.photography"]
+      "associatedDomains": ["applinks:www.mosaic.photography"],
+      "bundleIdentifier": "com.carlosdelrio.mosaicphotographyapp",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +35,8 @@
           "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
-      "package": "com.carlos_delrio.mosaicphotographyapp"
+      "package": "com.carlos_delrio.mosaicphotographyapp",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",

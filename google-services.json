@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "875383220631",
+    "project_id": "mosaic-photography-app",
+    "storage_bucket": "mosaic-photography-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875383220631:android:0157e10eed03144d3e7cd2",
+        "android_client_info": {
+          "package_name": "com.carlos_delrio.mosaicphotographyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-n_vYz5sEYVcatThkfbX1pm5VDAzSwQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
