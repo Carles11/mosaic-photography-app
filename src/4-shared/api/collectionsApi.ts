@@ -245,3 +245,11 @@ export async function fetchCollectionsBasicForUser(
   if (error) throw error;
   return data ?? [];
 }
+
+export async function deleteCollection(collectionId: string) {
+  const { error } = await supabase
+    .from("collections")
+    .delete()
+    .eq("id", collectionId);
+  if (error) throw error;
+}

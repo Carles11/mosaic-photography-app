@@ -4,12 +4,15 @@ import {
   PrimaryButton,
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
-import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
+import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -38,7 +41,6 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
 
     useImperativeHandle(ref, () => ({
       open: () => {
@@ -50,13 +52,12 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
     }));
 
     const handleCreate = async () => {
-      setError("");
       if (!user?.id) {
-        setError("You must be logged in.");
+        showErrorToast("You must be logged in.");
         return;
       }
       if (!name.trim()) {
-        setError("Please provide a collection name.");
+        showErrorToast("Please provide a collection name.");
         return;
       }
       setLoading(true);
@@ -67,14 +68,15 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
           user_id: user.id,
         });
         if (error) {
-          setError("Failed to create collection.");
+          showErrorToast("Failed to create collection.");
         } else {
           setName("");
           setDescription("");
+          showSuccessToast("Collection created!");
           if (onCreated) onCreated();
         }
       } catch {
-        setError("Failed to create collection.");
+        showErrorToast("Failed to create collection.");
       }
       setLoading(false);
     };
@@ -104,25 +106,44 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
             >
               Create New Collection
             </ThemedText>
-            {error ? (
-              <ThemedText style={{ color: "red", marginBottom: 6 }}>
-                {error}
-              </ThemedText>
-            ) : null}
-            <ThemedTextInput
+            <BottomSheetTextInput
               placeholder="Collection name"
               value={name}
               onChangeText={setName}
               editable={!loading}
               returnKeyType="next"
+              style={{
+                marginBottom: 10,
+                padding: 12,
+                borderRadius: 8,
+                backgroundColor: theme.inputBackgroundColor,
+                color: theme.inputTextColor,
+                borderWidth: 1,
+                borderColor: theme.inputBorderColor,
+                fontSize: 16,
+                fontFamily: theme.fontFamily,
+              }}
+              placeholderTextColor={theme.inputPlaceholderColor}
             />
-            <ThemedTextInput
+            <BottomSheetTextInput
               placeholder="Description (optional)"
               value={description}
               onChangeText={setDescription}
               editable={!loading}
               multiline
               maxLength={150}
+              style={{
+                marginBottom: 10,
+                padding: 12,
+                borderRadius: 8,
+                backgroundColor: theme.inputBackgroundColor,
+                color: theme.inputTextColor,
+                borderWidth: 1,
+                borderColor: theme.inputBorderColor,
+                fontSize: 16,
+                fontFamily: theme.fontFamily,
+              }}
+              placeholderTextColor={theme.inputPlaceholderColor}
             />
             <ThemedView
               style={[

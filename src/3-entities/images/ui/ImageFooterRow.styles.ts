@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginTop: 8,
     marginBottom: 4,
+    marginLeft: 12,
   },
   iconGroup: {
     flexDirection: "row",

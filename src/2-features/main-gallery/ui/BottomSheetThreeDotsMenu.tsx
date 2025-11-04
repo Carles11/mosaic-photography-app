@@ -166,7 +166,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                   <IconSymbol
                     name="flag"
                     type="material"
-                    size={11}
+                    size={14}
                     color={theme?.error ?? "#E74C3C"}
                     accessibilityLabel="Report"
                     onPress={() => {

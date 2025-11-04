@@ -10,7 +10,11 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
+import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   useCallback,
@@ -19,7 +23,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, FlatList, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { styles } from "./AddToCollectionSheet.styles";
 
 export type AddToCollectionSheetRef = {
@@ -45,7 +49,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
     const [collections, setCollections] = useState<Collection[]>([]);
     const [loadingCollections, setLoadingCollections] = useState(false);
     const [adding, setAdding] = useState(false);
-    const [feedback, setFeedback] = useState<string | null>(null);
     const [selectedImageId, setSelectedImageId] = useState<
       string | number | null
     >(null);
@@ -88,7 +91,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
           .finally(() => setLoadingCollections(false));
       }
       if (!selectedImageId) setCollections([]);
-      setFeedback(null);
       setShowCreateForm(false);
       setNewCollectionName("");
       setNewCollectionDescription("");
@@ -99,7 +101,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
       async (collectionId: string) => {
         if (!selectedImageId || !user?.id) return;
         setAdding(true);
-        setFeedback(null);
 
         const { data: favorite, error: favError } = await supabase
           .from("favorites")
@@ -109,7 +110,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
           .maybeSingle();
 
         if (favError || !favorite) {
-          setFeedback("Favorite record not found for this image.");
+          showErrorToast("Favorite record not found for this image.");
           setAdding(false);
           return;
         }
@@ -125,16 +126,15 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
             error.code === "23505" ||
             (error.message && error.message.toLowerCase().includes("duplicate"))
           ) {
-            setFeedback("Already in this collection!");
+            showErrorToast("Already in this collection!");
           } else {
-            setFeedback("Failed to add to collection.");
+            showErrorToast("Failed to add to collection.");
           }
         } else {
-          setFeedback("Added to collection!");
+          showSuccessToast("Added to collection!");
           if (onAdded) onAdded();
           setTimeout(() => {
             sheetRef.current?.dismiss();
-            setFeedback(null);
           }, 900);
         }
         setAdding(false);
@@ -145,11 +145,10 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
     const handleAddToNewCollection = async () => {
       if (!user?.id || !selectedImageId) return;
       if (!newCollectionName.trim()) {
-        setFeedback("Collection name is required.");
+        showErrorToast("Collection name is required.");
         return;
       }
       setCreatingCollection(true);
-      setFeedback(null);
 
       // 1. Create the new collection
       const { data: collectionInsert, error: collectionError } = await supabase
@@ -163,7 +162,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
         .maybeSingle();
 
       if (collectionError || !collectionInsert || !collectionInsert.id) {
-        setFeedback("Failed to create collection.");
+        showErrorToast("Failed to create collection.");
         setCreatingCollection(false);
         return;
       }
@@ -177,7 +176,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
         .maybeSingle();
 
       if (favError || !favorite) {
-        setFeedback("Favorite record not found for this image.");
+        showErrorToast("Favorite record not found for this image.");
         setCreatingCollection(false);
         return;
       }
@@ -191,12 +190,12 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
         });
 
       if (addError) {
-        setFeedback("Failed to add to new collection.");
+        showErrorToast("Failed to add to new collection.");
         setCreatingCollection(false);
         return;
       }
 
-      setFeedback("Created and added to new collection!");
+      showSuccessToast("Created and added to new collection!");
       setNewCollectionName("");
       setNewCollectionDescription("");
       setShowCreateForm(false);
@@ -211,7 +210,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
 
       setTimeout(() => {
         sheetRef.current?.dismiss();
-        setFeedback(null);
       }, 900);
 
       setCreatingCollection(false);
@@ -219,7 +217,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
 
     const handleSheetDismiss = () => {
       setSelectedImageId(null);
-      setFeedback(null);
       setAdding(false);
       setShowCreateForm(false);
       setNewCollectionName("");
@@ -300,7 +297,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                   >
                     Create a new Collection and add this image to it.
                   </ThemedText>
-                  <TextInput
+                  <BottomSheetTextInput
                     placeholder="Collection Name"
                     value={newCollectionName}
                     onChangeText={setNewCollectionName}
@@ -313,13 +310,15 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                         sheetRef.current.snapToIndex(1);
                       }
                     }}
+                    placeholderTextColor={theme.inputPlaceholderColor}
                   />
-                  <TextInput
+                  <BottomSheetTextInput
                     placeholder="Description (optional)"
                     value={newCollectionDescription}
                     onChangeText={setNewCollectionDescription}
                     style={[styles.input, { marginBottom: 8 }]}
                     editable={!creatingCollection}
+                    placeholderTextColor={theme.inputPlaceholderColor}
                   />
                   <PrimaryButton
                     title={creatingCollection ? "Creating..." : "Create & Add"}
@@ -336,11 +335,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                 </View>
               )}
             </ThemedView>
-          )}
-          {feedback && (
-            <ThemedText style={styles.feedback(feedback)}>
-              {feedback}
-            </ThemedText>
           )}
         </BottomSheetView>
       </ReusableBottomSheetModal>

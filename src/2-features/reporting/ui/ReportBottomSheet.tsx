@@ -12,6 +12,10 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
@@ -55,14 +59,12 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
     const [customReason, setCustomReason] = useState("");
     const [loading, setLoading] = useState(false);
-    const [feedback, setFeedback] = useState<string | null>(null);
 
     useImperativeHandle(ref, () => ({
       open: (newTarget: ReportTarget) => {
         setTarget(newTarget);
         setSelectedReason(null);
         setCustomReason("");
-        setFeedback(null);
         setTimeout(() => {
           sheetRef.current?.present();
         }, 0);
@@ -76,7 +78,6 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
       setTarget(null);
       setSelectedReason(null);
       setCustomReason("");
-      setFeedback(null);
       if (onClose) onClose();
     };
 
@@ -87,11 +88,10 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
         !selectedReason ||
         (selectedReason === "Other" && !customReason.trim())
       ) {
-        setFeedback("Please select a reason.");
+        showErrorToast("Please select a reason.");
         return;
       }
       setLoading(true);
-      setFeedback(null);
 
       const reasonToSend =
         selectedReason === "Other" ? customReason.trim() : selectedReason;
@@ -108,11 +108,9 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
       setLoading(false);
 
       if (error) {
-        if (error) {
-          setFeedback(`Failed to submit report: Please try again.`);
-        }
+        showErrorToast("Failed to submit report: Please try again.");
       } else {
-        setFeedback("Report submitted. Thank you!");
+        showSuccessToast("Report submitted. Thank you!");
         if (onReported) onReported();
         setTimeout(() => {
           sheetRef.current?.dismiss();
@@ -192,21 +190,6 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
               placeholderTextColor={theme.inputPlaceholderColor}
               editable={!loading}
             />
-          )}
-          {feedback && (
-            <ThemedText
-              style={{
-                color: feedback.toLowerCase().includes("thank")
-                  ? theme.success
-                  : theme.error,
-                marginTop: 4,
-                marginBottom: 4,
-                fontSize: 15,
-                textAlign: "center",
-              }}
-            >
-              {feedback}
-            </ThemedText>
           )}
           {loading ? (
             <ActivityIndicator

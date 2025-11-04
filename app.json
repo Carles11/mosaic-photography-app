@@ -10,9 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "associatedDomains": [
-        "applinks:www.mosaic.photography"
-      ]
+      "associatedDomains": ["applinks:www.mosaic.photography"]
     },
     "android": {
       "adaptiveIcon": {
@@ -32,10 +30,7 @@
               "pathPrefix": "/auth"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "package": "com.carlos_delrio.mosaicphotographyapp"
@@ -50,7 +45,7 @@
         "expo-splash-screen",
         {
           "image": "./src/4-shared/assets/expo-icons/splash-icon.png",
-          "imageWidth": 200,
+          "imageWidth": 400,
           "resizeMode": "contain",
           "backgroundColor": "#1d1d1d",
           "dark": {

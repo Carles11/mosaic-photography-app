@@ -3,6 +3,7 @@ import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext"
 import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
+import { MosaicToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Sentry from "@sentry/react-native";
 import { Stack } from "expo-router";
@@ -58,6 +59,7 @@ export default Sentry.wrap(function RootLayout() {
           </BottomSheetModalProvider>
         </AuthSessionProvider>
       </GestureHandlerRootView>
+      <MosaicToast />
     </SafeAreaProvider>
   );
 });

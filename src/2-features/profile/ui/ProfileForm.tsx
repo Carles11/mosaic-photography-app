@@ -3,6 +3,10 @@ import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedText
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
@@ -29,10 +33,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     instagram: "",
@@ -61,7 +61,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       const data = await createProfile(newProfile);
       setProfile(data);
     } catch (error: any) {
-      setMessage({ type: "error", text: "Failed to create initial profile" });
+      showErrorToast("Failed to create initial profile");
     }
   }, [user, canUseProfile, databaseError]);
 
@@ -86,7 +86,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         await createInitialProfile();
       }
     } catch (error: any) {
-      setMessage({ type: "error", text: "Failed to load profile" });
+      showErrorToast("Failed to load profile");
     } finally {
       setLoading(false);
     }
@@ -106,23 +106,19 @@ export default function ProfileForm({ user }: ProfileFormProps) {
 
   const handleSubmit = async () => {
     if (databaseError) {
-      setMessage({ type: "error", text: "Please set up the database first." });
+      showErrorToast("Please set up the database first.");
       return;
     }
     if (!canUseProfile) {
-      setMessage({
-        type: "error",
-        text: "No valid user found. Please log in again.",
-      });
+      showErrorToast("No valid user found. Please log in again.");
       return;
     }
     if (!formData.name.trim()) {
-      setMessage({ type: "error", text: "Display name is required." });
+      showErrorToast("Display name is required.");
       return;
     }
 
     setSaving(true);
-    setMessage(null);
 
     try {
       const updatedProfile = {
@@ -130,10 +126,10 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         updated_at: new Date().toISOString(),
       };
       await updateProfile(user.id, updatedProfile);
-      setMessage({ type: "success", text: "Profile updated successfully!" });
+      showSuccessToast("Profile updated successfully!");
       await loadProfile();
     } catch (error: any) {
-      setMessage({ type: "error", text: "Failed to update profile" });
+      showErrorToast("Failed to update profile");
     } finally {
       setSaving(false);
     }
@@ -168,17 +164,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       contentContainerStyle={styles.scrollContainer}
       keyboardShouldPersistTaps="handled"
     >
-      {message && (
-        <ThemedView
-          style={[
-            styles.message,
-            message.type === "error" ? styles.error : styles.success,
-          ]}
-        >
-          <ThemedText>{message.text}</ThemedText>
-        </ThemedView>
-      )}
-
       {databaseError && (
         <ThemedView style={styles.databaseSetup}>
           <ThemedText style={styles.dbTitle}>

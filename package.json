@@ -59,6 +59,7 @@
     "react-native-svg": "^15.14.0",
     "react-native-svg-transformer": "^1.5.1",
     "react-native-timeline-flatlist": "^0.8.0",
+    "react-native-toast-message": "^2.3.3",
     "react-native-worklets": "0.5.1"
   },
   "devDependencies": {
