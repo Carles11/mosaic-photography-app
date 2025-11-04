@@ -17,6 +17,10 @@ export const styles = StyleSheet.create({
   emptyText: {
     marginTop: 16,
   },
+  commentsList: {
+    paddingBottom: 111,
+    gap: 8,
+  },
   commentItem: {
     paddingVertical: 8,
     borderBottomColor: "#eee",
@@ -34,7 +38,7 @@ export const styles = StyleSheet.create({
   },
   editActions: {
     flexDirection: "row",
-    alignSelf: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   editActionsLeft: {

@@ -100,10 +100,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
             }}
             showsVerticalScrollIndicator={false}
           >
-            <ThemedText
-              type="subtitle"
-              style={{ marginBottom: 8, color: theme.text }}
-            >
+            <ThemedText type="subtitle" style={{ marginBottom: 8 }}>
               Create New Collection
             </ThemedText>
             <BottomSheetTextInput

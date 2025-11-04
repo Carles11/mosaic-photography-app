@@ -7,9 +7,9 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryFilter } from "@/4-shared/types";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Platform, TextInput, TouchableOpacity } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
@@ -30,10 +30,8 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
 }) => {
   const bottomSheetModalRef = useRef<any>(null);
   const { theme } = useTheme();
-  // snapPoints define sheet height (can adjust for your app)
   const snapPoints = Platform.OS === "web" ? ["40%"] : ["60%"];
 
-  // Present/dismiss modal as controlled by parent
   useEffect(() => {
     if (isOpen) {
       bottomSheetModalRef.current?.present();
@@ -42,18 +40,15 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
     }
   }, [isOpen]);
 
-  // Handle sheet close
   const handleClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
     onClose();
   }, [onClose]);
 
-  // Filter change helpers
   const handleChange = (key: keyof typeof filters, value: any) => {
     setFilters({ ...filters, [key]: value });
   };
 
-  // Year filter: Range picker via basic TextInputs (customize as needed)
   const handleYearRangeChange = (field: "from" | "to", value: string) => {
     const year = filters.year ?? { from: 0, to: 0 };
     const yearValue = {
@@ -94,38 +89,25 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             justifyContent: "center",
           }}
         >
-          <ThemedText
-            type="title"
-            style={[styles.title, { color: theme.text }]}
-          >
+          <ThemedText type="title" style={styles.title}>
             Gallery Filters
           </ThemedText>
           {/* Gender Filter */}
-          <ThemedText
-            type="subtitle"
-            style={[styles.label, { color: theme.text }]}
-          >
+          <ThemedText type="subtitle" style={styles.label}>
             Gender
           </ThemedText>
-          <ThemedView
-            style={[styles.row, { backgroundColor: theme.background }]}
-          >
+          <ThemedView style={styles.row}>
             {["male", "female", "mixed couples"].map((opt) => (
               <TouchableOpacity
                 key={opt}
                 style={[
                   styles.option,
-
                   filters.gender === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("gender", opt)}
               >
                 <ThemedText
-                  style={[
-                    styles.optionText,
-                    { color: theme.text },
-                    filters.gender === opt && styles.optionActiveText,
-                  ]}
+                  style={filters.gender === opt && styles.optionActiveText}
                 >
                   {opt}
                 </ThemedText>
@@ -133,31 +115,21 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Orientation Filter */}
-          <ThemedText
-            type="subtitle"
-            style={[styles.label, { color: theme.text }]}
-          >
+          <ThemedText type="subtitle" style={styles.label}>
             Orientation
           </ThemedText>
-          <ThemedView
-            style={[styles.row, { backgroundColor: theme.background }]}
-          >
+          <ThemedView style={styles.row}>
             {["vertical", "horizontal"].map((opt) => (
               <TouchableOpacity
                 key={opt}
                 style={[
                   styles.option,
-
                   filters.orientation === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("orientation", opt)}
               >
                 <ThemedText
-                  style={[
-                    styles.optionText,
-                    { color: theme.text },
-                    filters.orientation === opt && styles.optionActiveText,
-                  ]}
+                  style={filters.orientation === opt && styles.optionActiveText}
                 >
                   {opt}
                 </ThemedText>
@@ -165,31 +137,21 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Color Filter */}
-          <ThemedText
-            type="subtitle"
-            style={[styles.label, { color: theme.text }]}
-          >
+          <ThemedText type="subtitle" style={styles.label}>
             Color
           </ThemedText>
-          <ThemedView
-            style={[styles.row, { backgroundColor: theme.background }]}
-          >
+          <ThemedView style={styles.row}>
             {["color", "bw"].map((opt) => (
               <TouchableOpacity
                 key={opt}
                 style={[
                   styles.option,
-
                   filters.color === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("color", opt)}
               >
                 <ThemedText
-                  style={[
-                    styles.optionText,
-                    { color: theme.text },
-                    filters.color === opt && styles.optionActiveText,
-                  ]}
+                  style={filters.color === opt && styles.optionActiveText}
                 >
                   {opt}
                 </ThemedText>
@@ -197,10 +159,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Print Quality Filter */}
-          <ThemedText
-            type="subtitle"
-            style={[styles.label, { color: theme.text }]}
-          >
+          <ThemedText type="subtitle" style={styles.label}>
             Print Quality
           </ThemedText>
           <ThemedView
@@ -211,17 +170,14 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 key={opt}
                 style={[
                   styles.option,
-
                   filters.print_quality === opt && styles.optionActive,
                 ]}
                 onPress={() => handleChange("print_quality", opt)}
               >
                 <ThemedText
-                  style={[
-                    styles.optionText,
-                    { color: theme.text },
-                    filters.print_quality === opt && styles.optionActiveText,
-                  ]}
+                  style={
+                    filters.print_quality === opt && styles.optionActiveText
+                  }
                 >
                   {opt}
                 </ThemedText>
@@ -229,29 +185,28 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             ))}
           </ThemedView>
           {/* Year Range Filter */}
-          <ThemedText
-            type="subtitle"
-            style={[styles.label, { color: theme.text }]}
-          >
+          <ThemedText type="subtitle" style={styles.label}>
             Year Range
           </ThemedText>
-          <ThemedView
-            style={[styles.row, { backgroundColor: theme.background }]}
-          >
-            <TextInput
+          <ThemedView style={styles.row}>
+            <BottomSheetTextInput
               style={styles.input}
               keyboardType="numeric"
               value={filters.year?.from?.toString() ?? ""}
               placeholder="From"
               onChangeText={(v) => handleYearRangeChange("from", v)}
+              placeholderTextColor={theme.inputPlaceholderColor}
+              returnKeyType="done"
             />
             <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
-            <TextInput
+            <BottomSheetTextInput
               style={styles.input}
               keyboardType="numeric"
               value={filters.year?.to?.toString() ?? ""}
               placeholder="To"
               onChangeText={(v) => handleYearRangeChange("to", v)}
+              placeholderTextColor={theme.inputPlaceholderColor}
+              returnKeyType="done"
             />
           </ThemedView>
           {/* Actions */}

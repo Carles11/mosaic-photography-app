@@ -236,25 +236,20 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
         onDismiss={handleSheetDismiss}
       >
         <BottomSheetView style={styles.sheet}>
-          <ThemedText
-            type="title"
-            style={[styles.title, { color: theme.text }]}
-          >
+          <ThemedText type="title" style={styles.title}>
             Add to a Collection
           </ThemedText>
           {loadingCollections ? (
             <ActivityIndicator size="small" style={styles.loadingIndicator} />
           ) : (
-            <ThemedView style={{ flex: 1, backgroundColor: theme.background }}>
+            <ThemedView style={{ flex: 1 }}>
               {!showCreateForm ? (
                 <>
                   <FlatList<Collection>
                     data={collections}
                     keyExtractor={(item) => item.id}
                     ListEmptyComponent={
-                      <ThemedText
-                        style={[styles.emptyText, { color: theme.text }]}
-                      >
+                      <ThemedText style={styles.emptyText}>
                         You have no collections yet.
                       </ThemedText>
                     }
@@ -263,13 +258,9 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                         title={item.name}
                         onPress={() => handleAdd(item.id)}
                         disabled={adding || creatingCollection}
-                        textStyle={{ color: theme.text }}
                       />
                     )}
-                    contentContainerStyle={[
-                      styles.listContent,
-                      { backgroundColor: theme.background },
-                    ]}
+                    contentContainerStyle={styles.listContent}
                   />
                   <PrimaryButton
                     title="Add to a new collection"
@@ -291,10 +282,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                     { backgroundColor: theme.background, flex: 1 },
                   ]}
                 >
-                  <ThemedText
-                    type="subtitle"
-                    style={[styles.title, { color: theme.text }]}
-                  >
+                  <ThemedText style={styles.title}>
                     Create a new Collection and add this image to it.
                   </ThemedText>
                   <BottomSheetTextInput

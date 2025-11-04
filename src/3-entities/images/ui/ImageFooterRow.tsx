@@ -56,9 +56,7 @@ export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
           style={styles.icon}
           onPress={onPressComments}
         />
-        <ThemedText style={[{ color: theme.text }, styles.text]}>
-          {commentsCount}
-        </ThemedText>
+        <ThemedText style={styles.text}>{commentsCount}</ThemedText>
       </View>
     </View>
   );

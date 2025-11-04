@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   optionActive: {
-    backgroundColor: "#202030",
+    backgroundColor: "#2f2f4cff",
     borderWidth: 1,
     borderColor: "#313131",
   },
@@ -44,10 +44,7 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
-  optionText: {
-    fontSize: 15,
-    color: "#fff",
-  },
+
   input: {
     width: 72,
     borderWidth: 1,

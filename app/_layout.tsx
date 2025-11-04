@@ -42,23 +42,23 @@ export const unstable_settings = {
 export default Sentry.wrap(function RootLayout() {
   return (
     <SafeAreaProvider>
-      <GestureHandlerRootView>
-        <AuthSessionProvider>
-          <BottomSheetModalProvider>
-            <KeyboardProvider>
-              <FontLoader>
-                <ThemeProvider>
+      <ThemeProvider>
+        <GestureHandlerRootView>
+          <AuthSessionProvider>
+            <BottomSheetModalProvider>
+              <KeyboardProvider>
+                <FontLoader>
                   <CommentsProvider>
                     <FavoritesProvider>
                       <InnerLayout />
                     </FavoritesProvider>
                   </CommentsProvider>
-                </ThemeProvider>
-              </FontLoader>
-            </KeyboardProvider>
-          </BottomSheetModalProvider>
-        </AuthSessionProvider>
-      </GestureHandlerRootView>
+                </FontLoader>
+              </KeyboardProvider>
+            </BottomSheetModalProvider>
+          </AuthSessionProvider>
+        </GestureHandlerRootView>
+      </ThemeProvider>
       <MosaicToast />
     </SafeAreaProvider>
   );

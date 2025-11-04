@@ -16,7 +16,7 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "@/4-shared/utility/toast/Toast";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   useCallback,
@@ -24,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, TextInput, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 export type ReportTarget = {
   commentId?: string;
@@ -121,7 +121,7 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
     return (
       <BottomSheetModal
         ref={sheetRef}
-        snapPoints={["38%", "60%"]}
+        snapPoints={["80%", "95%"]}
         enablePanDownToClose
         onDismiss={handleSheetDismiss}
         keyboardBehavior="extend"
@@ -131,16 +131,10 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
         <BottomSheetView
           style={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 24 }}
         >
-          <ThemedText
-            type="title"
-            style={{ marginBottom: 8, color: theme.text }}
-          >
+          <ThemedText type="title" style={{ marginBottom: 8 }}>
             Report {target?.commentId ? "Comment" : "Image"}
           </ThemedText>
-          <ThemedText
-            type="subtitle"
-            style={{ marginBottom: 10, color: theme.text }}
-          >
+          <ThemedText style={{ marginBottom: 10 }}>
             Please select a reason:
           </ThemedText>
           <ThemedView
@@ -148,7 +142,6 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
               marginBottom: 12,
               flex: 1,
               alignSelf: "center",
-              backgroundColor: theme.background,
             }}
           >
             {REPORT_REASONS.map((reason) => (
@@ -157,14 +150,10 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
                 title={reason}
                 style={{
                   marginBottom: 8,
-                  backgroundColor: "transparent",
                   borderColor: theme.buttonBorderColor,
                   borderWidth:
                     selectedReason === reason ? theme.buttonBorderWidth : 0,
                   borderRadius: theme.buttonBorderRadius,
-                }}
-                textStyle={{
-                  color: theme.text,
                 }}
                 onPress={() => setSelectedReason(reason)}
                 disabled={loading}
@@ -172,7 +161,7 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
             ))}
           </ThemedView>
           {selectedReason === "Other" && (
-            <TextInput
+            <BottomSheetTextInput
               style={{
                 borderWidth: 1,
                 borderColor: theme.inputBorderColor,
@@ -189,6 +178,7 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
               placeholder="Describe the reason"
               placeholderTextColor={theme.inputPlaceholderColor}
               editable={!loading}
+              returnKeyType="done"
             />
           )}
           {loading ? (

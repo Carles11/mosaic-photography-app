@@ -8,7 +8,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Router } from "expo-router";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetThreeDotsMenu.styles";
 
@@ -49,8 +49,14 @@ export const BottomSheetThreeDotsMenu = forwardRef<
     },
     ref
   ) => {
-    const { theme } = useTheme();
+    const { theme, mode } = useTheme();
     const [showDownloadOptions, setShowDownloadOptions] = useState(false);
+
+    // Reset Download Options menu on sheet close!
+    const handleDismiss = useCallback(() => {
+      setShowDownloadOptions(false);
+      onClose();
+    }, [onClose]);
 
     const originalOption = downloadOptions.find((opt) => opt.isOriginal);
     const webpOptions = downloadOptions.filter((opt) => !opt.isOriginal);
@@ -59,7 +65,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
       <BottomSheetModal
         ref={ref}
         snapPoints={["70%"]}
-        onDismiss={onClose}
+        onDismiss={handleDismiss}
         enablePanDownToClose
       >
         <BottomSheetView style={styles.sheetView}>

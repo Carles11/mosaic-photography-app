@@ -98,7 +98,7 @@ export default function CommentsList() {
       <ThemedView
         style={[styles.centered, { backgroundColor: theme.background }]}
       >
-        <ThemedText style={[styles.emptyText, { color: theme.text }]}>
+        <ThemedText style={styles.emptyText}>
           Please log in to view your comments.
         </ThemedText>
       </ThemedView>
@@ -111,25 +111,19 @@ export default function CommentsList() {
         style={[styles.centered, { backgroundColor: theme.background }]}
       >
         <ActivityIndicator size="large" color={theme.favoriteIcon} />
-        <ThemedText style={[styles.loadingText, { color: theme.text }]}>
-          Loading comments...
-        </ThemedText>
+        <ThemedText style={styles.loadingText}>Loading comments...</ThemedText>
       </ThemedView>
     );
   }
 
   if (comments.length === 0) {
     return (
-      <ThemedView
-        style={[styles.centered, { backgroundColor: theme.background }]}
-      >
+      <ThemedView style={styles.centered}>
         <ThemedText style={[styles.emptyIcon, { color: theme.favoriteIcon }]}>
           💬
         </ThemedText>
-        <ThemedText style={[styles.emptyTitle, { color: theme.text }]}>
-          No comments yet
-        </ThemedText>
-        <ThemedText style={[styles.emptyText, { color: theme.text }]}>
+        <ThemedText style={styles.emptyTitle}>No comments yet</ThemedText>
+        <ThemedText style={styles.emptyText}>
           You haven't commented on any images yet.
         </ThemedText>
       </ThemedView>
@@ -137,14 +131,12 @@ export default function CommentsList() {
   }
 
   return (
-    <ThemedView
-      style={[styles.container, { backgroundColor: theme.background }]}
-    >
+    <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title" style={[styles.title, { color: theme.text }]}>
+        <ThemedText type="title" style={styles.title}>
           Your Comments ({comments.length})
         </ThemedText>
-        <ThemedText style={[styles.subtitle, { color: theme.text }]}>
+        <ThemedText style={styles.subtitle}>
           All comments you've made on gallery images.
         </ThemedText>
       </ThemedView>

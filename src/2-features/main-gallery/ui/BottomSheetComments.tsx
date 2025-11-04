@@ -67,10 +67,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
       >
         <BottomSheetView style={styles.sheetView}>
           <SafeAreaView edges={["bottom"]} style={styles.safeArea}>
-            <ThemedText
-              type="subtitle"
-              style={[styles.commentsTitle, { color: theme.text }]}
-            >
+            <ThemedText type="subtitle" style={styles.commentsTitle}>
               Comments
             </ThemedText>
             {isLoading ? (
@@ -84,6 +81,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                     No comments yet.
                   </ThemedText>
                 }
+                contentContainerStyle={styles.commentsList}
                 renderItem={({ item }) => (
                   <ThemedView
                     style={[
@@ -97,50 +95,27 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                         { backgroundColor: theme.background },
                       ]}
                     >
-                      <ThemedText
-                        type="defaultSemiBold"
-                        style={{ color: theme.text }}
-                      >
+                      <ThemedText type="defaultSemiBold">
                         {item.user_id === user?.id
                           ? "You"
                           : item.user_id || "Anonymous"}
                       </ThemedText>
-                      <ThemedText style={{ color: theme.text }}>
-                        {item.content}
-                      </ThemedText>
-                      <ThemedText
-                        style={[styles.commentDate, { color: theme.text }]}
-                      >
+                      <ThemedText>{item.content}</ThemedText>
+                      <ThemedText style={styles.commentDate}>
                         {item.created_at
                           ? new Date(item.created_at).toLocaleString()
                           : ""}
                       </ThemedText>
                     </ThemedView>
-                    <ThemedView
-                      style={[
-                        styles.editActions,
-                        {
-                          backgroundColor: theme.background,
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        },
-                      ]}
-                    >
+                    <ThemedView style={styles.editActions}>
                       {/* LEFT GROUP: Edit & Delete (and any others) */}
-                      <ThemedView
-                        style={[
-                          styles.editActionsLeft,
-                          { backgroundColor: theme.background },
-                        ]}
-                      >
+                      <ThemedView style={styles.editActionsLeft}>
                         {user && user.id === item.user_id && (
                           <>
                             <OnlyTextButton
                               title="Edit"
                               onPress={() => handleEdit(item.id, item.content)}
                               style={styles.editButton}
-                              textStyle={{ color: theme.text }}
                             />
                             <PrimaryButton
                               title="Delete"

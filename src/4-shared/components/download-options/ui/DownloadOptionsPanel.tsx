@@ -23,14 +23,20 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
   onDownloadOption,
   style,
 }) => {
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
+  console.log("DownloadOptionsPanel render with mode:", mode);
 
   return (
     <ThemedView style={[styles.panelContainer, style]}>
       {originalOption && (
         <ThemedView style={[styles.originalBlock]}>
           <ThemedView style={styles.originalTitleRow}>
-            <ThemedText type="defaultSemiBold">Original Masterpiece</ThemedText>
+            <ThemedText
+              type="defaultSemiBold"
+              style={{ backgroundColor: theme.background }}
+            >
+              Original Masterpiece
+            </ThemedText>
             <ThemedView style={styles.bestQualityBadge}>
               <ThemedText style={styles.bestQualityBadgeText}>
                 BEST QUALITY
@@ -65,9 +71,7 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
         style={[styles.webpBlock, { backgroundColor: theme.background }]}
       >
         <ThemedView style={styles.webpTitleRow}>
-          <ThemedText style={{ color: theme.text }}>
-            Fast & Free (for Devices)
-          </ThemedText>
+          <ThemedText>Fast & Free (for Devices)</ThemedText>
           <ThemedView style={styles.webpBadge}>
             <ThemedText style={styles.webpBadgeText}>WEBP</ThemedText>
           </ThemedView>
