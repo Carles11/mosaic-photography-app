@@ -8,11 +8,12 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Sentry from "@sentry/react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { logEvent } from "src/4-shared/firebase";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -32,6 +33,10 @@ export const unstable_settings = {
 };
 
 export default Sentry.wrap(function RootLayout() {
+  useEffect(() => {
+    logEvent("gallery_opened", { screen: "GalleryPage", userType: "guest" });
+  }, []);
+
   return (
     <SafeAreaProvider>
       <ThemeProvider>
