@@ -5,10 +5,21 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flex: 1,
+    flex: 3,
     paddingHorizontal: 24,
     justifyContent: "center",
     alignItems: "stretch",
+  },
+  containerTop: {
+    flex: 3,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    alignItems: "stretch",
+  },
+  containerBottom: {
+    flex: 1,
+    paddingBottom: 16,
+    alignItems: "center",
   },
   title: {
     fontSize: 28,

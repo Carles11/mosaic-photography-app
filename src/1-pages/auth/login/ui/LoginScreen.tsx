@@ -90,6 +90,12 @@ export const LoginScreen: React.FC = () => {
               setUseMagicLink(false);
             }}
           />
+          <OnlyTextButton
+            title="Back to Gallery"
+            onPress={() => {
+              router.replace("/"); // Adjust "/" to your main gallery route if needed
+            }}
+          />
         </ThemedView>
       </KeyboardAvoidingView>
     );
@@ -100,7 +106,7 @@ export const LoginScreen: React.FC = () => {
       style={[styles.root, { backgroundColor: theme.background }]}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ThemedView style={styles.container}>
+      <ThemedView style={styles.containerTop}>
         <Text
           style={[
             styles.title,
@@ -174,6 +180,21 @@ export const LoginScreen: React.FC = () => {
           title="Don't have an account? Register"
           onPress={() => {
             router.push("/auth/register");
+          }}
+        />
+
+        <OnlyTextButton
+          title="Back to Home Gallery"
+          onPress={() => {
+            router.replace("/"); // Adjust "/" if your gallery is elsewhere, e.g. "/gallery"
+          }}
+        />
+      </ThemedView>
+      <ThemedView style={styles.containerBottom}>
+        <OnlyTextButton
+          title="Back to Home Gallery"
+          onPress={() => {
+            router.replace("/"); // Adjust "/" if your gallery is elsewhere, e.g. "/gallery"
           }}
         />
       </ThemedView>

@@ -1,5 +1,6 @@
 import FontLoader from "@/4-shared/components/FontLoader";
 import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext";
+import { CollectionsProvider } from "@/4-shared/context/collections/CollectionsContext";
 import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
@@ -46,9 +47,11 @@ export default Sentry.wrap(function RootLayout() {
               <KeyboardProvider>
                 <FontLoader>
                   <CommentsProvider>
-                    <FavoritesProvider>
-                      <InnerLayout />
-                    </FavoritesProvider>
+                    <CollectionsProvider>
+                      <FavoritesProvider>
+                        <InnerLayout />
+                      </FavoritesProvider>
+                    </CollectionsProvider>
                   </CommentsProvider>
                 </FontLoader>
               </KeyboardProvider>
