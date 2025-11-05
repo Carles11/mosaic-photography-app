@@ -6,7 +6,10 @@ import {
   fetchCommentsForImage,
 } from "@/4-shared/api/commentsApi";
 import { Comment } from "@/4-shared/types";
-
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
 import type { ReactNode } from "react";
 import React, {
   createContext,
@@ -95,6 +98,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
       const counts = await fetchCommentCountsBatch(imageIds);
       setCommentCounts((prev) => ({ ...prev, ...counts }));
     } catch (err) {
+      showErrorToast("Failed to load comment counts.");
       console.error("Failed to load comment counts batch", err);
     }
   }, []);
@@ -108,6 +112,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
       setCommentCounts((prev) => ({ ...prev, [imageId]: data.length }));
     } catch (error) {
       setComments((prev) => ({ ...prev, [imageId]: [] }));
+      showErrorToast("Failed to load comments.");
     } finally {
       setLoading((prev) => ({ ...prev, [imageId]: false }));
     }
@@ -147,6 +152,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
             savedComment,
           ],
         }));
+        showSuccessToast("Comment added!");
       } catch (error) {
         // Revert optimistic add
         setComments((prev) => ({
@@ -157,6 +163,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
           ...prev,
           [imageId]: Math.max((prev[imageId] || 1) - 1, 0),
         }));
+        showErrorToast("Failed to add comment.");
         throw error;
       }
     },
@@ -196,12 +203,14 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
               : comment
           ),
         }));
+        showSuccessToast("Comment updated!");
       } catch (error) {
         // Revert optimistic update
         setComments((prev) => ({
           ...prev,
           [imageId]: prevComments,
         }));
+        showErrorToast("Failed to update comment.");
         throw error;
       }
     },
@@ -225,6 +234,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
       }));
       try {
         await apiDeleteComment(commentId, userId);
+        showSuccessToast("Comment deleted!");
       } catch (error) {
         // Revert optimistic delete
         setComments((prev) => ({
@@ -235,6 +245,7 @@ export function CommentsProvider({ children }: { children: ReactNode }) {
           ...prev,
           [imageId]: prevComments.length,
         }));
+        showErrorToast("Failed to delete comment.");
         throw error;
       }
     },

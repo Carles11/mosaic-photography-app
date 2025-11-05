@@ -1,4 +1,3 @@
-import { supabase } from "@/4-shared/api/supabaseClient";
 import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
   PrimaryButton,
@@ -7,11 +6,8 @@ import {
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "@/4-shared/utility/toast/Toast";
 import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
@@ -35,6 +31,7 @@ type Props = {
 const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
   ({ onCreated }, ref) => {
     const { user } = useAuthSession();
+    const { createCollection } = useCollections();
     const { theme } = useTheme();
     const sheetRef = useRef<any>(null);
 
@@ -53,32 +50,17 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
 
     const handleCreate = async () => {
       if (!user?.id) {
-        showErrorToast("You must be logged in.");
-        return;
-      }
-      if (!name.trim()) {
-        showErrorToast("Please provide a collection name.");
+        // Context already does error toast, but safe to double-check
         return;
       }
       setLoading(true);
-      try {
-        const { error } = await supabase.from("collections").insert({
-          name: name.trim(),
-          description: description.trim() || null,
-          user_id: user.id,
-        });
-        if (error) {
-          showErrorToast("Failed to create collection.");
-        } else {
-          setName("");
-          setDescription("");
-          showSuccessToast("Collection created!");
-          if (onCreated) onCreated();
-        }
-      } catch {
-        showErrorToast("Failed to create collection.");
-      }
+      const ok = await createCollection({ name, description });
       setLoading(false);
+      if (ok) {
+        setName("");
+        setDescription("");
+        if (onCreated) onCreated();
+      }
     };
 
     return (

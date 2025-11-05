@@ -1,4 +1,8 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type AuthContextType = {
@@ -38,6 +42,9 @@ export function AuthSessionProvider({
         ) {
           setUser(null);
           await supabase.auth.signOut();
+          showErrorToast("Session expired. Please log in again.");
+        } else {
+          showErrorToast("Failed to load user session.");
         }
         setLoading(false);
         return;
@@ -65,8 +72,13 @@ export function AuthSessionProvider({
   }, []);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      showSuccessToast("Signed out successfully.");
+    } catch (error) {
+      showErrorToast("Failed to sign out. Please try again.");
+    }
   };
 
   return (

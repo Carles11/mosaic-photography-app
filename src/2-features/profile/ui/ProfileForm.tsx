@@ -29,7 +29,6 @@ type ProfileFormProps = {
 };
 
 export default function ProfileForm({ user }: ProfileFormProps) {
-  console.log("OLAKEASE - Rendering ProfileForm");
   const { favorites } = useFavorites();
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);

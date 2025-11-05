@@ -75,7 +75,6 @@ function InnerLayout() {
     }),
     [theme]
   );
-  console.log("OLAKEASE-in-InnerLayout");
   return (
     <>
       <Stack screenOptions={defaultScreenOptions}>

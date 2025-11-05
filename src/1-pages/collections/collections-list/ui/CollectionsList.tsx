@@ -1,21 +1,13 @@
-import {
-  deleteCollection,
-  fetchCollectionsForUser,
-} from "@/4-shared/api/collectionsApi";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants/index";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { CollectionWithPreview } from "@/4-shared/types/collections";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "@/4-shared/utility/toast/Toast";
 import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -34,36 +26,26 @@ import CreateCollectionSheet, {
 export default function CollectionsList() {
   const { theme } = useTheme();
   const { user } = useAuthSession();
+  const { collections, loading, deleteCollection, reloadCollections } =
+    useCollections();
   const router = useRouter();
   const sheetRef = useRef<CreateCollectionSheetRef>(null);
-
-  const [collections, setCollections] = useState<CollectionWithPreview[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const loadCollections = useCallback(async () => {
-    if (!user?.id) return;
-    setLoading(true);
-    try {
-      const result = await fetchCollectionsForUser(user.id);
-      setCollections(result);
-    } catch (e) {
-      setCollections([]);
-    }
-    setLoading(false);
-  }, [user?.id]);
 
   useFocusEffect(
     useCallback(() => {
       if (!user?.id) {
-        showErrorToast("Please log in to view your collections.");
+        // Auth-guarding, can move to context if desired
+        import("@/4-shared/utility/toast/Toast").then(({ showErrorToast }) => {
+          showErrorToast("Please log in to view your collections.");
+        });
         router.replace("/auth/login");
         return;
       }
-      loadCollections();
-    }, [user?.id, router, loadCollections])
+      reloadCollections(); // this may be a no-op if you'll keep context auto-syncing on user change
+    }, [user?.id, router, reloadCollections])
   );
 
-  // Auth gating: only render content if logged in (prevents flicker and data loading for guests)
+  // Auth gating: only render content if logged in
   if (!user?.id) {
     return null;
   }
@@ -78,7 +60,7 @@ export default function CollectionsList() {
 
   const handleCollectionCreated = () => {
     sheetRef.current?.close();
-    loadCollections();
+    // reloadCollections(); // Should already be synced in context after create
   };
 
   const handleDeleteCollection = (
@@ -94,13 +76,8 @@ export default function CollectionsList() {
           text: "Delete",
           style: "destructive",
           onPress: async () => {
-            try {
-              await deleteCollection(collectionId);
-              showSuccessToast("Collection deleted!");
-              loadCollections();
-            } catch (e) {
-              showErrorToast("Failed to delete collection.");
-            }
+            await deleteCollection(collectionId);
+            // No need for reload, it's handled in context
           },
         },
       ]
@@ -127,13 +104,7 @@ export default function CollectionsList() {
 
   return (
     <ThemedView style={styles.container}>
-      {!user?.id ? (
-        <ThemedView style={styles.centered}>
-          <ThemedText style={styles.emptyText}>
-            Please log in to view your collections.
-          </ThemedText>
-        </ThemedView>
-      ) : loading ? (
+      {loading ? (
         <ThemedView style={styles.centered}>
           <ActivityIndicator size="large" color={theme.favoriteIcon} />
           <ThemedText style={styles.loadingText}>
@@ -264,7 +235,6 @@ const localStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 2,
-    // Optional: shadow for iOS
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,

@@ -1,12 +1,11 @@
-import { fetchCollectionDetail } from "@/4-shared/api/collectionsApi";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
-import { CollectionDetail } from "@/4-shared/types/collections";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -18,14 +17,11 @@ import { styles } from "./CollectionDetail.styles";
 
 export default function CollectionDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [collection, setCollection] = useState<CollectionDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [zoomVisible, setZoomVisible] = useState(false);
-  const [zoomIndex, setZoomIndex] = useState(0);
+  const { getCollectionDetail, detail, detailLoading } = useCollections();
+  const [zoomVisible, setZoomVisible] = React.useState(false);
+  const [zoomIndex, setZoomIndex] = React.useState(0);
 
   const { width: screenWidth } = useWindowDimensions();
-
-  // Adjust the thumbnail width for your grid; 180 is a common mobile grid size
   const thumbWidth = 180;
   const numColumns = Math.floor(screenWidth / thumbWidth) || 2;
 
@@ -33,21 +29,19 @@ export default function CollectionDetailScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      title: collection?.name || "Collection Details",
+      title: detail?.name || "Collection Details",
     });
-  }, [navigation, collection]);
+  }, [navigation, detail]);
 
   useEffect(() => {
-    if (!id) return;
-    setLoading(true);
-    fetchCollectionDetail(id as string)
-      .then((result) => {
-        setCollection(result);
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
+    if (id) {
+      getCollectionDetail(id as string);
+    }
+    // Optional: clear detail on unmount if desired.
+    // return () => setDetail(null); // would need setter in context
+  }, [id, getCollectionDetail]);
 
-  if (loading) {
+  if (detailLoading) {
     return (
       <ThemedView style={styles.centered}>
         <ActivityIndicator size="large" />
@@ -58,7 +52,7 @@ export default function CollectionDetailScreen() {
     );
   }
 
-  if (!collection) {
+  if (!detail) {
     return (
       <ThemedView style={styles.centered}>
         <ThemedText style={styles.emptyIcon}>📚</ThemedText>
@@ -70,18 +64,18 @@ export default function CollectionDetailScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        {collection.description ? (
+        {detail.description ? (
           <ThemedText style={styles.description}>
-            {collection.description}
+            {detail.description}
           </ThemedText>
         ) : null}
         <ThemedText style={styles.imageCount}>
-          {collection.images.length} image
-          {collection.images.length === 1 ? "" : "s"}
+          {detail.images.length} image
+          {detail.images.length === 1 ? "" : "s"}
         </ThemedText>
       </ThemedView>
       <FlatList
-        data={collection.images}
+        data={detail.images}
         keyExtractor={(item, idx) =>
           item.favorite_id
             ? String(item.favorite_id)
@@ -137,7 +131,7 @@ export default function CollectionDetailScreen() {
         }
       />
       <ZoomGalleryModal
-        images={collection.images.map((img) => ({
+        images={detail.images.map((img) => ({
           ...img,
           id: Number(img.id),
           base_url: img.base_url ?? "",
@@ -149,7 +143,6 @@ export default function CollectionDetailScreen() {
           orientation: img.orientation ?? "",
           width: img.width ?? 0,
           height: img.height ?? 0,
-          // You do not need to assign url or favorite_id if not required by GalleryImage
         }))}
         visible={zoomVisible}
         initialIndex={zoomIndex}

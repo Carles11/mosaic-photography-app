@@ -22,6 +22,7 @@ import {
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Linking, Share } from "react-native";
@@ -73,8 +74,6 @@ export const Home: React.FC = () => {
 
   // --- ASO / Analytics: Set navigation title to optimal ASO string ---
   useEffect(() => {
-    console.log("OLAKEASE-in-HOME-USEEFFECT");
-
     navigation.setOptions?.({
       title: ASO.home.title,
     });
@@ -96,7 +95,9 @@ export const Home: React.FC = () => {
         setImages(data);
         setError(null);
       } catch (e: any) {
-        setError(e.message || "Error loading images");
+        const msg = e.message || "Error loading images";
+        setError(msg);
+        showErrorToast(msg);
       } finally {
         setLoading(false);
       }
@@ -177,6 +178,7 @@ export const Home: React.FC = () => {
   const handleAddToFavorites = async () => {
     if (!selectedImage) return;
     if (!isUserLoggedIn()) {
+      showErrorToast("Please log in to use this feature.");
       router.push("/auth/login");
       return;
     }
@@ -201,7 +203,7 @@ export const Home: React.FC = () => {
         imageId: selectedImage.id,
       });
     } catch (error) {
-      console.log("Error sharing image:", error);
+      showErrorToast("Couldn't share this image.");
     }
   };
 
@@ -227,7 +229,7 @@ export const Home: React.FC = () => {
           option: defaultOption.folder,
         });
       } catch (error) {
-        console.log("Error opening image URL:", error);
+        showErrorToast("Failed to open image URL for download.");
       }
     }
   };

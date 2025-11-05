@@ -1,5 +1,4 @@
-import { fetchCollectionsBasicForUser } from "@/4-shared/api/collectionsApi";
-import { supabase } from "@/4-shared/api/supabaseClient";
+import { addFavoriteToCollection } from "@/4-shared/api/collectionsApi";
 import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
   OnlyTextButton,
@@ -9,6 +8,8 @@ import {
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
+import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import {
   showErrorToast,
@@ -23,7 +24,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import { styles } from "./AddToCollectionSheet.styles";
 
 export type AddToCollectionSheetRef = {
@@ -35,19 +36,16 @@ type Props = {
   onAdded?: () => void;
 };
 
-type Collection = {
-  id: string;
-  name: string;
-};
-
 const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
   ({ onAdded }, ref) => {
     const { user } = useAuthSession();
     const { theme } = useTheme();
     const sheetRef = useRef<any>(null);
 
-    const [collections, setCollections] = useState<Collection[]>([]);
-    const [loadingCollections, setLoadingCollections] = useState(false);
+    const { basicCollections, reloadBasicCollections, createCollection } =
+      useCollections();
+    const { ensureFavorite } = useFavorites();
+
     const [adding, setAdding] = useState(false);
     const [selectedImageId, setSelectedImageId] = useState<
       string | number | null
@@ -70,7 +68,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
       },
     }));
 
-    // Snap to 99% when create mode is enabled
     useEffect(() => {
       if (showCreateForm && sheetRef.current?.snapToIndex) {
         sheetRef.current.snapToIndex(1); // 1 = 99%
@@ -84,62 +81,46 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
         selectedImageId &&
         user?.id
       ) {
-        setLoadingCollections(true);
-        fetchCollectionsBasicForUser(user.id)
-          .then((data) => setCollections(data))
-          .catch(() => setCollections([]))
-          .finally(() => setLoadingCollections(false));
+        reloadBasicCollections();
       }
-      if (!selectedImageId) setCollections([]);
-      setShowCreateForm(false);
-      setNewCollectionName("");
-      setNewCollectionDescription("");
-      setCreatingCollection(false);
-    }, [selectedImageId, user?.id]);
+      if (!selectedImageId) {
+        setShowCreateForm(false);
+        setNewCollectionName("");
+        setNewCollectionDescription("");
+        setCreatingCollection(false);
+      }
+    }, [selectedImageId, user?.id, reloadBasicCollections]);
 
     const handleAdd = useCallback(
       async (collectionId: string) => {
         if (!selectedImageId || !user?.id) return;
         setAdding(true);
 
-        const { data: favorite, error: favError } = await supabase
-          .from("favorites")
-          .select("id")
-          .eq("user_id", user.id)
-          .eq("image_id", selectedImageId)
-          .maybeSingle();
-
-        if (favError || !favorite) {
-          showErrorToast("Favorite record not found for this image.");
+        const result = await ensureFavorite(selectedImageId);
+        if (!result || !result.favoriteId) {
           setAdding(false);
           return;
         }
-        const favoriteId = favorite.id;
+        const favoriteId = result.favoriteId;
 
-        const { error } = await supabase.from("collection_favorites").insert({
-          collection_id: collectionId,
-          favorite_id: favoriteId,
-        });
-
-        if (error) {
-          if (
-            error.code === "23505" ||
-            (error.message && error.message.toLowerCase().includes("duplicate"))
-          ) {
-            showErrorToast("Already in this collection!");
-          } else {
-            showErrorToast("Failed to add to collection.");
-          }
-        } else {
+        try {
+          await addFavoriteToCollection(collectionId, favoriteId);
           showSuccessToast("Added to collection!");
           if (onAdded) onAdded();
           setTimeout(() => {
             sheetRef.current?.dismiss();
           }, 900);
+        } catch (error: any) {
+          if (error.message === "Already in this collection!") {
+            showErrorToast(error.message);
+          } else {
+            showErrorToast("Failed to add to collection.");
+          }
         }
+
         setAdding(false);
       },
-      [selectedImageId, user, onAdded]
+      [selectedImageId, user, onAdded, ensureFavorite]
     );
 
     const handleAddToNewCollection = async () => {
@@ -150,67 +131,52 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
       }
       setCreatingCollection(true);
 
-      // 1. Create the new collection
-      const { data: collectionInsert, error: collectionError } = await supabase
-        .from("collections")
-        .insert({
-          name: newCollectionName.trim(),
-          description: newCollectionDescription.trim() || null,
-          user_id: user.id,
-        })
-        .select("id")
-        .maybeSingle();
+      const created = await createCollection({
+        name: newCollectionName.trim(),
+        description: newCollectionDescription.trim(),
+      });
 
-      if (collectionError || !collectionInsert || !collectionInsert.id) {
-        showErrorToast("Failed to create collection.");
+      if (!created) {
         setCreatingCollection(false);
         return;
       }
 
-      // 2. Find the favorite for this image/user
-      const { data: favorite, error: favError } = await supabase
-        .from("favorites")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("image_id", selectedImageId)
-        .maybeSingle();
-
-      if (favError || !favorite) {
-        showErrorToast("Favorite record not found for this image.");
+      const result = await ensureFavorite(selectedImageId);
+      if (!result || !result.favoriteId) {
         setCreatingCollection(false);
         return;
       }
 
-      // 3. Add the favorite to the new collection
-      const { error: addError } = await supabase
-        .from("collection_favorites")
-        .insert({
-          collection_id: collectionInsert.id,
-          favorite_id: favorite.id,
-        });
-
-      if (addError) {
-        showErrorToast("Failed to add to new collection.");
+      await reloadBasicCollections();
+      const fresh = (basicCollections || []).find(
+        (col) =>
+          col.name.trim().toLowerCase() ===
+          newCollectionName.trim().toLowerCase()
+      );
+      const newCollectionId = fresh?.id;
+      if (!newCollectionId) {
+        showErrorToast("Failed to find the new collection.");
         setCreatingCollection(false);
         return;
       }
 
-      showSuccessToast("Created and added to new collection!");
-      setNewCollectionName("");
-      setNewCollectionDescription("");
-      setShowCreateForm(false);
-
-      // Optionally, refresh collections
-      fetchCollectionsBasicForUser(user.id)
-        .then((data) => setCollections(data))
-        .catch(() => {})
-        .finally(() => {});
-
-      if (onAdded) onAdded();
-
-      setTimeout(() => {
-        sheetRef.current?.dismiss();
-      }, 900);
+      try {
+        await addFavoriteToCollection(newCollectionId, result.favoriteId);
+        showSuccessToast("Created and added to new collection!");
+        setNewCollectionName("");
+        setNewCollectionDescription("");
+        setShowCreateForm(false);
+        if (onAdded) onAdded();
+        setTimeout(() => {
+          sheetRef.current?.dismiss();
+        }, 900);
+      } catch (error: any) {
+        if (error.message === "Already in this collection!") {
+          showErrorToast(error.message);
+        } else {
+          showErrorToast("Failed to add to new collection.");
+        }
+      }
 
       setCreatingCollection(false);
     };
@@ -222,7 +188,6 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
       setNewCollectionName("");
       setNewCollectionDescription("");
       setCreatingCollection(false);
-      setCollections([]);
     };
 
     return (
@@ -239,86 +204,81 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
           <ThemedText type="title" style={styles.title}>
             Add to a Collection
           </ThemedText>
-          {loadingCollections ? (
-            <ActivityIndicator size="small" style={styles.loadingIndicator} />
-          ) : (
-            <ThemedView style={{ flex: 1 }}>
-              {!showCreateForm ? (
-                <>
-                  <FlatList<Collection>
-                    data={collections}
-                    keyExtractor={(item) => item.id}
-                    ListEmptyComponent={
-                      <ThemedText style={styles.emptyText}>
-                        You have no collections yet.
-                      </ThemedText>
+          <ThemedView style={{ flex: 1 }}>
+            {!showCreateForm ? (
+              <>
+                <FlatList
+                  data={basicCollections}
+                  keyExtractor={(item) => item.id}
+                  ListEmptyComponent={
+                    <ThemedText style={styles.emptyText}>
+                      You have no collections yet.
+                    </ThemedText>
+                  }
+                  renderItem={({ item }) => (
+                    <OnlyTextButton
+                      title={item.name}
+                      onPress={() => handleAdd(item.id)}
+                      disabled={adding || creatingCollection}
+                    />
+                  )}
+                  contentContainerStyle={styles.listContent}
+                />
+                <PrimaryButton
+                  title="Add to a new collection"
+                  style={styles.createForm}
+                  onPress={() => setShowCreateForm(true)}
+                  disabled={adding || creatingCollection}
+                />
+                <SecondaryButton
+                  title="Close"
+                  onPress={() => sheetRef.current?.dismiss()}
+                  style={styles.closeButton}
+                  disabled={adding || creatingCollection}
+                />
+              </>
+            ) : (
+              <ThemedView style={styles.createForm}>
+                <ThemedText style={styles.title}>
+                  Create a new Collection and add this image to it.
+                </ThemedText>
+                <BottomSheetTextInput
+                  placeholder="Collection Name"
+                  value={newCollectionName}
+                  onChangeText={setNewCollectionName}
+                  style={styles.input}
+                  editable={!creatingCollection}
+                  autoFocus
+                  onFocus={() => {
+                    if (sheetRef.current?.snapToIndex) {
+                      sheetRef.current.snapToIndex(1);
                     }
-                    renderItem={({ item }: { item: Collection }) => (
-                      <OnlyTextButton
-                        title={item.name}
-                        onPress={() => handleAdd(item.id)}
-                        disabled={adding || creatingCollection}
-                      />
-                    )}
-                    contentContainerStyle={styles.listContent}
-                  />
-                  <PrimaryButton
-                    title="Add to a new collection"
-                    style={styles.createForm}
-                    onPress={() => setShowCreateForm(true)}
-                    disabled={adding || creatingCollection}
-                  />
-                  <SecondaryButton
-                    title="Close"
-                    onPress={() => sheetRef.current?.dismiss()}
-                    style={styles.closeButton}
-                    disabled={adding || creatingCollection}
-                  />
-                </>
-              ) : (
-                <ThemedView style={styles.createForm}>
-                  <ThemedText style={styles.title}>
-                    Create a new Collection and add this image to it.
-                  </ThemedText>
-                  <BottomSheetTextInput
-                    placeholder="Collection Name"
-                    value={newCollectionName}
-                    onChangeText={setNewCollectionName}
-                    style={styles.input}
-                    editable={!creatingCollection}
-                    autoFocus
-                    onFocus={() => {
-                      // Snap to 99% if not already there
-                      if (sheetRef.current?.snapToIndex) {
-                        sheetRef.current.snapToIndex(1);
-                      }
-                    }}
-                    placeholderTextColor={theme.inputPlaceholderColor}
-                  />
-                  <BottomSheetTextInput
-                    placeholder="Description (optional)"
-                    value={newCollectionDescription}
-                    onChangeText={setNewCollectionDescription}
-                    style={[styles.input, { marginBottom: 8 }]}
-                    editable={!creatingCollection}
-                    placeholderTextColor={theme.inputPlaceholderColor}
-                  />
-                  <PrimaryButton
-                    title={creatingCollection ? "Creating..." : "Create & Add"}
-                    style={styles.createButton}
-                    onPress={handleAddToNewCollection}
-                    disabled={creatingCollection || adding}
-                  />
-                  <SecondaryButton
-                    title="Cancel"
-                    style={styles.cancelButton}
-                    onPress={() => setShowCreateForm(false)}
-                    disabled={creatingCollection}
-                  />
-                </ThemedView>
-              )}
-            </ThemedView>
-          )}
+                  }}
+                  placeholderTextColor={theme.inputPlaceholderColor}
+                />
+                <BottomSheetTextInput
+                  placeholder="Description (optional)"
+                  value={newCollectionDescription}
+                  onChangeText={setNewCollectionDescription}
+                  style={[styles.input, { marginBottom: 8 }]}
+                  editable={!creatingCollection}
+                  placeholderTextColor={theme.inputPlaceholderColor}
+                />
+                <PrimaryButton
+                  title={creatingCollection ? "Creating..." : "Create & Add"}
+                  style={styles.createButton}
+                  onPress={handleAddToNewCollection}
+                  disabled={creatingCollection || adding}
+                />
+                <SecondaryButton
+                  title="Cancel"
+                  style={styles.cancelButton}
+                  onPress={() => setShowCreateForm(false)}
+                  disabled={creatingCollection}
+                />
+              </ThemedView>
+            )}
+          </ThemedView>
         </BottomSheetView>
       </ReusableBottomSheetModal>
     );

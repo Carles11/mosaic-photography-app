@@ -253,3 +253,43 @@ export async function deleteCollection(collectionId: string) {
     .eq("id", collectionId);
   if (error) throw error;
 }
+
+// --- NEW ---
+
+/**
+ * Add a favorite to a collection.
+ */
+export async function addFavoriteToCollection(
+  collectionId: string,
+  favoriteId: number
+): Promise<void> {
+  const { error } = await supabase.from("collection_favorites").insert({
+    collection_id: collectionId,
+    favorite_id: favoriteId,
+  });
+  if (error) {
+    // 23505 is unique violation (duplicate), for Postgres. Handle as you wish.
+    if (
+      error.code === "23505" ||
+      (error.message && error.message.toLowerCase().includes("duplicate"))
+    ) {
+      throw new Error("Already in this collection!");
+    }
+    throw new Error("Failed to add to collection.");
+  }
+}
+
+/**
+ * Remove a favorite from a collection.
+ */
+export async function removeFavoriteFromCollection(
+  collectionId: string,
+  favoriteId: number
+): Promise<void> {
+  const { error } = await supabase
+    .from("collection_favorites")
+    .delete()
+    .eq("collection_id", collectionId)
+    .eq("favorite_id", favoriteId);
+  if (error) throw error;
+}

@@ -17,7 +17,6 @@ import { KeyboardAvoidingView, Platform, Text } from "react-native";
 import { styles } from "./LoginScreen.styles";
 
 export const LoginScreen: React.FC = () => {
-  console.log("OLAKEASE-in-LoginScreen");
   const { theme } = useTheme();
   const { user, loading } = useAuthSession();
   const router = useRouter();

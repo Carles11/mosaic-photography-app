@@ -52,8 +52,6 @@ export default function FavoritesList() {
   );
 
   useEffect(() => {
-    console.log("OLAKEASE - FavoritesList mounted");
-
     const fetchImages = async () => {
       setLoadingImages(true);
       const imgs = await fetchFavoriteImages(favorites, isUserLoggedIn());
