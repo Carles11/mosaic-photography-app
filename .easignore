@@ -1,34 +1,41 @@
 # dependencies
+
 node_modules/
 .expo/
 dist/
 web-build/
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+npm-debug._
+yarn-debug._
+yarn-error.\*
 
 # macOS
+
 .DS_Store
 
 # VS Code
+
 .vscode/
 
 # Native generated folders
-android/
-ios/
+
+/ios
+/android
 
 # Environment files
-.env*
-*.pem
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+
+.env\*
+_.pem
+_.jks
+_.p8
+_.p12
+_.key
+_.mobileprovision
 
 # Git
+
 .git/
 .gitignore
 
 # Expo build cache
+
 .expo-shared/
