@@ -54,9 +54,19 @@ export default function CollectionsList() {
 
   useFocusEffect(
     useCallback(() => {
+      if (!user?.id) {
+        showErrorToast("Please log in to view your collections.");
+        router.replace("/auth/login");
+        return;
+      }
       loadCollections();
-    }, [loadCollections])
+    }, [user?.id, router, loadCollections])
   );
+
+  // Auth gating: only render content if logged in (prevents flicker and data loading for guests)
+  if (!user?.id) {
+    return null;
+  }
 
   const handleOpenCreateSheet = () => {
     if (sheetRef.current) {

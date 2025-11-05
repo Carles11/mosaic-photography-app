@@ -9,9 +9,11 @@ import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { showErrorToast } from "@/4-shared/utility/toast/Toast";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import {
   ActivityIndicator,
   Alert,
@@ -29,13 +31,14 @@ export default function ProfileScreen() {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    console.log("OLAKEASE-in-ProfileScreen");
-    if (!authLoading && !user) {
-      showErrorToast("Please login to access your profile");
-      router.replace("/auth/login");
-    }
-  }, [authLoading, user, router]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!authLoading && !user) {
+        showErrorToast("Please login to access your profile");
+        router.replace("/auth/login");
+      }
+    }, [authLoading, user, router])
+  );
 
   const handleLogout = async () => {
     if (user) {

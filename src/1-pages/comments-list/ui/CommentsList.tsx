@@ -26,6 +26,8 @@ export default function CommentsList() {
   const [editContent, setEditContent] = useState<string>("");
 
   useEffect(() => {
+    console.log("OLAKEASE - CommentsList mounted");
+
     const load = async () => {
       if (!user?.id) return;
       setLoading(true);

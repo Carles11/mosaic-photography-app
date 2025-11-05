@@ -9,9 +9,11 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -40,7 +42,18 @@ export default function FavoritesList() {
   const addCollectionSheetRef = useRef<AddToCollectionSheetRef>(null);
   const router = useRouter();
 
+  useFocusEffect(
+    useCallback(() => {
+      if (!isUserLoggedIn()) {
+        showErrorToast("Please log in to view your favorites.");
+        router.replace("/auth/login");
+      }
+    }, [isUserLoggedIn, router])
+  );
+
   useEffect(() => {
+    console.log("OLAKEASE - FavoritesList mounted");
+
     const fetchImages = async () => {
       setLoadingImages(true);
       const imgs = await fetchFavoriteImages(favorites, isUserLoggedIn());
@@ -52,6 +65,7 @@ export default function FavoritesList() {
 
   const handleFavoritePress = (imageId: string | number) => {
     if (!isUserLoggedIn()) {
+      showErrorToast("Please log in to favorite images.");
       router.push("/auth/login");
       return;
     }
@@ -68,13 +82,7 @@ export default function FavoritesList() {
   };
 
   if (!isUserLoggedIn()) {
-    return (
-      <ThemedView style={styles.centered}>
-        <ThemedText style={[styles.emptyText]}>
-          Please log in to view your favorites.
-        </ThemedText>
-      </ThemedView>
-    );
+    return null;
   }
 
   if (favoritesLoading || loadingImages) {

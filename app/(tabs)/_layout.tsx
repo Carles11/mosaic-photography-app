@@ -5,7 +5,6 @@ import { Platform } from "react-native";
 
 export default function TabLayout() {
   const { theme } = useTheme();
-
   const iconColor = theme.icon;
   const labelStyle = {
     color: theme.text,
