@@ -9,6 +9,7 @@ import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -29,14 +30,17 @@ export default function ProfileScreen() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    console.log("OLAKEASE-in-ProfileScreen");
     if (!authLoading && !user) {
+      showErrorToast("Please login to access your profile");
       router.replace("/auth/login");
     }
   }, [authLoading, user, router]);
 
-  const handleAuthAction = async () => {
+  const handleLogout = async () => {
     if (user) {
       await signOut();
+      router.replace("/");
     } else {
       router.push("/auth/login");
     }
@@ -67,7 +71,7 @@ export default function ProfileScreen() {
                       await deleteProfile();
                       // Optionally, also delete the user from Supabase Auth here if required
                       await signOut();
-                      router.replace("/auth/login");
+                      router.replace("/");
                     } catch (error: any) {
                       Alert.alert(
                         "Error",
@@ -132,7 +136,7 @@ export default function ProfileScreen() {
 
           <TouchableOpacity
             style={styles.menuItem}
-            onPress={handleAuthAction}
+            onPress={handleLogout}
             disabled={authLoading}
           >
             <IconSymbol name="logout" size={20} color={theme.text} />

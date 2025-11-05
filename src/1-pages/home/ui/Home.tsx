@@ -73,6 +73,8 @@ export const Home: React.FC = () => {
 
   // --- ASO / Analytics: Set navigation title to optimal ASO string ---
   useEffect(() => {
+    console.log("OLAKEASE-in-HOME-USEEFFECT");
+
     navigation.setOptions?.({
       title: ASO.home.title,
     });
@@ -155,6 +157,7 @@ export const Home: React.FC = () => {
     logEvent("image_view", {
       imageId: image.id,
       imageTitle: image.title,
+      photographer: image.author,
     });
   };
 

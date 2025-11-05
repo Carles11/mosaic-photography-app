@@ -42,7 +42,6 @@ export default function TabLayout() {
         ) : (
           <Icon src={<VectorIcon family={MaterialIcons} name="home" />} />
         )}
-        {/* Label removed */}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="favorites">
@@ -51,7 +50,6 @@ export default function TabLayout() {
         ) : (
           <Icon src={<VectorIcon family={MaterialIcons} name="favorite" />} />
         )}
-        {/* Label removed */}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="collections">
@@ -67,7 +65,6 @@ export default function TabLayout() {
             src={<VectorIcon family={MaterialIcons} name="collections" />}
           />
         )}
-        {/* Label removed */}
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
@@ -78,7 +75,6 @@ export default function TabLayout() {
             src={<VectorIcon family={MaterialIcons} name="account-circle" />}
           />
         )}
-        {/* Label removed */}
       </NativeTabs.Trigger>
     </NativeTabs>
   );

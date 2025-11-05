@@ -34,7 +34,7 @@ export const unstable_settings = {
 
 export default Sentry.wrap(function RootLayout() {
   useEffect(() => {
-    logEvent("gallery_opened", { screen: "GalleryPage", userType: "guest" });
+    logEvent("gallery_opened", { screen: "home", userType: "guest" });
   }, []);
 
   return (
@@ -75,6 +75,7 @@ function InnerLayout() {
     }),
     [theme]
   );
+  console.log("OLAKEASE-in-InnerLayout");
   return (
     <>
       <Stack screenOptions={defaultScreenOptions}>
@@ -83,6 +84,37 @@ function InnerLayout() {
           name="comments-list"
           options={{ headerShown: true, title: "Comments List" }}
         />
+        <Stack.Screen
+          name="favorites-list"
+          options={{ headerShown: true, title: "Favorites" }}
+        />
+        <Stack.Screen
+          name="collections/[id]"
+          options={{ headerShown: true, title: "Collection detail" }}
+        />
+        <Stack.Screen
+          name="collections/collections-list"
+          options={{ headerShown: true, title: "Collections" }}
+        />
+        <Stack.Screen
+          name="photographer/[slug]"
+          options={{ headerShown: true, title: "Photographer" }}
+        />
+        <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+        <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="auth/forgot-password"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="auth/verify-email"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="auth/confirm-email-change"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="auth/magic-link" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style={mode === "light" ? "dark" : "light"} />
     </>
