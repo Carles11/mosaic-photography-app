@@ -11,16 +11,18 @@ import {
   ReportBottomSheetRef,
 } from "@/2-features/reporting/ui/ReportBottomSheet";
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
+import { ASO } from "@/4-shared/config/aso";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
 import { useFavorites } from "@/4-shared/context/favorites";
+import { logEvent } from "@/4-shared/firebase";
 import {
   DownloadOption,
   getAvailableDownloadOptionsForImage,
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Linking, Share } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -37,6 +39,7 @@ export const Home: React.FC = () => {
 
   const { isUserLoggedIn, toggleFavorite, isFavorite } = useFavorites();
   const router = useRouter();
+  const navigation = useNavigation();
   const scrollY = useSharedValue(0);
 
   const {
@@ -67,6 +70,21 @@ export const Home: React.FC = () => {
     id: string;
     content: string;
   } | null>(null);
+
+  // --- ASO / Analytics: Set navigation title to optimal ASO string ---
+  useEffect(() => {
+    navigation.setOptions?.({
+      title: ASO.home.title,
+    });
+  }, [navigation]);
+
+  // --- Analytics: home screen_view event ---
+  useEffect(() => {
+    logEvent("screen_view", {
+      screen: "Home",
+      section: "main_gallery",
+    });
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -134,6 +152,10 @@ export const Home: React.FC = () => {
     setSelectedImage(image);
     setDownloadOptions(getAvailableDownloadOptionsForImage(image));
     setImageMenuOpen(!isImageMenuOpen);
+    logEvent("image_view", {
+      imageId: image.id,
+      imageTitle: image.title,
+    });
   };
 
   const handleCloseImageMenu = () => {
@@ -156,15 +178,24 @@ export const Home: React.FC = () => {
       return;
     }
     await toggleFavorite(selectedImage.id);
+    logEvent("favorite_toggle", {
+      imageId: selectedImage.id,
+      favorited: !isFavorite(selectedImage.id),
+    });
   };
 
   const handleShare = async () => {
     if (!selectedImage) return;
+    const shareMsg = ASO.home.shareTemplate({
+      imageTitle: selectedImage.title,
+      url: selectedImage.url,
+    });
     try {
       await Share.share({
-        message: selectedImage.title
-          ? `${selectedImage.title}\n${selectedImage.url}`
-          : selectedImage.url,
+        message: shareMsg,
+      });
+      logEvent("share", {
+        imageId: selectedImage.id,
       });
     } catch (error) {
       console.log("Error sharing image:", error);
@@ -188,6 +219,10 @@ export const Home: React.FC = () => {
     if (defaultOption) {
       try {
         await Linking.openURL(defaultOption.url);
+        logEvent("image_download", {
+          imageId: selectedImage.id,
+          option: defaultOption.folder,
+        });
       } catch (error) {
         console.log("Error opening image URL:", error);
       }
@@ -202,6 +237,10 @@ export const Home: React.FC = () => {
     }
     try {
       await Linking.openURL(option.url);
+      logEvent("image_download", {
+        imageId: selectedImage.id,
+        option: option.folder,
+      });
     } catch (error) {
       console.log("Error downloading image:", error);
     }
@@ -250,6 +289,21 @@ export const Home: React.FC = () => {
       imageId: selectedImage ? Number(selectedImage.id) : undefined,
       // reportedUserId: selectedImage.user_id,
     });
+    logEvent("report_image", {
+      imageId: selectedImage.id,
+    });
+  };
+
+  // --- Analytics: track filter applied ---
+  interface FilterApplyEventData {
+    filters: typeof filters;
+  }
+
+  const handleApplyFilter = (nextFilters: typeof filters): void => {
+    setFilters(nextFilters);
+    logEvent("filter_applied", {
+      filters: nextFilters,
+    } as FilterApplyEventData);
   };
 
   return (
@@ -276,8 +330,11 @@ export const Home: React.FC = () => {
         isOpen={isFilterMenuOpen}
         onClose={() => setFilterMenuOpen(false)}
         filters={filters}
-        setFilters={setFilters}
-        resetFilters={resetFilters}
+        setFilters={handleApplyFilter}
+        resetFilters={() => {
+          resetFilters();
+          logEvent("filters_reset", {});
+        }}
       />
 
       {/* Image Actions Bottom Sheet */}
