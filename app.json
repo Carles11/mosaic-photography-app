@@ -29,7 +29,7 @@
             {
               "scheme": "https",
               "host": "www.mosaic.photography",
-              "pathPrefix": "/auth"
+              "pathPrefix": "/"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
