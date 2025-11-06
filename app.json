@@ -28,7 +28,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "*.mosaic.photography",
+              "host": "www.mosaic.photography",
               "pathPrefix": "/auth"
             }
           ],
