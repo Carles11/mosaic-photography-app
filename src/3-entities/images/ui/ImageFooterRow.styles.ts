@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 4,
     marginLeft: 12,
+    width: "100%",
   },
   iconGroup: {
     flexDirection: "row",
