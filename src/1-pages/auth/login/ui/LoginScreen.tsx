@@ -207,14 +207,6 @@ export const LoginScreen: React.FC = () => {
             router.push("/auth/register");
           }}
         />
-
-        <OnlyTextButton
-          title="Back to Home Gallery"
-          onPress={() => {
-            logEvent("back_home_clicked", { location: "main" });
-            router.replace("/");
-          }}
-        />
       </ThemedView>
       <ThemedView style={styles.containerBottom}>
         <OnlyTextButton
