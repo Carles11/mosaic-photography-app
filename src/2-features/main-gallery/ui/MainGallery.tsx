@@ -15,6 +15,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   onOpenMenu,
   onPressComments,
   scrollY,
+  onGalleryScroll,
 }) => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
@@ -23,6 +24,15 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
     setZoomIndex(index);
     setZoomVisible(true);
   }, []);
+
+  const handleZoomOpenAnalytics = useCallback(
+    (imageIdx: number) => {
+      if (images[imageIdx]) {
+        // TODO: also call props.logEvent if injected for analytics
+      }
+    },
+    [images]
+  );
 
   if (loading) return <ActivityIndicator />;
 
@@ -56,9 +66,13 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
                 ? () => onPressComments(String(item.id))
                 : undefined
             }
-            onPressZoom={() => handlePressZoom(index)}
+            onPressZoom={() => {
+              handleZoomOpenAnalytics(index);
+              handlePressZoom(index);
+            }}
           />
         )}
+        onGalleryScroll={onGalleryScroll}
       />
       <ZoomGalleryModal
         images={images}

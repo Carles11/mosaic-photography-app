@@ -58,6 +58,7 @@ export type MainGalleryProps = {
   onOpenMenu: (image: GalleryImage) => void;
   onPressComments?: (imageId: string) => void;
   scrollY: SharedValue<number>;
+  onGalleryScroll?: (scrollY: number) => void;
 };
 
 // Types for filters (mirroring your web app, but omitting "nudity")

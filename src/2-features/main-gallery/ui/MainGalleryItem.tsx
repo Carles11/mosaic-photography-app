@@ -22,11 +22,16 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
     return (
       <ThemedView style={styles.itemContainer}>
         <ImageHeaderRow onOpenMenu={onOpenMenu} />
-        <TouchableOpacity activeOpacity={0.85} onPress={onPressZoom}>
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={onPressZoom}
+          accessibilityLabel={`View high resolution photo by ${item.author}, taken in ${item.year}`}
+        >
           <Image
             source={{ uri: item.url }}
             style={styles.image}
             resizeMode="cover"
+            accessibilityLabel={`Vintage photo by ${item.author}, year ${item.year}`}
           />
         </TouchableOpacity>
         <ThemedText style={styles.title} numberOfLines={2}>

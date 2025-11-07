@@ -24,7 +24,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
           size={28}
           color={theme.icon ?? theme.text}
           style={styles.icon}
-          accessibilityLabel="Filters"
+          accessibilityLabel="Open filter menu"
           onPress={onOpenFilters}
         />
         <IconSymbol
@@ -33,7 +33,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
           size={28}
           color={theme.icon ?? theme.text}
           style={styles.icon}
-          accessibilityLabel="Messages"
+          accessibilityLabel="Open messages/comments"
           onPress={() => router.push("/comments-list")}
         />
       </ThemedView>

@@ -30,6 +30,8 @@ import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
 
+const SCROLL_THRESHOLDS = [0.25, 0.5, 0.75, 1];
+
 export const Home: React.FC = () => {
   const { theme } = useTheme();
   const { user, loading: authLoading } = useAuthSession();
@@ -37,7 +39,6 @@ export const Home: React.FC = () => {
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [downloadOptions, setDownloadOptions] = useState<DownloadOption[]>([]);
-
   const { isUserLoggedIn, toggleFavorite, isFavorite } = useFavorites();
   const router = useRouter();
   const navigation = useNavigation();
@@ -56,8 +57,6 @@ export const Home: React.FC = () => {
   const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
   const commentsSheetRef = useRef<any>(null);
   const imageMenuSheetRef = useRef<any>(null);
-
-  // Report bottom sheet ref
   const reportSheetRef = useRef<ReportBottomSheetRef>(null);
 
   const { filters, setFilters, resetFilters } = useGalleryFilters();
@@ -76,6 +75,7 @@ export const Home: React.FC = () => {
   useEffect(() => {
     navigation.setOptions?.({
       title: ASO.home.title,
+      subtitle: ASO.home.description,
     });
   }, [navigation]);
 
@@ -85,6 +85,13 @@ export const Home: React.FC = () => {
       screen: "Home",
       section: "main_gallery",
     });
+    const sessionStart = Date.now();
+    return () => {
+      const duration = (Date.now() - sessionStart) / 1000;
+      logEvent("home_session", {
+        duration,
+      });
+    };
   }, []);
 
   useEffect(() => {
@@ -151,6 +158,27 @@ export const Home: React.FC = () => {
     }
   }, [commentsImageId]);
 
+  const lastScrollLogged = useRef<number>(0);
+
+  const handleScroll = (y: number, listHeight: number = 1) => {
+    if (!images.length || !listHeight) return;
+    const scrollPositionRatio = y / listHeight;
+    for (let i = SCROLL_THRESHOLDS.length - 1; i >= 0; i--) {
+      const threshold = SCROLL_THRESHOLDS[i];
+      if (
+        scrollPositionRatio >= threshold &&
+        lastScrollLogged.current < threshold
+      ) {
+        lastScrollLogged.current = threshold;
+        logEvent("scroll_threshold_reached", {
+          screen: "Home",
+          threshold: threshold * 100,
+        });
+        break;
+      }
+    }
+  };
+
   const handleOpenImageMenu = (image: GalleryImage) => {
     setSelectedImage(image);
     setDownloadOptions(getAvailableDownloadOptionsForImage(image));
@@ -193,7 +221,9 @@ export const Home: React.FC = () => {
     if (!selectedImage) return;
     const shareMsg = ASO.home.shareTemplate({
       imageTitle: selectedImage.title,
+      photographer: selectedImage.author,
       url: selectedImage.url,
+      appName: "Mosaic Photography Gallery",
     });
     try {
       await Share.share({
@@ -283,7 +313,6 @@ export const Home: React.FC = () => {
     deleteComment(commentsImageId, commentId, user.id);
   };
 
-  // NEW: handleReportImage
   const handleReportImage = () => {
     if (!selectedImage) return;
     if (!user) {
@@ -292,14 +321,12 @@ export const Home: React.FC = () => {
     }
     reportSheetRef.current?.open({
       imageId: selectedImage ? Number(selectedImage.id) : undefined,
-      // reportedUserId: selectedImage.user_id,
     });
     logEvent("report_image", {
       imageId: selectedImage.id,
     });
   };
 
-  // --- Analytics: track filter applied ---
   interface FilterApplyEventData {
     filters: typeof filters;
   }
@@ -311,15 +338,36 @@ export const Home: React.FC = () => {
     } as FilterApplyEventData);
   };
 
+  // Analytics: track Filter Menu opened
+  const handleOpenFiltersMenu = () => {
+    setFilterMenuOpen(true);
+    logEvent("filters_menu_opened", {
+      screen: "Home",
+      context: "header",
+    });
+  };
+
+  // Gallery scroll height (estimated, for scroll tracking)
+  const GALLERY_ITEM_HEIGHT = 380; // approximate
+
   return (
     <SafeAreaView
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
       edges={["top"]}
     >
-      <HomeHeader onOpenFilters={() => setFilterMenuOpen(true)} />
+      <HomeHeader onOpenFilters={handleOpenFiltersMenu} />
 
       <RevealOnScroll scrollY={scrollY} height={160} threshold={32}>
-        <PhotographersSlider />
+        <PhotographersSlider
+          onPhotographerPress={(photographer) => {
+            logEvent("photographer_click", {
+              id: photographer.id,
+              slug: photographer.slug,
+              name: photographer.name,
+              surname: photographer.surname,
+            });
+          }}
+        />
       </RevealOnScroll>
 
       <MainGallery
@@ -329,8 +377,10 @@ export const Home: React.FC = () => {
         onOpenMenu={handleOpenImageMenu}
         onPressComments={handleOpenComments}
         scrollY={scrollY}
+        onGalleryScroll={(y) =>
+          handleScroll(y, filteredImages.length * GALLERY_ITEM_HEIGHT)
+        }
       />
-      {/* Filters Bottom Sheet */}
       <BottomSheetFilterMenu
         isOpen={isFilterMenuOpen}
         onClose={() => setFilterMenuOpen(false)}
@@ -341,8 +391,6 @@ export const Home: React.FC = () => {
           logEvent("filters_reset", {});
         }}
       />
-
-      {/* Image Actions Bottom Sheet */}
       <BottomSheetThreeDotsMenu
         ref={imageMenuSheetRef}
         isOpen={isImageMenuOpen}
@@ -354,13 +402,10 @@ export const Home: React.FC = () => {
         onDownload={handleDownload}
         downloadOptions={downloadOptions}
         onDownloadOption={handleDownloadOption}
-        // NEW PROPS:
         onReport={handleReportImage}
         user={user}
         router={router}
       />
-
-      {/* Comments Bottom Sheet */}
       <BottomSheetComments
         ref={commentsSheetRef}
         isOpen={!!commentsImageId}
@@ -378,8 +423,6 @@ export const Home: React.FC = () => {
         reportSheetRef={reportSheetRef}
         router={router}
       />
-
-      {/* Report Bottom Sheet */}
       <ReportBottomSheet ref={reportSheetRef} />
     </SafeAreaView>
   );

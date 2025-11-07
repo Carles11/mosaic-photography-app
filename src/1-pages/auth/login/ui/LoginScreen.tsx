@@ -9,10 +9,11 @@ import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedText
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Text } from "react-native";
 import { styles } from "./LoginScreen.styles";
 
@@ -29,10 +30,19 @@ export const LoginScreen: React.FC = () => {
   const [useMagicLink, setUseMagicLink] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
+  const sessionStartRef = useRef<number>(Date.now());
+
+  // Track screen land and session duration
   useEffect(() => {
+    logEvent("login_screen_view", { timestamp: Date.now() });
     navigation.setOptions({
       title: "Login",
     });
+    return () => {
+      logEvent("login_screen_session", {
+        duration: ((Date.now() - sessionStartRef.current) / 1000).toFixed(1),
+      });
+    };
   }, [navigation]);
 
   // Redirect to home if already logged in
@@ -46,17 +56,25 @@ export const LoginScreen: React.FC = () => {
     setIsSubmitting(true);
     setError(null);
 
+    const method = useMagicLink ? "magic_link" : "email_password";
+    logEvent("login_attempt", { method, email });
+
     if (useMagicLink) {
       const result = await loginWithMagicLink(email);
       if (result.error) {
         setError(result.error);
+        logEvent("login_failure", { method, error: result.error, email });
       } else {
         setMagicLinkSent(true);
+        logEvent("magic_link_sent", { email });
       }
     } else {
       const result = await loginWithEmail(email, password);
       if (result.error) {
         setError(result.error);
+        logEvent("login_failure", { method, error: result.error, email });
+      } else {
+        logEvent("login_success", { method, email });
       }
     }
     setIsSubmitting(false);
@@ -88,12 +106,14 @@ export const LoginScreen: React.FC = () => {
             onPress={() => {
               setMagicLinkSent(false);
               setUseMagicLink(false);
+              logEvent("back_to_login_clicked");
             }}
           />
           <OnlyTextButton
             title="Back to Gallery"
             onPress={() => {
-              router.replace("/"); // Adjust "/" to your main gallery route if needed
+              logEvent("back_home_clicked", { location: "magic_link" });
+              router.replace("/");
             }}
           />
         </ThemedView>
@@ -164,13 +184,17 @@ export const LoginScreen: React.FC = () => {
           title={
             useMagicLink ? "Use password instead" : "Use magic link instead"
           }
-          onPress={() => setUseMagicLink(!useMagicLink)}
+          onPress={() => {
+            setUseMagicLink(!useMagicLink);
+            logEvent("toggle_login_method", { useMagicLink: !useMagicLink });
+          }}
         />
 
         {!useMagicLink && (
           <OnlyTextButton
             title="Forgot Password?"
             onPress={() => {
+              logEvent("forgot_password_clicked");
               router.push("/auth/forgot-password");
             }}
           />
@@ -179,6 +203,7 @@ export const LoginScreen: React.FC = () => {
         <OnlyTextButton
           title="Don't have an account? Register"
           onPress={() => {
+            logEvent("register_clicked");
             router.push("/auth/register");
           }}
         />
@@ -186,7 +211,8 @@ export const LoginScreen: React.FC = () => {
         <OnlyTextButton
           title="Back to Home Gallery"
           onPress={() => {
-            router.replace("/"); // Adjust "/" if your gallery is elsewhere, e.g. "/gallery"
+            logEvent("back_home_clicked", { location: "main" });
+            router.replace("/");
           }}
         />
       </ThemedView>
@@ -194,7 +220,8 @@ export const LoginScreen: React.FC = () => {
         <OnlyTextButton
           title="Back to Home Gallery"
           onPress={() => {
-            router.replace("/"); // Adjust "/" if your gallery is elsewhere, e.g. "/gallery"
+            logEvent("back_home_clicked", { location: "bottom" });
+            router.replace("/");
           }}
         />
       </ThemedView>

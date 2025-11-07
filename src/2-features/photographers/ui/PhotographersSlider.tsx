@@ -1,5 +1,4 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,13 +14,18 @@ import {
 } from "../api/fetchPhotographersList";
 import { styles } from "./PhotographersSlider.styles";
 
-export const PhotographersSlider: React.FC = () => {
+type PhotographersSliderProps = {
+  onPhotographerPress?: (photographer: PhotographerListItem) => void;
+};
+
+export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
+  onPhotographerPress,
+}) => {
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
-  const theme = useTheme();
   useEffect(() => {
     let mounted = true;
     fetchPhotographersList().then((data) => {
@@ -58,12 +62,18 @@ export const PhotographersSlider: React.FC = () => {
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
+        initialNumToRender={5}
+        windowSize={7}
         renderItem={({ item }) => {
           return (
             <TouchableOpacity
               style={styles.item}
               activeOpacity={0.7}
-              onPress={() => router.push(`/photographer/${item.slug}`)}
+              onPress={() => {
+                router.push(`/photographer/${item.slug}`);
+                if (onPhotographerPress) onPhotographerPress(item);
+              }}
+              accessibilityLabel={`Discover vintage photography by ${item.name} ${item.surname}`}
             >
               <View style={[styles.portraitWrapper]}>
                 {item.portrait ? (

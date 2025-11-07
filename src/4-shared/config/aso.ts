@@ -38,5 +38,4 @@ export const ASO = {
         url ?? ""
       }`,
   },
-  // Add more screens as needed
 };

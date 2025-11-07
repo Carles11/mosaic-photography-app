@@ -7,10 +7,11 @@ import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedText
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { styles } from "./RegisterScreen.styles";
 
@@ -27,13 +28,20 @@ export const RegisterScreen: React.FC = () => {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
+  const sessionStartRef = useRef<number>(Date.now());
+
   useEffect(() => {
+    logEvent("register_screen_view", { timestamp: Date.now() });
     navigation.setOptions({
       title: "Register",
     });
+    return () => {
+      logEvent("register_screen_session", {
+        duration: ((Date.now() - sessionStartRef.current) / 1000).toFixed(1),
+      });
+    };
   }, [navigation]);
 
-  // Redirect to home if already logged in
   useEffect(() => {
     if (!loading && user) {
       router.replace("/");
@@ -45,28 +53,33 @@ export const RegisterScreen: React.FC = () => {
 
     if (!email || !password || !repeatPassword) {
       setError("Please fill all fields.");
+      logEvent("register_missing_fields", { email });
       return;
     }
 
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
+      logEvent("register_password_mismatch", { email });
       return;
     }
 
     setIsSubmitting(true);
+    logEvent("register_attempt", { email });
+
     const result = await registerWithEmail(email, password);
 
     if (result.error) {
       setError(result.error);
       setSuccess(false);
+      logEvent("register_failure", { error: result.error, email });
     } else {
       setSuccess(true);
       setError(null);
+      logEvent("register_success", { email });
     }
     setIsSubmitting(false);
   };
 
-  // If loading, you can show a spinner or return null
   if (loading) return null;
 
   return (
@@ -128,6 +141,7 @@ export const RegisterScreen: React.FC = () => {
         <OnlyTextButton
           title="Already have an account? Login"
           onPress={() => {
+            logEvent("login_clicked");
             router.push("/auth/login");
           }}
         />
