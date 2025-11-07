@@ -39,8 +39,71 @@ export const ASO = {
       }`,
   },
 
+  favorites: {
+    title: "Your Favorites | Mosaic Gallery",
+    description:
+      "Access your private list of favorite public domain vintage photographs. Only you can view your own curated collection.",
+    keywords: [
+      "favorites",
+      "private gallery",
+      "liked vintage photos",
+      "saved images",
+      "personal collection",
+      "public domain",
+      "vintage photography",
+      "Mosaic Gallery",
+    ],
+  },
+
+  collections: {
+    title: "Your Collections | Mosaic Gallery",
+    description:
+      "Organize your favorite images into themed collections. Group, curate, and share your best public domain vintage photography.",
+    keywords: [
+      "collections",
+      "gallery",
+      "curated images",
+      "vintage photography",
+      "public domain",
+      "favorites",
+      "themed image sets",
+      "Mosaic Gallery",
+    ],
+    emptyTitle: "No collections yet",
+    emptyText: "Create your first collection to organize your favorite images.",
+  },
+
+  collectionDetail: {
+    title: (name: string) => `${name} | Mosaic Gallery Collection`,
+    description: (desc: string, count: number) =>
+      `${desc} — ${count} images in this curated collection of public domain vintage photography.`,
+    keywords: [
+      "collection",
+      "curated",
+      "public domain images",
+      "gallery",
+      "Mosaic Gallery",
+    ],
+    emptyTitle: "No images in this collection",
+    emptyText:
+      "Add images to this collection to start showcasing your favorites.",
+    shareTemplate: ({
+      name,
+      description,
+      url,
+      count,
+    }: {
+      name: string;
+      description?: string;
+      url?: string;
+      count?: number;
+    }) =>
+      `Check out my collection "${name}" on Mosaic Gallery! ${
+        description ? `${description} — ` : ""
+      }${count ? `${count} images. ` : ""}View it here: ${url ?? ""}`,
+  },
+
   photographer: {
-    // Dynamic ASO title
     title: ({
       name,
       surname,
@@ -53,8 +116,6 @@ export const ASO = {
       `${name ?? ""} ${surname ?? ""} – Vintage Nude Photography${
         origin ? " (" + origin + ")" : ""
       } | Mosaic Gallery`,
-
-    // Dynamic ASO description
     description: ({
       name,
       surname,
@@ -71,8 +132,6 @@ export const ASO = {
       }, legendary in public domain art. View biography, gallery (${
         galleryCount ?? 0
       } images), and historical milestones at Mosaic Photography.`,
-
-    // Dynamic keywords
     keywords: ({
       name,
       surname,
@@ -93,8 +152,6 @@ export const ASO = {
         "Mosaic Gallery",
         origin ?? "",
       ].filter((kw) => !!kw && kw.length > 0),
-
-    // Dynamic share-template for social/analytics
     shareTemplate: ({
       name,
       surname,
@@ -111,8 +168,6 @@ export const ASO = {
       }'s vintage nude photography on Mosaic Gallery — view ${
         galleryCount ?? 0
       } images, bio, and milestones. ${url ?? ""}`,
-
-    // Dynamic OpenGraph meta (for universal future support)
     openGraph: ({
       name,
       surname,
@@ -144,7 +199,6 @@ export const ASO = {
         lastName: surname ?? "",
       },
     }),
-
     twitter: ({
       name,
       surname,

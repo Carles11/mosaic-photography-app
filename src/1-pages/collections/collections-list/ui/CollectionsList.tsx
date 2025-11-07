@@ -2,17 +2,20 @@ import { PrimaryButton } from "@/4-shared/components/buttons/variants/index";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { ASO } from "@/4-shared/config/aso";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useFocusEffect } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useRef } from "react";
 import {
   ActivityIndicator,
   Alert,
   FlatList,
   Image,
+  Share,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -29,23 +32,30 @@ export default function CollectionsList() {
   const { collections, loading, deleteCollection, reloadCollections } =
     useCollections();
   const router = useRouter();
+  const navigation = useNavigation();
   const sheetRef = useRef<CreateCollectionSheetRef>(null);
 
   useFocusEffect(
     useCallback(() => {
       if (!user?.id) {
-        // Auth-guarding, can move to context if desired
         import("@/4-shared/utility/toast/Toast").then(({ showErrorToast }) => {
           showErrorToast("Please log in to view your collections.");
         });
         router.replace("/auth/login");
         return;
       }
-      reloadCollections(); // this may be a no-op if you'll keep context auto-syncing on user change
+      reloadCollections();
     }, [user?.id, router, reloadCollections])
   );
 
-  // Auth gating: only render content if logged in
+  // ASO: Set optimal title and subtitle from config
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: ASO.collections.title,
+      subtitle: ASO.collections.description,
+    });
+  }, [navigation]);
+
   if (!user?.id) {
     return null;
   }
@@ -60,7 +70,6 @@ export default function CollectionsList() {
 
   const handleCollectionCreated = () => {
     sheetRef.current?.close();
-    // reloadCollections(); // Should already be synced in context after create
   };
 
   const handleDeleteCollection = (
@@ -77,11 +86,32 @@ export default function CollectionsList() {
           style: "destructive",
           onPress: async () => {
             await deleteCollection(collectionId);
-            // No need for reload, it's handled in context
           },
         },
       ]
     );
+  };
+
+  // Share collection (in card)
+  const handleShareCollection = (collection: any) => {
+    const url = `https://www.mosaic.photography/profile/collections/${collection.id}`;
+    const message = ASO.collectionDetail?.shareTemplate
+      ? ASO.collectionDetail.shareTemplate({
+          name: collection.name,
+          description: collection.description || "",
+          url,
+        })
+      : `Check out my collection "${collection.name}" on Mosaic Gallery! ${
+          collection.description ?? ""
+        } View it here: ${url}`;
+    Share.share({ message });
+    logEvent("collection_shared", {
+      collectionId: collection.id,
+      collectionName: collection.name,
+      imageCount: collection.imageCount,
+      userId: user?.id,
+      screen: "CollectionsList",
+    });
   };
 
   const renderRightActions = (
@@ -114,9 +144,11 @@ export default function CollectionsList() {
       ) : collections.length === 0 ? (
         <ThemedView style={styles.centered}>
           <ThemedText style={styles.emptyIcon}>📚</ThemedText>
-          <ThemedText style={styles.emptyTitle}>No collections yet</ThemedText>
+          <ThemedText style={styles.emptyTitle}>
+            {ASO.collections.emptyTitle}
+          </ThemedText>
           <ThemedText style={styles.emptyText}>
-            Create your first collection to organize your favorite images.
+            {ASO.collections.emptyText}
           </ThemedText>
           <PrimaryButton
             title="New Collection"
@@ -128,10 +160,10 @@ export default function CollectionsList() {
         <>
           <ThemedView style={styles.header}>
             <ThemedText type="title" style={styles.title}>
-              Your Collections ({collections.length})
+              {ASO.collections.title} ({collections.length})
             </ThemedText>
             <ThemedText style={styles.subtitle}>
-              Organize your favorite images into themed collections.
+              {ASO.collections.description}
             </ThemedText>
             <PrimaryButton
               title="+ New Collection"
@@ -154,60 +186,68 @@ export default function CollectionsList() {
                 containerStyle={{}}
                 childrenContainerStyle={{}}
               >
-                <TouchableOpacity
+                <ThemedView
                   style={[
                     styles.collectionCard,
                     { borderWidth: 1, borderColor: theme.border },
                   ]}
-                  activeOpacity={0.8}
-                  onPress={() => router.push(`/collections/${item.id}`)}
                 >
-                  <ThemedView style={styles.cardPreviewRow}>
-                    {item.previewImages.map((img) => (
-                      <Image
-                        key={String(img.id)}
-                        source={img.url ? { uri: img.url } : undefined}
-                        style={styles.previewThumb}
-                        resizeMode="cover"
-                      />
-                    ))}
-                    {item.previewImages.length === 0 && (
-                      <ThemedView style={styles.emptyThumb}>
-                        <ThemedText style={styles.emptyThumbIcon}>
-                          🖼️
-                        </ThemedText>
-                      </ThemedView>
-                    )}
-                  </ThemedView>
-                  <ThemedView style={styles.cardInfo}>
-                    <ThemedText
-                      style={styles.collectionName}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {item.name}
-                    </ThemedText>
-                    {item.description ? (
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{ flex: 1 }}
+                    onPress={() => router.push(`/collections/${item.id}`)}
+                  >
+                    <ThemedView style={styles.cardPreviewRow}>
+                      {item.previewImages.map((img) => (
+                        <Image
+                          key={String(img.id)}
+                          source={img.url ? { uri: img.url } : undefined}
+                          style={styles.previewThumb}
+                          resizeMode="cover"
+                        />
+                      ))}
+                      {item.previewImages.length === 0 && (
+                        <ThemedView style={styles.emptyThumb}>
+                          <ThemedText style={styles.emptyThumbIcon}>
+                            🖼️
+                          </ThemedText>
+                        </ThemedView>
+                      )}
+                    </ThemedView>
+                    <ThemedView style={styles.cardInfo}>
                       <ThemedText
-                        style={styles.collectionDescription}
-                        numberOfLines={2}
+                        style={styles.collectionName}
+                        numberOfLines={1}
                         ellipsizeMode="tail"
                       >
-                        {item.description}
+                        {item.name}
                       </ThemedText>
-                    ) : null}
-                    <ThemedText style={styles.imageCount}>
-                      {item.imageCount} image
-                      {item.imageCount === 1 ? "" : "s"}
-                    </ThemedText>
-                  </ThemedView>
-                </TouchableOpacity>
+                      {item.description ? (
+                        <ThemedText
+                          style={styles.collectionDescription}
+                          numberOfLines={2}
+                          ellipsizeMode="tail"
+                        >
+                          {item.description}
+                        </ThemedText>
+                      ) : null}
+                      <ThemedText style={styles.imageCount}>
+                        {item.imageCount} image
+                        {item.imageCount === 1 ? "" : "s"}
+                      </ThemedText>
+                    </ThemedView>
+                  </TouchableOpacity>
+                  <PrimaryButton
+                    title="Share"
+                    onPress={() => handleShareCollection(item)}
+                    style={styles.shareButton}
+                  />
+                </ThemedView>
               </Swipeable>
             )}
           />
         </>
       )}
-      {/* Bottom sheet must always be mounted outside any conditional render */}
       <CreateCollectionSheet
         ref={sheetRef}
         onCreated={handleCollectionCreated}

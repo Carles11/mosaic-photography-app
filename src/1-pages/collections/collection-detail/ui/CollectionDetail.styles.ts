@@ -68,4 +68,10 @@ export const styles = StyleSheet.create({
     marginBottom: 6,
     textAlign: "center",
   },
+  emptyText: {
+    fontSize: 16,
+    textAlign: "center",
+    maxWidth: 260,
+    alignSelf: "center",
+  },
 });

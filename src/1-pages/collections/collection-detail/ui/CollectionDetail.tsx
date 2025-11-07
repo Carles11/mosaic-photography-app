@@ -1,6 +1,7 @@
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { ASO } from "@/4-shared/config/aso";
 import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { useNavigation } from "@react-navigation/native";
@@ -29,7 +30,16 @@ export default function CollectionDetailScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      title: detail?.name || "Collection Details",
+      title: detail?.name
+        ? ASO.collectionDetail.title(detail?.name)
+        : ASO.collectionDetail.title("Collection Details"),
+      subtitle:
+        detail?.description && detail?.images
+          ? ASO.collectionDetail.description(
+              detail.description,
+              detail.images.length
+            )
+          : ASO.collections.description,
     });
   }, [navigation, detail]);
 
@@ -37,8 +47,6 @@ export default function CollectionDetailScreen() {
     if (id) {
       getCollectionDetail(id as string);
     }
-    // Optional: clear detail on unmount if desired.
-    // return () => setDetail(null); // would need setter in context
   }, [id, getCollectionDetail]);
 
   if (detailLoading) {
@@ -56,7 +64,12 @@ export default function CollectionDetailScreen() {
     return (
       <ThemedView style={styles.centered}>
         <ThemedText style={styles.emptyIcon}>📚</ThemedText>
-        <ThemedText style={styles.emptyTitle}>Collection not found</ThemedText>
+        <ThemedText style={styles.emptyTitle}>
+          {ASO.collectionDetail.emptyTitle}
+        </ThemedText>
+        <ThemedText style={styles.emptyText}>
+          {ASO.collectionDetail.emptyText}
+        </ThemedText>
       </ThemedView>
     );
   }
@@ -125,7 +138,10 @@ export default function CollectionDetailScreen() {
           <ThemedView style={styles.centered}>
             <ThemedText style={styles.emptyIcon}>📷</ThemedText>
             <ThemedText style={styles.emptyTitle}>
-              No images in this collection
+              {ASO.collectionDetail.emptyTitle}
+            </ThemedText>
+            <ThemedText style={styles.emptyText}>
+              {ASO.collectionDetail.emptyText}
             </ThemedText>
           </ThemedView>
         }

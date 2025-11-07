@@ -6,13 +6,15 @@ import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { ASO } from "@/4-shared/config/aso";
 import { useFavorites } from "@/4-shared/context/favorites";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -41,6 +43,23 @@ export default function FavoritesList() {
 
   const addCollectionSheetRef = useRef<AddToCollectionSheetRef>(null);
   const router = useRouter();
+  const navigation = useNavigation();
+
+  // Inject ASO screen meta on mount/update
+  useEffect(() => {
+    navigation.setOptions({
+      title: ASO.favorites.title,
+      subtitle: ASO.favorites.description,
+    });
+  }, [navigation]);
+
+  // Analytics: track screen view on mount
+  useEffect(() => {
+    logEvent("favorites_screen_view", {
+      screen: "Favorites",
+      favoritesCount: favorites.size,
+    });
+  }, [favorites.size]);
 
   useFocusEffect(
     useCallback(() => {
@@ -61,6 +80,7 @@ export default function FavoritesList() {
     fetchImages();
   }, [favorites, isUserLoggedIn]);
 
+  // Analytics: favorite/unfavorite toggle
   const handleFavoritePress = (imageId: string | number) => {
     if (!isUserLoggedIn()) {
       showErrorToast("Please log in to favorite images.");
@@ -68,15 +88,33 @@ export default function FavoritesList() {
       return;
     }
     toggleFavorite(imageId);
+    logEvent("favorite_toggled", {
+      imageId,
+      favorited: !isFavorite(imageId),
+      screen: "Favorites",
+    });
   };
 
+  // Analytics: adding image to a collection from favorites
   const handleAddToCollectionPress = (imageId: string | number) => {
     addCollectionSheetRef.current?.open(imageId);
+    logEvent("add_to_collection_from_favorites", {
+      imageId,
+      screen: "Favorites",
+    });
   };
 
+  // Analytics: zoom on favorite image
   const handlePressZoom = (index: number) => {
     setZoomIndex(index);
     setZoomVisible(true);
+    if (images[index]) {
+      logEvent("favorites_image_zoom", {
+        imageId: images[index].id,
+        index,
+        screen: "Favorites",
+      });
+    }
   };
 
   if (!isUserLoggedIn()) {
@@ -95,12 +133,17 @@ export default function FavoritesList() {
   }
 
   if (images.length === 0) {
+    logEvent("favorites_empty_state", {
+      screen: "Favorites",
+    });
     return (
       <ThemedView style={styles.centered}>
         <ThemedText style={[styles.emptyIcon, { color: theme.favoriteIcon }]}>
           ♡
         </ThemedText>
-        <ThemedText style={[styles.emptyTitle]}>No favorites yet</ThemedText>
+        <ThemedText style={[styles.emptyTitle]}>
+          {ASO.favorites.title}
+        </ThemedText>
         <ThemedText style={[styles.emptyText]}>
           Start exploring the gallery and heart the images you love!
         </ThemedText>
@@ -112,10 +155,10 @@ export default function FavoritesList() {
     <ThemedView style={[styles.container]}>
       <ThemedView style={styles.header}>
         <ThemedText type="title" style={[styles.title]}>
-          Your Favorites ({images.length})
+          {ASO.favorites.title} ({images.length})
         </ThemedText>
         <ThemedText style={[styles.subtitle]}>
-          Images you've saved to your favorites list.
+          {ASO.favorites.description}
         </ThemedText>
       </ThemedView>
       <FlatList
