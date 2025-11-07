@@ -25,7 +25,7 @@ export const RevealOnScroll: React.FC<RevealOnScrollProps> = ({
   threshold = 24,
 }) => {
   // Track last scrollY and accumulated delta between direction changes
-  const lastScrollY = useSharedValue(scrollY.value);
+  const lastScrollY = useSharedValue(0);
   const accumulatedDelta = useSharedValue(0);
   const lastAction = useSharedValue(1); // 1 = revealed, 0 = hidden
 
