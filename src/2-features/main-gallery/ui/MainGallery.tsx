@@ -72,7 +72,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
             }}
           />
         )}
-        onGalleryScroll={onGalleryScroll}
+        // onGalleryScroll={onGalleryScroll}
       />
       <ZoomGalleryModal
         images={images}

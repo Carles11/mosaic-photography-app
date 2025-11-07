@@ -158,26 +158,31 @@ export const Home: React.FC = () => {
     }
   }, [commentsImageId]);
 
-  const lastScrollLogged = useRef<number>(0);
+  // Analytics: track scroll thresholds CRASHES THE APP ON SCROLL - TODO FIX
 
-  const handleScroll = (y: number, listHeight: number = 1) => {
-    if (!images.length || !listHeight) return;
-    const scrollPositionRatio = y / listHeight;
-    for (let i = SCROLL_THRESHOLDS.length - 1; i >= 0; i--) {
-      const threshold = SCROLL_THRESHOLDS[i];
-      if (
-        scrollPositionRatio >= threshold &&
-        lastScrollLogged.current < threshold
-      ) {
-        lastScrollLogged.current = threshold;
-        logEvent("scroll_threshold_reached", {
-          screen: "Home",
-          threshold: threshold * 100,
-        });
-        break;
-      }
-    }
-  };
+  // const lastScrollLogged = useRef<number>(0);
+
+  // const handleScroll = useCallback(
+  //   (y: number, listHeight: number = 1) => {
+  //     if (!filteredImages.length || !listHeight) return;
+  //     const scrollPositionRatio = y / listHeight;
+  //     for (let i = SCROLL_THRESHOLDS.length - 1; i >= 0; i--) {
+  //       const threshold = SCROLL_THRESHOLDS[i];
+  //       if (
+  //         scrollPositionRatio >= threshold &&
+  //         lastScrollLogged.current < threshold
+  //       ) {
+  //         lastScrollLogged.current = threshold;
+  //         logEvent("scroll_threshold_reached", {
+  //           screen: "Home",
+  //           threshold: threshold * 100,
+  //         });
+  //         break;
+  //       }
+  //     }
+  //   },
+  //   [filteredImages.length]
+  // );
 
   const handleOpenImageMenu = (image: GalleryImage) => {
     setSelectedImage(image);
@@ -377,9 +382,9 @@ export const Home: React.FC = () => {
         onOpenMenu={handleOpenImageMenu}
         onPressComments={handleOpenComments}
         scrollY={scrollY}
-        onGalleryScroll={(y) =>
-          handleScroll(y, filteredImages.length * GALLERY_ITEM_HEIGHT)
-        }
+        // onGalleryScroll={(y) =>
+        //   handleScroll(y, filteredImages.length * GALLERY_ITEM_HEIGHT)
+        // }
       />
       <BottomSheetFilterMenu
         isOpen={isFilterMenuOpen}

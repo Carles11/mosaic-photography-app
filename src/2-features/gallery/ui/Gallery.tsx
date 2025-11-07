@@ -1,6 +1,5 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types";
 import React, { useRef } from "react";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
@@ -12,7 +11,6 @@ export type GalleryProps = {
   renderItem: (item: GalleryImage, index: number) => React.ReactNode;
   scrollY: any;
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
-  onGalleryScroll?: (y: number) => void;
 };
 
 export const Gallery: React.FC<GalleryProps> = ({
@@ -21,17 +19,12 @@ export const Gallery: React.FC<GalleryProps> = ({
   renderItem,
   scrollY,
   ListHeaderComponent,
-  onGalleryScroll,
 }) => {
-  const { theme } = useTheme();
   const listRef = useRef<Animated.FlatList<GalleryImage>>(null);
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      scrollY.value = event.contentOffset.y;
-      if (onGalleryScroll) {
-        onGalleryScroll(event.contentOffset.y);
-      }
-    },
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    "worklet";
+    scrollY.value = event.contentOffset.y;
   });
 
   return (
