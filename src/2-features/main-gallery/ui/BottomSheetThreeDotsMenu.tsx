@@ -3,30 +3,12 @@ import { DownloadOptionsPanel } from "@/4-shared/components/download-options/ui/
 import { HrLine } from "@/4-shared/components/elements/horizontal-line-hr";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { GalleryImage } from "@/4-shared/types/gallery";
+import { BottomSheetThreeDotsMenuProps } from "@/4-shared/types";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { Router } from "expo-router";
 import React, { forwardRef, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetThreeDotsMenu.styles";
-
-type BottomSheetThreeDotsMenuProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  selectedImage: GalleryImage | null;
-  onAddToFavorites?: () => void;
-  isFavorite?: (imageId: string | number) => void;
-  onShare?: () => void;
-  onDownload?: () => void;
-  downloadOptions?: DownloadOption[];
-  onDownloadOption?: (option: DownloadOption) => void;
-  // NEW props for reporting
-  onReport?: () => void;
-  user?: { id: string } | null;
-  router?: Router;
-};
 
 export const BottomSheetThreeDotsMenu = forwardRef<
   any,
@@ -34,13 +16,9 @@ export const BottomSheetThreeDotsMenu = forwardRef<
 >(
   (
     {
-      isOpen,
       onClose,
       selectedImage,
-      onAddToFavorites,
-      isFavorite,
       onShare,
-      onDownload,
       downloadOptions = [],
       onDownloadOption,
       onReport,
@@ -49,7 +27,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
     },
     ref
   ) => {
-    const { theme, mode } = useTheme();
+    const { theme } = useTheme();
     const [showDownloadOptions, setShowDownloadOptions] = useState(false);
 
     // Reset Download Options menu on sheet close!
@@ -79,15 +57,6 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                   {selectedImage.description}
                 </ThemedText>
                 <HrLine />
-                <ActionRow
-                  icon="favorite-border"
-                  label={
-                    isFavorite ? "Remove from Favorites" : "Add to Favorites"
-                  }
-                  color={theme.favoriteIcon}
-                  onPress={onAddToFavorites}
-                  textColor={theme.text}
-                />
                 <ActionRow
                   icon="share"
                   label="Share this image"

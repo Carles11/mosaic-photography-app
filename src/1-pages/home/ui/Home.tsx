@@ -242,37 +242,6 @@ export const Home: React.FC = () => {
     }
   };
 
-  // --- Download main button ---
-  const handleDownload = async () => {
-    if (!selectedImage) return;
-    if (!user) {
-      setImageMenuOpen(false); // close sheet in app state
-      imageMenuSheetRef.current?.dismiss?.(); // direct ref close if available
-      showErrorToast("Please log in to download images.");
-      router.push("/auth/login");
-      return;
-    }
-    const options = getAvailableDownloadOptionsForImage(selectedImage);
-    let defaultOption =
-      options.find((opt) => opt.folder === "originalsWEBP") ||
-      options
-        .filter((opt) => !opt.isOriginal)
-        .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0] ||
-      options.find((opt) => opt.isOriginal);
-
-    if (defaultOption) {
-      try {
-        await Linking.openURL(defaultOption.url);
-        logEvent("image_download", {
-          imageId: selectedImage.id,
-          option: defaultOption.folder,
-        });
-      } catch (error) {
-        showErrorToast("Failed to open image URL for download.");
-      }
-    }
-  };
-
   // --- Download option buttons ---
   const handleDownloadOption = async (option: DownloadOption) => {
     if (!selectedImage) return;
@@ -405,13 +374,11 @@ export const Home: React.FC = () => {
       />
       <BottomSheetThreeDotsMenu
         ref={imageMenuSheetRef}
-        isOpen={isImageMenuOpen}
         onClose={handleCloseImageMenu}
         selectedImage={selectedImage}
         onAddToFavorites={handleAddToFavorites}
         isFavorite={isFavorite}
         onShare={handleShare}
-        onDownload={handleDownload}
         downloadOptions={downloadOptions}
         onDownloadOption={handleDownloadOption}
         onReport={handleReportImage}

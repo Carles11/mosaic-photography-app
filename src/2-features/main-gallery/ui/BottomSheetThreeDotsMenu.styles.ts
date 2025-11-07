@@ -23,9 +23,9 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
-    marginVertical: 8,
+    marginVertical: 4,
     width: "50%",
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 12,
   },
   downloadOptionsTitle: {

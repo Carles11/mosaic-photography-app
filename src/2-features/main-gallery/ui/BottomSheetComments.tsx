@@ -10,10 +10,10 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { Comment } from "@/4-shared/types";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Router } from "expo-router";
 import React, { forwardRef } from "react";
-import { ActivityIndicator, FlatList, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetComments.styles";
 
@@ -39,7 +39,6 @@ type BottomSheetCommentsProps = {
 export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
   (
     {
-      isOpen,
       onClose,
       comments,
       isLoading,
@@ -155,12 +154,12 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
             </View>
             {user ? (
               <ThemedView style={styles.inputRow}>
-                <TextInput
-                  style={styles.textInput}
+                <BottomSheetTextInput
                   placeholder="Write a comment..."
                   value={commentText}
                   onChangeText={setCommentText}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={theme.inputPlaceholderColor ?? "#999"}
+                  style={styles.textInput}
                 />
                 <PrimaryButton
                   title={editMode ? "Update" : "Send"}

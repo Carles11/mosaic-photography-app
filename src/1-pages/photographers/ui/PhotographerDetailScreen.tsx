@@ -1,24 +1,44 @@
 import { Gallery } from "@/2-features/gallery/ui/Gallery";
+import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetComments";
+import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
 import { PhotographerPortraitHeader } from "@/2-features/photographers/ui/PhotographerPortraitHeader";
 import { PhotographerTimeline } from "@/2-features/photographers/ui/Timeline";
 import { WebGalleryMessage } from "@/2-features/photographers/ui/WebGalleryMessage";
+import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
+import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useComments } from "@/4-shared/context/comments";
+import { useFavorites } from "@/4-shared/context/favorites";
+import { logEvent } from "@/4-shared/firebase";
+import {
+  DownloadOption,
+  getAvailableDownloadOptionsForImage,
+} from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { mapPhotographerImagesToGalleryImages } from "@/4-shared/lib/mapPhotographerImageToGalleryImage";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { PhotographerSlug } from "@/4-shared/types";
-import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ActivityIndicator,
   Dimensions,
   Image,
+  Linking,
   Share,
   TouchableOpacity,
 } from "react-native";
@@ -30,6 +50,19 @@ const HEADER_HEIGHT = deviceHeight * 0.5;
 
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
+  const router = useRouter();
+  const { theme } = useTheme();
+  const { user, loading: authLoading } = useAuthSession();
+  const { isFavorite, toggleFavorite, isUserLoggedIn } = useFavorites();
+  const {
+    comments,
+    loading: commentsLoading,
+    addComment,
+    updateComment,
+    deleteComment,
+    loadCommentsForImage,
+    loadCommentCountsBatch,
+  } = useComments();
   const { slug } = useLocalSearchParams();
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null
@@ -39,7 +72,23 @@ const PhotographerDetailScreen: React.FC = () => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
 
-  // ScrollY for RevealOnScroll and Gallery scroll tracking
+  // Gallery image menu state/refs
+  const [selectedImage, setSelectedImage] = useState<any | null>(null);
+  const imageMenuSheetRef = useRef<any>(null);
+
+  const [downloadOptions, setDownloadOptions] = useState<DownloadOption[]>([]);
+
+  // Comments state (bottom sheet)
+  const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
+  const commentsSheetRef = useRef<any>(null);
+  const reportSheetRef = useRef<any>(null);
+
+  const [commentText, setCommentText] = useState("");
+  const [editMode, setEditMode] = useState<{
+    id: string;
+    content: string;
+  } | null>(null);
+
   const scrollY = useSharedValue(0);
 
   useEffect(() => {
@@ -63,12 +112,6 @@ const PhotographerDetailScreen: React.FC = () => {
           galleryCount: photographer.images?.length ?? 0,
         }),
       });
-      // Optionally (for debugging/analytics):
-      // console.log('Keywords:', ASO.photographer.keywords({
-      //   name: photographer.name,
-      //   surname: photographer.surname,
-      //   origin: photographer.origin,
-      // }));
     }
   }, [photographer, navigation]);
 
@@ -112,24 +155,155 @@ const PhotographerDetailScreen: React.FC = () => {
     [photographer]
   );
 
+  // Load comments counts in batch
+  useEffect(() => {
+    if (galleryImages.length > 0) {
+      const imageIds = galleryImages.map((img) => String(img.id));
+      loadCommentCountsBatch(imageIds);
+    }
+  }, [galleryImages, loadCommentCountsBatch]);
+
+  // open/close comments sheet imperatively
+  useEffect(() => {
+    if (commentsImageId) {
+      commentsSheetRef.current?.present();
+    } else {
+      commentsSheetRef.current?.dismiss();
+      setCommentText("");
+      setEditMode(null);
+    }
+  }, [commentsImageId]);
+
+  // load the comments for the selected image
+  useEffect(() => {
+    if (commentsImageId) {
+      loadCommentsForImage(commentsImageId);
+    }
+  }, [commentsImageId, loadCommentsForImage]);
+
   const handlePressZoom = useCallback((index: number) => {
     setZoomIndex(index);
     setZoomVisible(true);
   }, []);
 
-  // Optionally: Share Photographer for social/analytics purposes
-  const handleSharePhotographer = useCallback(() => {
-    if (!photographer) return;
-    const msg = ASO.photographer.shareTemplate({
-      name: photographer.name,
-      surname: photographer.surname,
-      galleryCount: photographer.images?.length ?? 0,
-      url: `https://www.mosaic.photography/photographers/${photographer.slug}`,
+  // --- Image Menu handlers (imperative, Home-style, no isOpen state) ---
+  const handleOpenImageMenu = useCallback((image: any) => {
+    setSelectedImage(image);
+    setDownloadOptions(getAvailableDownloadOptionsForImage(image));
+    setTimeout(() => {
+      imageMenuSheetRef.current?.present?.();
+    }, 0);
+    logEvent("image_view", {
+      imageId: image.id,
+      imageTitle: image.title,
+      photographer: image.author,
     });
-    Share.share({ message: msg });
-  }, [photographer]);
+  }, []);
 
-  // Appealing web version message if few images
+  const handleCloseImageMenu = () => {
+    imageMenuSheetRef.current?.dismiss?.();
+    setSelectedImage(null);
+  };
+
+  // Download option logic
+  const handleDownloadOption = async (option: DownloadOption) => {
+    if (!selectedImage) return;
+    if (!user) {
+      handleCloseImageMenu();
+      showErrorToast("Please log in to download images.");
+      return;
+    }
+    try {
+      await Linking.openURL(option.url);
+      logEvent("image_download", {
+        imageId: selectedImage.id,
+        option: option.folder,
+      });
+    } catch (error) {
+      showErrorToast("Failed to open image URL for download.");
+    }
+  };
+
+  // Share logic
+  const handleShareImage = async () => {
+    if (!selectedImage) return;
+    const shareMsg = ASO.home.shareTemplate({
+      imageTitle: selectedImage.title,
+      photographer: selectedImage.author,
+      url: selectedImage.url,
+      appName: "Mosaic Photography Gallery",
+    });
+    try {
+      await Share.share({
+        message: shareMsg,
+      });
+      logEvent("share", {
+        imageId: selectedImage.id,
+      });
+    } catch (error) {
+      showErrorToast("Couldn't share this image.");
+    }
+  };
+
+  const handleAddToFavorites = async () => {
+    if (!selectedImage) return;
+    if (!isUserLoggedIn()) {
+      showErrorToast("Please log in to use this feature.");
+      return;
+    }
+    await toggleFavorite(selectedImage.id);
+    logEvent("favorite_toggle", {
+      imageId: selectedImage.id,
+      favorited: !isFavorite(selectedImage.id),
+    });
+  };
+
+  // --- Comments ---
+  const handleOpenComments = useCallback((imageId: string) => {
+    setCommentsImageId(imageId);
+  }, []);
+
+  const handleCloseComments = useCallback(() => {
+    setCommentsImageId(null);
+    setCommentText("");
+    setEditMode(null);
+  }, []);
+
+  const handleSaveComment = () => {
+    if (!user || !commentsImageId) return;
+    if (editMode) {
+      updateComment(commentsImageId, editMode.id, user.id, commentText);
+      setEditMode(null);
+    } else {
+      addComment(commentsImageId, user.id, commentText);
+    }
+    setCommentText("");
+  };
+
+  const handleEdit = (commentId: string, content: string) => {
+    setEditMode({ id: commentId, content });
+    setCommentText(content);
+  };
+
+  const handleDelete = (commentId: string) => {
+    if (!user || !commentsImageId) return;
+    deleteComment(commentsImageId, commentId, user.id);
+  };
+
+  // --- Report ---
+  const handleReportImage = () => {
+    if (!selectedImage) return;
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    // Optional: open report bottom sheet if you use it, else just call the handler here
+    // reportSheetRef.current?.open({ imageId: Number(selectedImage.id) });
+    logEvent("report_image", {
+      imageId: selectedImage.id,
+    });
+  };
+
   const showWebMsg = photographer && (photographer.images?.length ?? 0) < 5;
 
   const ListHeaderComponent = useCallback(() => {
@@ -172,7 +346,16 @@ const PhotographerDetailScreen: React.FC = () => {
           />
           <TouchableOpacity
             style={styles.shareButton}
-            onPress={handleSharePhotographer}
+            onPress={() => {
+              if (!photographer) return;
+              const msg = ASO.photographer.shareTemplate({
+                name: photographer.name,
+                surname: photographer.surname,
+                galleryCount: photographer.images?.length ?? 0,
+                url: `https://www.mosaic.photography/photographers/${photographer.slug}`,
+              });
+              Share.share({ message: msg });
+            }}
           >
             <ThemedText style={styles.shareButtonText}>
               Share Photographer
@@ -187,13 +370,7 @@ const PhotographerDetailScreen: React.FC = () => {
         </ThemedView>
       </>
     );
-  }, [
-    photographer,
-    timelineEvents,
-    scrollY,
-    showWebMsg,
-    handleSharePhotographer,
-  ]);
+  }, [photographer, timelineEvents, scrollY, showWebMsg]);
 
   if (loading) {
     return (
@@ -213,6 +390,11 @@ const PhotographerDetailScreen: React.FC = () => {
     );
   }
 
+  const imageComments = commentsImageId ? comments[commentsImageId] || [] : [];
+  const isCommentsLoading = commentsImageId
+    ? commentsLoading[commentsImageId]
+    : false;
+
   return (
     <>
       <Gallery
@@ -221,9 +403,13 @@ const PhotographerDetailScreen: React.FC = () => {
         scrollY={scrollY}
         renderItem={(item, index) => (
           <ThemedView style={styles.galleryImageWrapper}>
+            <ImageHeaderRow onOpenMenu={() => handleOpenImageMenu(item)} />
             <TouchableOpacity
               activeOpacity={0.85}
-              onPress={() => handlePressZoom(index)}
+              onPress={() => {
+                setZoomIndex(index);
+                setZoomVisible(true);
+              }}
             >
               <Image
                 source={{ uri: item.url }}
@@ -242,9 +428,41 @@ const PhotographerDetailScreen: React.FC = () => {
                 </ThemedText>
               ) : null}
             </TouchableOpacity>
+            <ImageFooterRow
+              imageId={String(item.id)}
+              onPressComments={() => handleOpenComments(String(item.id))}
+            />
           </ThemedView>
         )}
         ListHeaderComponent={ListHeaderComponent}
+      />
+      <BottomSheetThreeDotsMenu
+        ref={imageMenuSheetRef}
+        selectedImage={selectedImage}
+        onAddToFavorites={handleAddToFavorites}
+        isFavorite={isFavorite}
+        onShare={handleShareImage}
+        downloadOptions={downloadOptions}
+        onDownloadOption={handleDownloadOption}
+        user={user}
+        onClose={handleCloseImageMenu}
+      />
+      <BottomSheetComments
+        ref={commentsSheetRef}
+        isOpen={!!commentsImageId}
+        onClose={handleCloseComments}
+        comments={imageComments}
+        isLoading={isCommentsLoading}
+        commentText={commentText}
+        setCommentText={setCommentText}
+        handleSaveComment={handleSaveComment}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        authLoading={authLoading}
+        editMode={editMode}
+        user={user}
+        reportSheetRef={reportSheetRef}
+        router={router}
       />
       <ZoomGalleryModal
         visible={zoomVisible}

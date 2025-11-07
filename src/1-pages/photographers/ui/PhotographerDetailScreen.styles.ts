@@ -72,6 +72,7 @@ export const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: "hidden",
     elevation: 2,
+    width: "100%",
   },
   galleryImage: {
     borderRadius: 4,
