@@ -13,6 +13,9 @@ export type GalleryProps = {
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
 };
 
+// Consistent card/item height for FlatList optimization
+const GALLERY_ITEM_HEIGHT = 180; // Adjust to your card/item height
+
 export const Gallery: React.FC<GalleryProps> = ({
   galleryTitle,
   images,
@@ -27,6 +30,16 @@ export const Gallery: React.FC<GalleryProps> = ({
     scrollY.value = event.contentOffset.y;
   });
 
+  // Type fix here: use ArrayLike for _data param
+  const getItemLayout = (
+    _data: ArrayLike<GalleryImage> | null | undefined,
+    index: number
+  ) => ({
+    length: GALLERY_ITEM_HEIGHT,
+    offset: GALLERY_ITEM_HEIGHT * index,
+    index,
+  });
+
   return (
     <ThemedView>
       {galleryTitle && (
@@ -39,12 +52,14 @@ export const Gallery: React.FC<GalleryProps> = ({
         data={images}
         keyExtractor={(item) => String(item.id)}
         numColumns={1}
-        initialNumToRender={5}
-        windowSize={7}
+        initialNumToRender={6}
+        windowSize={10}
         contentContainerStyle={styles.container}
         renderItem={({ item, index }) => (
           <ThemedView style={styles.item}>{renderItem(item, index)}</ThemedView>
         )}
+        getItemLayout={getItemLayout}
+        removeClippedSubviews={true}
         ListHeaderComponent={ListHeaderComponent}
         onScroll={scrollHandler}
         scrollEventThrottle={32}

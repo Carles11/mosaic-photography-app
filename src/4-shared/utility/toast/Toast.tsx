@@ -1,51 +1,92 @@
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import React from "react";
+import { Text } from "react-native";
 import Toast, { BaseToast, ErrorToast } from "react-native-toast-message";
-// You may import custom styles from Toast.styles if desired
 
-const { theme } = useTheme();
+export const MosaicToast = () => {
+  const { theme } = useTheme();
 
-const toastConfig = {
-  success: (props: any) => (
-    <BaseToast
-      {...props}
-      style={{
-        borderLeftColor: theme.success,
-      }}
-      contentContainerStyle={{ paddingHorizontal: 15 }}
-      text1Style={{
-        fontSize: 16,
-        fontWeight: "bold",
-      }}
-      text2Style={{
-        fontSize: 14,
-      }}
-    />
-  ),
-  error: (props: any) => (
-    <ErrorToast
-      {...props}
-      style={{
-        borderLeftColor: theme.error,
-      }}
-      text1Style={{
-        fontSize: 16,
-        fontWeight: "bold",
-      }}
-      text2Style={{
-        fontSize: 14,
-      }}
-    />
-  ),
-  // Extend with more types as needed (e.g. info)
+  const toastConfig = {
+    success: (props: any) => (
+      <BaseToast
+        {...props}
+        style={{
+          borderLeftColor: theme.success,
+        }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        renderText1={({ children }: { children: React.ReactNode }) => (
+          <Text
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "#222",
+            }}
+          >
+            {children}
+          </Text>
+        )}
+        renderText2={({ children }: { children: React.ReactNode }) =>
+          children ? (
+            <Text
+              numberOfLines={2}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 14,
+                color: "#555",
+                marginTop: 2,
+              }}
+            >
+              {children}
+            </Text>
+          ) : null
+        }
+      />
+    ),
+    error: (props: any) => (
+      <ErrorToast
+        {...props}
+        style={{
+          borderLeftColor: theme.error,
+        }}
+        renderText1={({ children }: { children: React.ReactNode }) => (
+          <Text
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color: "#222",
+            }}
+          >
+            {children}
+          </Text>
+        )}
+        renderText2={({ children }: { children: React.ReactNode }) =>
+          children ? (
+            <Text
+              numberOfLines={2}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 14,
+                color: "#555",
+                marginTop: 2,
+              }}
+            >
+              {children}
+            </Text>
+          ) : null
+        }
+      />
+    ),
+    // Add other toast types here...
+  };
+
+  return <Toast config={toastConfig} position="top" topOffset={48} />;
 };
 
-// Toast global component for inclusion at entry-point
-export const MosaicToast = () => (
-  <Toast config={toastConfig} position="top" topOffset={48} />
-);
-
-// Helper functions for use throughout the app
+// Helper functions (no changes needed, keep as-is)
 export function showToast({
   type = "success",
   text1,

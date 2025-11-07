@@ -25,4 +25,12 @@ export const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 8,
   },
+  imagePlaceholder: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#eaeaea", // soft fallback for progressive loading
+    zIndex: 2,
+  },
 });

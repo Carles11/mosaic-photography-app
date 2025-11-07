@@ -30,7 +30,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
 
-const SCROLL_THRESHOLDS = [0.25, 0.5, 0.75, 1];
+// const SCROLL_THRESHOLDS = [0.25, 0.5, 0.75, 1];
 
 export const Home: React.FC = () => {
   const { theme } = useTheme();
@@ -242,9 +242,13 @@ export const Home: React.FC = () => {
     }
   };
 
+  // --- Download main button ---
   const handleDownload = async () => {
     if (!selectedImage) return;
     if (!user) {
+      setImageMenuOpen(false); // close sheet in app state
+      imageMenuSheetRef.current?.dismiss?.(); // direct ref close if available
+      showErrorToast("Please log in to download images.");
       router.push("/auth/login");
       return;
     }
@@ -269,9 +273,13 @@ export const Home: React.FC = () => {
     }
   };
 
+  // --- Download option buttons ---
   const handleDownloadOption = async (option: DownloadOption) => {
     if (!selectedImage) return;
     if (!user) {
+      setImageMenuOpen(false); // close menu
+      imageMenuSheetRef.current?.dismiss?.();
+      showErrorToast("Please log in to download images.");
       router.push("/auth/login");
       return;
     }
@@ -285,7 +293,6 @@ export const Home: React.FC = () => {
       console.log("Error downloading image:", error);
     }
   };
-
   useEffect(() => {
     if (commentsImageId) {
       loadCommentsForImage(commentsImageId);

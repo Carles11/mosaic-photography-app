@@ -2,12 +2,14 @@ import { Gallery } from "@/2-features/gallery/ui/Gallery";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { ASO } from "@/4-shared/config/aso";
+import { logEvent } from "@/4-shared/firebase";
+import { GalleryImage } from "@/4-shared/types";
 import { MainGalleryProps } from "@/4-shared/types/index";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { styles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
-
 export const MainGallery: React.FC<MainGalleryProps> = ({
   images,
   loading,
@@ -15,26 +17,63 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   onOpenMenu,
   onPressComments,
   scrollY,
-  onGalleryScroll,
 }) => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
 
-  const handlePressZoom = useCallback((index: number) => {
-    setZoomIndex(index);
-    setZoomVisible(true);
-  }, []);
+  // Analytics: fire event on mount/render
+  useEffect(() => {
+    logEvent("main_gallery_screen_view", {
+      screen: "Home", // Parent screen
+      galleryTitle: ASO.home.title,
+      imagesCount: images.length,
+    });
+  }, [images.length]);
 
-  const handleZoomOpenAnalytics = useCallback(
-    (imageIdx: number) => {
-      if (images[imageIdx]) {
-        // TODO: also call props.logEvent if injected for analytics
+  const handlePressZoom = useCallback(
+    (index: number) => {
+      setZoomIndex(index);
+      setZoomVisible(true);
+      if (images[index]) {
+        logEvent("main_gallery_image_zoom", {
+          imageId: images[index].id,
+          index,
+          screen: "Home",
+        });
       }
     },
     [images]
   );
 
-  if (loading) return <ActivityIndicator />;
+  const handleOpenMenu = useCallback(
+    (item: GalleryImage) => {
+      logEvent("main_gallery_image_menu_open", {
+        imageId: item.id,
+        screen: "Home",
+      });
+      onOpenMenu?.(item);
+    },
+    [onOpenMenu]
+  );
+
+  const handleOpenComments = useCallback(
+    (imageId: string | number) => {
+      logEvent("main_gallery_image_comments_open", {
+        imageId,
+        screen: "Home",
+      });
+      onPressComments?.(String(imageId));
+    },
+    [onPressComments]
+  );
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.centered}>
+        <ActivityIndicator size="large" />
+      </ThemedView>
+    );
+  }
 
   if (error) {
     return (
@@ -54,25 +93,20 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   return (
     <>
       <Gallery
-        galleryTitle="Mosaic Gallery"
+        galleryTitle={ASO.home.title}
         scrollY={scrollY}
         images={images}
         renderItem={(item, index) => (
-          <MainGalleryItem
+          <MemoizedMainGalleryItem
             item={item}
-            onOpenMenu={() => onOpenMenu(item)}
+            onOpenMenu={() => handleOpenMenu(item)}
             onPressComments={
-              onPressComments
-                ? () => onPressComments(String(item.id))
-                : undefined
+              onPressComments ? () => handleOpenComments(item.id) : undefined
             }
-            onPressZoom={() => {
-              handleZoomOpenAnalytics(index);
-              handlePressZoom(index);
-            }}
+            onPressZoom={() => handlePressZoom(index)}
           />
         )}
-        // onGalleryScroll={onGalleryScroll}
+        // Make sure FlatList optimizations are set inside Gallery
       />
       <ZoomGalleryModal
         images={images}
@@ -83,3 +117,6 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
     </>
   );
 };
+
+// Memoized MainGalleryItem for better performance
+const MemoizedMainGalleryItem = React.memo(MainGalleryItem);
