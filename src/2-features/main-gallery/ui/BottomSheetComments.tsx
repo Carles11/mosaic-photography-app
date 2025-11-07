@@ -1,5 +1,5 @@
 import { ReportBottomSheetRef } from "@/2-features/reporting/ui/ReportBottomSheet";
-import { BottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
+import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
   OnlyTextButton,
   PrimaryButton,
@@ -59,7 +59,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
     const { theme } = useTheme();
 
     return (
-      <BottomSheetModal
+      <ReusableBottomSheetModal
         ref={ref}
         snapPoints={["80%"]}
         onDismiss={onClose}
@@ -181,7 +181,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
             />
           </SafeAreaView>
         </BottomSheetView>
-      </BottomSheetModal>
+      </ReusableBottomSheetModal>
     );
   }
 );
