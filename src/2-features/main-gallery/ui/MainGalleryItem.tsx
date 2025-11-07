@@ -3,7 +3,6 @@ import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
@@ -17,11 +16,10 @@ type MainGalleryItemProps = {
 };
 
 const PLACEHOLDER_IMAGE =
-  "https://cdn.mosaic.photography/assets/placeholder.webp"; // Update as needed
+  "https://cdn.mosaic.photography/logos/mosaic-high-resolution-logo-transparent-DESKTOP-dark_766x541px_lg82w1.webp";
 
 export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
   ({ item, onOpenMenu, onPressComments, onPressZoom }) => {
-    const { theme } = useTheme();
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
 

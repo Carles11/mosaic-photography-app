@@ -4,6 +4,7 @@ import AddToCollectionSheet, {
 } from "@/2-features/favorites-list/ui/AddToCollectionSheet";
 import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
+import SwipeableCard from "@/4-shared/components/swipeable-card/ui/SwipeableCard";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
@@ -16,12 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { styles } from "./FavoritesList.styles";
 
 export default function FavoritesList() {
@@ -80,7 +76,6 @@ export default function FavoritesList() {
     fetchImages();
   }, [favorites, isUserLoggedIn]);
 
-  // Analytics: favorite/unfavorite toggle
   const handleFavoritePress = (imageId: string | number) => {
     if (!isUserLoggedIn()) {
       showErrorToast("Please log in to favorite images.");
@@ -95,7 +90,6 @@ export default function FavoritesList() {
     });
   };
 
-  // Analytics: adding image to a collection from favorites
   const handleAddToCollectionPress = (imageId: string | number) => {
     addCollectionSheetRef.current?.open(imageId);
     logEvent("add_to_collection_from_favorites", {
@@ -104,7 +98,6 @@ export default function FavoritesList() {
     });
   };
 
-  // Analytics: zoom on favorite image
   const handlePressZoom = (index: number) => {
     setZoomIndex(index);
     setZoomVisible(true);
@@ -151,6 +144,52 @@ export default function FavoritesList() {
     );
   }
 
+  const renderItem = ({
+    item,
+    index,
+  }: {
+    item: GalleryImage;
+    index: number;
+  }) => (
+    <SwipeableCard
+      imageUrl={item.thumbnailUrl ?? ""}
+      onImagePress={() => handlePressZoom(index)}
+      title={item.author}
+      subtitle={item.description}
+      year={item.year}
+      rightActions={[
+        {
+          icon: (
+            <FavoriteButton
+              imageId={item.id}
+              size={24}
+              color={theme.favoriteIcon}
+              onPressFavoriteIcon={() => handleFavoritePress(item.id)}
+              isFavorite={isFavorite}
+              loading={loading}
+            />
+          ),
+          onPress: () => handleFavoritePress(item.id),
+          accessibilityLabel: "Toggle Favorite",
+          backgroundColor: "#fff",
+        },
+        {
+          icon: (
+            <Ionicons
+              name="add-circle-outline"
+              size={26}
+              color={theme.favoriteIcon}
+            />
+          ),
+          onPress: () => handleAddToCollectionPress(item.id),
+          accessibilityLabel: "Add to Collection",
+          backgroundColor: "#f5f5f5",
+        },
+      ]}
+      containerStyle={{ marginBottom: 12 }}
+    />
+  );
+
   return (
     <ThemedView style={[styles.container]}>
       <ThemedView style={styles.header}>
@@ -165,47 +204,7 @@ export default function FavoritesList() {
         data={images}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item, index }) => (
-          <ThemedView style={styles.imageCard}>
-            <TouchableOpacity onPress={() => handlePressZoom(index)}>
-              <Image
-                source={{ uri: item.thumbnailUrl }}
-                style={styles.thumbnail}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.imageInfo}>
-              <ThemedText style={[styles.imageAuthor]}>
-                {item.author}
-              </ThemedText>
-              <ThemedText style={[styles.imageDescription]}>
-                {item.description}
-              </ThemedText>
-              <ThemedText style={[styles.imageYear]}>{item.year}</ThemedText>
-            </TouchableOpacity>
-            <ThemedView style={{ flexDirection: "row", alignItems: "center" }}>
-              <FavoriteButton
-                imageId={item.id}
-                size={24}
-                color={theme.favoriteIcon}
-                onPressFavoriteIcon={() => handleFavoritePress(item.id)}
-                isFavorite={isFavorite}
-                loading={loading}
-              />
-              <TouchableOpacity
-                style={{ marginLeft: 12 }}
-                onPress={() => handleAddToCollectionPress(item.id)}
-                accessibilityLabel="Add to Collection"
-              >
-                <Ionicons
-                  name="add-circle-outline"
-                  size={26}
-                  color={theme.favoriteIcon}
-                />
-              </TouchableOpacity>
-            </ThemedView>
-          </ThemedView>
-        )}
+        renderItem={renderItem}
       />
       <AddToCollectionSheet ref={addCollectionSheetRef} />
       <ZoomGalleryModal

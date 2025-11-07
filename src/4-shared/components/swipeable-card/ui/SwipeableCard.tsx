@@ -1,0 +1,134 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import { ThemedText } from "@/4-shared/components/themed-text";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { SwipeableCardProps } from "@/4-shared/types/swipeableCard";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { memo } from "react";
+import { Image, TouchableOpacity, View } from "react-native";
+import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { styles } from "./SwipeableCard.styles";
+
+/**
+ * A performant, reusable swipeable card for lists (collections, favorites, and more).
+ * @example
+ * <SwipeableCard
+ *   imageUrl={item.thumbnailUrl}
+ *   onImagePress={() => handleZoom(index)}
+ *   title={item.author}
+ *   subtitle={item.description}
+ *   year={item.year}
+ *   rightActions={[
+ *     { icon: <ShareIcon />, onPress: () => handleShare(item), backgroundColor: '#eee' },
+ *     { icon: <DeleteIcon />, onPress: () => handleDelete(item.id), backgroundColor: 'red' }
+ *   ]}
+ * />
+ */
+const SwipeableCard: React.FC<SwipeableCardProps> = memo(
+  ({
+    imageUrl,
+    onImagePress,
+    title,
+    subtitle,
+    year,
+    rightActions,
+    containerStyle = {},
+    imageStyle = {},
+    textStyle = {},
+  }) => {
+    const { theme } = useTheme();
+
+    // Render right swipe actions (up to two)
+    const renderRightActions = (progress: any, drag: any) => (
+      <View style={styles.rightActionContainer}>
+        {rightActions.slice(0, 2).map((action, idx) => (
+          <TouchableOpacity
+            key={idx}
+            onPress={action.onPress}
+            style={[
+              styles.actionButton,
+              {
+                backgroundColor:
+                  action.backgroundColor || (idx === 1 ? "#e53935" : "#f5f5f5"),
+              },
+            ]}
+            activeOpacity={0.7}
+            accessibilityLabel={action.accessibilityLabel}
+          >
+            {action.icon}
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+
+    return (
+      <Swipeable
+        renderRightActions={renderRightActions}
+        friction={2}
+        rightThreshold={40}
+        overshootRight={false}
+      >
+        <View style={[styles.card, containerStyle]}>
+          {/* Left: Image */}
+          <TouchableOpacity
+            onPress={onImagePress}
+            activeOpacity={onImagePress ? 0.85 : 1}
+            disabled={!onImagePress}
+            style={styles.imageContainer}
+          >
+            <Image
+              source={{ uri: imageUrl }}
+              style={[styles.image, imageStyle]}
+              resizeMode="cover"
+            />
+          </TouchableOpacity>
+          {/* Center: Texts */}
+          <View style={styles.infoContainer}>
+            <ThemedText
+              style={[styles.title, textStyle]}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {title}
+            </ThemedText>
+            {subtitle ? (
+              <ThemedText
+                style={[styles.subtitle, textStyle]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {subtitle}
+              </ThemedText>
+            ) : null}
+            {year ? (
+              <ThemedText
+                style={[styles.year, textStyle]}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {year}
+              </ThemedText>
+            ) : null}
+          </View>
+          {/* Swipe Hint: Chevron + Gradient (always visible, right side) */}
+          <View style={styles.swipeHintContainer} pointerEvents="none">
+            <LinearGradient
+              colors={["transparent", "#e3e5ea"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.swipeGradient}
+            />
+            <IconSymbol
+              name="chevron-left"
+              type="material"
+              size={18}
+              color="#a6a9b2"
+              style={styles.swipeChevron}
+            />
+          </View>
+        </View>
+      </Swipeable>
+    );
+  }
+);
+
+export default SwipeableCard;

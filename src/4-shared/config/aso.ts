@@ -40,7 +40,7 @@ export const ASO = {
   },
 
   favorites: {
-    title: "Your Favorites | Mosaic Gallery",
+    title: "Favorites | Mosaic Gallery",
     description:
       "Access your private list of favorite public domain vintage photographs. Only you can view your own curated collection.",
     keywords: [
@@ -56,7 +56,7 @@ export const ASO = {
   },
 
   collections: {
-    title: "Your Collections | Mosaic Gallery",
+    title: "Collections | Mosaic Gallery",
     description:
       "Organize your favorite images into themed collections. Group, curate, and share your best public domain vintage photography.",
     keywords: [

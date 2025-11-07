@@ -9,6 +9,9 @@ export const styles = {
   title: {
     marginBottom: 12,
   },
+  subtitle: {
+    marginBottom: 12,
+  },
   loadingIndicator: {
     marginTop: 16,
   },
@@ -21,6 +24,9 @@ export const styles = {
   },
   listContent: {
     paddingBottom: Platform.OS === "android" ? 48 : 0,
+  },
+  listItem: {
+    marginVertical: 12,
   },
   createNewButton: {
     marginTop: 16,

@@ -15,12 +15,12 @@ export const styles = StyleSheet.create({
   item: {
     alignItems: "center",
     marginRight: 22,
-    width: 70,
+    width: 65,
   },
   portraitWrapper: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 95,
+    height: 95,
+    borderRadius: 47.5,
     overflow: "hidden",
     marginBottom: 6,
     backgroundColor: "#eee",
@@ -30,13 +30,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   portrait: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 95,
+    height: 95,
+    borderRadius: 47.5,
   },
   placeholderPortrait: {
-    width: 70,
-    height: 70,
+    width: 95,
+    height: 95,
     borderRadius: 35,
     backgroundColor: "#bbb",
     justifyContent: "center",
@@ -49,7 +49,8 @@ export const styles = StyleSheet.create({
   },
   name: {
     textAlign: "center",
-    maxWidth: 70,
+    fontSize: 16,
+    maxWidth: 65,
   },
   loadingContainer: {
     paddingVertical: 20,

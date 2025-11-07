@@ -91,7 +91,12 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
                   </View>
                 )}
               </View>
-              <ThemedText style={styles.name} numberOfLines={2}>
+              <ThemedText
+                style={styles.name}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                allowFontScaling={false}
+              >
                 {item.surname}
               </ThemedText>
             </TouchableOpacity>

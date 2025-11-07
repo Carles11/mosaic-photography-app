@@ -1,5 +1,6 @@
 import { PrimaryButton } from "@/4-shared/components/buttons/variants/index";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import SwipeableCard from "@/4-shared/components/swipeable-card/ui/SwipeableCard";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
@@ -8,20 +9,9 @@ import { useCollections } from "@/4-shared/context/collections/CollectionsContex
 import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useFocusEffect } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useRef } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  Share,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Swipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { ActivityIndicator, Alert, FlatList, Share } from "react-native";
 import { styles } from "./CollectionsList.styles";
 import CreateCollectionSheet, {
   CreateCollectionSheetRef,
@@ -113,32 +103,32 @@ export default function CollectionsList() {
     });
   };
 
-  // ---- SWIPE ACTIONS: Share and Delete ----
-  const renderRightActions = (
-    collectionId: string,
-    collectionName: string,
-    progress: any,
-    drag: any,
-    item: any
-  ) => (
-    <View style={localStyles.rightActionContainer}>
-      <TouchableOpacity
-        style={localStyles.shareButton}
-        onPress={() => handleShareCollection(item)}
-        activeOpacity={0.7}
-        accessibilityLabel="Share Collection"
-      >
-        <IconSymbol name="share" type="material" size={24} color="#444" />
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={localStyles.trashButton}
-        onPress={() => handleDeleteCollection(collectionId, collectionName)}
-        activeOpacity={0.7}
-        accessibilityLabel="Delete Collection"
-      >
-        <IconSymbol name="delete" type="material" size={26} color="#fff" />
-      </TouchableOpacity>
-    </View>
+  const renderItem = ({ item }: { item: any }) => (
+    <SwipeableCard
+      imageUrl={item.previewImages?.[0]?.url ?? ""}
+      onImagePress={() => router.push(`/collections/${item.id}`)}
+      title={item.name}
+      subtitle={`${item.imageCount} image${item.imageCount === 1 ? "" : "s"}`}
+      rightActions={[
+        {
+          icon: (
+            <IconSymbol name="share" type="material" size={24} color="#444" />
+          ),
+          onPress: () => handleShareCollection(item),
+          accessibilityLabel: "Share Collection",
+          backgroundColor: "#f5f5f5",
+        },
+        {
+          icon: (
+            <IconSymbol name="delete" type="material" size={26} color="#fff" />
+          ),
+          onPress: () => handleDeleteCollection(item.id, item.name),
+          accessibilityLabel: "Delete Collection",
+          backgroundColor: "#e53935",
+        },
+      ]}
+      containerStyle={{ marginBottom: 12 }}
+    />
   );
 
   return (
@@ -169,7 +159,8 @@ export default function CollectionsList() {
         <>
           <ThemedView style={styles.header}>
             <ThemedText type="title" style={styles.title}>
-              {ASO.collections.title} ({collections.length})
+              You created {collections.length}{" "}
+              {collections.length === 1 ? "collection" : "collections"}
             </ThemedText>
             <ThemedText style={styles.subtitle}>
               {ASO.collections.description}
@@ -184,72 +175,7 @@ export default function CollectionsList() {
             data={collections}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => (
-              <Swipeable
-                renderRightActions={(progress, drag) =>
-                  renderRightActions(item.id, item.name, progress, drag, item)
-                }
-                friction={2}
-                rightThreshold={40}
-                overshootRight={false}
-                containerStyle={{}}
-                childrenContainerStyle={{}}
-              >
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={localStyles.collectionCard}
-                  onPress={() => router.push(`/collections/${item.id}`)}
-                >
-                  {/* Left: image preview, 1/4 width */}
-                  <View style={localStyles.previewImageContainer}>
-                    {item.previewImages?.[0]?.url ? (
-                      <Image
-                        source={{ uri: item.previewImages[0].url }}
-                        style={localStyles.previewImage}
-                        resizeMode="cover"
-                      />
-                    ) : (
-                      <View style={localStyles.emptyPreview}>
-                        <ThemedText style={localStyles.emptyThumbIcon}>
-                          🖼️
-                        </ThemedText>
-                      </View>
-                    )}
-                  </View>
-                  {/* Right: name and count, 3/4 width */}
-                  <View style={localStyles.infoContainer}>
-                    <ThemedText
-                      style={localStyles.collectionName}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {item.name}
-                    </ThemedText>
-                    <ThemedText style={localStyles.imageCount}>
-                      {item.imageCount} image
-                      {item.imageCount === 1 ? "" : "s"}
-                    </ThemedText>
-                  </View>
-
-                  {/* SWIPE HINT: Chevron + Gradient */}
-                  <View style={localStyles.swipeHintContainer}>
-                    <LinearGradient
-                      colors={["transparent", "#e3e5ea"]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 0 }}
-                      style={localStyles.swipeGradient}
-                    />
-                    <IconSymbol
-                      name="chevron-left"
-                      type="material"
-                      size={18}
-                      color="#a6a9b2"
-                      style={localStyles.swipeChevron}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </Swipeable>
-            )}
+            renderItem={renderItem}
           />
         </>
       )}
@@ -260,136 +186,3 @@ export default function CollectionsList() {
     </ThemedView>
   );
 }
-
-const CARD_HEIGHT = 96;
-
-const localStyles = StyleSheet.create({
-  rightActionContainer: {
-    flexDirection: "row",
-    height: CARD_HEIGHT - 14,
-    alignItems: "center",
-    marginVertical: 7,
-    marginHorizontal: 10,
-    gap: 6,
-  },
-  shareButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 24,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 1,
-    flexDirection: "column",
-  },
-  trashButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 24,
-    backgroundColor: "#e53935",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    flexDirection: "column",
-    padding: 14,
-  },
-  collectionCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: CARD_HEIGHT,
-    backgroundColor: "#fff",
-    borderRadius: 14,
-    overflow: "hidden",
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    position: "relative",
-  },
-  previewImageContainer: {
-    width: "25%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#eef0f4",
-  },
-  previewImage: {
-    width: "100%",
-    height: "100%",
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 0,
-  },
-  emptyPreview: {
-    width: "70%",
-    height: "68%",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
-    backgroundColor: "#d9dde3",
-  },
-  emptyThumbIcon: {
-    fontSize: 36,
-    color: "#b7bdc9",
-  },
-  infoContainer: {
-    width: "75%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    paddingLeft: 18,
-    paddingVertical: 12,
-  },
-  collectionName: {
-    fontSize: 17,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 6,
-  },
-  imageCount: {
-    fontSize: 14,
-    color: "#657188",
-    letterSpacing: 0.1,
-    marginTop: 2,
-  },
-
-  // SWIPE HINT container, gradient, chevron
-  swipeHintContainer: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: 32,
-    justifyContent: "center",
-    alignItems: "flex-end",
-    zIndex: 2,
-  },
-  swipeGradient: {
-    position: "absolute",
-    right: 0,
-    top: 0,
-    bottom: 0,
-    height: "100%",
-    width: 24,
-    borderTopRightRadius: 14,
-    borderBottomRightRadius: 14,
-  },
-  swipeChevron: {
-    position: "absolute",
-    right: 7,
-    top: "50%",
-    marginTop: -9,
-    opacity: 0.7,
-  },
-});

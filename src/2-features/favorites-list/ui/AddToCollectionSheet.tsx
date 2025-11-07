@@ -197,6 +197,9 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
             Add to a Collection
           </ThemedText>
           <ThemedView style={{ flex: 1 }}>
+            <ThemedText style={styles.subtitle}>
+              Available collections:
+            </ThemedText>
             {!showCreateForm ? (
               <>
                 <FlatList
@@ -208,11 +211,14 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
                     </ThemedText>
                   }
                   renderItem={({ item }) => (
-                    <OnlyTextButton
-                      title={item.name}
-                      onPress={() => handleAdd(item.id)}
-                      disabled={adding || creatingCollection}
-                    />
+                    <>
+                      <OnlyTextButton
+                        title={item.name}
+                        onPress={() => handleAdd(item.id)}
+                        disabled={adding || creatingCollection}
+                        style={styles.listItem}
+                      />
+                    </>
                   )}
                   contentContainerStyle={styles.listContent}
                 />

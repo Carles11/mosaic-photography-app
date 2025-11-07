@@ -40,13 +40,12 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     own_store_name: "",
     own_store_url: "",
   });
-  const [databaseError, setDatabaseError] = useState(false);
 
   const canUseProfile = !!user && !!user.id && !!user.email;
   const router = useRouter();
 
   const createInitialProfile = useCallback(async () => {
-    if (!canUseProfile || databaseError) return;
+    if (!canUseProfile) return;
     try {
       const newProfile: ProfileData = {
         id: user.id,
@@ -63,7 +62,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
     } catch (error: any) {
       showErrorToast("Failed to create initial profile");
     }
-  }, [user, canUseProfile, databaseError]);
+  }, [user, canUseProfile]);
 
   const loadProfile = useCallback(async () => {
     if (!canUseProfile) {
@@ -105,10 +104,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
   };
 
   const handleSubmit = async () => {
-    if (databaseError) {
-      showErrorToast("Please set up the database first.");
-      return;
-    }
     if (!canUseProfile) {
       showErrorToast("No valid user found. Please log in again.");
       return;
@@ -164,30 +159,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
       contentContainerStyle={styles.scrollContainer}
       keyboardShouldPersistTaps="handled"
     >
-      {databaseError && (
-        <ThemedView style={styles.databaseSetup}>
-          <ThemedText style={styles.dbTitle}>
-            🔧 Database Setup Required
-          </ThemedText>
-          <ThemedText>
-            To use the profile functionality, you need to create the database
-            table first.
-          </ThemedText>
-          <ThemedText style={styles.instructionsTitle}>
-            Setup Instructions:
-          </ThemedText>
-          <ThemedText>
-            1. Go to your Supabase Dashboard{"\n"}
-            2. Navigate to the SQL Editor tab{"\n"}
-            3. Copy and paste the SQL from{" "}
-            <ThemedText style={styles.code}>DATABASE_SETUP.md</ThemedText>
-            {"\n"}
-            4. Click "Run" to execute the SQL{"\n"}
-            5. Refresh this page
-          </ThemedText>
-        </ThemedView>
-      )}
-
       <ThemedView style={styles.section}>
         <ThemedText type="title" style={styles.sectionTitle}>
           Account Information
@@ -214,13 +185,6 @@ export default function ProfileForm({ user }: ProfileFormProps) {
         <ThemedText type="title" style={styles.sectionTitle}>
           Profile Details
         </ThemedText>
-        {databaseError && (
-          <ThemedView style={styles.disabledForm}>
-            <ThemedText>
-              ⚠️ Form disabled until database setup is complete
-            </ThemedText>
-          </ThemedView>
-        )}
         <View style={styles.container}>
           <View style={styles.field}>
             <ThemedText style={styles.label}>Display Name</ThemedText>
@@ -230,7 +194,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
               onChangeText={(v) => handleInputChange("name", v)}
               placeholder="Enter your display name"
               maxLength={100}
-              editable={!databaseError && !saving}
+              editable={!saving}
               accessibilityLabel="Display Name"
             />
           </View>
@@ -244,7 +208,7 @@ export default function ProfileForm({ user }: ProfileFormProps) {
               }
               placeholder="your_username"
               maxLength={30}
-              editable={!databaseError && !saving}
+              editable={!saving}
               accessibilityLabel="Instagram"
             />
           </View>
@@ -255,20 +219,14 @@ export default function ProfileForm({ user }: ProfileFormProps) {
               value={formData.website}
               onChangeText={(v) => handleInputChange("website", v)}
               placeholder="https://yourwebsite.com"
-              editable={!databaseError && !saving}
+              editable={!saving}
               accessibilityLabel="Website"
             />
           </View>
           <PrimaryButton
-            title={
-              saving
-                ? "Saving..."
-                : databaseError
-                ? "Database Setup Required"
-                : "Update Profile"
-            }
+            title={saving ? "Saving..." : "Update Profile"}
             onPress={handleSubmit}
-            disabled={saving || databaseError || !formData.name.trim()}
+            disabled={saving || !formData.name.trim()}
           />
         </View>
       </ThemedView>

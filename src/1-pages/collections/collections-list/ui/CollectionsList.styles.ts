@@ -31,53 +31,6 @@ export const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 40,
   },
-  collectionCard: {
-    borderRadius: 16,
-    marginBottom: 16,
-    padding: 14,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  cardPreviewRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    minWidth: 80,
-    marginRight: 13,
-  },
-  previewThumb: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    marginRight: 5,
-  },
-  emptyThumb: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  emptyThumbIcon: {
-    fontSize: 24,
-  },
-  cardInfo: {
-    flex: 1,
-    justifyContent: "center",
-    minWidth: 0,
-  },
-  collectionName: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 2,
-  },
-  collectionDescription: {
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  imageCount: {
-    fontSize: 12,
-  },
   centered: {
     flex: 1,
     flexDirection: "column",
@@ -104,23 +57,5 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     maxWidth: 260,
     alignSelf: "center",
-  },
-
-  editActions: {
-    flexDirection: "row",
-    gap: 12,
-    marginBottom: 4,
-  },
-  shareButton: {
-    marginVertical: 24,
-    padding: 14,
-    borderRadius: 8,
-    backgroundColor: "#2F3542", // Example dark theme
-    alignItems: "center",
-  },
-  shareButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
   },
 });
