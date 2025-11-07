@@ -8,6 +8,7 @@ import { useCollections } from "@/4-shared/context/collections/CollectionsContex
 import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useRef } from "react";
 import {
@@ -194,58 +195,59 @@ export default function CollectionsList() {
                 containerStyle={{}}
                 childrenContainerStyle={{}}
               >
-                <ThemedView
-                  style={[
-                    styles.collectionCard,
-                    { borderWidth: 1, borderColor: theme.border },
-                  ]}
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={localStyles.collectionCard}
+                  onPress={() => router.push(`/collections/${item.id}`)}
                 >
-                  <TouchableOpacity
-                    activeOpacity={0.8}
-                    style={{ flex: 1 }}
-                    onPress={() => router.push(`/collections/${item.id}`)}
-                  >
-                    <ThemedView style={styles.cardPreviewRow}>
-                      {item.previewImages.map((img) => (
-                        <Image
-                          key={String(img.id)}
-                          source={img.url ? { uri: img.url } : undefined}
-                          style={styles.previewThumb}
-                          resizeMode="cover"
-                        />
-                      ))}
-                      {item.previewImages.length === 0 && (
-                        <ThemedView style={styles.emptyThumb}>
-                          <ThemedText style={styles.emptyThumbIcon}>
-                            🖼️
-                          </ThemedText>
-                        </ThemedView>
-                      )}
-                    </ThemedView>
-                    <ThemedView style={styles.cardInfo}>
-                      <ThemedText
-                        style={styles.collectionName}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                      >
-                        {item.name}
-                      </ThemedText>
-                      {item.description ? (
-                        <ThemedText
-                          style={styles.collectionDescription}
-                          numberOfLines={2}
-                          ellipsizeMode="tail"
-                        >
-                          {item.description}
+                  {/* Left: image preview, 1/4 width */}
+                  <View style={localStyles.previewImageContainer}>
+                    {item.previewImages?.[0]?.url ? (
+                      <Image
+                        source={{ uri: item.previewImages[0].url }}
+                        style={localStyles.previewImage}
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View style={localStyles.emptyPreview}>
+                        <ThemedText style={localStyles.emptyThumbIcon}>
+                          🖼️
                         </ThemedText>
-                      ) : null}
-                      <ThemedText style={styles.imageCount}>
-                        {item.imageCount} image
-                        {item.imageCount === 1 ? "" : "s"}
-                      </ThemedText>
-                    </ThemedView>
-                  </TouchableOpacity>
-                </ThemedView>
+                      </View>
+                    )}
+                  </View>
+                  {/* Right: name and count, 3/4 width */}
+                  <View style={localStyles.infoContainer}>
+                    <ThemedText
+                      style={localStyles.collectionName}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {item.name}
+                    </ThemedText>
+                    <ThemedText style={localStyles.imageCount}>
+                      {item.imageCount} image
+                      {item.imageCount === 1 ? "" : "s"}
+                    </ThemedText>
+                  </View>
+
+                  {/* SWIPE HINT: Chevron + Gradient */}
+                  <View style={localStyles.swipeHintContainer}>
+                    <LinearGradient
+                      colors={["transparent", "#e3e5ea"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={localStyles.swipeGradient}
+                    />
+                    <IconSymbol
+                      name="chevron-left"
+                      type="material"
+                      size={18}
+                      color="#a6a9b2"
+                      style={localStyles.swipeChevron}
+                    />
+                  </View>
+                </TouchableOpacity>
               </Swipeable>
             )}
           />
@@ -299,5 +301,95 @@ const localStyles = StyleSheet.create({
     shadowRadius: 3,
     flexDirection: "column",
     padding: 14,
+  },
+  collectionCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: CARD_HEIGHT,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    overflow: "hidden",
+    marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    position: "relative",
+  },
+  previewImageContainer: {
+    width: "25%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#eef0f4",
+  },
+  previewImage: {
+    width: "100%",
+    height: "100%",
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 0,
+  },
+  emptyPreview: {
+    width: "70%",
+    height: "68%",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    backgroundColor: "#d9dde3",
+  },
+  emptyThumbIcon: {
+    fontSize: 36,
+    color: "#b7bdc9",
+  },
+  infoContainer: {
+    width: "75%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "flex-start",
+    paddingLeft: 18,
+    paddingVertical: 12,
+  },
+  collectionName: {
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 6,
+  },
+  imageCount: {
+    fontSize: 14,
+    color: "#657188",
+    letterSpacing: 0.1,
+    marginTop: 2,
+  },
+
+  // SWIPE HINT container, gradient, chevron
+  swipeHintContainer: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 32,
+    justifyContent: "center",
+    alignItems: "flex-end",
+    zIndex: 2,
+  },
+  swipeGradient: {
+    position: "absolute",
+    right: 0,
+    top: 0,
+    bottom: 0,
+    height: "100%",
+    width: 24,
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
+  },
+  swipeChevron: {
+    position: "absolute",
+    right: 7,
+    top: "50%",
+    marginTop: -9,
+    opacity: 0.7,
   },
 });

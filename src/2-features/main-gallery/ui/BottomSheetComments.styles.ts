@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    padding: 16,
+    padding: 12,
   },
   commentsTitle: {
     marginBottom: 8,
@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
     marginTop: 16,
   },
   commentsList: {
-    paddingBottom: 111,
     gap: 8,
   },
   commentItem: {

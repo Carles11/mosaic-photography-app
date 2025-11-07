@@ -13,7 +13,7 @@ import { Comment } from "@/4-shared/types";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Router } from "expo-router";
 import React, { forwardRef } from "react";
-import { ActivityIndicator, FlatList, TextInput } from "react-native";
+import { ActivityIndicator, FlatList, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetComments.styles";
 
@@ -65,80 +65,94 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
         onDismiss={onClose}
         enablePanDownToClose
       >
-        <BottomSheetView style={styles.sheetView}>
-          <SafeAreaView edges={["bottom"]} style={styles.safeArea}>
-            <ThemedText type="subtitle" style={styles.commentsTitle}>
-              Comments
-            </ThemedText>
-            {isLoading ? (
-              <ActivityIndicator size="small" style={styles.loadingIndicator} />
-            ) : (
-              <FlatList
-                data={comments}
-                keyExtractor={(item) => item.id}
-                ListEmptyComponent={
-                  <ThemedText style={styles.emptyText}>
-                    No comments yet.
-                  </ThemedText>
-                }
-                contentContainerStyle={styles.commentsList}
-                renderItem={({ item }) => (
-                  <ThemedView style={styles.commentItem}>
-                    <ThemedView style={styles.commentInfo}>
-                      <ThemedText type="defaultSemiBold">
-                        {item.user_id === user?.id
-                          ? "You"
-                          : item.user_id || "Anonymous"}
-                      </ThemedText>
-                      <ThemedText>{item.content}</ThemedText>
-                      <ThemedText style={styles.commentDate}>
-                        {item.created_at
-                          ? new Date(item.created_at).toLocaleString()
-                          : ""}
-                      </ThemedText>
-                    </ThemedView>
-                    <ThemedView style={styles.editActions}>
-                      {/* LEFT GROUP: Edit & Delete (and any others) */}
-                      <ThemedView style={styles.editActionsLeft}>
-                        {user && user.id === item.user_id && (
-                          <>
-                            <OnlyTextButton
-                              title="Edit"
-                              onPress={() => handleEdit(item.id, item.content)}
-                              style={styles.editButton}
-                            />
-                            <PrimaryButton
-                              title="Delete"
-                              onPress={() => handleDelete(item.id)}
-                              style={styles.deleteButton}
-                            />
-                          </>
-                        )}
+        <BottomSheetView style={{ flex: 1 }}>
+          <SafeAreaView
+            edges={["bottom"]}
+            style={[styles.safeArea, { flex: 1 }]}
+          >
+            <View style={{ flex: 1 }}>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="small"
+                  style={styles.loadingIndicator}
+                />
+              ) : (
+                <FlatList
+                  style={{ flex: 1 }}
+                  data={comments}
+                  keyExtractor={(item) => item.id}
+                  ListHeaderComponent={
+                    <ThemedText type="subtitle" style={styles.commentsTitle}>
+                      Comments
+                    </ThemedText>
+                  }
+                  ListEmptyComponent={
+                    <ThemedText style={styles.emptyText}>
+                      No comments yet.
+                    </ThemedText>
+                  }
+                  contentContainerStyle={{
+                    ...styles.commentsList,
+                    paddingBottom: 100,
+                  }}
+                  renderItem={({ item }) => (
+                    <ThemedView style={styles.commentItem}>
+                      <ThemedView style={styles.commentInfo}>
+                        <ThemedText type="defaultSemiBold">
+                          {item.user_id === user?.id
+                            ? "You"
+                            : item.user_id || "Anonymous"}
+                        </ThemedText>
+                        <ThemedText>{item.content}</ThemedText>
+                        <ThemedText style={styles.commentDate}>
+                          {item.created_at
+                            ? new Date(item.created_at).toLocaleString()
+                            : ""}
+                        </ThemedText>
                       </ThemedView>
-                      {/* RIGHT: Report Icon always visible */}
-                      <IconSymbol
-                        name="flag"
-                        type="material"
-                        size={11}
-                        color={theme?.error ?? "#E74C3C"}
-                        accessibilityLabel="Report"
-                        onPress={() => {
-                          if (!user) {
-                            router.push("/auth/login");
-                          } else {
-                            reportSheetRef.current?.open({
-                              commentId: item.id,
-                              reportedUserId: item.user_id,
-                            });
-                          }
-                        }}
-                        style={styles.reportButtonIcon}
-                      />
+                      <ThemedView style={styles.editActions}>
+                        <ThemedView style={styles.editActionsLeft}>
+                          {user && user.id === item.user_id && (
+                            <>
+                              <OnlyTextButton
+                                title="Edit"
+                                onPress={() =>
+                                  handleEdit(item.id, item.content)
+                                }
+                                style={styles.editButton}
+                              />
+                              <PrimaryButton
+                                title="Delete"
+                                onPress={() => handleDelete(item.id)}
+                                style={styles.deleteButton}
+                              />
+                            </>
+                          )}
+                        </ThemedView>
+                        <IconSymbol
+                          name="flag"
+                          type="material"
+                          size={11}
+                          color={theme?.error ?? "#E74C3C"}
+                          accessibilityLabel="Report"
+                          onPress={() => {
+                            if (!user) {
+                              router.push("/auth/login");
+                            } else {
+                              reportSheetRef.current?.open({
+                                commentId: item.id,
+                                reportedUserId: item.user_id,
+                              });
+                            }
+                          }}
+                          style={styles.reportButtonIcon}
+                        />
+                      </ThemedView>
                     </ThemedView>
-                  </ThemedView>
-                )}
-              />
-            )}
+                  )}
+                />
+              )}
+            </View>
             {user ? (
               <ThemedView style={styles.inputRow}>
                 <TextInput
