@@ -9,6 +9,7 @@ import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGaller
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { ASO } from "@/4-shared/config/aso";
 import { mapPhotographerImagesToGalleryImages } from "@/4-shared/lib/mapPhotographerImageToGalleryImage";
 import { PhotographerSlug } from "@/4-shared/types";
 import { useNavigation } from "@react-navigation/native";
@@ -18,6 +19,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
+  Share,
   TouchableOpacity,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -49,8 +51,24 @@ const PhotographerDetailScreen: React.FC = () => {
   useEffect(() => {
     if (photographer) {
       navigation.setOptions({
-        title: `${photographer.surname}'s Details`,
+        title: ASO.photographer.title({
+          name: photographer.name,
+          surname: photographer.surname,
+          origin: photographer.origin,
+        }),
+        subtitle: ASO.photographer.description({
+          name: photographer.name,
+          surname: photographer.surname,
+          origin: photographer.origin,
+          galleryCount: photographer.images?.length ?? 0,
+        }),
       });
+      // Optionally (for debugging/analytics):
+      // console.log('Keywords:', ASO.photographer.keywords({
+      //   name: photographer.name,
+      //   surname: photographer.surname,
+      //   origin: photographer.origin,
+      // }));
     }
   }, [photographer, navigation]);
 
@@ -99,6 +117,18 @@ const PhotographerDetailScreen: React.FC = () => {
     setZoomVisible(true);
   }, []);
 
+  // Optionally: Share Photographer for social/analytics purposes
+  const handleSharePhotographer = useCallback(() => {
+    if (!photographer) return;
+    const msg = ASO.photographer.shareTemplate({
+      name: photographer.name,
+      surname: photographer.surname,
+      galleryCount: photographer.images?.length ?? 0,
+      url: `https://www.mosaic.photography/photographers/${photographer.slug}`,
+    });
+    Share.share({ message: msg });
+  }, [photographer]);
+
   // Appealing web version message if few images
   const showWebMsg = photographer && (photographer.images?.length ?? 0) < 5;
 
@@ -140,6 +170,14 @@ const PhotographerDetailScreen: React.FC = () => {
             stores={photographer.store}
             website={photographer.website}
           />
+          <TouchableOpacity
+            style={styles.shareButton}
+            onPress={handleSharePhotographer}
+          >
+            <ThemedText style={styles.shareButtonText}>
+              Share Photographer
+            </ThemedText>
+          </TouchableOpacity>
           <ThemedText style={styles.sectionTitle}>
             {photographer.surname}'s Gallery{" "}
             <ThemedText style={styles.galleryCount}>
@@ -149,7 +187,13 @@ const PhotographerDetailScreen: React.FC = () => {
         </ThemedView>
       </>
     );
-  }, [photographer, timelineEvents, scrollY, showWebMsg]);
+  }, [
+    photographer,
+    timelineEvents,
+    scrollY,
+    showWebMsg,
+    handleSharePhotographer,
+  ]);
 
   if (loading) {
     return (

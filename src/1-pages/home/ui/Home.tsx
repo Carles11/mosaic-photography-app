@@ -158,7 +158,7 @@ export const Home: React.FC = () => {
     }
   }, [commentsImageId]);
 
-  // Analytics: track scroll thresholds CRASHES THE APP ON SCROLL - TODO FIX
+  // TODO: Analytics: track scroll thresholds CRASHES THE APP ON SCROLL - FIX
 
   // const lastScrollLogged = useRef<number>(0);
 

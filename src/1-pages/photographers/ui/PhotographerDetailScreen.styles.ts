@@ -90,4 +90,16 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 8,
     textAlign: "center",
   },
+  shareButton: {
+    marginVertical: 24,
+    padding: 14,
+    borderRadius: 8,
+    backgroundColor: "#2F3542", // Example dark theme
+    alignItems: "center",
+  },
+  shareButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 });
