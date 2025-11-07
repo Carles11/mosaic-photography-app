@@ -24,7 +24,7 @@ export type CreateCollectionSheetRef = {
 };
 
 type Props = {
-  onCreated?: () => void;
+  onCreated?: (createdId?: string) => void;
   debug?: boolean;
 };
 
@@ -54,12 +54,12 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
         return;
       }
       setLoading(true);
-      const ok = await createCollection({ name, description });
+      const created = await createCollection({ name, description });
       setLoading(false);
-      if (ok) {
+      if (created) {
         setName("");
         setDescription("");
-        if (onCreated) onCreated();
+        if (onCreated) onCreated(created.id); // pass back created id if needed
       }
     };
 

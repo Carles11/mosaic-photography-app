@@ -22,6 +22,8 @@ import React, {
   useState,
 } from "react";
 
+type BasicCollection = { id: string; name: string };
+
 type CollectionsContextType = {
   collections: CollectionWithPreview[];
   loading: boolean;
@@ -31,12 +33,12 @@ type CollectionsContextType = {
   createCollection: (params: {
     name: string;
     description?: string;
-  }) => Promise<boolean>;
+  }) => Promise<BasicCollection | null>;
   deleteCollection: (collectionId: string) => Promise<boolean>;
   getCollectionDetail: (
     collectionId: string
   ) => Promise<CollectionDetail | null>;
-  basicCollections: { id: string; name: string }[];
+  basicCollections: BasicCollection[];
   reloadBasicCollections: () => Promise<void>;
 };
 
@@ -64,9 +66,9 @@ export function CollectionsProvider({
   const [loading, setLoading] = useState(true);
 
   // For AddToCollectionSheet (list of collections with id, name only)
-  const [basicCollections, setBasicCollections] = useState<
-    { id: string; name: string }[]
-  >([]);
+  const [basicCollections, setBasicCollections] = useState<BasicCollection[]>(
+    []
+  );
 
   // Detail
   const [detail, setDetail] = useState<CollectionDetail | null>(null);
@@ -134,16 +136,22 @@ export function CollectionsProvider({
     []
   );
 
-  // Create a new collection. Will reload on success.
+  // Create a new collection. Returns new collection object (id, name), reloads lists.
   const createCollection = useCallback(
-    async ({ name, description }: { name: string; description?: string }) => {
+    async ({
+      name,
+      description,
+    }: {
+      name: string;
+      description?: string;
+    }): Promise<BasicCollection | null> => {
       if (!userId) {
         showErrorToast("Not authenticated.");
-        return false;
+        return null;
       }
       if (!name || name.trim() === "") {
         showErrorToast("Collection name is required.");
-        return false;
+        return null;
       }
       try {
         // Insert, using direct supabase to get id
@@ -162,15 +170,16 @@ export function CollectionsProvider({
         );
         if (error || !data) {
           showErrorToast("Failed to create collection.");
-          return false;
+          return null;
         }
         showSuccessToast("Collection created!");
         await reloadCollections();
         await reloadBasicCollections();
-        return true;
+        // data.id and data.name should both exist
+        return { id: data.id, name: data.name };
       } catch {
         showErrorToast("Failed to create collection.");
-        return false;
+        return null;
       }
     },
     [userId, reloadCollections, reloadBasicCollections]

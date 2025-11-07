@@ -48,7 +48,6 @@ export default function CollectionsList() {
     }, [user?.id, router, reloadCollections])
   );
 
-  // ASO: Set optimal title and subtitle from config
   React.useEffect(() => {
     navigation.setOptions({
       title: ASO.collections.title,
@@ -92,7 +91,6 @@ export default function CollectionsList() {
     );
   };
 
-  // Share collection (in card)
   const handleShareCollection = (collection: any) => {
     const url = `https://www.mosaic.photography/profile/collections/${collection.id}`;
     const message = ASO.collectionDetail?.shareTemplate
@@ -114,13 +112,23 @@ export default function CollectionsList() {
     });
   };
 
+  // ---- SWIPE ACTIONS: Share and Delete ----
   const renderRightActions = (
     collectionId: string,
     collectionName: string,
     progress: any,
-    drag: any
+    drag: any,
+    item: any
   ) => (
     <View style={localStyles.rightActionContainer}>
+      <TouchableOpacity
+        style={localStyles.shareButton}
+        onPress={() => handleShareCollection(item)}
+        activeOpacity={0.7}
+        accessibilityLabel="Share Collection"
+      >
+        <IconSymbol name="share" type="material" size={24} color="#444" />
+      </TouchableOpacity>
       <TouchableOpacity
         style={localStyles.trashButton}
         onPress={() => handleDeleteCollection(collectionId, collectionName)}
@@ -178,7 +186,7 @@ export default function CollectionsList() {
             renderItem={({ item }) => (
               <Swipeable
                 renderRightActions={(progress, drag) =>
-                  renderRightActions(item.id, item.name, progress, drag)
+                  renderRightActions(item.id, item.name, progress, drag, item)
                 }
                 friction={2}
                 rightThreshold={40}
@@ -237,11 +245,6 @@ export default function CollectionsList() {
                       </ThemedText>
                     </ThemedView>
                   </TouchableOpacity>
-                  <PrimaryButton
-                    title="Share"
-                    onPress={() => handleShareCollection(item)}
-                    style={styles.shareButton}
-                  />
                 </ThemedView>
               </Swipeable>
             )}
@@ -260,16 +263,31 @@ const CARD_HEIGHT = 96;
 
 const localStyles = StyleSheet.create({
   rightActionContainer: {
+    flexDirection: "row",
     height: CARD_HEIGHT - 14,
-    width: 56,
+    alignItems: "center",
     marginVertical: 7,
-    marginRight: 10,
+    marginHorizontal: 10,
+    gap: 6,
+  },
+  shareButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 24,
+    backgroundColor: "#f5f5f5",
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 8,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    flexDirection: "column",
   },
   trashButton: {
-    width: 48,
-    height: 48,
+    width: 56,
+    height: 56,
     borderRadius: 24,
     backgroundColor: "#e53935",
     justifyContent: "center",
@@ -279,5 +297,7 @@ const localStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
+    flexDirection: "column",
+    padding: 14,
   },
 });

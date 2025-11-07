@@ -123,6 +123,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
       [selectedImageId, user, onAdded, ensureFavorite]
     );
 
+    // FIX: Use the returned collection directly
     const handleAddToNewCollection = async () => {
       if (!user?.id || !selectedImageId) return;
       if (!newCollectionName.trim()) {
@@ -131,37 +132,28 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
       }
       setCreatingCollection(true);
 
+      // --- Use returned collection object ---
       const created = await createCollection({
         name: newCollectionName.trim(),
         description: newCollectionDescription.trim(),
       });
 
-      if (!created) {
+      if (!created || !created.id) {
         setCreatingCollection(false);
+        showErrorToast("Failed to create new collection.");
         return;
       }
 
       const result = await ensureFavorite(selectedImageId);
       if (!result || !result.favoriteId) {
         setCreatingCollection(false);
-        return;
-      }
-
-      await reloadBasicCollections();
-      const fresh = (basicCollections || []).find(
-        (col) =>
-          col.name.trim().toLowerCase() ===
-          newCollectionName.trim().toLowerCase()
-      );
-      const newCollectionId = fresh?.id;
-      if (!newCollectionId) {
-        showErrorToast("Failed to find the new collection.");
-        setCreatingCollection(false);
+        showErrorToast("Failed to add image as favorite.");
         return;
       }
 
       try {
-        await addFavoriteToCollection(newCollectionId, result.favoriteId);
+        // Use the created.id directly
+        await addFavoriteToCollection(created.id, result.favoriteId);
         showSuccessToast("Created and added to new collection!");
         setNewCollectionName("");
         setNewCollectionDescription("");
