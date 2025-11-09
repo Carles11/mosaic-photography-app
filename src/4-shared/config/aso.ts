@@ -5,9 +5,17 @@ export const ASO = {
       "Discover Mosaic’s curated gallery of public domain vintage photography. Explore timeless images from legendary photographers—preserved, free, and ready to inspire.",
     keywords: [
       "public domain photography",
+      "public domain nude photography",
+      "vintage photos",
+      "free vintage images",
+      "classic photography",
+      "public domain vintage photos",
       "vintage photography",
+      "free vintage photos",
+      "vintage nude photography",
       "public domain art",
       "retro photography",
+      "retro nude photography",
       "classic photo gallery",
       "free to use photography",
       "legendary photographers",
@@ -45,6 +53,11 @@ export const ASO = {
       "Access your private list of favorite public domain vintage photographs. Only you can view your own curated collection.",
     keywords: [
       "favorites",
+      "favorite photos",
+      "private favorites",
+      "curated images",
+      "nude photography",
+      "photo gallery",
       "private gallery",
       "liked vintage photos",
       "saved images",
@@ -61,6 +74,9 @@ export const ASO = {
       "Organize your favorite images into themed collections. Group, curate, and share your best public domain vintage photography.",
     keywords: [
       "collections",
+      "curated collections",
+      "nude photography collections",
+      "photo collections",
       "gallery",
       "curated images",
       "vintage photography",
@@ -74,11 +90,16 @@ export const ASO = {
   },
 
   collectionDetail: {
-    title: (name: string) => `${name} | Mosaic Gallery Collection`,
+    title: (name: string) => `${name || "Mosaic Gallery Collection"}`,
     description: (desc: string, count: number) =>
       `${desc} — ${count} images in this curated collection of public domain vintage photography.`,
     keywords: [
       "collection",
+      "curated collection",
+      "vintage nude photography",
+      "vintage photography",
+      "nude photography",
+      "photo-curation",
       "curated",
       "public domain images",
       "gallery",
@@ -86,7 +107,7 @@ export const ASO = {
     ],
     emptyTitle: "No images in this collection",
     emptyText:
-      "Add images to this collection to start showcasing your favorites.",
+      "Add some of your favorited images to this collection to start showcasing your collection.",
     shareTemplate: ({
       name,
       description,
@@ -143,6 +164,9 @@ export const ASO = {
     }) =>
       [
         "vintage nude photography",
+        "vintage photography",
+        "nude photography",
+        "public domain photography",
         "public domain",
         "classic nude art",
         "gallery",
