@@ -1,3 +1,6 @@
+import { ReportBottomSheetRef } from "@/2-features/reporting/ui/ReportBottomSheet";
+import { Router } from "expo-router";
+
 export type Comment = {
   id: string;
   user_id: string;
@@ -24,4 +27,23 @@ export type UserCommentWithImage = Comment & {
       slug: string;
     } | null;
   } | null;
+};
+
+export type EditMode = { id: string; content: string } | null;
+
+export type BottomSheetCommentsProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  comments: Comment[];
+  isLoading: boolean;
+  commentText: string;
+  setCommentText: (txt: string) => void;
+  handleSaveComment: () => void;
+  handleEdit: (id: string, content: string) => void;
+  handleDelete: (id: string) => void;
+  editMode: EditMode;
+  user: { id: string } | null;
+  authLoading: boolean;
+  reportSheetRef: React.RefObject<ReportBottomSheetRef | null>;
+  router: Router;
 };

@@ -1,17 +1,14 @@
-import { Dimensions, StyleSheet } from "react-native";
-
-const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
-
-// Height constants
-export const HEADER_HEIGHT = deviceHeight * 0.5;
-// We want the fade to start at the bottom 1/3 of the image
-export const FADE_START = HEADER_HEIGHT * (2 / 3);
-export const FADE_HEIGHT = HEADER_HEIGHT - FADE_START;
+import {
+  PHOTOGRAPHER_HEADER_DEVICE_WIDTH,
+  PHOTOGRAPHER_HEADER_FADE_HEIGHT,
+  PHOTOGRAPHER_HEADER_HEIGHT,
+} from "@/4-shared/constants/photographers";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   root: {
-    width: deviceWidth,
-    height: HEADER_HEIGHT,
+    width: PHOTOGRAPHER_HEADER_DEVICE_WIDTH,
+    height: PHOTOGRAPHER_HEADER_HEIGHT,
   },
   image: {
     ...StyleSheet.absoluteFillObject,
@@ -19,8 +16,8 @@ export const styles = StyleSheet.create({
   gradientContainer: {
     position: "absolute",
     left: 0,
-    width: deviceWidth,
-    height: FADE_HEIGHT,
+    width: PHOTOGRAPHER_HEADER_DEVICE_WIDTH,
+    height: PHOTOGRAPHER_HEADER_FADE_HEIGHT,
     bottom: 0,
     overflow: "hidden",
   },
@@ -32,9 +29,9 @@ export const styles = StyleSheet.create({
   },
   overlayContent: {
     position: "absolute",
-    width: deviceWidth,
+    width: PHOTOGRAPHER_HEADER_DEVICE_WIDTH,
     alignItems: "center",
-    bottom: FADE_HEIGHT * 0.4,
+    bottom: PHOTOGRAPHER_HEADER_FADE_HEIGHT * 0.4,
   },
   name: {
     color: "#fff",

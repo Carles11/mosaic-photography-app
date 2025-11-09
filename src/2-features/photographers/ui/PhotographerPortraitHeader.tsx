@@ -2,22 +2,11 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { formatLifespan } from "@/4-shared/lib/formatLifespan";
 import { hexToRgba } from "@/4-shared/lib/hexToRgba";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { PhotographerPortraitHeaderProps } from "@/4-shared/types";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Image, View } from "react-native";
 import { styles } from "./PhotographerPortraitHeader.styles";
-
-type Photographer = {
-  name: string;
-  surname: string;
-  birthdate?: string | null;
-  deceasedate?: string | null;
-  images?: { filename: string; url: string }[];
-};
-
-type PhotographerPortraitHeaderProps = {
-  photographer: Photographer;
-};
 
 export const PhotographerPortraitHeader: React.FC<
   PhotographerPortraitHeaderProps

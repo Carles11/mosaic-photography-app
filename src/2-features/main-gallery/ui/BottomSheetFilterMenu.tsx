@@ -6,20 +6,13 @@ import {
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { GalleryFilter } from "@/4-shared/types";
 import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useRef } from "react";
 import { Platform, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
-type BottomSheetFilterMenuProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  filters: GalleryFilter;
-  setFilters: (filters: GalleryFilter) => void;
-  resetFilters: () => void;
-};
+import { BottomSheetFilterMenuProps } from "@/4-shared/types";
 
 export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   isOpen,

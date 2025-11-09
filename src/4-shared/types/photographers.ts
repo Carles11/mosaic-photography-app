@@ -30,7 +30,6 @@ export interface PhotographerSlug {
 
 export interface TimelineItemModelProps {
   title?: string;
-
   cardTitle?: string;
   cardSubtitle?: string;
   cardDetailedText?: string;
@@ -54,3 +53,49 @@ export interface TimelineProps {
   height?: string | number;
   // You can add more props like theme, etc.
 }
+
+export type PhotographerDetail = {
+  name: string;
+  surname: string;
+  birthdate?: string | null;
+  deceasedate?: string | null;
+  images?: { filename: string; url: string }[];
+};
+
+export type PhotographerPortraitHeaderProps = {
+  photographer: PhotographerDetail;
+};
+
+export interface Store {
+  store: string;
+  website: string;
+  affiliate?: boolean;
+}
+
+export interface PhotographerLinksProps {
+  stores?: Store[] | string[];
+  website?: string;
+}
+
+export interface PhotographerListItem {
+  id: string;
+  name: string;
+  surname: string;
+  slug: string;
+  portrait: string;
+}
+
+export type PhotographersSliderProps = {
+  onPhotographerPress?: (photographer: PhotographerListItem) => void;
+};
+
+export interface TimelineProps {
+  events: TimelineItemModelProps[];
+}
+
+export type WebGalleryMessageProps = {
+  style?: object;
+  slug: string;
+  name: string;
+  surname: string;
+};

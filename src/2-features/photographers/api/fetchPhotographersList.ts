@@ -2,13 +2,7 @@ import { supabase } from "@/4-shared/api/supabaseClient";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { Dimensions } from "react-native";
 
-export interface PhotographerListItem {
-  id: string;
-  name: string;
-  surname: string;
-  slug: string;
-  portrait: string;
-}
+import { PhotographerListItem } from "@/4-shared/types";
 
 export async function fetchPhotographersList(): Promise<
   PhotographerListItem[]

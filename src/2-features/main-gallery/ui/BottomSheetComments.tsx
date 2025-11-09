@@ -1,4 +1,3 @@
-import { ReportBottomSheetRef } from "@/2-features/reporting/ui/ReportBottomSheet";
 import { BottomSheetModal as ReusableBottomSheetModal } from "@/4-shared/components/bottom-sheet/ui/BottomSheetModal";
 import {
   OnlyTextButton,
@@ -9,32 +8,12 @@ import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { Comment } from "@/4-shared/types";
+import { BottomSheetCommentsProps } from "@/4-shared/types";
 import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
-import { Router } from "expo-router";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetComments.styles";
-
-type EditMode = { id: string; content: string } | null;
-
-type BottomSheetCommentsProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  comments: Comment[];
-  isLoading: boolean;
-  commentText: string;
-  setCommentText: (txt: string) => void;
-  handleSaveComment: () => void;
-  handleEdit: (id: string, content: string) => void;
-  handleDelete: (id: string) => void;
-  editMode: EditMode;
-  user: { id: string } | null;
-  authLoading: boolean;
-  reportSheetRef: React.RefObject<ReportBottomSheetRef | null>;
-  router: Router;
-};
 
 export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
   (

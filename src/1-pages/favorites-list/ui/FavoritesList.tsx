@@ -153,7 +153,7 @@ export default function FavoritesList() {
   }) => (
     <SwipeableCard
       imageUrl={item.thumbnailUrl ?? ""}
-      onImagePress={() => handlePressZoom(index)}
+      onPress={() => handlePressZoom(index)}
       title={item.author}
       subtitle={item.description}
       year={item.year}

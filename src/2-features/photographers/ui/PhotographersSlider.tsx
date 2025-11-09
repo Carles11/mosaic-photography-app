@@ -1,4 +1,8 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
+import {
+  PhotographerListItem,
+  PhotographersSliderProps,
+} from "@/4-shared/types";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -8,15 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  fetchPhotographersList,
-  PhotographerListItem,
-} from "../api/fetchPhotographersList";
+import { fetchPhotographersList } from "../api/fetchPhotographersList";
 import { styles } from "./PhotographersSlider.styles";
-
-type PhotographersSliderProps = {
-  onPhotographerPress?: (photographer: PhotographerListItem) => void;
-};
 
 export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   onPhotographerPress,

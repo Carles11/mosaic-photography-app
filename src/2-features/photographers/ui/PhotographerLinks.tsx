@@ -1,19 +1,9 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { PhotographerLinksProps, Store } from "@/4-shared/types";
 import React from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { styles } from "./PhotographerLinks.styles";
-
-interface Store {
-  store: string;
-  website: string;
-  affiliate?: boolean;
-}
-
-interface PhotographerLinksProps {
-  stores?: Store[] | string[];
-  website?: string;
-}
 
 const PhotographerLinks: React.FC<PhotographerLinksProps> = ({
   stores,

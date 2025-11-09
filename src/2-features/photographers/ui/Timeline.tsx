@@ -1,14 +1,10 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { TimelineItemModelProps } from "@/4-shared/types";
+import { TimelineItemModelProps, TimelineProps } from "@/4-shared/types";
 import React from "react";
 import Timeline from "react-native-timeline-flatlist";
 import { styles } from "./Timeline.styles";
-
-interface TimelineProps {
-  events: TimelineItemModelProps[];
-}
 
 function mapEventsToTimelineFlatlist(events: TimelineItemModelProps[]) {
   return events.map((item, idx) => ({

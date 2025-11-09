@@ -13,7 +13,7 @@ import { styles } from "./SwipeableCard.styles";
  * @example
  * <SwipeableCard
  *   imageUrl={item.thumbnailUrl}
- *   onImagePress={() => handleZoom(index)}
+ *   onPress={() => handleZoom(index)}
  *   title={item.author}
  *   subtitle={item.description}
  *   year={item.year}
@@ -23,10 +23,12 @@ import { styles } from "./SwipeableCard.styles";
  *   ]}
  * />
  */
-const SwipeableCard: React.FC<SwipeableCardProps> = memo(
+const SwipeableCard: React.FC<
+  Omit<SwipeableCardProps, "onImagePress"> & { onPress?: () => void }
+> = memo(
   ({
     imageUrl,
-    onImagePress,
+    onPress,
     title,
     subtitle,
     year,
@@ -67,20 +69,20 @@ const SwipeableCard: React.FC<SwipeableCardProps> = memo(
         rightThreshold={40}
         overshootRight={false}
       >
-        <View style={[styles.card, containerStyle]}>
+        <TouchableOpacity
+          onPress={onPress}
+          activeOpacity={onPress ? 0.85 : 1}
+          disabled={!onPress}
+          style={[styles.card, containerStyle]}
+        >
           {/* Left: Image */}
-          <TouchableOpacity
-            onPress={onImagePress}
-            activeOpacity={onImagePress ? 0.85 : 1}
-            disabled={!onImagePress}
-            style={styles.imageContainer}
-          >
+          <View style={styles.imageContainer}>
             <Image
               source={{ uri: imageUrl }}
               style={[styles.image, imageStyle]}
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </View>
           {/* Center: Texts */}
           <View style={styles.infoContainer}>
             <ThemedText
@@ -125,7 +127,7 @@ const SwipeableCard: React.FC<SwipeableCardProps> = memo(
               style={styles.swipeChevron}
             />
           </View>
-        </View>
+        </TouchableOpacity>
       </Swipeable>
     );
   }

@@ -10,7 +10,7 @@ import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
-import React, { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { ActivityIndicator, Alert, FlatList, Share } from "react-native";
 import { styles } from "./CollectionsList.styles";
 import CreateCollectionSheet, {
@@ -39,7 +39,7 @@ export default function CollectionsList() {
     }, [user?.id, router, reloadCollections])
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     navigation.setOptions({
       title: ASO.collections.title,
       subtitle: ASO.collections.description,
@@ -106,7 +106,7 @@ export default function CollectionsList() {
   const renderItem = ({ item }: { item: any }) => (
     <SwipeableCard
       imageUrl={item.previewImages?.[0]?.url ?? ""}
-      onImagePress={() => router.push(`/collections/${item.id}`)}
+      onPress={() => router.push(`/collections/${item.id}`)}
       title={item.name}
       subtitle={`${item.imageCount} image${item.imageCount === 1 ? "" : "s"}`}
       rightActions={[

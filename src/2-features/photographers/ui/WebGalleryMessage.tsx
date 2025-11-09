@@ -1,14 +1,7 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import React from "react";
+import { WebGalleryMessageProps } from "@/4-shared/types";
 import { Linking, TouchableOpacity } from "react-native";
-
-type WebGalleryMessageProps = {
-  style?: object;
-  slug: string;
-  name: string;
-  surname: string;
-};
 
 export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
   name,

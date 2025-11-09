@@ -1,8 +1,10 @@
+import { GALLERY_ITEM_HEIGHT, IMAGE_HEIGHT } from "@/4-shared/constants";
 import { StyleSheet } from "react-native";
+// Define your gallery item fixed height
 
 export const styles = StyleSheet.create({
   itemContainer: {
-    marginBottom: 24,
+    height: GALLERY_ITEM_HEIGHT,
     borderRadius: 8,
     borderBottomWidth: 1,
     borderBottomColor: "#ececec",
@@ -12,11 +14,13 @@ export const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
+    marginBottom: 24,
+    backgroundColor: "#fff",
   },
   image: {
     width: "100%",
-    height: "auto",
-    minHeight: 450,
+    height: IMAGE_HEIGHT, // fixed height for the image
+    borderRadius: 0,
   },
   title: {
     fontSize: 15,
@@ -26,11 +30,14 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   imagePlaceholder: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: 12,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#eaeaea", // soft fallback for progressive loading
+    backgroundColor: "#eaeaea",
     zIndex: 2,
   },
 });

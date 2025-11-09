@@ -1,5 +1,6 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { GALLERY_ITEM_HEIGHT } from "@/4-shared/constants";
 import { GalleryImage } from "@/4-shared/types";
 import React, { useRef } from "react";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
@@ -14,7 +15,6 @@ export type GalleryProps = {
 };
 
 // Consistent card/item height for FlatList optimization
-const GALLERY_ITEM_HEIGHT = 180; // Adjust to your card/item height
 
 export const Gallery: React.FC<GalleryProps> = ({
   galleryTitle,

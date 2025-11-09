@@ -39,6 +39,13 @@ export type GalleryImage = {
   mosaicType?: "normal" | "large" | "wide" | "tall";
 };
 
+export type MainGalleryItemProps = {
+  item: GalleryImage;
+  onOpenMenu: () => void;
+  onPressComments?: () => void;
+  onPressZoom?: () => void;
+};
+
 export type GalleryImageWithPhotographer = GalleryImage & {
   photographers?: Photographer;
 };
@@ -82,4 +89,12 @@ export type ZoomGalleryModalProps = {
   visible: boolean;
   initialIndex?: number;
   onClose: () => void;
+};
+
+export type BottomSheetFilterMenuProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  filters: GalleryFilter;
+  setFilters: (filters: GalleryFilter) => void;
+  resetFilters: () => void;
 };

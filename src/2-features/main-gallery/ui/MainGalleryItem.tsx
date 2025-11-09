@@ -3,27 +3,19 @@ import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
-import { GalleryImage } from "@/4-shared/types/gallery";
+import { MainGalleryItemProps } from "@/4-shared/types";
 import React, { useState } from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { styles } from "./MainGalleryItem.styles";
 
-type MainGalleryItemProps = {
-  item: GalleryImage;
-  onOpenMenu: () => void;
-  onPressComments?: () => void;
-  onPressZoom?: () => void;
-};
-
-const PLACEHOLDER_IMAGE =
-  "https://cdn.mosaic.photography/logos/mosaic-high-resolution-logo-transparent-DESKTOP-dark_766x541px_lg82w1.webp";
+const PLACEHOLDER_IMAGE = "https://placehold.co/480";
 
 export const MainGalleryItem: React.FC<MainGalleryItemProps> = React.memo(
   ({ item, onOpenMenu, onPressComments, onPressZoom }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [imageError, setImageError] = useState(false);
 
-    // Reuse shared logic for mobile thumbnail (w400)
+    // Use the thumbnail for mobile
     const { url: thumbnailUrl } = getBestS3FolderForWidth(item, 400);
 
     return (
