@@ -4,6 +4,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import {
   PHOTOGRAPHER_DETAILS_GALLERY_DESCRIPTION_HEIGHT,
+  PHOTOGRAPHER_DETAILS_GALLERY_IMAGE_HEIGHT,
   PHOTOGRAPHER_DETAILS_GALLERY_YEAR_HEIGHT,
 } from "@/4-shared/constants";
 import React from "react";
@@ -11,7 +12,7 @@ import { Image, TouchableOpacity, View } from "react-native";
 import { styles } from "./PhotographerGalleryItem.styles";
 
 export type PhotographerGalleryItemProps = {
-  item: any; // Replace with the actual type if you have it
+  item: any;
   onOpenMenu: () => void;
   onPressComments: () => void;
   onPressZoom: () => void;
@@ -26,7 +27,8 @@ export const PhotographerGalleryItem: React.FC<
       activeOpacity={0.85}
       onPress={onPressZoom}
       style={{
-        flex: 1,
+        width: "100%",
+        height: PHOTOGRAPHER_DETAILS_GALLERY_IMAGE_HEIGHT,
       }}
     >
       <Image

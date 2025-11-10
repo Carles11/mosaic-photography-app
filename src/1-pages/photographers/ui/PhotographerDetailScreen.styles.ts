@@ -1,4 +1,3 @@
-import { PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT } from "@/4-shared/constants";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -67,36 +66,7 @@ export const styles = StyleSheet.create({
     fontWeight: "normal",
     opacity: 0.7,
   },
-  // Gallery styles for FlatList renderItem
-  galleryImageWrapper: {
-    alignItems: "center",
-    borderRadius: 4,
-    overflow: "hidden",
-    elevation: 2,
-    width: "100%",
-    height: PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT,
 
-    position: "relative",
-  },
-  galleryImage: {
-    height: PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT,
-
-    borderRadius: 4,
-  },
-  imageYear: {
-    marginTop: 8,
-    fontWeight: "600",
-    fontSize: 16,
-    textAlign: "center",
-    paddingHorizontal: 8,
-  },
-  imageDescription: {
-    fontSize: 14,
-    marginBottom: 8,
-    marginTop: 4,
-    paddingHorizontal: 8,
-    textAlign: "center",
-  },
   shareButton: {
     marginVertical: 24,
     padding: 14,
