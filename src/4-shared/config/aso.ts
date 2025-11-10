@@ -134,7 +134,7 @@ export const ASO = {
       surname?: string;
       origin?: string;
     }) =>
-      `${name ?? ""} ${surname ?? ""} – Vintage Nude Photography${
+      `${name ?? ""} ${surname ?? ""} – Vintage Photography${
         origin ? " (" + origin + ")" : ""
       } | Mosaic Gallery`,
     description: ({

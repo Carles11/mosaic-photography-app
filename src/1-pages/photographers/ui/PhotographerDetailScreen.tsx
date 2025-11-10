@@ -3,17 +3,20 @@ import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetCom
 import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
+import { MemoizedPhotographerGalleryItem } from "@/2-features/photographers/ui/PhotographerGalleryItem";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
 import { PhotographerPortraitHeader } from "@/2-features/photographers/ui/PhotographerPortraitHeader";
 import { PhotographerTimeline } from "@/2-features/photographers/ui/Timeline";
 import { WebGalleryMessage } from "@/2-features/photographers/ui/WebGalleryMessage";
-import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
-import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
+import {
+  PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT,
+  PHOTOGRAPHER_HEADER_HEIGHT,
+} from "@/4-shared/constants";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
 import { useFavorites } from "@/4-shared/context/favorites";
@@ -23,21 +26,12 @@ import {
   getAvailableDownloadOptionsForImage,
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { mapPhotographerImagesToGalleryImages } from "@/4-shared/lib/mapPhotographerImageToGalleryImage";
-import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { PhotographerSlug } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
-  Image,
   Linking,
   Share,
   TouchableOpacity,
@@ -45,13 +39,10 @@ import {
 import { useSharedValue } from "react-native-reanimated";
 import { styles } from "./PhotographerDetailScreen.styles";
 
-const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
-const HEADER_HEIGHT = deviceHeight * 0.5;
-
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const router = useRouter();
-  const { theme } = useTheme();
+
   const { user, loading: authLoading } = useAuthSession();
   const { isFavorite, toggleFavorite, isUserLoggedIn } = useFavorites();
   const {
@@ -181,11 +172,6 @@ const PhotographerDetailScreen: React.FC = () => {
     }
   }, [commentsImageId, loadCommentsForImage]);
 
-  const handlePressZoom = useCallback((index: number) => {
-    setZoomIndex(index);
-    setZoomVisible(true);
-  }, []);
-
   // --- Image Menu handlers (imperative, Home-style, no isOpen state) ---
   const handleOpenImageMenu = useCallback((image: any) => {
     setSelectedImage(image);
@@ -290,27 +276,17 @@ const PhotographerDetailScreen: React.FC = () => {
     deleteComment(commentsImageId, commentId, user.id);
   };
 
-  // --- Report ---
-  const handleReportImage = () => {
-    if (!selectedImage) return;
-    if (!user) {
-      router.push("/auth/login");
-      return;
-    }
-    // Optional: open report bottom sheet if you use it, else just call the handler here
-    // reportSheetRef.current?.open({ imageId: Number(selectedImage.id) });
-    logEvent("report_image", {
-      imageId: selectedImage.id,
-    });
-  };
-
   const showWebMsg = photographer && (photographer.images?.length ?? 0) < 5;
 
   const ListHeaderComponent = useCallback(() => {
     if (!photographer) return null;
     return (
       <>
-        <RevealOnScroll scrollY={scrollY} height={HEADER_HEIGHT} threshold={32}>
+        <RevealOnScroll
+          scrollY={scrollY}
+          height={PHOTOGRAPHER_HEADER_HEIGHT}
+          threshold={32}
+        >
           <PhotographerPortraitHeader photographer={photographer} />
         </RevealOnScroll>
         {showWebMsg && (
@@ -401,38 +377,17 @@ const PhotographerDetailScreen: React.FC = () => {
         galleryTitle={undefined}
         images={galleryImages}
         scrollY={scrollY}
+        itemHeight={PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT}
         renderItem={(item, index) => (
-          <ThemedView style={styles.galleryImageWrapper}>
-            <ImageHeaderRow onOpenMenu={() => handleOpenImageMenu(item)} />
-            <TouchableOpacity
-              activeOpacity={0.85}
-              onPress={() => {
-                setZoomIndex(index);
-                setZoomVisible(true);
-              }}
-            >
-              <Image
-                source={{ uri: item.url }}
-                style={[
-                  styles.galleryImage,
-                  { width: deviceWidth, height: deviceWidth * 0.7 },
-                ]}
-                resizeMode="cover"
-              />
-              {item.year ? (
-                <ThemedText style={styles.imageYear}>{item.year}</ThemedText>
-              ) : null}
-              {item.description ? (
-                <ThemedText style={styles.imageDescription}>
-                  {item.description}
-                </ThemedText>
-              ) : null}
-            </TouchableOpacity>
-            <ImageFooterRow
-              imageId={String(item.id)}
-              onPressComments={() => handleOpenComments(String(item.id))}
-            />
-          </ThemedView>
+          <MemoizedPhotographerGalleryItem
+            item={item}
+            onOpenMenu={() => handleOpenImageMenu(item)}
+            onPressComments={() => handleOpenComments(String(item.id))}
+            onPressZoom={() => {
+              setZoomIndex(index);
+              setZoomVisible(true);
+            }}
+          />
         )}
         ListHeaderComponent={ListHeaderComponent}
       />

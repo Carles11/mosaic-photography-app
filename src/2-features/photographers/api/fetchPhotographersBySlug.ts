@@ -23,7 +23,7 @@ export async function fetchPhotographerBySlug(
   const { data: notNudeImages, error: notNudeError } = await supabase
     .from("images_resize")
     .select(
-      "id, filename, base_url, width, orientation, title, year, description, nudity"
+      "id, filename, base_url, width, orientation, title, year, description, nudity, author"
     )
     .eq("author", photographer.author)
     .eq("nudity", "not-nude");

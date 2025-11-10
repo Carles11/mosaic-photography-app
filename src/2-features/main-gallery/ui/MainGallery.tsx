@@ -3,6 +3,7 @@ import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGaller
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
+import { GALLERY_ITEM_HEIGHT } from "@/4-shared/constants";
 import { logEvent } from "@/4-shared/firebase";
 import { GalleryImage } from "@/4-shared/types";
 import { MainGalleryProps } from "@/4-shared/types/index";
@@ -10,6 +11,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { styles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
+
 export const MainGallery: React.FC<MainGalleryProps> = ({
   images,
   loading,
@@ -96,6 +98,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         galleryTitle={ASO.home.title}
         scrollY={scrollY}
         images={images}
+        itemHeight={GALLERY_ITEM_HEIGHT}
         renderItem={(item, index) => (
           <MemoizedMainGalleryItem
             item={item}

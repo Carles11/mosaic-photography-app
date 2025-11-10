@@ -12,9 +12,8 @@ export type GalleryProps = {
   renderItem: (item: GalleryImage, index: number) => React.ReactNode;
   scrollY: any;
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+  itemHeight?: number;
 };
-
-// Consistent card/item height for FlatList optimization
 
 export const Gallery: React.FC<GalleryProps> = ({
   galleryTitle,
@@ -22,21 +21,22 @@ export const Gallery: React.FC<GalleryProps> = ({
   renderItem,
   scrollY,
   ListHeaderComponent,
+  itemHeight,
 }) => {
   const listRef = useRef<Animated.FlatList<GalleryImage>>(null);
+  const computedItemHeight = itemHeight || GALLERY_ITEM_HEIGHT;
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     "worklet";
     scrollY.value = event.contentOffset.y;
   });
 
-  // Type fix here: use ArrayLike for _data param
   const getItemLayout = (
     _data: ArrayLike<GalleryImage> | null | undefined,
     index: number
   ) => ({
-    length: GALLERY_ITEM_HEIGHT,
-    offset: GALLERY_ITEM_HEIGHT * index,
+    length: computedItemHeight,
+    offset: computedItemHeight * index,
     index,
   });
 

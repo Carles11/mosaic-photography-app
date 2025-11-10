@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     height: CARD_HEIGHT,
-    backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#e3e5ea",
     borderRadius: 14,
@@ -24,7 +23,6 @@ export const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#eef0f4",
   },
   image: {
     width: "100%",
@@ -45,17 +43,14 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 17,
     fontWeight: "bold",
-    color: "#333",
     marginBottom: 6,
   },
   subtitle: {
     fontSize: 14,
-    color: "#657188",
     marginTop: 2,
   },
   year: {
     fontSize: 12,
-    color: "#888",
     marginTop: 2,
   },
   rightActionContainer: {

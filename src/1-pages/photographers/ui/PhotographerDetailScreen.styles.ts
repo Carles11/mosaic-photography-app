@@ -1,3 +1,4 @@
+import { PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT } from "@/4-shared/constants";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -73,8 +74,13 @@ export const styles = StyleSheet.create({
     overflow: "hidden",
     elevation: 2,
     width: "100%",
+    height: PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT,
+
+    position: "relative",
   },
   galleryImage: {
+    height: PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT,
+
     borderRadius: 4,
   },
   imageYear: {

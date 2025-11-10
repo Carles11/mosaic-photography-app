@@ -50,10 +50,10 @@ export const BottomSheetThreeDotsMenu = forwardRef<
           <SafeAreaView edges={["bottom"]} style={styles.safeArea}>
             {selectedImage && (
               <>
-                <ThemedText style={[styles.author, { color: theme.text }]}>
+                <ThemedText style={styles.author}>
                   {selectedImage.author}, {selectedImage.year}
                 </ThemedText>
-                <ThemedText style={[styles.description, { color: theme.text }]}>
+                <ThemedText style={styles.description}>
                   {selectedImage.description}
                 </ThemedText>
                 <HrLine />

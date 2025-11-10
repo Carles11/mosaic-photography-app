@@ -114,7 +114,7 @@ const SwipeableCard: React.FC<
           {/* Swipe Hint: Chevron + Gradient (always visible, right side) */}
           <View style={styles.swipeHintContainer} pointerEvents="none">
             <LinearGradient
-              colors={["transparent", "#e3e5ea"]}
+              colors={["transparent", theme.background]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.swipeGradient}
