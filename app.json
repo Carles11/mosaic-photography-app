@@ -8,12 +8,22 @@
     "scheme": "mosaicphotographyapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "linking": {
+      "prefixes": [
+        "https://www.mosaic.photography",
+        "https://www.mosaic.photography/auth",
+        "https://www.mosaic.photography/collections",
+        "https://www.mosaic.photography/photographer",
+        "mosaicphotographyapp://"
+      ]
+    },
     "ios": {
       "supportsTablet": true,
       "associatedDomains": ["applinks:www.mosaic.photography"],
       "bundleIdentifier": "com.carlosdelrio.mosaicphotographyapp",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
+
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#1d1d1d",
