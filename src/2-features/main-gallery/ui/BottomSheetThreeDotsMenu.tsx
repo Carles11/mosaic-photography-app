@@ -5,10 +5,15 @@ import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetThreeDotsMenuProps } from "@/4-shared/types";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetView } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetThreeDotsMenu.styles";
+
+function isRefObject<T>(ref: React.Ref<T>): ref is React.RefObject<T> {
+  return !!ref && typeof ref !== "function";
+}
 
 export const BottomSheetThreeDotsMenu = forwardRef<
   any,
@@ -36,8 +41,35 @@ export const BottomSheetThreeDotsMenu = forwardRef<
       onClose();
     }, [onClose]);
 
+    // Unified handler for reporting images
+    const handleReportPress = useCallback(() => {
+      if (!user) {
+        showErrorToast("Please log in to use this feature.");
+        if (
+          isRefObject(ref) &&
+          ref.current &&
+          typeof ref.current.dismiss === "function"
+        ) {
+          ref.current.dismiss();
+        }
+        setTimeout(() => {
+          router?.push("/auth/login");
+        }, 400);
+      } else if (onReport) {
+        onReport();
+        if (
+          isRefObject(ref) &&
+          ref.current &&
+          typeof ref.current.dismiss === "function"
+        ) {
+          ref.current.dismiss();
+        }
+      }
+    }, [user, onReport, ref, router]);
+
     const originalOption = downloadOptions.find((opt) => opt.isOriginal);
     const webpOptions = downloadOptions.filter((opt) => !opt.isOriginal);
+
     return (
       <BottomSheetModal
         ref={ref}
@@ -79,46 +111,15 @@ export const BottomSheetThreeDotsMenu = forwardRef<
                     onDownloadOption={onDownloadOption ?? (() => {})}
                   />
                 )}
-                {/* NEW: Report Image Button */}
                 <HrLine />
-                <SafeAreaView
-                  style={[styles.actionRow]}
-                  edges={[]}
-                  onTouchEnd={() => {
-                    if (!user) {
-                      router?.push("/auth/login");
-                    } else if (onReport) {
-                      onReport();
-                    }
-                  }}
-                  accessible
-                  accessibilityRole="button"
+                <ActionRow
+                  icon="flag"
+                  label="Report this image"
+                  color={theme?.error ?? "#E74C3C"}
+                  onPress={handleReportPress}
+                  textColor={theme.favoriteIcon}
                   accessibilityLabel="Report image"
-                >
-                  <ThemedText
-                    style={{
-                      color: theme.favoriteIcon,
-                      marginLeft: 5,
-                    }}
-                  >
-                    Report this image
-                  </ThemedText>
-                  <IconSymbol
-                    name="flag"
-                    type="material"
-                    size={14}
-                    color={theme?.error ?? "#E74C3C"}
-                    accessibilityLabel="Report"
-                    onPress={() => {
-                      if (!user) {
-                        router?.push("/auth/login");
-                      } else if (onReport) {
-                        onReport();
-                      }
-                    }}
-                    style={styles.reportButtonIcon}
-                  />
-                </SafeAreaView>
+                />
               </>
             )}
           </SafeAreaView>
@@ -134,6 +135,7 @@ type ActionRowProps = {
   color: string;
   onPress?: () => void;
   textColor: string;
+  accessibilityLabel?: string;
 };
 
 const ActionRow: React.FC<ActionRowProps> = ({
@@ -142,6 +144,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
   color,
   onPress,
   textColor,
+  accessibilityLabel,
 }) => (
   <>
     <HrLine />
@@ -151,7 +154,7 @@ const ActionRow: React.FC<ActionRowProps> = ({
       onTouchEnd={onPress}
       accessible
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={accessibilityLabel || label}
     >
       <IconSymbol type="material" name={icon} size={17} color={color} />
       <ThemedText style={{ color: textColor, marginLeft: 5 }}>
