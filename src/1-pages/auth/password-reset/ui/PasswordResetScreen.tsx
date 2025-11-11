@@ -6,6 +6,7 @@ import {
 import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -37,38 +38,79 @@ export function PasswordResetScreen() {
     });
   }, [navigation]);
 
+  // Analytics: track screen view on mount
+  useEffect(() => {
+    logEvent("password_reset_screen_view", {
+      token: Boolean(token),
+    });
+  }, [token]);
+
   const handlePasswordReset = async () => {
     setError(null);
     setSuccess(false);
 
+    // Analytics: reset attempt
+    logEvent("password_reset_attempt", {
+      tokenPresent: Boolean(token),
+    });
+
     if (!password || !repeatPassword) {
       setError("Please fill out both fields.");
+      // Analytics: field empty error
+      logEvent("password_reset_failure", {
+        reason: "empty_fields",
+      });
       return;
     }
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
+      // Analytics: validation error
+      logEvent("password_reset_failure", {
+        reason: "passwords_do_not_match",
+      });
       return;
     }
     if (!validatePassword(password)) {
       setError(
         "Password must be at least 8 characters, including a letter and a number."
       );
+      logEvent("password_reset_failure", {
+        reason: "weak_password",
+      });
       return;
     }
     if (!token) {
       setError("Invalid or missing password reset token.");
+      // Analytics: missing token error
+      logEvent("password_reset_failure", {
+        reason: "missing_token",
+      });
       return;
     }
 
     setIsSubmitting(true);
+
     const result = await passwordReset(token, password);
     if (result.error) {
       setError(result.error);
       setSuccess(false);
+      // Analytics: API error
+      logEvent("password_reset_failure", {
+        token,
+        error: result.error,
+      });
     } else {
       setSuccess(true);
+      logEvent("password_reset_success", {
+        token,
+      });
     }
     setIsSubmitting(false);
+  };
+
+  const handleGoToLogin = () => {
+    logEvent("password_reset_goto_login_clicked");
+    router.push("/auth/login");
   };
 
   return (
@@ -126,12 +168,7 @@ export function PasswordResetScreen() {
           disabled={isSubmitting || !password || !repeatPassword}
         />
 
-        <OnlyTextButton
-          title="Back to Login"
-          onPress={() => {
-            router.push("/auth/login");
-          }}
-        />
+        <OnlyTextButton title="Back to Login" onPress={handleGoToLogin} />
       </ThemedView>
     </KeyboardAvoidingView>
   );

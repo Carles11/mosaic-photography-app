@@ -3,7 +3,6 @@ import { loginWithMagicLink } from "@/2-features/auth/api/loginWithMagicLink";
 import {
   OnlyTextButton,
   PrimaryButton,
-  SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
@@ -180,6 +179,11 @@ export const LoginScreen: React.FC = () => {
           }
         />
 
+        {/* 
+          TEMPORARILY HIDE MAGIC LINK TOGGLE BUTTON:
+          To restore magic link login, uncomment the block below.
+        */}
+        {/*
         <SecondaryButton
           title={
             useMagicLink ? "Use password instead" : "Use magic link instead"
@@ -189,6 +193,7 @@ export const LoginScreen: React.FC = () => {
             logEvent("toggle_login_method", { useMagicLink: !useMagicLink });
           }}
         />
+        */}
 
         {!useMagicLink && (
           <OnlyTextButton

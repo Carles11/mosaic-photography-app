@@ -1,3 +1,3 @@
-import { MagicLinkScreen } from "@/1-pages/auth/magic-link/ui/MagicLinkScreen";
+// import { MagicLinkScreen } from "@/1-pages/auth/magic-link/ui/MagicLinkScreen";
 
-export default MagicLinkScreen;
+// export default MagicLinkScreen;

@@ -6,6 +6,7 @@ import {
 import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -34,16 +35,33 @@ export function ForgotPasswordScreen() {
     });
   }, [navigation]);
 
+  // Analytics: track screen view on mount
+  useEffect(() => {
+    logEvent("forgot_password_screen_view");
+  }, []);
+
   const handleForgotPassword = async () => {
     setError(null);
     setSuccess(false);
 
+    // Analytics: attempt
+    logEvent("forgot_password_attempt", {
+      emailFilled: !!email,
+    });
+
     if (!email) {
       setError("Please enter your email address.");
+      logEvent("forgot_password_failure", {
+        reason: "empty_email",
+      });
       return;
     }
     if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
+      logEvent("forgot_password_failure", {
+        reason: "invalid_email",
+        email,
+      });
       return;
     }
 
@@ -52,10 +70,22 @@ export function ForgotPasswordScreen() {
     if (result.error) {
       setError(result.error);
       setSuccess(false);
+      logEvent("forgot_password_failure", {
+        error: result.error,
+        email,
+      });
     } else {
       setSuccess(true);
+      logEvent("forgot_password_success", {
+        email,
+      });
     }
     setIsSubmitting(false);
+  };
+
+  const handleGoToLogin = () => {
+    logEvent("forgot_password_goto_login_clicked");
+    router.push("/auth/login");
   };
 
   return (
@@ -106,12 +136,7 @@ export function ForgotPasswordScreen() {
           disabled={isSubmitting || !email}
         />
 
-        <OnlyTextButton
-          title="Back to Login"
-          onPress={() => {
-            router.push("/auth/login");
-          }}
-        />
+        <OnlyTextButton title="Back to Login" onPress={handleGoToLogin} />
       </ThemedView>
     </KeyboardAvoidingView>
   );
