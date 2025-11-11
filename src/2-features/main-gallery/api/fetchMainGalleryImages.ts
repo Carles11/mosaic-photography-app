@@ -86,9 +86,9 @@ export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
 
     const { url } = getBestS3FolderForWidth(
       {
-        width: img.width,
         filename: img.filename,
         base_url: baseUrl,
+        width: img.width,
       },
       effectiveWidth
     );

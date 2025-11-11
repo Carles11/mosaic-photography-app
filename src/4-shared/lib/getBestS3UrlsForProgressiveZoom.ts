@@ -1,8 +1,5 @@
-import {
-  getBestS3FolderForWidth,
-  S3_SIZE_WIDTHS,
-} from "./getBestS3FolderForWidth";
-
+import { S3_SIZE_WIDTHS } from "@/4-shared/constants";
+import { getBestS3FolderForWidth } from "./getBestS3FolderForWidth";
 /**
  * Returns both a preview (progressive) and a zoom (full) S3 URL for an image,
  * based on device or rendered width.

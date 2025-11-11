@@ -1,7 +1,6 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import type { PhotographerSlug } from "@/4-shared/types";
-import { Dimensions } from "react-native";
 
 export async function fetchPhotographerBySlug(
   slug: string
@@ -23,7 +22,23 @@ export async function fetchPhotographerBySlug(
   const { data: notNudeImages, error: notNudeError } = await supabase
     .from("images_resize")
     .select(
-      "id, filename, base_url, width, orientation, title, year, description, nudity, author"
+      `
+      id,
+      base_url,
+      filename,
+      author,
+      title,
+      description,
+      created_at,
+      orientation,
+      width,
+      height,
+      print_quality,
+      gender,
+      color,
+      nudity,
+      year
+    `
     )
     .eq("author", photographer.author)
     .eq("nudity", "not-nude");
@@ -32,7 +47,23 @@ export async function fetchPhotographerBySlug(
   const { data: portraitImages, error: portraitError } = await supabase
     .from("images_resize")
     .select(
-      "id, filename, base_url, width, orientation, title, year, description, nudity"
+      `
+      id,
+      base_url,
+      filename,
+      author,
+      title,
+      description,
+      created_at,
+      orientation,
+      width,
+      height,
+      print_quality,
+      gender,
+      color,
+      nudity,
+      year
+    `
     )
     .eq("author", photographer.author)
     .ilike("filename", "000_aaa_%");
@@ -47,24 +78,25 @@ export async function fetchPhotographerBySlug(
   });
   const allImages = Object.values(allImagesMap);
 
-  const deviceWidth = Dimensions.get("window").width;
+  // Use device screen width for optimal image size selection
+  // If you want to use actual rendered width, pass it in from your component instead of using screenWidth here.
+  const screenWidth = require("react-native").Dimensions.get("window").width;
+  const pixelDensity = require("react-native").PixelRatio.get();
+  const effectiveWidth = screenWidth * pixelDensity;
 
   // 5. Map images to use the best available resolution in the CDN
-  const processedImages = allImages.map((img) => {
-    const best = getBestS3FolderForWidth(
+  const processedImages = allImages.map((img) => ({
+    ...img,
+    url: getBestS3FolderForWidth(
       {
         filename: img.filename,
         base_url: img.base_url,
         width: img.width,
       },
-      deviceWidth
-    );
-    return {
-      ...img,
-      url: best.url,
-      width: best.width,
-    };
-  });
+      effectiveWidth
+    ).url,
+    // 🚫 DO NOT overwrite width here – keep original width!
+  }));
 
   return {
     ...photographer,

@@ -38,7 +38,6 @@ export const BottomSheetThreeDotsMenu = forwardRef<
 
     const originalOption = downloadOptions.find((opt) => opt.isOriginal);
     const webpOptions = downloadOptions.filter((opt) => !opt.isOriginal);
-
     return (
       <BottomSheetModal
         ref={ref}

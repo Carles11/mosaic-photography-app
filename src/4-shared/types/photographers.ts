@@ -1,17 +1,6 @@
-type TimelineOrientation = "HORIZONTAL" | "VERTICAL" | "VERTICAL_ALTERNATING";
+import { GalleryImage } from "./gallery";
 
-export interface PhotographerImage {
-  id: string;
-  filename: string;
-  base_url: string;
-  width: number;
-  year: number;
-  url: string;
-  title?: string;
-  description?: string;
-  author?: string;
-  slug?: string;
-}
+type TimelineOrientation = "HORIZONTAL" | "VERTICAL" | "VERTICAL_ALTERNATING";
 
 export interface PhotographerSlug {
   id: string;
@@ -25,7 +14,7 @@ export interface PhotographerSlug {
   deceasedate?: string;
   website?: string;
   store?: { store: string; website: string; affiliate?: boolean }[] | string[];
-  images?: PhotographerImage[];
+  images?: GalleryImage[];
 }
 
 export interface TimelineItemModelProps {

@@ -1,3 +1,6 @@
+// S3 sizes available, always webp for resized folders except originals
+export const S3_SIZE_WIDTHS = [400, 600, 800, 1200, 1600];
+
 export const GALLERY_ITEM_HEIGHT = 480;
 
 // Calculate image height based on fixed cell height minus header (50), title (33), footer (30)

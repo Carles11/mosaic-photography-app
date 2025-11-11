@@ -1,14 +1,6 @@
-// S3 sizes available, always webp for resized folders except originals
-export const S3_SIZE_WIDTHS = [400, 600, 800, 1200, 1600];
+import { S3_SIZE_WIDTHS } from "@/4-shared/constants";
 
-/**
- * Converts any image filename to .webp for resized folders.
- * Leaves the extension untouched ONLY for originals and originalsWEBP.
- */
-export function convertToWebpExtension(filename: string): string {
-  return filename.replace(/\.(jpg|jpeg|png|tif|tiff|png|bmp)$/i, ".webp");
-}
-
+import { convertToWebpExtension } from "./convertToWebExtension";
 /**
  * Returns the best S3 folder and URL for an image given device/rendered width.
  * Assumes the image object has `width`, `filename`, and `base_url` fields.

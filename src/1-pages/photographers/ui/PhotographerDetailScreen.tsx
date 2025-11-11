@@ -25,11 +25,10 @@ import {
   DownloadOption,
   getAvailableDownloadOptionsForImage,
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
-import { mapPhotographerImagesToGalleryImages } from "@/4-shared/lib/mapPhotographerImageToGalleryImage";
 import { PhotographerSlug } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Linking,
@@ -137,14 +136,7 @@ const PhotographerDetailScreen: React.FC = () => {
     ? getTimelineBySlug(photographer.slug) || []
     : [];
 
-  const galleryImages = useMemo(
-    () =>
-      mapPhotographerImagesToGalleryImages(
-        photographer?.images || [],
-        photographer?.slug || ""
-      ),
-    [photographer]
-  );
+  const galleryImages = photographer?.images || [];
 
   // Load comments counts in batch
   useEffect(() => {
@@ -197,6 +189,7 @@ const PhotographerDetailScreen: React.FC = () => {
     if (!user) {
       handleCloseImageMenu();
       showErrorToast("Please log in to download images.");
+      router.push("/auth/login");
       return;
     }
     try {
@@ -378,21 +371,24 @@ const PhotographerDetailScreen: React.FC = () => {
         images={galleryImages}
         scrollY={scrollY}
         itemHeight={PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT}
-        renderItem={(item, index) => (
-          <MemoizedPhotographerGalleryItem
-            item={item}
-            onOpenMenu={() => handleOpenImageMenu(item)}
-            onPressComments={() => handleOpenComments(String(item.id))}
-            onPressZoom={() => {
-              setZoomIndex(index);
-              setZoomVisible(true);
-            }}
-          />
-        )}
+        renderItem={(item, index) => {
+          return (
+            <MemoizedPhotographerGalleryItem
+              item={item}
+              onOpenMenu={() => handleOpenImageMenu(item)}
+              onPressComments={() => handleOpenComments(String(item.id))}
+              onPressZoom={() => {
+                setZoomIndex(index);
+                setZoomVisible(true);
+              }}
+            />
+          );
+        }}
         ListHeaderComponent={ListHeaderComponent}
       />
       <BottomSheetThreeDotsMenu
         ref={imageMenuSheetRef}
+        onClose={handleCloseImageMenu}
         selectedImage={selectedImage}
         onAddToFavorites={handleAddToFavorites}
         isFavorite={isFavorite}
@@ -400,7 +396,7 @@ const PhotographerDetailScreen: React.FC = () => {
         downloadOptions={downloadOptions}
         onDownloadOption={handleDownloadOption}
         user={user}
-        onClose={handleCloseImageMenu}
+        router={router}
       />
       <BottomSheetComments
         ref={commentsSheetRef}

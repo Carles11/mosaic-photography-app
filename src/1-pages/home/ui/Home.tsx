@@ -260,8 +260,10 @@ export const Home: React.FC = () => {
       });
     } catch (error) {
       console.log("Error downloading image:", error);
+      showErrorToast("Failed to open image URL for download.");
     }
   };
+
   useEffect(() => {
     if (commentsImageId) {
       loadCommentsForImage(commentsImageId);

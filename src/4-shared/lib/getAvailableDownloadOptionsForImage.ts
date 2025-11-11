@@ -1,7 +1,5 @@
-import {
-  S3_SIZE_WIDTHS,
-  convertToWebpExtension,
-} from "./getBestS3FolderForWidth";
+import { S3_SIZE_WIDTHS } from "@/4-shared/constants";
+import { convertToWebpExtension } from "./convertToWebExtension";
 
 type GalleryImage = {
   base_url: string;

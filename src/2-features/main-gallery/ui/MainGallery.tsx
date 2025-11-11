@@ -99,16 +99,18 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         scrollY={scrollY}
         images={images}
         itemHeight={GALLERY_ITEM_HEIGHT}
-        renderItem={(item, index) => (
-          <MemoizedMainGalleryItem
-            item={item}
-            onOpenMenu={() => handleOpenMenu(item)}
-            onPressComments={
-              onPressComments ? () => handleOpenComments(item.id) : undefined
-            }
-            onPressZoom={() => handlePressZoom(index)}
-          />
-        )}
+        renderItem={(item, index) => {
+          return (
+            <MemoizedMainGalleryItem
+              item={item}
+              onOpenMenu={() => handleOpenMenu(item)}
+              onPressComments={
+                onPressComments ? () => handleOpenComments(item.id) : undefined
+              }
+              onPressZoom={() => handlePressZoom(index)}
+            />
+          );
+        }}
         // Make sure FlatList optimizations are set inside Gallery
       />
       <ZoomGalleryModal
