@@ -8,7 +8,7 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
   useImperativeHandle,
@@ -72,78 +72,77 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
       >
-        <BottomSheetView
-          style={[styles.sheet, { backgroundColor: theme.background }]}
-        >
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={[
+            styles.sheet,
+            {
               paddingBottom: Platform.OS === "android" ? 64 : 0,
+            },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <ThemedText type="subtitle" style={{ marginBottom: 8 }}>
+            Create New Collection
+          </ThemedText>
+          <BottomSheetTextInput
+            placeholder="Collection name"
+            value={name}
+            onChangeText={setName}
+            editable={!loading}
+            returnKeyType="next"
+            style={{
+              marginBottom: 10,
+              padding: 12,
+              borderRadius: 8,
+              backgroundColor: theme.inputBackgroundColor,
+              color: theme.inputTextColor,
+              borderWidth: 1,
+              borderColor: theme.inputBorderColor,
+              fontSize: 16,
+              fontFamily: theme.fontFamily,
             }}
-            showsVerticalScrollIndicator={false}
-          >
-            <ThemedText type="subtitle" style={{ marginBottom: 8 }}>
-              Create New Collection
-            </ThemedText>
-            <BottomSheetTextInput
-              placeholder="Collection name"
-              value={name}
-              onChangeText={setName}
-              editable={!loading}
-              returnKeyType="next"
+            placeholderTextColor={theme.inputPlaceholderColor}
+          />
+          <BottomSheetTextInput
+            placeholder="Description (optional)"
+            value={description}
+            onChangeText={setDescription}
+            editable={!loading}
+            multiline
+            maxLength={150}
+            style={{
+              marginBottom: 10,
+              padding: 12,
+              borderRadius: 8,
+              backgroundColor: theme.inputBackgroundColor,
+              color: theme.inputTextColor,
+              borderWidth: 1,
+              borderColor: theme.inputBorderColor,
+              fontSize: 16,
+              fontFamily: theme.fontFamily,
+            }}
+            placeholderTextColor={theme.inputPlaceholderColor}
+          />
+          <ThemedView style={styles.editActions}>
+            <PrimaryButton
+              title={loading ? "Creating..." : "Create"}
+              onPress={handleCreate}
+              disabled={loading}
               style={{
-                marginBottom: 10,
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor: theme.inputBackgroundColor,
-                color: theme.inputTextColor,
-                borderWidth: 1,
-                borderColor: theme.inputBorderColor,
-                fontSize: 16,
-                fontFamily: theme.fontFamily,
+                flex: 1,
               }}
-              placeholderTextColor={theme.inputPlaceholderColor}
             />
-            <BottomSheetTextInput
-              placeholder="Description (optional)"
-              value={description}
-              onChangeText={setDescription}
-              editable={!loading}
-              multiline
-              maxLength={150}
+            <SecondaryButton
+              title="Cancel"
+              onPress={() => sheetRef.current?.dismiss()}
+              disabled={loading}
               style={{
-                marginBottom: 10,
-                padding: 12,
-                borderRadius: 8,
-                backgroundColor: theme.inputBackgroundColor,
-                color: theme.inputTextColor,
-                borderWidth: 1,
-                borderColor: theme.inputBorderColor,
-                fontSize: 16,
-                fontFamily: theme.fontFamily,
+                flex: 1,
               }}
-              placeholderTextColor={theme.inputPlaceholderColor}
             />
-            <ThemedView style={styles.editActions}>
-              <PrimaryButton
-                title={loading ? "Creating..." : "Create"}
-                onPress={handleCreate}
-                disabled={loading}
-                style={{
-                  flex: 1,
-                }}
-              />
-              <SecondaryButton
-                title="Cancel"
-                onPress={() => sheetRef.current?.dismiss()}
-                disabled={loading}
-                style={{
-                  flex: 1,
-                }}
-              />
-            </ThemedView>
-          </ScrollView>
-        </BottomSheetView>
+          </ThemedView>
+        </ScrollView>
       </ReusableBottomSheetModal>
     );
   }

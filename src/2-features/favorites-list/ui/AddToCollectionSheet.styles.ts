@@ -2,7 +2,6 @@ import { Platform } from "react-native";
 
 export const styles = {
   sheet: {
-    flex: 1,
     padding: 16,
     paddingBottom: 77,
   },
