@@ -17,7 +17,6 @@ export function createMainGalleryItemStyles(
       shadowOffset: { width: 0, height: 2 },
       elevation: 2,
       marginBottom: 24,
-      backgroundColor: "#fff", // Ensure this is included!
     },
     image: {
       width: "100%",

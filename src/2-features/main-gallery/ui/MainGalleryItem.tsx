@@ -1,9 +1,10 @@
 import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
 import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { MainGalleryItemProps } from "@/4-shared/types";
 import React from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import { createMainGalleryItemStyles } from "./MainGalleryItem.styles";
 
 export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
@@ -19,7 +20,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
   const s = styles || createMainGalleryItemStyles(itemHeight, imageHeight);
 
   return (
-    <View style={s.itemContainer}>
+    <ThemedView style={s.itemContainer}>
       <ImageHeaderRow onOpenMenu={onOpenMenu} />
       <TouchableOpacity activeOpacity={0.92} onPress={onPressZoom}>
         <Image source={{ uri: item.url }} style={s.image} resizeMode="cover" />
@@ -27,12 +28,12 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
       <ThemedText style={s.title} numberOfLines={2}>
         {item.title}
       </ThemedText>
-      <View style={s.footerRowContainer}>
+      <ThemedView style={s.footerRowContainer}>
         <ImageFooterRow
           imageId={String(item.id)}
           onPressComments={onPressComments}
         />
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 };
