@@ -5,13 +5,12 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
 import { logEvent } from "@/4-shared/firebase";
 import { useResponsiveGalleryDimensions } from "@/4-shared/hooks/use-responsive-gallery-dimensions";
-import { GalleryImage } from "@/4-shared/types";
-import { MainGalleryProps } from "@/4-shared/types/index";
+import { GalleryImage, MainGalleryProps } from "@/4-shared/types";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { createMainGalleryStyles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
-
+import { createMainGalleryItemStyles } from "./MainGalleryItem.styles";
 export const MainGallery: React.FC<MainGalleryProps> = ({
   images,
   loading,
@@ -25,6 +24,11 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   const { galleryItemHeight, imageHeight } = useResponsiveGalleryDimensions();
 
   const mainGalleryStyles = createMainGalleryStyles(
+    galleryItemHeight,
+    imageHeight
+  );
+
+  const mainGalleryItemStyles = createMainGalleryItemStyles(
     galleryItemHeight,
     imageHeight
   );
@@ -109,7 +113,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
             item={item}
             itemHeight={galleryItemHeight}
             imageHeight={imageHeight}
-            styles={mainGalleryStyles}
+            styles={mainGalleryItemStyles}
             onOpenMenu={() => handleOpenMenu(item)}
             onPressComments={
               onPressComments ? () => handleOpenComments(item.id) : undefined

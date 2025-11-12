@@ -1,20 +1,10 @@
 import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
 import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { GalleryImage } from "@/4-shared/types";
+import { MainGalleryItemProps } from "@/4-shared/types";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { createMainGalleryItemStyles } from "./MainGalleryItem.styles";
-
-type MainGalleryItemProps = {
-  item: GalleryImage;
-  itemHeight: number;
-  imageHeight: number;
-  styles?: ReturnType<typeof createMainGalleryItemStyles>;
-  onOpenMenu?: () => void;
-  onPressComments?: () => void;
-  onPressZoom?: () => void;
-};
 
 export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
   item,

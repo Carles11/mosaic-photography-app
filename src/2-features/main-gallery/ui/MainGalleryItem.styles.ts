@@ -17,7 +17,7 @@ export function createMainGalleryItemStyles(
       shadowOffset: { width: 0, height: 2 },
       elevation: 2,
       marginBottom: 24,
-      backgroundColor: "#fff",
+      backgroundColor: "#fff", // Ensure this is included!
     },
     image: {
       width: "100%",
@@ -43,9 +43,14 @@ export function createMainGalleryItemStyles(
       zIndex: 2,
     },
     footerRowContainer: {
-      marginHorizontal: 12,
       marginTop: 6,
       marginBottom: 8,
+    },
+    error: {
+      color: "#B00020",
+      fontSize: 16,
+      fontWeight: "bold",
+      textAlign: "center",
     },
   });
 }

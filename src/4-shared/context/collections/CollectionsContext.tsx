@@ -3,6 +3,7 @@ import {
   fetchCollectionDetail,
   fetchCollectionsBasicForUser,
   fetchCollectionsForUser,
+  removeFavoriteFromCollection, // <-- ADD THIS IMPORT
 } from "@/4-shared/api/collectionsApi";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import {
@@ -38,6 +39,11 @@ type CollectionsContextType = {
   getCollectionDetail: (
     collectionId: string
   ) => Promise<CollectionDetail | null>;
+  /** NEW: Remove an image (by favoriteId) from a collection */
+  removeImageFromCollection: (
+    collectionId: string,
+    favoriteId: number
+  ) => Promise<boolean>;
   basicCollections: BasicCollection[];
   reloadBasicCollections: () => Promise<void>;
 };
@@ -205,6 +211,26 @@ export function CollectionsProvider({
     [reloadCollections, reloadBasicCollections]
   );
 
+  // --- NEW: Remove an image from a collection ---
+  const removeImageFromCollection = useCallback(
+    async (collectionId: string, favoriteId: number): Promise<boolean> => {
+      setDetailLoading(true);
+      try {
+        await removeFavoriteFromCollection(collectionId, favoriteId);
+        showSuccessToast("Image removed from collection!");
+        // Refresh detail so UI updates
+        await getCollectionDetail(collectionId);
+        return true;
+      } catch (err) {
+        showErrorToast("Failed to remove image from collection.");
+        return false;
+      } finally {
+        setDetailLoading(false);
+      }
+    },
+    [getCollectionDetail]
+  );
+
   // Memo for context value
   const value: CollectionsContextType = useMemo(
     () => ({
@@ -216,6 +242,7 @@ export function CollectionsProvider({
       createCollection,
       deleteCollection,
       getCollectionDetail,
+      removeImageFromCollection, // << Add to memo!
       basicCollections,
       reloadBasicCollections,
     }),
@@ -228,6 +255,7 @@ export function CollectionsProvider({
       createCollection,
       deleteCollection,
       getCollectionDetail,
+      removeImageFromCollection,
       basicCollections,
       reloadBasicCollections,
     ]

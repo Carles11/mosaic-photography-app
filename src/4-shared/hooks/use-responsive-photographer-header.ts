@@ -8,7 +8,7 @@ import {
   TABLET_BREAKPOINT,
   TABLET_PHOTOGRAPHER_HEADER_HEIGHT_RATIO,
   TABLET_PHOTOGRAPHER_ITEM_HEIGHT,
-} from "@/4-shared/constants/dimensions";
+} from "@/4-shared/constants";
 import { useWindowDimensions } from "react-native";
 
 export function useResponsivePhotographerHeader() {

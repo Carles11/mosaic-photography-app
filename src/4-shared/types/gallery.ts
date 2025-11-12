@@ -1,3 +1,4 @@
+import { createMainGalleryItemStyles } from "@/2-features/main-gallery/ui/MainGalleryItem.styles";
 import { SharedValue } from "react-native-reanimated";
 
 export type Photographer = {
@@ -44,6 +45,9 @@ export type MainGalleryItemProps = {
   onOpenMenu: () => void;
   onPressComments?: () => void;
   onPressZoom?: () => void;
+  itemHeight: number;
+  imageHeight: number;
+  styles: ReturnType<typeof createMainGalleryItemStyles>;
 };
 
 export type GalleryImageWithPhotographer = GalleryImage & {

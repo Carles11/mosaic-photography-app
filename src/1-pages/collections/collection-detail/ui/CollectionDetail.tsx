@@ -1,3 +1,4 @@
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol"; // ADD THIS if not done yet
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
@@ -9,6 +10,7 @@ import { useLocalSearchParams } from "expo-router";
 import React, { useEffect } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Image,
   TouchableOpacity,
@@ -18,7 +20,12 @@ import { styles } from "./CollectionDetail.styles";
 
 export default function CollectionDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { getCollectionDetail, detail, detailLoading } = useCollections();
+  const {
+    getCollectionDetail,
+    detail,
+    detailLoading,
+    removeImageFromCollection,
+  } = useCollections();
   const [zoomVisible, setZoomVisible] = React.useState(false);
   const [zoomIndex, setZoomIndex] = React.useState(0);
 
@@ -48,6 +55,24 @@ export default function CollectionDetailScreen() {
       getCollectionDetail(id as string);
     }
   }, [id, getCollectionDetail]);
+
+  // --- Handler for remove image ---
+  const handleRemoveImage = (collectionId: string, favoriteId: number) => {
+    Alert.alert(
+      "Remove Image",
+      "Are you sure you want to remove this image from the collection?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: async () => {
+            await removeImageFromCollection(collectionId, favoriteId);
+          },
+        },
+      ]
+    );
+  };
 
   if (detailLoading) {
     return (
@@ -125,6 +150,28 @@ export default function CollectionDetailScreen() {
                   resizeMode="cover"
                 />
               </TouchableOpacity>
+              {/* --- DELETE/TRASH ICON --- */}
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  top: 6,
+                  right: 6,
+                  padding: 5,
+                  zIndex: 2,
+                  backgroundColor: "rgba(242,42,31,0.89)",
+                  borderRadius: 16,
+                }}
+                onPress={() => handleRemoveImage(detail.id, item.favorite_id)}
+                accessibilityLabel="Remove image from collection"
+              >
+                <IconSymbol
+                  name="delete"
+                  type="material"
+                  size={18}
+                  color="#fff"
+                />
+              </TouchableOpacity>
+              {/* --- END DELETE ICON --- */}
               <ThemedText style={styles.imageTitle} numberOfLines={1}>
                 {item.title}
               </ThemedText>

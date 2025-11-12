@@ -1,2 +1,2 @@
+export * from "./dimensions";
 export * from "./gallery";
-export * from "./photographers";

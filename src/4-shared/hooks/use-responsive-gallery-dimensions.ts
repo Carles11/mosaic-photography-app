@@ -5,7 +5,7 @@ import {
   MOBILE_GALLERY_ITEM_HEIGHT,
   TABLET_BREAKPOINT,
   TABLET_GALLERY_ITEM_HEIGHT,
-} from "@/4-shared/constants/dimensions";
+} from "@/4-shared/constants";
 import { useWindowDimensions } from "react-native";
 
 export function useResponsiveGalleryDimensions() {
