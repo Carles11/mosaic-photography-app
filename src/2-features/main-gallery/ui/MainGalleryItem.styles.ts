@@ -17,6 +17,7 @@ export function createMainGalleryItemStyles(
       shadowOffset: { width: 0, height: 2 },
       elevation: 2,
       marginBottom: 24,
+      backgroundColor: "#fff",
     },
     image: {
       width: "100%",
@@ -41,16 +42,10 @@ export function createMainGalleryItemStyles(
       backgroundColor: "#eaeaea",
       zIndex: 2,
     },
-    actionsRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
+    footerRowContainer: {
       marginHorizontal: 12,
-      marginTop: 8,
+      marginTop: 6,
+      marginBottom: 8,
     },
-    actionButton: {
-      padding: 8,
-    },
-    // Add any further actions/styles as needed
   });
 }

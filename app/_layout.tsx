@@ -116,7 +116,7 @@ function InnerLayout() {
           name="auth/confirm-email-change"
           options={{ headerShown: false }}
         />
-        {/* <Stack.Screen name="auth/magic-link" options={{ headerShown: false }} /> */}
+        <Stack.Screen name="auth/magic-link" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style={mode === "light" ? "dark" : "light"} />
     </>

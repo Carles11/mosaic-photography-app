@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 export function createPhotographerPortraitHeaderStyles(
   headerWidth: number,
   headerHeight: number,
-  headerImageWidth: number, // not used for full-bleed; can be reused for something else
   fadeHeight: number
 ) {
   return StyleSheet.create({
