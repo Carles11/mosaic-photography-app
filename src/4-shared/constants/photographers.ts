@@ -1,30 +1,25 @@
-import { Dimensions } from "react-native";
+// // Responsive dimensions: always use this hook for photographer-related layouts!
+// export { useResponsivePhotographerHeader } from "@/4-shared/hooks/use-responsive-photographer-header";
 
-const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
+// // (Optional) Legacy: Only use below for non-reactive direct constant needs, e.g. test or web builds.
+// import { Dimensions } from "react-native";
 
-export const PHOTOGRAPHER_HEADER_DEVICE_WIDTH = deviceWidth;
-export const PHOTOGRAPHER_HEADER_DEVICE_HEIGHT = deviceHeight;
+// const { width: deviceWidth, height: deviceHeight } = Dimensions.get("window");
 
-// Main header height: 50% of screen height
-export const PHOTOGRAPHER_HEADER_HEIGHT =
-  PHOTOGRAPHER_HEADER_DEVICE_HEIGHT * 0.5;
-
-export const PHOTOGRAPHER_HEADER_WIDTH = PHOTOGRAPHER_HEADER_DEVICE_WIDTH * 0.7;
-
-// Fade starts at the bottom third of the image
-export const PHOTOGRAPHER_HEADER_FADE_START =
-  PHOTOGRAPHER_HEADER_HEIGHT * (2 / 3);
-
-export const PHOTOGRAPHER_HEADER_FADE_HEIGHT =
-  PHOTOGRAPHER_HEADER_HEIGHT - PHOTOGRAPHER_HEADER_FADE_START;
-
-export const PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT = 600;
-
-export const PHOTOGRAPHER_DETAILS_GALLERY_YEAR_HEIGHT = 33;
-export const PHOTOGRAPHER_DETAILS_GALLERY_DESCRIPTION_HEIGHT = 66;
-export const PHOTOGRAPHER_DETAILS_GALLERY_FOOTER_HEIGHT = 90;
-export const PHOTOGRAPHER_DETAILS_GALLERY_IMAGE_HEIGHT =
-  PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT -
-  PHOTOGRAPHER_DETAILS_GALLERY_YEAR_HEIGHT -
-  PHOTOGRAPHER_DETAILS_GALLERY_DESCRIPTION_HEIGHT -
-  PHOTOGRAPHER_DETAILS_GALLERY_FOOTER_HEIGHT;
+// export const LEGACY_PHOTOGRAPHER_HEADER_DEVICE_WIDTH = deviceWidth;
+// export const LEGACY_PHOTOGRAPHER_HEADER_DEVICE_HEIGHT = deviceHeight;
+// export const LEGACY_PHOTOGRAPHER_HEADER_HEIGHT = deviceHeight * 0.5;
+// export const LEGACY_PHOTOGRAPHER_HEADER_WIDTH = deviceWidth * 0.7;
+// export const LEGACY_PHOTOGRAPHER_HEADER_FADE_START =
+//   LEGACY_PHOTOGRAPHER_HEADER_HEIGHT * (2 / 3);
+// export const LEGACY_PHOTOGRAPHER_HEADER_FADE_HEIGHT =
+//   LEGACY_PHOTOGRAPHER_HEADER_HEIGHT - LEGACY_PHOTOGRAPHER_HEADER_FADE_START;
+// export const LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT = 600;
+// export const LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_YEAR_HEIGHT = 33;
+// export const LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_DESCRIPTION_HEIGHT = 66;
+// export const LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_FOOTER_HEIGHT = 90;
+// export const LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_IMAGE_HEIGHT =
+//   LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT -
+//   LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_YEAR_HEIGHT -
+//   LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_DESCRIPTION_HEIGHT -
+//   LEGACY_PHOTOGRAPHER_DETAILS_GALLERY_FOOTER_HEIGHT;

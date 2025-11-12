@@ -1,49 +1,65 @@
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 0,
-  },
-  imageHeaderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    padding: 8,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loading: {
-    color: "#fff",
-    fontSize: 18,
-  },
-  error: {
-    color: "#ff3333",
-    fontSize: 16,
-  },
-  image: {
-    width: "100%",
-    aspectRatio: 1,
-  },
-  mosaicTitle: {
-    paddingLeft: 8,
-    marginBottom: 4,
-    fontSize: 12,
-    textAlign: "center",
-  },
-  title: {
-    padding: 4,
-    marginBottom: 4,
-    fontSize: 14,
-    textAlign: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  galleryList: {
-    paddingTop: 8,
-    paddingBottom: 32, // extra space for bottom safe area or modals
-  },
-});
+export function createMainGalleryStyles(
+  itemHeight: number,
+  imageHeight: number
+) {
+  return StyleSheet.create({
+    itemContainer: {
+      height: itemHeight,
+      borderRadius: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: "#ececec",
+      overflow: "hidden",
+      shadowColor: "#dedede",
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 2,
+      marginBottom: 24,
+    },
+    image: {
+      width: "100%",
+      height: imageHeight,
+      borderRadius: 0,
+    },
+    title: {
+      fontSize: 15,
+      fontWeight: "bold",
+      marginHorizontal: 12,
+      marginTop: 10,
+      marginBottom: 8,
+    },
+    imagePlaceholder: {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#eaeaea",
+      zIndex: 2,
+    },
+    actionsRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginHorizontal: 12,
+      marginTop: 8,
+    },
+    actionButton: {
+      padding: 8,
+    },
+    centered: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    error: {
+      color: "#ed4343",
+      fontWeight: "bold",
+      fontSize: 17,
+    },
+  });
+}

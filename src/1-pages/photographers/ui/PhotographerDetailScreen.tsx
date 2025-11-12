@@ -4,6 +4,7 @@ import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomShe
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
 import { MemoizedPhotographerGalleryItem } from "@/2-features/photographers/ui/PhotographerGalleryItem";
+import { createPhotographerGalleryItemStyles } from "@/2-features/photographers/ui/PhotographerGalleryItem.styles";
 import PhotographerLinks from "@/2-features/photographers/ui/PhotographerLinks";
 import { PhotographerPortraitHeader } from "@/2-features/photographers/ui/PhotographerPortraitHeader";
 import { PhotographerTimeline } from "@/2-features/photographers/ui/Timeline";
@@ -13,14 +14,11 @@ import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/Reveal
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
-import {
-  PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT,
-  PHOTOGRAPHER_HEADER_HEIGHT,
-} from "@/4-shared/constants";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { logEvent } from "@/4-shared/firebase";
+import { useResponsivePhotographerHeader } from "@/4-shared/hooks/use-responsive-photographer-header";
 import {
   DownloadOption,
   getAvailableDownloadOptionsForImage,
@@ -42,6 +40,25 @@ const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const router = useRouter();
 
+  // Responsive dimensions for gallery items
+  const {
+    galleryItemHeight,
+    galleryImageHeight,
+    galleryYearHeight,
+    galleryDescriptionHeight,
+    galleryFooterHeight,
+    headerHeight,
+  } = useResponsivePhotographerHeader();
+
+  // Responsive styles for each item
+  const photographerGalleryItemStyles = createPhotographerGalleryItemStyles(
+    galleryItemHeight,
+    galleryImageHeight,
+    galleryYearHeight,
+    galleryDescriptionHeight,
+    galleryFooterHeight
+  );
+
   const { user, loading: authLoading } = useAuthSession();
   const { isFavorite, toggleFavorite, isUserLoggedIn } = useFavorites();
   const {
@@ -62,13 +79,11 @@ const PhotographerDetailScreen: React.FC = () => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
 
-  // Gallery image menu state/refs
   const [selectedImage, setSelectedImage] = useState<any | null>(null);
   const imageMenuSheetRef = useRef<any>(null);
 
   const [downloadOptions, setDownloadOptions] = useState<DownloadOption[]>([]);
 
-  // Comments state (bottom sheet)
   const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
   const commentsSheetRef = useRef<any>(null);
   const reportSheetRef = useRef<any>(null);
@@ -138,7 +153,6 @@ const PhotographerDetailScreen: React.FC = () => {
 
   const galleryImages = photographer?.images || [];
 
-  // Load comments counts in batch
   useEffect(() => {
     if (galleryImages.length > 0) {
       const imageIds = galleryImages.map((img) => String(img.id));
@@ -146,7 +160,6 @@ const PhotographerDetailScreen: React.FC = () => {
     }
   }, [galleryImages, loadCommentCountsBatch]);
 
-  // open/close comments sheet imperatively
   useEffect(() => {
     if (commentsImageId) {
       commentsSheetRef.current?.present();
@@ -157,14 +170,12 @@ const PhotographerDetailScreen: React.FC = () => {
     }
   }, [commentsImageId]);
 
-  // load the comments for the selected image
   useEffect(() => {
     if (commentsImageId) {
       loadCommentsForImage(commentsImageId);
     }
   }, [commentsImageId, loadCommentsForImage]);
 
-  // --- Image Menu handlers (imperative, Home-style, no isOpen state) ---
   const handleOpenImageMenu = useCallback((image: any) => {
     setSelectedImage(image);
     setDownloadOptions(getAvailableDownloadOptionsForImage(image));
@@ -183,7 +194,6 @@ const PhotographerDetailScreen: React.FC = () => {
     setSelectedImage(null);
   };
 
-  // Download option logic
   const handleDownloadOption = async (option: DownloadOption) => {
     if (!selectedImage) return;
     if (!user) {
@@ -203,7 +213,6 @@ const PhotographerDetailScreen: React.FC = () => {
     }
   };
 
-  // Share logic
   const handleShareImage = async () => {
     if (!selectedImage) return;
     const shareMsg = ASO.home.shareTemplate({
@@ -237,7 +246,6 @@ const PhotographerDetailScreen: React.FC = () => {
     });
   };
 
-  // --- Comments ---
   const handleOpenComments = useCallback((imageId: string) => {
     setCommentsImageId(imageId);
   }, []);
@@ -275,11 +283,7 @@ const PhotographerDetailScreen: React.FC = () => {
     if (!photographer) return null;
     return (
       <>
-        <RevealOnScroll
-          scrollY={scrollY}
-          height={PHOTOGRAPHER_HEADER_HEIGHT}
-          threshold={32}
-        >
+        <RevealOnScroll scrollY={scrollY} height={headerHeight} threshold={32}>
           <PhotographerPortraitHeader photographer={photographer} />
         </RevealOnScroll>
         {showWebMsg && (
@@ -364,26 +368,41 @@ const PhotographerDetailScreen: React.FC = () => {
     ? commentsLoading[commentsImageId]
     : false;
 
+  // FlatList key for full remount/layout on rotation for Gallery
+  const galleryKey = `${galleryItemHeight}_${galleryImageHeight}_${galleryYearHeight}_${galleryDescriptionHeight}_${galleryFooterHeight}`;
+
   return (
     <>
       <Gallery
+        key={galleryKey}
         galleryTitle={undefined}
         images={galleryImages}
         scrollY={scrollY}
-        itemHeight={PHOTOGRAPHER_DETAILS_GALLERY_ITEM_HEIGHT}
-        renderItem={(item, index) => {
-          return (
-            <MemoizedPhotographerGalleryItem
-              item={item}
-              onOpenMenu={() => handleOpenImageMenu(item)}
-              onPressComments={() => handleOpenComments(String(item.id))}
-              onPressZoom={() => {
-                setZoomIndex(index);
-                setZoomVisible(true);
-              }}
-            />
-          );
+        itemHeight={galleryItemHeight}
+        extraData={{
+          galleryItemHeight,
+          galleryImageHeight,
+          galleryYearHeight,
+          galleryDescriptionHeight,
+          galleryFooterHeight,
         }}
+        renderItem={(item, index) => (
+          <MemoizedPhotographerGalleryItem
+            item={item}
+            itemHeight={galleryItemHeight}
+            imageHeight={galleryImageHeight}
+            yearHeight={galleryYearHeight}
+            descriptionHeight={galleryDescriptionHeight}
+            footerHeight={galleryFooterHeight}
+            styles={photographerGalleryItemStyles}
+            onOpenMenu={() => handleOpenImageMenu(item)}
+            onPressComments={() => handleOpenComments(String(item.id))}
+            onPressZoom={() => {
+              setZoomIndex(index);
+              setZoomVisible(true);
+            }}
+          />
+        )}
         ListHeaderComponent={ListHeaderComponent}
       />
       <BottomSheetThreeDotsMenu

@@ -56,6 +56,8 @@ export type GalleryProps = {
   renderItem: (item: GalleryImage, index: number) => React.ReactNode;
   scrollY: any;
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+  itemHeight?: number;
+  extraData?: any;
 };
 
 export type MainGalleryProps = {

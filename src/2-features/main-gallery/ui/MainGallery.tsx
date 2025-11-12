@@ -3,13 +3,13 @@ import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGaller
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
-import { GALLERY_ITEM_HEIGHT } from "@/4-shared/constants";
 import { logEvent } from "@/4-shared/firebase";
+import { useResponsiveGalleryDimensions } from "@/4-shared/hooks/use-responsive-gallery-dimensions";
 import { GalleryImage } from "@/4-shared/types";
 import { MainGalleryProps } from "@/4-shared/types/index";
 import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { styles } from "./MainGallery.styles";
+import { createMainGalleryStyles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 
 export const MainGallery: React.FC<MainGalleryProps> = ({
@@ -22,11 +22,16 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 }) => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
+  const { galleryItemHeight, imageHeight } = useResponsiveGalleryDimensions();
 
-  // Analytics: fire event on mount/render
+  const mainGalleryStyles = createMainGalleryStyles(
+    galleryItemHeight,
+    imageHeight
+  );
+
   useEffect(() => {
     logEvent("main_gallery_screen_view", {
-      screen: "Home", // Parent screen
+      screen: "Home",
       galleryTitle: ASO.home.title,
       imagesCount: images.length,
     });
@@ -71,7 +76,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 
   if (loading) {
     return (
-      <ThemedView style={styles.centered}>
+      <ThemedView style={mainGalleryStyles.centered}>
         <ActivityIndicator size="large" />
       </ThemedView>
     );
@@ -79,14 +84,14 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 
   if (error) {
     return (
-      <ThemedView style={styles.centered}>
-        <ThemedText style={styles.error}>{error}</ThemedText>
+      <ThemedView style={mainGalleryStyles.centered}>
+        <ThemedText style={mainGalleryStyles.error}>{error}</ThemedText>
       </ThemedView>
     );
   }
   if (!images.length) {
     return (
-      <ThemedView style={styles.centered}>
+      <ThemedView style={mainGalleryStyles.centered}>
         <ThemedText>No images found.</ThemedText>
       </ThemedView>
     );
@@ -98,20 +103,20 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         galleryTitle={ASO.home.title}
         scrollY={scrollY}
         images={images}
-        itemHeight={GALLERY_ITEM_HEIGHT}
-        renderItem={(item, index) => {
-          return (
-            <MemoizedMainGalleryItem
-              item={item}
-              onOpenMenu={() => handleOpenMenu(item)}
-              onPressComments={
-                onPressComments ? () => handleOpenComments(item.id) : undefined
-              }
-              onPressZoom={() => handlePressZoom(index)}
-            />
-          );
-        }}
-        // Make sure FlatList optimizations are set inside Gallery
+        itemHeight={galleryItemHeight}
+        renderItem={(item, index) => (
+          <MemoizedMainGalleryItem
+            item={item}
+            itemHeight={galleryItemHeight}
+            imageHeight={imageHeight}
+            styles={mainGalleryStyles}
+            onOpenMenu={() => handleOpenMenu(item)}
+            onPressComments={
+              onPressComments ? () => handleOpenComments(item.id) : undefined
+            }
+            onPressZoom={() => handlePressZoom(index)}
+          />
+        )}
       />
       <ZoomGalleryModal
         images={images}
@@ -123,5 +128,4 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   );
 };
 
-// Memoized MainGalleryItem for better performance
 const MemoizedMainGalleryItem = React.memo(MainGalleryItem);

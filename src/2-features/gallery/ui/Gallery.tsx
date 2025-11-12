@@ -1,19 +1,10 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { GALLERY_ITEM_HEIGHT } from "@/4-shared/constants";
-import { GalleryImage } from "@/4-shared/types";
+import { useResponsiveGalleryDimensions } from "@/4-shared/hooks/use-responsive-gallery-dimensions";
+import { GalleryImage, GalleryProps } from "@/4-shared/types";
 import React, { useRef } from "react";
 import Animated, { useAnimatedScrollHandler } from "react-native-reanimated";
 import { styles } from "./Gallery.styles";
-
-export type GalleryProps = {
-  galleryTitle?: string;
-  images: GalleryImage[];
-  renderItem: (item: GalleryImage, index: number) => React.ReactNode;
-  scrollY: any;
-  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
-  itemHeight?: number;
-};
 
 export const Gallery: React.FC<GalleryProps> = ({
   galleryTitle,
@@ -24,7 +15,13 @@ export const Gallery: React.FC<GalleryProps> = ({
   itemHeight,
 }) => {
   const listRef = useRef<Animated.FlatList<GalleryImage>>(null);
-  const computedItemHeight = itemHeight || GALLERY_ITEM_HEIGHT;
+
+  const { galleryItemHeight, imageHeight } = useResponsiveGalleryDimensions();
+  const computedItemHeight = itemHeight || galleryItemHeight;
+  const galleryStyles = styles(computedItemHeight);
+
+  // Compose a key to force FlatList full remount/layout on orientation change
+  const flatListKey = `${galleryItemHeight}_${imageHeight}`;
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     "worklet";
@@ -40,10 +37,12 @@ export const Gallery: React.FC<GalleryProps> = ({
     index,
   });
 
+  const extraData = { images, galleryItemHeight, imageHeight };
+
   return (
     <ThemedView>
       {galleryTitle && (
-        <ThemedText type="subtitle" style={styles.title}>
+        <ThemedText type="subtitle" style={galleryStyles.title}>
           {galleryTitle}
         </ThemedText>
       )}
@@ -54,9 +53,13 @@ export const Gallery: React.FC<GalleryProps> = ({
         numColumns={1}
         initialNumToRender={6}
         windowSize={10}
-        contentContainerStyle={styles.container}
+        contentContainerStyle={galleryStyles.container}
         renderItem={({ item, index }) => (
-          <ThemedView style={styles.item}>{renderItem(item, index)}</ThemedView>
+          <ThemedView
+            style={[galleryStyles.item, { height: computedItemHeight }]}
+          >
+            {renderItem(item, index)}
+          </ThemedView>
         )}
         getItemLayout={getItemLayout}
         removeClippedSubviews={true}
@@ -64,7 +67,8 @@ export const Gallery: React.FC<GalleryProps> = ({
         onScroll={scrollHandler}
         scrollEventThrottle={32}
         showsVerticalScrollIndicator={false}
-        extraData={images}
+        extraData={extraData ?? images}
+        key={flatListKey}
       />
     </ThemedView>
   );
