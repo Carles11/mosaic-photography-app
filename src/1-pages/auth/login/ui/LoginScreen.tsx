@@ -3,6 +3,7 @@ import { loginWithMagicLink } from "@/2-features/auth/api/loginWithMagicLink";
 import {
   OnlyTextButton,
   PrimaryButton,
+  SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { ThemedTextInput } from "@/4-shared/components/inputs/text/ui/ThemedTextInput";
 import { ThemedText } from "@/4-shared/components/themed-text";
@@ -13,7 +14,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, Text } from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { styles } from "./LoginScreen.styles";
 
 export const LoginScreen: React.FC = () => {
@@ -89,14 +90,7 @@ export const LoginScreen: React.FC = () => {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ThemedView style={styles.container}>
-          <ThemedText
-            style={[
-              styles.title,
-              { color: theme.text, fontFamily: theme.fontFamilyBold },
-            ]}
-          >
-            Magic Link Sent!
-          </ThemedText>
+          <ThemedText style={styles.title}>Magic Link Sent!</ThemedText>
           <ThemedText style={[styles.success, { color: theme.success }]}>
             Check your email for a magic link to sign in.
           </ThemedText>
@@ -126,15 +120,9 @@ export const LoginScreen: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ThemedView style={styles.containerTop}>
-        <Text
-          style={[
-            styles.title,
-            { color: theme.text, fontFamily: theme.fontFamilyBold },
-          ]}
-        >
+        <ThemedText style={styles.title}>
           {useMagicLink ? "Sign in with Magic Link" : "Login to Mosaic"}
-        </Text>
-
+        </ThemedText>
         <ThemedTextInput
           value={email}
           onChangeText={setEmail}
@@ -142,7 +130,6 @@ export const LoginScreen: React.FC = () => {
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
-          placeholderTextColor={theme.text}
         />
 
         {!useMagicLink && (
@@ -152,7 +139,6 @@ export const LoginScreen: React.FC = () => {
             placeholder="Password"
             secureTextEntry
             autoCapitalize="none"
-            placeholderTextColor={theme.text}
           />
         )}
 
@@ -179,11 +165,6 @@ export const LoginScreen: React.FC = () => {
           }
         />
 
-        {/* 
-          TEMPORARILY HIDE MAGIC LINK TOGGLE BUTTON:
-          To restore magic link login, uncomment the block below.
-        */}
-        {/*
         <SecondaryButton
           title={
             useMagicLink ? "Use password instead" : "Use magic link instead"
@@ -193,7 +174,6 @@ export const LoginScreen: React.FC = () => {
             logEvent("toggle_login_method", { useMagicLink: !useMagicLink });
           }}
         />
-        */}
 
         {!useMagicLink && (
           <OnlyTextButton
