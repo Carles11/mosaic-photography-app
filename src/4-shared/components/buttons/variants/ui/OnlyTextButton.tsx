@@ -41,7 +41,6 @@ export const OnlyTextButton: React.FC<OnlyTextButtonProps> = ({
         style={[
           styles.text,
           {
-            color: theme.buttonTextColorSecondary,
             textAlign: "center",
             fontVariant: ["tabular-nums"], // helps with numbers
           },

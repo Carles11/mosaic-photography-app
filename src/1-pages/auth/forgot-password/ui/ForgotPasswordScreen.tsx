@@ -109,7 +109,6 @@ export function ForgotPasswordScreen() {
           keyboardType="email-address"
           autoCapitalize="none"
           textContentType="emailAddress"
-          placeholderTextColor={theme.text}
           autoCorrect={false}
           returnKeyType="done"
           accessible

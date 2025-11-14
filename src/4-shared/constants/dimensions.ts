@@ -1,6 +1,6 @@
 export const TABLET_BREAKPOINT = 768;
 
-export const MOBILE_GALLERY_ITEM_HEIGHT = 480;
+export const MOBILE_GALLERY_ITEM_HEIGHT = 580;
 export const TABLET_GALLERY_ITEM_HEIGHT = 720;
 
 export const IMAGE_HEADER_HEIGHT = 50;

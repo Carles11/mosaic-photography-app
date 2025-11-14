@@ -133,7 +133,6 @@ export function PasswordResetScreen() {
           secureTextEntry
           autoCapitalize="none"
           textContentType="newPassword"
-          placeholderTextColor={theme.text}
         />
         <ThemedTextInput
           value={repeatPassword}
@@ -146,7 +145,6 @@ export function PasswordResetScreen() {
           secureTextEntry
           autoCapitalize="none"
           textContentType="newPassword"
-          placeholderTextColor={theme.text}
         />
 
         {error ? (

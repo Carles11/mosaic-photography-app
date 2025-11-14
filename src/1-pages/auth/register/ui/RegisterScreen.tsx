@@ -99,7 +99,6 @@ export const RegisterScreen: React.FC = () => {
           keyboardType="email-address"
           autoCapitalize="none"
           autoComplete="email"
-          placeholderTextColor={theme.text}
         />
         <ThemedTextInput
           value={password}
@@ -107,7 +106,6 @@ export const RegisterScreen: React.FC = () => {
           placeholder="Password"
           secureTextEntry
           autoCapitalize="none"
-          placeholderTextColor={theme.text}
         />
         <ThemedTextInput
           value={repeatPassword}
@@ -115,7 +113,6 @@ export const RegisterScreen: React.FC = () => {
           placeholder="Repeat Password"
           secureTextEntry
           autoCapitalize="none"
-          placeholderTextColor={theme.text}
         />
 
         {error && (
