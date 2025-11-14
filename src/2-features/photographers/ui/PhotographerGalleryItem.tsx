@@ -43,6 +43,8 @@ export const PhotographerGalleryItem: React.FC<
       footerHeight
     );
 
+  const hasImage = !!item.url && item.url.length > 0;
+
   return (
     <ThemedView style={s.galleryImageWrapper}>
       <ImageHeaderRow onOpenMenu={onOpenMenu} />
@@ -54,11 +56,28 @@ export const PhotographerGalleryItem: React.FC<
           height: imageHeight,
         }}
       >
-        <Image
-          source={{ uri: item.url }}
-          style={s.galleryImage}
-          resizeMode="cover"
-        />
+        {hasImage ? (
+          <Image
+            source={{ uri: item.url }}
+            style={s.galleryImage}
+            resizeMode="cover"
+          />
+        ) : (
+          <ThemedView
+            style={[
+              s.galleryImage,
+              {
+                backgroundColor: "#333",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            ]}
+          >
+            <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+              No image
+            </ThemedText>
+          </ThemedView>
+        )}
         {item.year ? (
           <ThemedText style={s.imageYear}>{item.year}</ThemedText>
         ) : (

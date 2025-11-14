@@ -62,6 +62,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         initialNumToRender={5}
         windowSize={7}
         renderItem={({ item }) => {
+          const hasPortrait = !!item.portrait && item.portrait.length > 0;
           return (
             <TouchableOpacity
               style={styles.item}
@@ -73,7 +74,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
               accessibilityLabel={`Discover vintage photography by ${item.name} ${item.surname}`}
             >
               <View style={[styles.portraitWrapper]}>
-                {item.portrait ? (
+                {hasPortrait ? (
                   <Image
                     source={{ uri: item.portrait }}
                     style={styles.portrait}

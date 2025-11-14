@@ -62,6 +62,8 @@ const SwipeableCard: React.FC<
       </View>
     );
 
+    const hasImage = !!imageUrl && imageUrl.length > 0;
+
     return (
       <Swipeable
         renderRightActions={renderRightActions}
@@ -77,11 +79,28 @@ const SwipeableCard: React.FC<
         >
           {/* Left: Image */}
           <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: imageUrl }}
-              style={[styles.image, imageStyle]}
-              resizeMode="cover"
-            />
+            {hasImage ? (
+              <Image
+                source={{ uri: imageUrl }}
+                style={[styles.image, imageStyle]}
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={[
+                  styles.image,
+                  {
+                    backgroundColor: "#333",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  },
+                ]}
+              >
+                <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+                  No image
+                </ThemedText>
+              </View>
+            )}
           </View>
           {/* Center: Texts */}
           <View style={styles.infoContainer}>

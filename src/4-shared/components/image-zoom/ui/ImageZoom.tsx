@@ -2,8 +2,6 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import React, { useState } from "react";
-import { ZoomScaleBadge } from "./ZoomScaleBadge";
-
 import {
   ActivityIndicator,
   Image as RNImage,
@@ -19,6 +17,7 @@ import Animated, {
   useSharedValue,
 } from "react-native-reanimated";
 import { styles } from "./ImageZoom.styles";
+import { ZoomScaleBadge } from "./ZoomScaleBadge";
 
 type ZoomImageProps = {
   image: {
@@ -92,10 +91,15 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
     setOverlaysVisible((prev) => !prev);
   };
 
+  // Defensive: Only show preview if URL exists and is not empty.
+  const hasPreview = !!previewUrl && previewUrl.length > 0;
+  // Defensive: Only use zoomUrl if not empty
+  const hasZoom = !!zoomUrl && zoomUrl.length > 0;
+
   return (
     <View style={[styles.container, style]}>
       {/* Preview image (always shown until zoom image is loaded) */}
-      {!zoomLoaded && (
+      {!zoomLoaded && hasPreview && (
         <RNImage
           source={{ uri: previewUrl }}
           style={[styles.image, imageStyle]}
@@ -104,30 +108,32 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
         />
       )}
       {/* Zoom image (progressively loaded) */}
-      <ImageZoom
-        uri={zoomUrl}
-        minScale={minScale}
-        maxScale={maxScale}
-        doubleTapScale={doubleTapScale}
-        isPanEnabled
-        isPinchEnabled
-        isDoubleTapEnabled
-        isSingleTapEnabled
-        onSingleTap={handleSingleTap}
-        onInteractionStart={onInteractionStart}
-        onInteractionEnd={onInteractionEnd}
-        style={[
-          styles.image,
-          imageStyle,
-          {
-            position: zoomLoaded ? "relative" : "absolute",
-            opacity: zoomLoaded ? 1 : 0,
-          },
-        ]}
-        resizeMode="contain"
-        onLoad={handleZoomLoad}
-        scale={scale}
-      />
+      {hasZoom && (
+        <ImageZoom
+          uri={zoomUrl}
+          minScale={minScale}
+          maxScale={maxScale}
+          doubleTapScale={doubleTapScale}
+          isPanEnabled
+          isPinchEnabled
+          isDoubleTapEnabled
+          isSingleTapEnabled
+          onSingleTap={handleSingleTap}
+          onInteractionStart={onInteractionStart}
+          onInteractionEnd={onInteractionEnd}
+          style={[
+            styles.image,
+            imageStyle,
+            {
+              position: zoomLoaded ? "relative" : "absolute",
+              opacity: zoomLoaded ? 1 : 0,
+            },
+          ]}
+          resizeMode="contain"
+          onLoad={handleZoomLoad}
+          scale={scale}
+        />
+      )}
       {/* Top legend: author and year */}
       <Animated.View
         style={[
@@ -229,6 +235,26 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           color="#fff"
           style={{ position: "absolute", alignSelf: "center" }}
         />
+      )}
+      {/* Placeholder if no preview or zoom image at all */}
+      {!hasPreview && !hasZoom && (
+        <View
+          style={[
+            styles.image,
+            {
+              backgroundColor: "#333",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+            },
+          ]}
+        >
+          <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+            No image
+          </ThemedText>
+        </View>
       )}
     </View>
   );

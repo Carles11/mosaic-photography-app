@@ -19,11 +19,34 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
   // Use provided styles, or create them (for standalone usage/testing)
   const s = styles || createMainGalleryItemStyles(itemHeight, imageHeight);
 
+  const hasImage = !!item.url && item.url.length > 0;
+
   return (
     <ThemedView style={s.itemContainer}>
       <ImageHeaderRow onOpenMenu={onOpenMenu} />
       <TouchableOpacity activeOpacity={0.92} onPress={onPressZoom}>
-        <Image source={{ uri: item.url }} style={s.image} resizeMode="cover" />
+        {hasImage ? (
+          <Image
+            source={{ uri: item.url }}
+            style={s.image}
+            resizeMode="cover"
+          />
+        ) : (
+          <ThemedView
+            style={[
+              s.image,
+              {
+                backgroundColor: "#333",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            ]}
+          >
+            <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+              No image
+            </ThemedText>
+          </ThemedView>
+        )}
       </TouchableOpacity>
       <ThemedText style={s.title} numberOfLines={2}>
         {item.title}

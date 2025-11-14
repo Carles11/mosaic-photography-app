@@ -149,11 +149,28 @@ export default function CommentsList() {
           }
           return (
             <ThemedView style={styles.imageCard}>
-              <Image
-                source={thumbnailUrl ? { uri: thumbnailUrl } : undefined}
-                style={styles.thumbnail}
-                resizeMode="cover"
-              />
+              {thumbnailUrl ? (
+                <Image
+                  source={{ uri: thumbnailUrl }}
+                  style={styles.thumbnail}
+                  resizeMode="cover"
+                />
+              ) : (
+                <ThemedView
+                  style={[
+                    styles.thumbnail,
+                    {
+                      backgroundColor: "#333",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    },
+                  ]}
+                >
+                  <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+                    No image
+                  </ThemedText>
+                </ThemedView>
+              )}
               <ThemedView style={styles.imageInfo}>
                 <ThemedText style={styles.imageAuthor}>
                   {image?.author}

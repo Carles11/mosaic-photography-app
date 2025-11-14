@@ -1,4 +1,4 @@
-import { IconSymbol } from "@/4-shared/components/elements/icon-symbol"; // ADD THIS if not done yet
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
@@ -144,11 +144,28 @@ export default function CollectionDetailScreen() {
                   setZoomVisible(true);
                 }}
               >
-                <Image
-                  source={imageUrl ? { uri: imageUrl } : undefined}
-                  style={styles.image}
-                  resizeMode="cover"
-                />
+                {imageUrl ? (
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <ThemedView
+                    style={[
+                      styles.image,
+                      {
+                        backgroundColor: "#333",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      },
+                    ]}
+                  >
+                    <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+                      No image
+                    </ThemedText>
+                  </ThemedView>
+                )}
               </TouchableOpacity>
               {/* --- DELETE/TRASH ICON --- */}
               <TouchableOpacity

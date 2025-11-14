@@ -13,13 +13,12 @@ export const PhotographerPortraitHeader: React.FC<
   PhotographerPortraitHeaderProps
 > = ({ photographer }) => {
   const { theme } = useTheme();
-  const { headerWidth, headerHeight, headerImageWidth, fadeHeight } =
+  const { headerWidth, headerHeight, fadeHeight } =
     useResponsivePhotographerHeader();
 
   const styles = createPhotographerPortraitHeaderStyles(
     headerWidth,
     headerHeight,
-    headerImageWidth,
     fadeHeight
   );
 
@@ -28,15 +27,34 @@ export const PhotographerPortraitHeader: React.FC<
       img.filename?.toLowerCase().startsWith("000_aaa_")
     ) || null;
 
+  const hasImage = !!portrait?.url && portrait.url.length > 0;
+
   if (!portrait) return null;
 
   return (
     <View style={styles.root}>
-      <Image
-        source={{ uri: portrait.url }}
-        style={styles.image}
-        resizeMode="cover"
-      />
+      {hasImage ? (
+        <Image
+          source={{ uri: portrait.url }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      ) : (
+        <View
+          style={[
+            styles.image,
+            {
+              backgroundColor: "#333",
+              alignItems: "center",
+              justifyContent: "center",
+            },
+          ]}
+        >
+          <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+            No image
+          </ThemedText>
+        </View>
+      )}
       <View style={styles.gradientContainer} pointerEvents="none">
         <LinearGradient
           colors={[
