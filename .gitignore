@@ -45,7 +45,6 @@ mosaic-photography-app.git.bfg-report
 app-example
 
 # generated native folders
-/ios
 /android
 
 .env.local
