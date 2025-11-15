@@ -20,8 +20,6 @@ platform :ios, **podfile_properties['ios.deploymentTarget'] || '15.1'
 use_modular_headers!
 $RNFirebaseAsStaticFramework = true
 
-pod 'GoogleUtilities', :modular_headers => true
-pod 'FirebaseCoreInternal', :modular_headers => true
 
 prepare_react_native_project!
 
