@@ -47,10 +47,7 @@
               "pathPrefix": "/"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "package": "com.carlos_delrio.mosaicphotographyapp",
@@ -93,6 +90,7 @@
         "projectId": "2989e5c6-09a8-4746-ba94-44b2ec60b552"
       }
     },
-    "owner": "carles-at-notjustdev"
+    "owner": "carles-at-notjustdev",
+    "platforms": ["ios", "android"]
   }
 }
