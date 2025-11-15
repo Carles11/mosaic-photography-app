@@ -19,11 +19,16 @@
     },
     "ios": {
       "supportsTablet": true,
-      "associatedDomains": ["applinks:www.mosaic.photography"],
+      "associatedDomains": [
+        "applinks:www.mosaic.photography",
+        "applinks:www.mosaic.photography"
+      ],
       "bundleIdentifier": "com.carlosdelrio.mosaicphotographyapp",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
-
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#1d1d1d",
@@ -42,7 +47,10 @@
               "pathPrefix": "/"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "package": "com.carlos_delrio.mosaicphotographyapp",
