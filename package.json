@@ -25,8 +25,6 @@
     "@gorhom/bottom-sheet": "^5.2.6",
     "@likashefqet/react-native-image-zoom": "^4.3.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
-    "@react-native-firebase/analytics": "^23.5.0",
-    "@react-native-firebase/app": "^23.5.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.18",
