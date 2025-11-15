@@ -58,10 +58,11 @@ target 'IconicPhotography' do
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
 
-    # Force module definition for problematic pods if they exist
+    # Dynamically set DEFINES_MODULE = YES for GoogleUtilities and FirebaseCoreInternal if present
     pods_to_patch = ['GoogleUtilities', 'FirebaseCoreInternal']
     installer.pods_project.targets.each do |target|
       if pods_to_patch.include?(target.name)
+        puts "[Patch] Ensuring #{target.name} has DEFINES_MODULE=YES"
         target.build_configurations.each do |config|
           config.build_settings['DEFINES_MODULE'] = 'YES'
         end
