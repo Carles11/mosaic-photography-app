@@ -13,7 +13,10 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "ios": {
+        "image": "macos-13"
+      }
     }
   },
   "submit": {
