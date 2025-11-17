@@ -11,6 +11,7 @@ import {
   ReportBottomSheetRef,
 } from "@/2-features/reporting/ui/ReportBottomSheet";
 import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { ASO } from "@/4-shared/config/aso";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
@@ -338,8 +339,17 @@ export const Home: React.FC = () => {
       edges={["top"]}
     >
       <HomeHeader onOpenFilters={handleOpenFiltersMenu} />
-
-      <RevealOnScroll scrollY={scrollY} height={160} threshold={32}>
+      <ThemedText type="title" style={styles.pageTitle}>
+        Welcome to Mosaic Gallery
+      </ThemedText>
+      <ThemedText type="defaultSemiBold" style={{ marginHorizontal: 16 }}>
+        Experience the world’s best vintage photography.
+      </ThemedText>
+      <ThemedText type="default" style={{ marginHorizontal: 16 }}>
+        Curated collections—fast, beautiful, high-res images. Browse, favorite,
+        and download, always copyright free.
+      </ThemedText>
+      <RevealOnScroll scrollY={scrollY} height={300} threshold={180}>
         <PhotographersSlider
           onPhotographerPress={(photographer) => {
             logEvent("photographer_click", {

@@ -4,4 +4,7 @@ export const styles = StyleSheet.create({
   page: {
     paddingTop: 0, // navigation handles status bar
   },
+  pageTitle: {
+    margin: 16,
+  },
 });

@@ -2,11 +2,13 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
+    marginVertical: 16,
     paddingLeft: 10,
     paddingRight: 0,
   },
   title: {
-    marginBottom: 8,
+    marginTop: 16,
+    marginBottom: 22,
     paddingLeft: 6,
   },
   listContent: {
@@ -15,12 +17,13 @@ export const styles = StyleSheet.create({
   item: {
     alignItems: "center",
     marginRight: 22,
-    width: 65,
+    // width sets the separation between items
+    width: 145,
   },
   portraitWrapper: {
-    width: 95,
-    height: 95,
-    borderRadius: 47.5,
+    width: 160,
+    height: 160,
+    borderRadius: 8,
     overflow: "hidden",
     marginBottom: 6,
     backgroundColor: "#eee",
@@ -30,14 +33,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   portrait: {
-    width: 95,
-    height: 95,
-    borderRadius: 47.5,
+    width: 160,
+    height: 160,
+    borderRadius: 8,
   },
   placeholderPortrait: {
-    width: 95,
-    height: 95,
-    borderRadius: 35,
+    width: 160,
+    height: 160,
+    borderRadius: 8,
     backgroundColor: "#bbb",
     justifyContent: "center",
     alignItems: "center",
@@ -50,7 +53,7 @@ export const styles = StyleSheet.create({
   name: {
     textAlign: "center",
     fontSize: 16,
-    maxWidth: 65,
+    maxWidth: "auto",
   },
   loadingContainer: {
     paddingVertical: 20,
