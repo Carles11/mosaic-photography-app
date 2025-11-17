@@ -78,6 +78,9 @@ function InnerLayout() {
     }),
     [theme]
   );
+
+  console.log("[(app/_layout.tsx)] App-layout.tsx loaded");
+
   return (
     <>
       <Stack screenOptions={defaultScreenOptions}>

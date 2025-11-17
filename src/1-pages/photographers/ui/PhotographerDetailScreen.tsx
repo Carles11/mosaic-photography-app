@@ -370,7 +370,7 @@ const PhotographerDetailScreen: React.FC = () => {
 
   // FlatList key for full remount/layout on rotation for Gallery
   const galleryKey = `${galleryItemHeight}_${galleryImageHeight}_${galleryYearHeight}_${galleryDescriptionHeight}_${galleryFooterHeight}`;
-
+  console.log("hello from PhotographerDetailScreen");
   return (
     <>
       <Gallery

@@ -49,7 +49,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
         )}
       </TouchableOpacity>
       <ThemedText style={s.title} numberOfLines={2}>
-        {item.title}
+        {item.description}
       </ThemedText>
       <ThemedView style={s.footerRowContainer}>
         <ImageFooterRow
