@@ -3,6 +3,7 @@ import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { logEvent } from "@/4-shared/firebase";
+import { getInitialDeepLinkParamsAsync } from "@/4-shared/routing/getDeepLinkParams";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -19,23 +20,26 @@ export function MagicLinkScreen() {
   const router = useRouter();
   const navigation = useNavigation();
 
-  const { token, type } = useLocalSearchParams<{
-    token: string;
-    type: string;
+  // Initial params from query string via expo-router
+  const searchParams = useLocalSearchParams<{
+    token?: string;
+    type?: string;
   }>();
+  const [token, setToken] = useState<string | undefined>(searchParams.token);
+  const [type, setType] = useState<string | undefined>(searchParams.type);
 
   const [status, setStatus] = useState<"verifying" | "success" | "error">(
     "verifying"
   );
   const [error, setError] = useState<string | null>(null);
 
+  // On mount, check for hash/fragment params if any are missing
   useEffect(() => {
     navigation.setOptions({
       title: "Magic Link Login",
     });
   }, [navigation]);
 
-  // Analytics: track screen view on mount
   useEffect(() => {
     logEvent("magic_link_screen_view", {
       token: Boolean(token),
@@ -44,9 +48,36 @@ export function MagicLinkScreen() {
   }, [token, type]);
 
   useEffect(() => {
+    console.log("[MagicLinkScreen] useLocalSearchParams", { token, type });
+  }, [token, type]);
+
+  useEffect(() => {
+    // Only do this once, on mount
+    if (!token) {
+      // Try to grab params from full URL, including fragment!
+      getInitialDeepLinkParamsAsync().then((params) => {
+        console.log(
+          "[MagicLinkScreen] Got deep link params from initialURL:",
+          params
+        );
+
+        if (params.token || params.access_token) {
+          setToken(params.token || params.access_token);
+        }
+        setType(params.type || "magiclink"); // fallback to magiclink type for convenience
+      });
+    }
+    // else, no fallback needed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (token && type) {
       handleMagicLinkVerification();
-    } else {
+    } else if (token && !type) {
+      // fallback: just try with 'magiclink'
+      setType("magiclink");
+    } else if (!token) {
       setStatus("error");
       setError("Invalid magic link. Please request a new one.");
       logEvent("magic_link_verification_failure", {
@@ -63,7 +94,7 @@ export function MagicLinkScreen() {
 
     logEvent("magic_link_verification_attempt", { token, type });
 
-    const result = await verifyMagicLink(token, type);
+    const result = await verifyMagicLink(token, type!);
 
     if (result.error) {
       setStatus("error");
