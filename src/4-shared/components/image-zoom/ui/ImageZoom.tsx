@@ -95,7 +95,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
   const hasPreview = !!previewUrl && previewUrl.length > 0;
   // Defensive: Only use zoomUrl if not empty
   const hasZoom = !!zoomUrl && zoomUrl.length > 0;
-
   return (
     <View style={[styles.container, style]}>
       {/* Preview image (always shown until zoom image is loaded) */}

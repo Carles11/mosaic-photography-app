@@ -6,11 +6,12 @@ import { ASO } from "@/4-shared/config/aso";
 import { logEvent } from "@/4-shared/firebase";
 import { useResponsiveGalleryDimensions } from "@/4-shared/hooks/use-responsive-gallery-dimensions";
 import { GalleryImage, MainGalleryProps } from "@/4-shared/types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { createMainGalleryStyles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 import { createMainGalleryItemStyles } from "./MainGalleryItem.styles";
+
 export const MainGallery: React.FC<MainGalleryProps> = ({
   images,
   loading,
@@ -33,27 +34,37 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
     imageHeight
   );
 
+  // 1. Shuffle images when images changes, stable between renders:
+  const shuffledImages = useMemo(() => {
+    const arr = [...images];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [images]);
+
   useEffect(() => {
     logEvent("main_gallery_screen_view", {
       screen: "Home",
       galleryTitle: ASO.home.title,
-      imagesCount: images.length,
+      imagesCount: shuffledImages.length,
     });
-  }, [images.length]);
+  }, [shuffledImages.length]);
 
   const handlePressZoom = useCallback(
     (index: number) => {
       setZoomIndex(index);
       setZoomVisible(true);
-      if (images[index]) {
+      if (shuffledImages[index]) {
         logEvent("main_gallery_image_zoom", {
-          imageId: images[index].id,
+          imageId: shuffledImages[index].id,
           index,
           screen: "Home",
         });
       }
     },
-    [images]
+    [shuffledImages]
   );
 
   const handleOpenMenu = useCallback(
@@ -93,7 +104,8 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
       </ThemedView>
     );
   }
-  if (!images.length) {
+
+  if (!shuffledImages.length) {
     return (
       <ThemedView style={mainGalleryStyles.centered}>
         <ThemedText>No images found.</ThemedText>
@@ -106,7 +118,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
       <Gallery
         galleryTitle={ASO.home.title}
         scrollY={scrollY}
-        images={images}
+        images={shuffledImages} // Use shuffled!
         itemHeight={galleryItemHeight}
         renderItem={(item, index) => (
           <MemoizedMainGalleryItem
@@ -123,7 +135,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         )}
       />
       <ZoomGalleryModal
-        images={images}
+        images={shuffledImages} // Use shuffled!
         visible={zoomVisible}
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}
