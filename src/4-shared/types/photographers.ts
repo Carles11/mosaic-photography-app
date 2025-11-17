@@ -91,6 +91,5 @@ export type WebGalleryMessageProps = {
 };
 
 export interface HomeHeaderWithSliderProps {
-  onOpenFilters: () => void;
   onPhotographerPress: (photographer: any) => void;
 }

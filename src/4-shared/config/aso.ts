@@ -1,6 +1,6 @@
 export const ASO = {
   home: {
-    title: "Public Domain Vintage Photography | Mosaic Gallery",
+    title: "Vintage Photography Gallery | Mosaic",
     description:
       "Discover Mosaic’s curated gallery of public domain vintage photography. Explore timeless images from legendary photographers—preserved, free, and ready to inspire.",
     keywords: [

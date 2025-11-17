@@ -52,7 +52,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   return (
     <View style={styles.container}>
       <ThemedText type="title" style={styles.pageTitle}>
-        Welcome to Mosaic Photography
+        Welcome to Mosaic
       </ThemedText>
       <ThemedView style={{ paddingHorizontal: 4 }}>
         <ThemedText type="defaultSemiBold">

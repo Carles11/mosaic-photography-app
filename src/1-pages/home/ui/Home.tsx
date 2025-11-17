@@ -1,3 +1,4 @@
+import { HomeHeader } from "@/2-features/home";
 import { HomeHeaderWithSlider } from "@/2-features/home/ui/HomeHeaderWithSlider";
 import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
@@ -336,6 +337,8 @@ export const Home: React.FC = () => {
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
       edges={["top"]}
     >
+      <HomeHeader onOpenFilters={handleOpenFiltersMenu} />
+
       <MainGallery
         images={filteredImages}
         loading={loading}
@@ -345,7 +348,6 @@ export const Home: React.FC = () => {
         scrollY={scrollY}
         ListHeaderComponent={
           <HomeHeaderWithSlider
-            onOpenFilters={handleOpenFiltersMenu}
             onPhotographerPress={(photographer: PhotographerSlug) => {
               logEvent("photographer_click", {
                 id: photographer.id,
