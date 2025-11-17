@@ -72,6 +72,7 @@ export type MainGalleryProps = {
   onPressComments?: (imageId: string) => void;
   scrollY: SharedValue<number>;
   onGalleryScroll?: (scrollY: number) => void;
+  ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
 };
 
 // Types for filters (mirroring your web app, but omitting "nudity")

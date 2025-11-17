@@ -1,4 +1,5 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import {
   PhotographerListItem,
   PhotographersSliderProps,
@@ -50,6 +51,18 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
 
   return (
     <View style={styles.container}>
+      <ThemedText type="title" style={styles.pageTitle}>
+        Welcome to Mosaic Photography
+      </ThemedText>
+      <ThemedView style={{ paddingHorizontal: 4 }}>
+        <ThemedText type="defaultSemiBold">
+          Experience the world’s best vintage photography.
+        </ThemedText>
+        <ThemedText type="default">
+          Curated collections—fast, beautiful, high-res images. Browse,
+          favorite, and download, always copyright free.
+        </ThemedText>
+      </ThemedView>
       <ThemedText type="subtitle" style={styles.title}>
         Featured Photographers
       </ThemedText>
@@ -90,12 +103,22 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
                 )}
               </View>
               <ThemedText
+                type="defaultSemiBold"
                 style={styles.name}
                 numberOfLines={1}
                 ellipsizeMode="tail"
                 allowFontScaling={false}
               >
                 {item.surname}
+              </ThemedText>
+              <ThemedText
+                type="default"
+                style={styles.intro}
+                numberOfLines={3}
+                ellipsizeMode="tail"
+                allowFontScaling={false}
+              >
+                {item.intro}
               </ThemedText>
             </TouchableOpacity>
           );

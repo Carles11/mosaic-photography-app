@@ -3,8 +3,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     marginVertical: 16,
-    paddingLeft: 10,
-    paddingRight: 0,
+    paddingHorizontal: 11,
+    height: 525,
+  },
+  pageTitle: {
+    marginVertical: 11,
   },
   title: {
     marginTop: 16,
@@ -12,17 +15,17 @@ export const styles = StyleSheet.create({
     paddingLeft: 6,
   },
   listContent: {
-    paddingRight: 10,
+    paddingRight: 0,
   },
   item: {
     alignItems: "center",
-    marginRight: 22,
     // width sets the separation between items
-    width: 145,
+    width: 165,
+    padding: 8,
   },
   portraitWrapper: {
     width: 160,
-    height: 160,
+    height: 222,
     borderRadius: 8,
     overflow: "hidden",
     marginBottom: 6,
@@ -34,12 +37,12 @@ export const styles = StyleSheet.create({
   },
   portrait: {
     width: 160,
-    height: 160,
+    height: 222,
     borderRadius: 8,
   },
   placeholderPortrait: {
     width: 160,
-    height: 160,
+    height: 222,
     borderRadius: 8,
     backgroundColor: "#bbb",
     justifyContent: "center",
@@ -54,6 +57,12 @@ export const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
     maxWidth: "auto",
+  },
+  intro: {
+    textAlign: "center",
+    fontSize: 12,
+    maxWidth: "auto",
+    height: 148,
   },
   loadingContainer: {
     paddingVertical: 20,

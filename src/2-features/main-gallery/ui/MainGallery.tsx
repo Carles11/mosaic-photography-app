@@ -19,6 +19,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   onOpenMenu,
   onPressComments,
   scrollY,
+  ListHeaderComponent,
 }) => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
@@ -120,6 +121,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         scrollY={scrollY}
         images={shuffledImages} // Use shuffled!
         itemHeight={galleryItemHeight}
+        ListHeaderComponent={ListHeaderComponent}
         renderItem={(item, index) => (
           <MemoizedMainGalleryItem
             item={item}

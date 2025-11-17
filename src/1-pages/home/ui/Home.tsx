@@ -1,17 +1,14 @@
-import { HomeHeader } from "@/2-features/home";
+import { HomeHeaderWithSlider } from "@/2-features/home/ui/HomeHeaderWithSlider";
 import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
 import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetComments";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
 import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
-import { PhotographersSlider } from "@/2-features/photographers/ui/PhotographersSlider";
 import {
   ReportBottomSheet,
   ReportBottomSheetRef,
 } from "@/2-features/reporting/ui/ReportBottomSheet";
-import { RevealOnScroll } from "@/4-shared/components/reveal-on-scroll/ui/RevealOnScroll";
-import { ThemedText } from "@/4-shared/components/themed-text";
 import { ASO } from "@/4-shared/config/aso";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
@@ -23,6 +20,7 @@ import {
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
+import { PhotographerSlug } from "@/4-shared/types/photographers";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -338,30 +336,6 @@ export const Home: React.FC = () => {
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
       edges={["top"]}
     >
-      <HomeHeader onOpenFilters={handleOpenFiltersMenu} />
-      <ThemedText type="title" style={styles.pageTitle}>
-        Welcome to Mosaic Gallery
-      </ThemedText>
-      <ThemedText type="defaultSemiBold" style={{ marginHorizontal: 16 }}>
-        Experience the world’s best vintage photography.
-      </ThemedText>
-      <ThemedText type="default" style={{ marginHorizontal: 16 }}>
-        Curated collections—fast, beautiful, high-res images. Browse, favorite,
-        and download, always copyright free.
-      </ThemedText>
-      <RevealOnScroll scrollY={scrollY} height={300} threshold={180}>
-        <PhotographersSlider
-          onPhotographerPress={(photographer) => {
-            logEvent("photographer_click", {
-              id: photographer.id,
-              slug: photographer.slug,
-              name: photographer.name,
-              surname: photographer.surname,
-            });
-          }}
-        />
-      </RevealOnScroll>
-
       <MainGallery
         images={filteredImages}
         loading={loading}
@@ -369,6 +343,19 @@ export const Home: React.FC = () => {
         onOpenMenu={handleOpenImageMenu}
         onPressComments={handleOpenComments}
         scrollY={scrollY}
+        ListHeaderComponent={
+          <HomeHeaderWithSlider
+            onOpenFilters={handleOpenFiltersMenu}
+            onPhotographerPress={(photographer: PhotographerSlug) => {
+              logEvent("photographer_click", {
+                id: photographer.id,
+                slug: photographer.slug,
+                name: photographer.name,
+                surname: photographer.surname,
+              });
+            }}
+          />
+        }
         // onGalleryScroll={(y) =>
         //   handleScroll(y, filteredImages.length * GALLERY_ITEM_HEIGHT)
         // }

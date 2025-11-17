@@ -10,7 +10,7 @@ export async function fetchPhotographersList(): Promise<
   // Step 1: Fetch all photographers
   const { data: photographers, error: photographerError } = await supabase
     .from("photographers")
-    .select("id, name, surname, slug, author")
+    .select("id, name, surname, slug, author, intro")
     .order("surname");
 
   if (photographerError || !photographers) return [];
@@ -58,6 +58,7 @@ export async function fetchPhotographersList(): Promise<
       name: photographer.name,
       surname: photographer.surname,
       slug: photographer.slug,
+      intro: photographer.intro,
       portrait,
     };
   });

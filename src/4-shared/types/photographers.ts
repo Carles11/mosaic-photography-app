@@ -72,6 +72,7 @@ export interface PhotographerListItem {
   surname: string;
   slug: string;
   portrait: string;
+  intro: string;
 }
 
 export type PhotographersSliderProps = {
@@ -88,3 +89,8 @@ export type WebGalleryMessageProps = {
   name: string;
   surname: string;
 };
+
+export interface HomeHeaderWithSliderProps {
+  onOpenFilters: () => void;
+  onPhotographerPress: (photographer: any) => void;
+}
