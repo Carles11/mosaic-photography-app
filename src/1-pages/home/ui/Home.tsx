@@ -332,7 +332,6 @@ export const Home: React.FC = () => {
 
   // Gallery scroll height (estimated, for scroll tracking)
   // const GALLERY_ITEM_HEIGHT = 380; // approximate
-  console.log("hello from HomeScreen");
   return (
     <SafeAreaView
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
