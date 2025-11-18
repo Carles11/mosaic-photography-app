@@ -22,7 +22,6 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({
       style={[
         styles.card,
         {
-          backgroundColor: theme.error + "10", // low opacity version of error color
           borderColor: theme.error,
         },
       ]}
@@ -39,7 +38,7 @@ export const DangerZoneCard: React.FC<DangerZoneCardProps> = ({
       <ThemedText style={styles.hint}>
         Deleting your account is{" "}
         <ThemedText style={styles.bold}>irreversible.</ThemedText> Your data,
-        including your favorites and collections, will be permanently lost.
+        including all your favorites and collections, will be permanently lost.
       </ThemedText>
 
       <TouchableOpacity

@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     position: "relative",
   },
   gradient: {
+    borderWidth: 1,
     width: "90%",
     height: 100,
     borderRadius: 22,

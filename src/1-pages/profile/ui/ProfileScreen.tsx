@@ -13,6 +13,8 @@ import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
+import { useFavorites } from "@/4-shared/context/favorites";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
@@ -34,8 +36,10 @@ export default function ProfileScreen() {
   const colorScheme = useColorScheme();
   const theme = globalTheme[colorScheme];
   const router = useRouter();
-  const [deleting, setDeleting] = useState(false);
+  const { favorites } = useFavorites();
+  const { collections } = useCollections();
 
+  const [deleting, setDeleting] = useState(false);
   // 1. Profile fields state for editing/updating
   const [profileFields, setProfileFields] = useState<ProfileData | null>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -207,8 +211,8 @@ export default function ProfileScreen() {
           createdAt={profileFields.created_at}
         />
         <ProfileStatCard
-          favoritesCount={user.favoritesCount ?? 0}
-          collectionsCount={0}
+          favoritesCount={favorites.size}
+          collectionsCount={collections.length}
         />
         <SettingsCard
           mode={mode}

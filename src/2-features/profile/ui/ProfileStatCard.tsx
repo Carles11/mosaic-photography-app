@@ -15,7 +15,7 @@ export const ProfileStatCard: React.FC<ProfileStatCardProps> = ({
   favoritesCount,
   collectionsCount = 0,
 }) => {
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
 
   return (
     <ThemedView
@@ -45,7 +45,7 @@ export const ProfileStatCard: React.FC<ProfileStatCardProps> = ({
           name="collections-bookmark"
           type="material"
           size={28}
-          color={theme.primary}
+          color={mode === "light" ? theme.primary : "#888"}
         />
         <ThemedText style={styles.statLabel}>Collections</ThemedText>
         <ThemedText style={styles.statValue}>{collectionsCount}</ThemedText>

@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 18,
     paddingHorizontal: 18,
     marginVertical: 18,
+    backgroundColor: "#ffe5e5",
   },
   sectionHeader: {
     flexDirection: "row",

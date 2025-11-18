@@ -42,7 +42,6 @@ export const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#222",
     marginTop: 2,
   },
   divider: {

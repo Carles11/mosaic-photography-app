@@ -13,9 +13,9 @@ type ProfileHeaderProps = {
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   name,
-  size = 96,
+  size = 90,
 }) => {
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
 
   const getInitial = () => {
     if (!name || name.length === 0) return "?";
@@ -26,7 +26,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <ThemedView style={styles.container}>
       <LinearGradient
         colors={[theme.primary, theme.background]}
-        style={styles.gradient}
+        style={[
+          styles.gradient,
+          { borderColor: mode === "light" ? theme.accent : "#fff" },
+        ]}
         start={{ x: 0.1, y: 0.3 }}
         end={{ x: 1, y: 0.8 }}
       />
@@ -40,14 +43,17 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             width: size,
             height: size,
             borderRadius: size / 2,
-            borderColor: theme.accent,
+            borderColor: mode === "light" ? theme.accent : "#fff",
           },
         ]}
       >
         <ThemedText
           style={[
             styles.initial,
-            { color: theme.accent, fontSize: size * 0.45 },
+            {
+              color: mode === "light" ? theme.accent : "#fff",
+              fontSize: size * 0.45,
+            },
           ]}
         >
           {getInitial()}

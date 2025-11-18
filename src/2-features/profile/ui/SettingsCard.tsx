@@ -251,9 +251,7 @@ export const SettingsCard: React.FC<SettingsCardProps> = ({
             size={22}
             color={theme.icon}
           />
-          <ThemedText style={[styles.rowLabel, { color: theme.error }]}>
-            Log out
-          </ThemedText>
+          <ThemedText style={styles.rowLabel}>Log out</ThemedText>
         </View>
       </TouchableOpacity>
     </ThemedView>
