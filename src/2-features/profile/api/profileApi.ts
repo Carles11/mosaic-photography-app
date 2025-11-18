@@ -1,15 +1,5 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
-
-export type ProfileData = {
-  id: string;
-  name: string;
-  instagram: string;
-  website: string;
-  own_store_name: string;
-  own_store_url: string;
-  created_at: string;
-  updated_at: string;
-};
+import { ProfileData } from "@/4-shared/types";
 
 export async function getProfile(userId: string): Promise<ProfileData | null> {
   const { data, error } = await supabase

@@ -1,0 +1,65 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  card: {
+    width: "90%",
+    alignSelf: "center",
+    borderRadius: 20,
+    borderWidth: 1.5,
+    paddingTop: 20,
+    paddingBottom: 4,
+    marginTop: 18,
+    marginBottom: 18,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+    backgroundColor: "#fff",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+    paddingLeft: 8,
+  },
+  sectionHeaderText: {
+    marginLeft: 7,
+    fontWeight: "bold",
+    fontSize: 17,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    minHeight: 44,
+    justifyContent: "space-between",
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+  },
+  rowIconLabel: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rowLabel: {
+    fontSize: 15,
+    marginLeft: 7,
+    fontWeight: "600",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#eee",
+    alignSelf: "center",
+    width: "92%",
+    marginVertical: 2,
+  },
+  input: {
+    marginTop: 4,
+    marginBottom: 12,
+    marginHorizontal: 16,
+    borderRadius: 8,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#e0e0e0",
+    fontSize: 15,
+  },
+});

@@ -6,4 +6,5 @@ export * from "./gallery";
 export * from "./icons";
 export * from "./menu";
 export * from "./photographers";
+export * from "./profile";
 export * from "./swipeableCard";
