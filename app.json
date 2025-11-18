@@ -78,6 +78,16 @@
           "project": "mosaic-photography",
           "organization": "carles-del-rio-frances"
         }
+      ],
+      "@react-native-firebase/analytics",
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
     ],
     "experiments": {
