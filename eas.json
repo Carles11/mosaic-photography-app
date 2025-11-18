@@ -16,7 +16,7 @@
       "autoIncrement": true,
       "ios": {
         "image": "macos-sequoia-15.6-xcode-16.4",
-        "pre-install": "bash eas-build-pre-install.sh"
+        "pre-install-script": "bash eas-build-pre-install.sh"
       }
     }
   },
