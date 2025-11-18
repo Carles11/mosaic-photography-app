@@ -73,6 +73,7 @@ export interface PhotographerListItem {
   slug: string;
   portrait: string;
   intro: string;
+  author: string;
 }
 
 export type PhotographersSliderProps = {

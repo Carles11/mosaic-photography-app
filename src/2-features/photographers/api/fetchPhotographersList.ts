@@ -59,6 +59,7 @@ export async function fetchPhotographersList(): Promise<
       surname: photographer.surname,
       slug: photographer.slug,
       intro: photographer.intro,
+      author: photographer.author,
       portrait,
     };
   });

@@ -44,9 +44,4 @@ export const styles = StyleSheet.create({
   introTouchable: {
     width: "100%",
   },
-  intro: {
-    textAlign: "center",
-    fontSize: 12,
-    maxWidth: "auto",
-  },
 });

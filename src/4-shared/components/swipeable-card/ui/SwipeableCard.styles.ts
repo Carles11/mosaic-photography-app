@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-const CARD_HEIGHT = 96;
+const CARD_HEIGHT = 111;
 
 export const styles = StyleSheet.create({
   card: {
@@ -48,6 +48,7 @@ export const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     marginTop: 2,
+    lineHeight: 18,
   },
   year: {
     fontSize: 12,

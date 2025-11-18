@@ -9,8 +9,8 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  LayoutAnimation,
   Platform,
+  TouchableOpacity,
   UIManager,
   View,
 } from "react-native";
@@ -32,7 +32,6 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
-  const [expandedIntroId, setExpandedIntroId] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -47,11 +46,6 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
       mounted = false;
     };
   }, []);
-
-  const handleIntroToggle = (itemId: string) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedIntroId((prev) => (prev === itemId ? null : itemId));
-  };
 
   const handleNavigateToPhotographer = (slug: string) => {
     router.push(`/photographer/${slug}`);
@@ -83,9 +77,18 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
           favorite, and download, always copyright free.
         </ThemedText>
       </ThemedView>
-      <ThemedText type="subtitle" style={styles.title}>
-        Featured Photographers
-      </ThemedText>
+      <ThemedView style={styles.header}>
+        <ThemedText type="subtitle" style={styles.titleLeft}>
+          Featured Photographers
+        </ThemedText>
+        <TouchableOpacity
+          onPress={() => router.push("/photographer/photographers-list")}
+        >
+          <ThemedText type="defaultSemiBold" style={styles.titleRight}>
+            Photographers list
+          </ThemedText>
+        </TouchableOpacity>
+      </ThemedView>
       <FlatList
         data={photographers}
         horizontal
@@ -97,9 +100,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         renderItem={({ item }) => (
           <PhotographersSliderItem
             item={item}
-            isExpanded={expandedIntroId === item.id}
             onPhotographerPress={onPhotographerPress}
-            onIntroToggle={handleIntroToggle}
             onNavigateToPhotographer={handleNavigateToPhotographer}
           />
         )}

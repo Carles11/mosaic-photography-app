@@ -248,4 +248,43 @@ export const ASO = {
       ],
     }),
   },
+  photographers: {
+    title: "Photographers | Mosaic Gallery",
+    description:
+      "Browse our curated list of legendary vintage photographers, discover their galleries, explore their biographies and unique photographic styles, and find your next inspiration.",
+    keywords: [
+      "photographers",
+      "vintage photographers",
+      "public domain artists",
+      "classic photographers",
+      "photo creators",
+      "photographer gallery",
+      "vintage photography",
+      "biographies",
+      "photographic style",
+      "art history",
+      "nude photography artists",
+      "retro photo artists",
+      "legendary photographers",
+      "timeless photo art",
+      "public domain",
+      "Mosaic Gallery",
+    ],
+    emptyTitle: "No photographers yet",
+    emptyText: "No photographers found. Please check back soon.",
+    shareTemplate: ({
+      photographer,
+      url,
+      appName = "Mosaic Gallery",
+    }: {
+      photographer?: string;
+      url?: string;
+      appName?: string;
+    }) =>
+      `Discover legendary photographer${
+        photographer ? " " + photographer : "s"
+      } on ${appName} — explore classic, public domain photography. ${
+        url ?? ""
+      }`,
+  },
 };

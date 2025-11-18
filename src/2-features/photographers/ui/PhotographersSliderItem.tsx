@@ -6,17 +6,13 @@ import { styles } from "./PhotographersSliderItem.styles";
 
 interface PhotographerSliderItemProps {
   item: PhotographerListItem;
-  isExpanded: boolean;
   onPhotographerPress?: (item: PhotographerListItem) => void;
-  onIntroToggle: (id: string) => void;
   onNavigateToPhotographer: (slug: string) => void;
 }
 
 export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
   item,
-  isExpanded,
   onPhotographerPress,
-  onIntroToggle,
   onNavigateToPhotographer,
 }) => {
   const hasPortrait = !!item.portrait && item.portrait.length > 0;
@@ -56,26 +52,6 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
           allowFontScaling={false}
         >
           {item.surname}
-        </ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        style={styles.introTouchable}
-        onPress={() => onIntroToggle(item.id)}
-        accessibilityLabel={
-          isExpanded
-            ? `Collapse introduction of ${item.name} ${item.surname}`
-            : `Expand introduction of ${item.name} ${item.surname}`
-        }
-      >
-        <ThemedText
-          type="default"
-          style={styles.intro}
-          numberOfLines={isExpanded ? undefined : 2}
-          ellipsizeMode="tail"
-          allowFontScaling={false}
-        >
-          {item.intro}
         </ThemedText>
       </TouchableOpacity>
     </View>

@@ -114,7 +114,7 @@ const SwipeableCard: React.FC<
             {subtitle ? (
               <ThemedText
                 style={[styles.subtitle, textStyle]}
-                numberOfLines={1}
+                numberOfLines={3}
                 ellipsizeMode="tail"
               >
                 {subtitle}
