@@ -9,12 +9,21 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Image,
-  TouchableOpacity,
+  LayoutAnimation,
+  Platform,
+  UIManager,
   View,
 } from "react-native";
 import { fetchPhotographersList } from "../api/fetchPhotographersList";
 import { styles } from "./PhotographersSlider.styles";
+import { PhotographersSliderItem } from "./PhotographersSliderItem";
+
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   onPhotographerPress,
@@ -23,7 +32,9 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
+  const [expandedIntroId, setExpandedIntroId] = useState<string | null>(null);
   const router = useRouter();
+
   useEffect(() => {
     let mounted = true;
     fetchPhotographersList().then((data) => {
@@ -36,6 +47,15 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
       mounted = false;
     };
   }, []);
+
+  const handleIntroToggle = (itemId: string) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpandedIntroId((prev) => (prev === itemId ? null : itemId));
+  };
+
+  const handleNavigateToPhotographer = (slug: string) => {
+    router.push(`/photographer/${slug}`);
+  };
 
   if (loading) {
     return (
@@ -74,55 +94,15 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         contentContainerStyle={styles.listContent}
         initialNumToRender={5}
         windowSize={7}
-        renderItem={({ item }) => {
-          const hasPortrait = !!item.portrait && item.portrait.length > 0;
-          return (
-            <TouchableOpacity
-              style={styles.item}
-              activeOpacity={0.7}
-              onPress={() => {
-                router.push(`/photographer/${item.slug}`);
-                if (onPhotographerPress) onPhotographerPress(item);
-              }}
-              accessibilityLabel={`Discover vintage photography by ${item.name} ${item.surname}`}
-            >
-              <View style={[styles.portraitWrapper]}>
-                {hasPortrait ? (
-                  <Image
-                    source={{ uri: item.portrait }}
-                    style={styles.portrait}
-                    resizeMode="cover"
-                    accessibilityLabel={`${item.name} ${item.surname} portrait`}
-                  />
-                ) : (
-                  <View style={styles.placeholderPortrait}>
-                    <ThemedText style={styles.placeholderInitial}>
-                      {item.name[0]}
-                    </ThemedText>
-                  </View>
-                )}
-              </View>
-              <ThemedText
-                type="defaultSemiBold"
-                style={styles.name}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                allowFontScaling={false}
-              >
-                {item.surname}
-              </ThemedText>
-              <ThemedText
-                type="default"
-                style={styles.intro}
-                numberOfLines={3}
-                ellipsizeMode="tail"
-                allowFontScaling={false}
-              >
-                {item.intro}
-              </ThemedText>
-            </TouchableOpacity>
-          );
-        }}
+        renderItem={({ item }) => (
+          <PhotographersSliderItem
+            item={item}
+            isExpanded={expandedIntroId === item.id}
+            onPhotographerPress={onPhotographerPress}
+            onIntroToggle={handleIntroToggle}
+            onNavigateToPhotographer={handleNavigateToPhotographer}
+          />
+        )}
       />
     </View>
   );
