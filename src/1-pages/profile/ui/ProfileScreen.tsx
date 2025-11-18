@@ -110,15 +110,7 @@ export default function ProfileScreen() {
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 140 }}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedView style={styles.centered}>
-          {user ? (
-            <ProfileForm user={user} />
-          ) : (
-            <ThemedText style={styles.loadingText}>
-              Please log in to view your profile.
-            </ThemedText>
-          )}
-        </ThemedView>
+        <ProfileForm user={user} />
 
         <ThemedView style={styles.profileMenuSection}>
           <ThemedView style={styles.menuItem}>
