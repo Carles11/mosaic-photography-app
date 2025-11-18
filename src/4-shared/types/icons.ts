@@ -1,10 +1,8 @@
+import { SymbolWeight } from "expo-symbols";
+import { StyleProp, ViewStyle } from "react-native";
+import { SvgProps } from "react-native-svg";
 
-import { SymbolWeight } from 'expo-symbols';
-import { StyleProp, ViewStyle } from 'react-native';
-import { SvgProps } from 'react-native-svg';
-
-
-export type IconType = 'material' | 'ion' | 'fontawesome' | 'svg' | 'sf';
+export type IconType = "material" | "ion" | "fontawesome" | "svg" | "sf";
 
 export interface IconSymbolProps {
   name?: string;

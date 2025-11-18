@@ -1,15 +1,12 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import Animated, {
-  useAnimatedProps,
+  useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
 import { styles } from "./ZoomScaleBadge.styles";
-
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 type ZoomScaleBadgeProps = {
   scale: number;
@@ -28,7 +25,6 @@ export const ZoomScaleBadge: React.FC<ZoomScaleBadgeProps> = ({
 }) => {
   const { theme } = useTheme();
 
-  // Badge circle geometry
   const size = 48;
   const strokeWidth = 5;
   const radius = (size - strokeWidth) / 2;
@@ -41,29 +37,32 @@ export const ZoomScaleBadge: React.FC<ZoomScaleBadgeProps> = ({
     Math.min(1, (scale - minScale) / (maxScale - minScale))
   );
 
-  // Animated stroke offset
-  const animatedProps = useAnimatedProps(() => ({
-    strokeDashoffset: withSpring(circumference * (1 - progress), {
-      damping: 18,
-      stiffness: 180,
-    }),
-  }));
+  // Use React state to update the strokeDashoffset directly on prop change (no Reanimated here)
+  const [strokeDashoffset, setStrokeDashoffset] = useState(
+    circumference * (1 - progress)
+  );
+  useEffect(() => {
+    setStrokeDashoffset(circumference * (1 - progress));
+  }, [progress, circumference]);
 
-  // Animate appearance
-  const animatedContainerStyle = useAnimatedProps(() => ({
-    opacity: withSpring(visible ? 1 : 0, { damping: 15, stiffness: 180 }),
-    transform: [
-      {
-        scale: withSpring(visible ? 1 : 0.7, { damping: 18, stiffness: 160 }),
-      },
-    ],
-  }));
+  // Animate appearance of the container
+  const animatedContainerStyle = useAnimatedStyle(
+    () => ({
+      opacity: withSpring(visible ? 1 : 0, { damping: 15, stiffness: 180 }),
+      transform: [
+        {
+          scale: withSpring(visible ? 1 : 0.7, { damping: 18, stiffness: 160 }),
+        },
+      ],
+    }),
+    [visible]
+  );
 
   return (
     <Animated.View
       style={[
         styles.badgeContainer,
-        animatedContainerStyle as any,
+        animatedContainerStyle,
         style,
         {
           backgroundColor:
@@ -82,8 +81,8 @@ export const ZoomScaleBadge: React.FC<ZoomScaleBadgeProps> = ({
           strokeWidth={strokeWidth}
           fill="none"
         />
-        {/* Progress circle */}
-        <AnimatedCircle
+        {/* Progress circle (not animated via Reanimated) */}
+        <Circle
           cx={center}
           cy={center}
           r={radius}
@@ -91,7 +90,7 @@ export const ZoomScaleBadge: React.FC<ZoomScaleBadgeProps> = ({
           strokeWidth={strokeWidth}
           fill="none"
           strokeDasharray={`${circumference}, ${circumference}`}
-          animatedProps={animatedProps}
+          strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
         />
       </Svg>
