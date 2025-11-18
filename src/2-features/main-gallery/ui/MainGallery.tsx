@@ -115,7 +115,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   }
 
   return (
-    <>
+    <ThemedView style={{ flex: 1, marginBottom: 122 }}>
       <Gallery
         galleryTitle={ASO.home.title}
         scrollY={scrollY}
@@ -142,7 +142,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}
       />
-    </>
+    </ThemedView>
   );
 };
 

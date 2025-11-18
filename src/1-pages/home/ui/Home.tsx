@@ -160,30 +160,6 @@ export const Home: React.FC = () => {
 
   // TODO: Analytics: track scroll thresholds CRASHES THE APP ON SCROLL - FIX
 
-  // const lastScrollLogged = useRef<number>(0);
-
-  // const handleScroll = useCallback(
-  //   (y: number, listHeight: number = 1) => {
-  //     if (!filteredImages.length || !listHeight) return;
-  //     const scrollPositionRatio = y / listHeight;
-  //     for (let i = SCROLL_THRESHOLDS.length - 1; i >= 0; i--) {
-  //       const threshold = SCROLL_THRESHOLDS[i];
-  //       if (
-  //         scrollPositionRatio >= threshold &&
-  //         lastScrollLogged.current < threshold
-  //       ) {
-  //         lastScrollLogged.current = threshold;
-  //         logEvent("scroll_threshold_reached", {
-  //           screen: "Home",
-  //           threshold: threshold * 100,
-  //         });
-  //         break;
-  //       }
-  //     }
-  //   },
-  //   [filteredImages.length]
-  // );
-
   const handleOpenImageMenu = (image: GalleryImage) => {
     setSelectedImage(image);
     setDownloadOptions(getAvailableDownloadOptionsForImage(image));

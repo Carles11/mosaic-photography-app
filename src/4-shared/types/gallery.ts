@@ -65,6 +65,7 @@ export type GalleryProps = {
 };
 
 export type MainGalleryProps = {
+  onScrollY?: (scrollY: number) => void;
   images: GalleryImage[];
   loading: boolean;
   error: string | null;
