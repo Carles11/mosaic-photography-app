@@ -8,19 +8,9 @@
     "scheme": "mosaicphotographyapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "linking": {
-      "prefixes": [
-        "https://www.mosaic.photography",
-        "https://www.mosaic.photography/auth",
-        "https://www.mosaic.photography/collections",
-        "https://www.mosaic.photography/photographer",
-        "mosaicphotographyapp://"
-      ]
-    },
     "ios": {
       "supportsTablet": true,
       "associatedDomains": [
-        "applinks:www.mosaic.photography",
         "applinks:www.mosaic.photography"
       ],
       "bundleIdentifier": "com.carlosdelrio.mosaicphotographyapp",
@@ -47,7 +37,10 @@
               "pathPrefix": "/"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "package": "com.carlos_delrio.mosaicphotographyapp",
@@ -87,7 +80,8 @@
             "useFrameworks": "static"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -100,6 +94,9 @@
       }
     },
     "owner": "carles-at-notjustdev",
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }
