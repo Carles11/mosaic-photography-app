@@ -105,7 +105,7 @@ function InnerLayout() {
         />
         <Stack.Screen
           name="photographer/photographers-list"
-          options={{ headerShown: true, title: "Photographer" }}
+          options={{ headerShown: true, title: "Photographers List" }}
         />
         <Stack.Screen name="auth/login" options={{ headerShown: false }} />
         <Stack.Screen name="auth/register" options={{ headerShown: false }} />
