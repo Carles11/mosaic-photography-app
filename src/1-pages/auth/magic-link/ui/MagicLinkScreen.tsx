@@ -1,3 +1,4 @@
+// @/2-features/auth/screens/MagicLinkScreen.tsx
 import { verifyMagicLink } from "@/2-features/auth/api/verifyMagicLink";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
@@ -44,19 +45,9 @@ export function MagicLinkScreen() {
     console.log("[MagicLinkScreen] Extracted hash params:", magicParams);
   }
 
-  const initialToken =
-    magicParams.access_token ||
-    magicParams.token ||
-    searchParams.token ||
-    searchParams.access_token ||
-    undefined;
-  const initialType = magicParams.type || searchParams.type || "magiclink";
-
   // New: Email state from storage or manual input
   const [email, setEmail] = useState<string | undefined>(undefined);
   const [emailInput, setEmailInput] = useState<string>("");
-  const [token, setToken] = useState<string | undefined>(initialToken);
-  const [type, setType] = useState<string | undefined>(initialType);
   const [status, setStatus] = useState<"verifying" | "success" | "error">(
     "verifying"
   );
@@ -64,6 +55,7 @@ export function MagicLinkScreen() {
   const [deepLinkUrl, setDeepLinkUrl] = useState<string | null>(null);
   const [paramsFromUrl, setParamsFromUrl] = useState<any>(null);
   const [verifyResult, setVerifyResult] = useState<any>(null);
+  const [verificationAttempted, setVerificationAttempted] = useState(false);
 
   useEffect(() => {
     console.log("[MagicLinkScreen] === COMPONENT RENDERED ===");
@@ -79,84 +71,88 @@ export function MagicLinkScreen() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!token) {
-      getInitialDeepLinkParamsAsync().then((params) => {
-        setParamsFromUrl(params);
-        console.log(
-          "[MagicLinkScreen] getInitialDeepLinkParamsAsync returned:",
-          params
-        );
-
-        if (params.token || params.access_token) {
-          setToken(params.token || params.access_token);
-        } else {
-          console.log(
-            "[MagicLinkScreen] No token/access_token in deep link params"
-          );
-        }
-
-        if (params.type) {
-          setType(params.type);
-        } else {
-          setType("magiclink");
-        }
-
-        if (params.error || params.error_code || params.error_description) {
-          console.log("[MagicLinkScreen] ERROR PARAMS in deep link params:", {
-            error: params.error,
-            error_code: params.error_code,
-            error_description: params.error_description,
-          });
-        }
-      });
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (paramsFromUrl) {
-      console.log(
-        "[MagicLinkScreen] paramsFromUrl state set to:",
-        paramsFromUrl
-      );
-    }
-  }, [paramsFromUrl]);
-
-  // New: Try to load stored email on mount
+  // Load stored email on mount
   useEffect(() => {
     let didCancel = false;
     (async () => {
       const stored = await getMagicLinkEmail();
-      if (!didCancel) setEmail(stored ?? undefined);
+      if (!didCancel) {
+        setEmail(stored ?? undefined);
+        console.log("[MagicLinkScreen] Loaded stored email:", stored);
+      }
     })();
     return () => {
       didCancel = true;
     };
   }, []);
 
+  // Main verification effect
   useEffect(() => {
-    console.log("[MagicLinkScreen] token state changed:", token);
-    console.log("[MagicLinkScreen] type state changed:", type);
-  }, [token, type]);
+    const verifyFromParams = async () => {
+      if (verificationAttempted) {
+        console.log(
+          "[MagicLinkScreen] Verification already attempted, skipping"
+        );
+        return;
+      }
 
-  // Main effect: react to email+token+type ready
-  useEffect(() => {
-    if (token && type && email) {
-      handleMagicLinkVerification(email, token, type);
-    } else if ((token && !type) || (type && !token)) {
-      setType("magiclink");
-    } else if (!token) {
-      setStatus("error");
-      setError("Invalid magic link. Please request a new one.");
-      logEvent("magic_link_verification_failure", {
-        reason: "missing_token_or_type",
-        tokenPresent: Boolean(token),
-        typePresent: Boolean(type),
-      });
-      console.log("[MagicLinkScreen] ERROR: missing token", { token, type });
+      console.log("[MagicLinkScreen] Starting verification from params...");
+
+      // Get parameters from all possible sources
+      const urlParams = await getInitialDeepLinkParamsAsync();
+      setParamsFromUrl(urlParams);
+      console.log("[MagicLinkScreen] Deep link params:", urlParams);
+
+      // Extract token and type with priority to deep link params
+      const token =
+        urlParams?.access_token ||
+        urlParams?.token ||
+        magicParams.access_token ||
+        magicParams.token ||
+        searchParams.access_token ||
+        searchParams.token;
+      const type =
+        urlParams?.type || magicParams.type || searchParams.type || "magiclink";
+
+      console.log("[MagicLinkScreen] Final extracted params:", { token, type });
+
+      if (!token) {
+        console.log("[MagicLinkScreen] No token found in any source");
+        setStatus("error");
+        setError("Invalid magic link. No authentication token found.");
+        setVerificationAttempted(true);
+        logEvent("magic_link_verification_failure", {
+          reason: "missing_token",
+          hasDeepLinkParams: !!urlParams,
+          hasMagicParams: !!Object.keys(magicParams).length,
+          hasSearchParams: !!Object.keys(searchParams).length,
+        });
+        return;
+      }
+
+      // Get stored email
+      const storedEmail = await getMagicLinkEmail();
+      if (!storedEmail) {
+        console.log("[MagicLinkScreen] No stored email found");
+        setStatus("error");
+        setError("Session expired. Please request a new magic link.");
+        setVerificationAttempted(true);
+        return;
+      }
+
+      setEmail(storedEmail);
+      setVerificationAttempted(true);
+
+      // Perform verification
+      await handleMagicLinkVerification(storedEmail, token, type);
+    };
+
+    if (!verificationAttempted && email !== undefined) {
+      verifyFromParams();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email, token, type]);
+  }, [email, verificationAttempted, magicParams, searchParams]);
+
+  // Update the handleMagicLinkVerification function in your MagicLinkScreen component:
 
   const handleMagicLinkVerification = async (
     emailParam: string,
@@ -169,18 +165,28 @@ export function MagicLinkScreen() {
 
     console.log("[MagicLinkScreen] handleMagicLinkVerification called with:", {
       emailParam,
-      tokenParam,
+      tokenParam: tokenParam ? `${tokenParam.substring(0, 10)}...` : "empty",
       typeParam,
     });
 
     logEvent("magic_link_verification_attempt", {
       email: emailParam,
-      token: tokenParam,
+      token_length: tokenParam?.length || 0,
       type: typeParam,
     });
 
     try {
-      const result = await verifyMagicLink(emailParam, tokenParam, typeParam);
+      // Extract refresh token from URL parameters if available
+      const refreshToken =
+        paramsFromUrl?.refresh_token || magicParams.refresh_token;
+      console.log("[MagicLinkScreen] Refresh token available:", !!refreshToken);
+
+      const result = await verifyMagicLink(
+        emailParam,
+        tokenParam,
+        typeParam,
+        refreshToken
+      );
       setVerifyResult(result);
       console.log("[MagicLinkScreen] verifyMagicLink result:", result);
 
@@ -189,30 +195,23 @@ export function MagicLinkScreen() {
         setError(result.error);
         logEvent("magic_link_verification_failure", {
           email: emailParam,
-          token: tokenParam,
           type: typeParam,
           error: result.error,
         });
-      } else if (result) {
+      } else {
         setStatus("success");
-        clearMagicLinkEmail(); // Cleanup: remove stored email after successful login
+        await clearMagicLinkEmail(); // Cleanup: remove stored email after successful login
         logEvent("magic_link_verification_success", {
           email: emailParam,
-          token: tokenParam,
           type: typeParam,
         });
         setTimeout(() => router.replace("/"), 2000);
-      } else {
-        setStatus("error");
-        setError("Unknown server response.");
-        console.log("[MagicLinkScreen] ERROR: Unknown server response", result);
       }
     } catch (e: any) {
       setStatus("error");
-      setError(e?.message || "Unexpected error");
+      setError(e?.message || "Unexpected error during verification");
       logEvent("magic_link_verification_failure", {
         email: emailParam,
-        token: tokenParam,
         type: typeParam,
         error: e?.message || "Unexpected JS error",
       });
@@ -231,9 +230,16 @@ export function MagicLinkScreen() {
       saveMagicLinkEmail(emailInput);
       setEmail(emailInput);
       setError(null);
+      setVerificationAttempted(false); // Reset to allow new verification attempt
     } else {
       setError("Please enter your email address to continue.");
     }
+  };
+
+  const handleRetryVerification = () => {
+    setVerificationAttempted(false);
+    setError(null);
+    setStatus("verifying");
   };
 
   const debugBlock = (
@@ -261,10 +267,6 @@ export function MagicLinkScreen() {
         [DEBUG] Params from URL:{"\n"}
         {JSON.stringify(paramsFromUrl, null, 2)}
         {"\n"}
-        [DEBUG] State Token: {token}
-        {"\n"}
-        [DEBUG] State Type: {type}
-        {"\n"}
         [DEBUG] State Email: {email}
         {"\n"}
         [DEBUG] Verify Result:{"\n"}
@@ -273,6 +275,8 @@ export function MagicLinkScreen() {
         [DEBUG] Status: {status}
         {"\n"}
         [DEBUG] Error: {error}
+        {"\n"}
+        [DEBUG] Verification Attempted: {verificationAttempted.toString()}
       </ThemedText>
     </ThemedView>
   );
@@ -287,6 +291,11 @@ export function MagicLinkScreen() {
           <>
             <ThemedText style={[styles.title]}>
               Enter your email to verify login
+            </ThemedText>
+            <ThemedText
+              style={[styles.subtitle, { color: theme.text, marginBottom: 16 }]}
+            >
+              We need your email to match with the magic link you received
             </ThemedText>
             <TextInput
               style={[
@@ -327,6 +336,9 @@ export function MagicLinkScreen() {
           <>
             <ActivityIndicator size="large" color={theme.primary} />
             <ThemedText style={[styles.title]}>Signing you in...</ThemedText>
+            <ThemedText style={[styles.subtitle, { color: theme.text }]}>
+              Verifying your magic link for {email}
+            </ThemedText>
             {debugBlock}
           </>
         )}
@@ -346,6 +358,11 @@ export function MagicLinkScreen() {
                 <ThemedText style={[styles.error, { color: theme.error }]}>
                   {error}
                 </ThemedText>
+                <PrimaryButton
+                  title="Try Again"
+                  onPress={handleRetryVerification}
+                  style={{ marginBottom: 10 }}
+                />
                 <PrimaryButton title="Go to Login" onPress={handleGoToLogin} />
               </>
             )}
