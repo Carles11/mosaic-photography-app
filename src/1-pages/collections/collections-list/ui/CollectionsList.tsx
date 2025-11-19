@@ -12,6 +12,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef } from "react";
 import { ActivityIndicator, Alert, FlatList, Share } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./CollectionsList.styles";
 import CreateCollectionSheet, {
   CreateCollectionSheetRef,
@@ -132,57 +133,62 @@ export default function CollectionsList() {
   );
 
   return (
-    <ThemedView style={styles.container}>
-      {loading ? (
-        <ThemedView style={styles.centered}>
-          <ActivityIndicator size="large" color={theme.favoriteIcon} />
-          <ThemedText style={styles.loadingText}>
-            Loading collections...
-          </ThemedText>
-        </ThemedView>
-      ) : collections.length === 0 ? (
-        <ThemedView style={styles.centered}>
-          <ThemedText style={styles.emptyIcon}>📚</ThemedText>
-          <ThemedText style={styles.emptyTitle}>
-            {ASO.collections.emptyTitle}
-          </ThemedText>
-          <ThemedText style={styles.emptyText}>
-            {ASO.collections.emptyText}
-          </ThemedText>
-          <PrimaryButton
-            title="New Collection"
-            onPress={handleOpenCreateSheet}
-            style={styles.createButton}
-          />
-        </ThemedView>
-      ) : (
-        <>
-          <ThemedView style={styles.header}>
-            <ThemedText type="title" style={styles.title}>
-              You created {collections.length}{" "}
-              {collections.length === 1 ? "collection" : "collections"}
+    <SafeAreaView
+      style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
+      edges={["bottom"]}
+    >
+      <ThemedView style={styles.container}>
+        {loading ? (
+          <ThemedView style={styles.centered}>
+            <ActivityIndicator size="large" color={theme.favoriteIcon} />
+            <ThemedText style={styles.loadingText}>
+              Loading collections...
             </ThemedText>
-            <ThemedText style={styles.subtitle}>
-              {ASO.collections.description}
+          </ThemedView>
+        ) : collections.length === 0 ? (
+          <ThemedView style={styles.centered}>
+            <ThemedText style={styles.emptyIcon}>📚</ThemedText>
+            <ThemedText style={styles.emptyTitle}>
+              {ASO.collections.emptyTitle}
+            </ThemedText>
+            <ThemedText style={styles.emptyText}>
+              {ASO.collections.emptyText}
             </ThemedText>
             <PrimaryButton
-              title="+ New Collection"
+              title="New Collection"
               onPress={handleOpenCreateSheet}
               style={styles.createButton}
             />
           </ThemedView>
-          <FlatList
-            data={collections}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContent}
-            renderItem={renderItem}
-          />
-        </>
-      )}
-      <CreateCollectionSheet
-        ref={sheetRef}
-        onCreated={handleCollectionCreated}
-      />
-    </ThemedView>
+        ) : (
+          <>
+            <ThemedView style={styles.header}>
+              <ThemedText type="title" style={styles.title}>
+                You created {collections.length}{" "}
+                {collections.length === 1 ? "collection" : "collections"}
+              </ThemedText>
+              <ThemedText style={styles.subtitle}>
+                {ASO.collections.description}
+              </ThemedText>
+              <PrimaryButton
+                title="+ New Collection"
+                onPress={handleOpenCreateSheet}
+                style={styles.createButton}
+              />
+            </ThemedView>
+            <FlatList
+              data={collections}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.listContent}
+              renderItem={renderItem}
+            />
+          </>
+        )}
+        <CreateCollectionSheet
+          ref={sheetRef}
+          onCreated={handleCollectionCreated}
+        />
+      </ThemedView>
+    </SafeAreaView>
   );
 }

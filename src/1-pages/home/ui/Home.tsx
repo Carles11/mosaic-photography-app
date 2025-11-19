@@ -311,7 +311,7 @@ export const Home: React.FC = () => {
   return (
     <SafeAreaView
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
-      edges={["top"]}
+      edges={["bottom", "top"]}
     >
       <HomeHeader onOpenFilters={handleOpenFiltersMenu} />
 

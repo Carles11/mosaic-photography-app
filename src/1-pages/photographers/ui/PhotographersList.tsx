@@ -10,6 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Share } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographersList.styles";
 
 const PhotographersList = () => {
@@ -115,24 +116,30 @@ const PhotographersList = () => {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          {ASO.photographers?.title ?? "Photographers"} ({photographers.length})
-        </ThemedText>
-        {!!ASO.photographers?.description && (
-          <ThemedText style={styles.subtitle}>
-            {ASO.photographers.description}
+    <SafeAreaView
+      style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
+      edges={["bottom"]}
+    >
+      <ThemedView style={styles.container}>
+        <ThemedView style={styles.header}>
+          <ThemedText type="title" style={styles.title}>
+            {ASO.photographers?.title ?? "Photographers"} (
+            {photographers.length})
           </ThemedText>
-        )}
+          {!!ASO.photographers?.description && (
+            <ThemedText style={styles.subtitle}>
+              {ASO.photographers.description}
+            </ThemedText>
+          )}
+        </ThemedView>
+        <FlatList
+          data={photographers}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={styles.listContent}
+          renderItem={renderItem}
+        />
       </ThemedView>
-      <FlatList
-        data={photographers}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContent}
-        renderItem={renderItem}
-      />
-    </ThemedView>
+    </SafeAreaView>
   );
 };
 

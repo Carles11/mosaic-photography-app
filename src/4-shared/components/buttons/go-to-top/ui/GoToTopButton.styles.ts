@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     borderRadius: 24,
     position: "absolute",
     right: 11,
-    bottom: 65,
+    bottom: 11,
     elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
