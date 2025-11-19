@@ -1,3 +1,4 @@
+// @/2-features/auth/api/verifyEmail.ts - WITH EMAIL
 import { supabase } from "@/4-shared/api/supabaseClient";
 
 type VerifyEmailResult = {
@@ -10,24 +11,29 @@ export async function verifyEmail(
   type: string
 ): Promise<VerifyEmailResult> {
   try {
+    console.log("[verifyEmail] Starting verification with:", {
+      email,
+      token: token ? `${token.substring(0, 10)}...` : "empty",
+      type,
+    });
+
     const { error } = await supabase.auth.verifyOtp({
       email: email,
       token: token,
-      type: type as
-        | "magiclink"
-        | "recovery"
-        | "invite"
-        | "signup"
-        | "email"
-        | "email_change",
+      type: type as any,
     });
 
+    if (error) {
+      console.error("[verifyEmail] verifyOtp error:", error);
+      return { error: error.message };
+    }
+
+    console.log("[verifyEmail] Email verified successfully");
+    return { error: null };
+  } catch (err: any) {
+    console.error("[verifyEmail] Unexpected error:", err);
     return {
-      error: error?.message ?? null,
-    };
-  } catch (err) {
-    return {
-      error: "Verification failed. Please try again.",
+      error: err?.message || "Email verification failed. Please try again.",
     };
   }
 }
