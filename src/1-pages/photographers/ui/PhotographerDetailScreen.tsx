@@ -23,6 +23,7 @@ import {
   DownloadOption,
   getAvailableDownloadOptionsForImage,
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { PhotographerSlug } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
@@ -34,6 +35,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographerDetailScreen.styles";
 
 const PhotographerDetailScreen: React.FC = () => {
@@ -74,6 +76,8 @@ const PhotographerDetailScreen: React.FC = () => {
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null
   );
+
+  const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [zoomVisible, setZoomVisible] = useState(false);
@@ -372,7 +376,10 @@ const PhotographerDetailScreen: React.FC = () => {
   const galleryKey = `${galleryItemHeight}_${galleryImageHeight}_${galleryYearHeight}_${galleryDescriptionHeight}_${galleryFooterHeight}`;
 
   return (
-    <>
+    <SafeAreaView
+      style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
+      edges={["bottom"]}
+    >
       <Gallery
         key={galleryKey}
         galleryTitle={undefined}
@@ -440,7 +447,7 @@ const PhotographerDetailScreen: React.FC = () => {
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}
       />
-    </>
+    </SafeAreaView>
   );
 };
 

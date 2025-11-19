@@ -18,6 +18,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./FavoritesList.styles";
 
 export default function FavoritesList() {
@@ -191,28 +192,33 @@ export default function FavoritesList() {
   );
 
   return (
-    <ThemedView style={[styles.container]}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title" style={[styles.title]}>
-          {ASO.favorites.title} ({images.length})
-        </ThemedText>
-        <ThemedText style={[styles.subtitle]}>
-          {ASO.favorites.description}
-        </ThemedText>
+    <SafeAreaView
+      style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
+      edges={["bottom"]}
+    >
+      <ThemedView style={[styles.container]}>
+        <ThemedView style={styles.header}>
+          <ThemedText type="title" style={[styles.title]}>
+            {ASO.favorites.title} ({images.length})
+          </ThemedText>
+          <ThemedText style={[styles.subtitle]}>
+            {ASO.favorites.description}
+          </ThemedText>
+        </ThemedView>
+        <FlatList
+          data={images}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={styles.listContent}
+          renderItem={renderItem}
+        />
+        <AddToCollectionSheet ref={addCollectionSheetRef} />
+        <ZoomGalleryModal
+          visible={zoomVisible}
+          images={images}
+          initialIndex={zoomIndex}
+          onClose={() => setZoomVisible(false)}
+        />
       </ThemedView>
-      <FlatList
-        data={images}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContent}
-        renderItem={renderItem}
-      />
-      <AddToCollectionSheet ref={addCollectionSheetRef} />
-      <ZoomGalleryModal
-        visible={zoomVisible}
-        images={images}
-        initialIndex={zoomIndex}
-        onClose={() => setZoomVisible(false)}
-      />
-    </ThemedView>
+    </SafeAreaView>
   );
 }
