@@ -4,35 +4,33 @@ type PasswordResetResult = {
   error: string | null;
 };
 
-// Now requires email in addition to token and newPassword
 export async function passwordReset(
-  email: string,
-  token: string,
-  newPassword: string
+  newPassword: string,
+  accessToken: string,
+  refreshToken?: string
 ): Promise<PasswordResetResult> {
   try {
-    // Use verifyOtp for password reset tokens with required email param
-    const { error } = await supabase.auth.verifyOtp({
-      email: email,
-      token: token,
-      type: "recovery",
+    // This is the critical part!
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: refreshToken || "",
     });
 
-    if (error) {
-      return { error: error.message };
+    if (sessionError) {
+      return {
+        error: sessionError.message || "Failed to authenticate reset link.",
+      };
     }
 
-    // Update the password
+    // Now update the password
     const { error: updateError } = await supabase.auth.updateUser({
       password: newPassword,
     });
 
+    return { error: updateError?.message ?? null };
+  } catch (err: any) {
     return {
-      error: updateError?.message ?? null,
-    };
-  } catch (err) {
-    return {
-      error: "Password reset failed. Please try again.",
+      error: err?.message || "Password reset failed. Please try again.",
     };
   }
 }
