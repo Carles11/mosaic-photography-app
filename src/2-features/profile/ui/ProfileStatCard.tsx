@@ -2,8 +2,9 @@ import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useRouter } from "expo-router";
 import React from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { styles } from "./ProfileStatCard.styles";
 
 type ProfileStatCardProps = {
@@ -16,6 +17,7 @@ export const ProfileStatCard: React.FC<ProfileStatCardProps> = ({
   collectionsCount = 0,
 }) => {
   const { theme, mode } = useTheme();
+  const router = useRouter();
 
   return (
     <ThemedView
@@ -25,7 +27,11 @@ export const ProfileStatCard: React.FC<ProfileStatCardProps> = ({
       ]}
     >
       {/* Favorites */}
-      <View style={[styles.statBlock, styles.leftStat]}>
+      <Pressable
+        onPress={() => router.push("/favorites-list")}
+        style={[styles.statBlock, styles.leftStat]}
+        android_ripple={{ color: theme.border }}
+      >
         <IconSymbol
           name="favorite"
           type="material"
@@ -34,13 +40,17 @@ export const ProfileStatCard: React.FC<ProfileStatCardProps> = ({
         />
         <ThemedText style={styles.statLabel}>Favorites</ThemedText>
         <ThemedText style={styles.statValue}>{favoritesCount}</ThemedText>
-      </View>
+      </Pressable>
 
       {/* Divider */}
       <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
       {/* Collections */}
-      <View style={[styles.statBlock, styles.rightStat]}>
+      <Pressable
+        onPress={() => router.push("/collections/collections-list")}
+        style={[styles.statBlock, styles.rightStat]}
+        android_ripple={{ color: theme.border }}
+      >
         <IconSymbol
           name="collections-bookmark"
           type="material"
@@ -49,7 +59,7 @@ export const ProfileStatCard: React.FC<ProfileStatCardProps> = ({
         />
         <ThemedText style={styles.statLabel}>Collections</ThemedText>
         <ThemedText style={styles.statValue}>{collectionsCount}</ThemedText>
-      </View>
+      </Pressable>
     </ThemedView>
   );
 };
