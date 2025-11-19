@@ -68,14 +68,16 @@
         }
       ],
       "@react-native-firebase/app",
-      "expo-build-properties",
-      {
-        "ios": {
-          "useFrameworks": "static",
-          "podfileProperties": { "use_modular_headers!": true },
-          "buildReactNativeFromSource": true
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "podfileProperties": { "use_modular_headers!": true },
+            "buildReactNativeFromSource": true
+          }
         }
-      },
+      ],
       "expo-web-browser"
     ],
     "experiments": {
