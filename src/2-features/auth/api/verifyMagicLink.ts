@@ -5,13 +5,21 @@ type VerifyMagicLinkResult = {
 };
 
 export async function verifyMagicLink(
+  email: string,
   token: string,
   type: string
 ): Promise<VerifyMagicLinkResult> {
   try {
     const { error } = await supabase.auth.verifyOtp({
-      token_hash: token,
-      type: type as any,
+      email: email,
+      token: token,
+      type: type as
+        | "magiclink"
+        | "recovery"
+        | "invite"
+        | "signup"
+        | "email"
+        | "email_change",
     });
 
     return {

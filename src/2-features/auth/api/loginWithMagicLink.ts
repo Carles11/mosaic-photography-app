@@ -1,4 +1,5 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { saveMagicLinkEmail } from "@/4-shared/utility/emailStorage";
 
 type MagicLinkResult = {
   error: string | null;
@@ -7,6 +8,8 @@ type MagicLinkResult = {
 export async function loginWithMagicLink(
   email: string
 ): Promise<MagicLinkResult> {
+  await saveMagicLinkEmail(email);
+
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {

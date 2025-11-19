@@ -4,14 +4,17 @@ type PasswordResetResult = {
   error: string | null;
 };
 
+// Now requires email in addition to token and newPassword
 export async function passwordReset(
+  email: string,
   token: string,
   newPassword: string
 ): Promise<PasswordResetResult> {
   try {
-    // Use verifyOtp for password reset tokens
+    // Use verifyOtp for password reset tokens with required email param
     const { error } = await supabase.auth.verifyOtp({
-      token_hash: token,
+      email: email,
+      token: token,
       type: "recovery",
     });
 
