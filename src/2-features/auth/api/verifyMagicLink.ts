@@ -1,4 +1,3 @@
-// @/2-features/auth/api/verifyMagicLink.ts
 import { supabase } from "@/4-shared/api/supabaseClient";
 
 type VerifyMagicLinkResult = {
@@ -12,13 +11,6 @@ export async function verifyMagicLink(
   refreshToken?: string
 ): Promise<VerifyMagicLinkResult> {
   try {
-    console.log("[verifyMagicLink] Starting verification with:", {
-      email,
-      token: token ? `${token.substring(0, 10)}...` : "empty",
-      type,
-      hasRefreshToken: !!refreshToken,
-    });
-
     if (type === "magiclink") {
       // For magic links, we need to create a session with both access_token and refresh_token
       const { data, error } = await supabase.auth.setSession({
@@ -27,10 +19,7 @@ export async function verifyMagicLink(
       });
 
       if (error) {
-        console.error("[verifyMagicLink] setSession error:", error);
-
         // If setSession fails, try an alternative approach - use verifyOtp with the token
-        console.log("[verifyMagicLink] Trying verifyOtp as fallback...");
         const { error: verifyError } = await supabase.auth.verifyOtp({
           email: email,
           token: token,
@@ -38,18 +27,12 @@ export async function verifyMagicLink(
         });
 
         if (verifyError) {
-          console.error(
-            "[verifyMagicLink] verifyOtp also failed:",
-            verifyError
-          );
           return { error: verifyError.message };
         }
 
-        console.log("[verifyMagicLink] verifyOtp fallback succeeded");
         return { error: null };
       }
 
-      console.log("[verifyMagicLink] Session set successfully");
       return { error: null };
     } else {
       // For other OTP types (email, recovery, etc.), use verifyOtp
@@ -64,7 +47,6 @@ export async function verifyMagicLink(
       };
     }
   } catch (err: any) {
-    console.error("[verifyMagicLink] Unexpected error:", err);
     return {
       error:
         err?.message || "Magic link verification failed. Please try again.",

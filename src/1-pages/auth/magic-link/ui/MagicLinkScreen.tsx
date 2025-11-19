@@ -1,4 +1,3 @@
-// @/2-features/auth/screens/MagicLinkScreen.tsx
 import { verifyMagicLink } from "@/2-features/auth/api/verifyMagicLink";
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
@@ -42,7 +41,6 @@ export function MagicLinkScreen() {
   let magicParams: Record<string, string> = {};
   if ("#" in searchParams && typeof searchParams["#"] === "string") {
     magicParams = parseHashParams(searchParams["#"]);
-    console.log("[MagicLinkScreen] Extracted hash params:", magicParams);
   }
 
   // New: Email state from storage or manual input
@@ -58,7 +56,6 @@ export function MagicLinkScreen() {
   const [verificationAttempted, setVerificationAttempted] = useState(false);
 
   useEffect(() => {
-    console.log("[MagicLinkScreen] === COMPONENT RENDERED ===");
     navigation.setOptions({
       title: "Magic Link Login",
     });
@@ -67,7 +64,6 @@ export function MagicLinkScreen() {
   useEffect(() => {
     Linking.getInitialURL().then((url) => {
       setDeepLinkUrl(url);
-      console.log("[MagicLinkScreen] Linking.getInitialURL:", url);
     });
   }, []);
 
@@ -78,7 +74,6 @@ export function MagicLinkScreen() {
       const stored = await getMagicLinkEmail();
       if (!didCancel) {
         setEmail(stored ?? undefined);
-        console.log("[MagicLinkScreen] Loaded stored email:", stored);
       }
     })();
     return () => {
@@ -90,18 +85,12 @@ export function MagicLinkScreen() {
   useEffect(() => {
     const verifyFromParams = async () => {
       if (verificationAttempted) {
-        console.log(
-          "[MagicLinkScreen] Verification already attempted, skipping"
-        );
         return;
       }
-
-      console.log("[MagicLinkScreen] Starting verification from params...");
 
       // Get parameters from all possible sources
       const urlParams = await getInitialDeepLinkParamsAsync();
       setParamsFromUrl(urlParams);
-      console.log("[MagicLinkScreen] Deep link params:", urlParams);
 
       // Extract token and type with priority to deep link params
       const token =
@@ -114,10 +103,7 @@ export function MagicLinkScreen() {
       const type =
         urlParams?.type || magicParams.type || searchParams.type || "magiclink";
 
-      console.log("[MagicLinkScreen] Final extracted params:", { token, type });
-
       if (!token) {
-        console.log("[MagicLinkScreen] No token found in any source");
         setStatus("error");
         setError("Invalid magic link. No authentication token found.");
         setVerificationAttempted(true);
@@ -133,7 +119,6 @@ export function MagicLinkScreen() {
       // Get stored email
       const storedEmail = await getMagicLinkEmail();
       if (!storedEmail) {
-        console.log("[MagicLinkScreen] No stored email found");
         setStatus("error");
         setError("Session expired. Please request a new magic link.");
         setVerificationAttempted(true);
@@ -163,12 +148,6 @@ export function MagicLinkScreen() {
     setError(null);
     setVerifyResult(null);
 
-    console.log("[MagicLinkScreen] handleMagicLinkVerification called with:", {
-      emailParam,
-      tokenParam: tokenParam ? `${tokenParam.substring(0, 10)}...` : "empty",
-      typeParam,
-    });
-
     logEvent("magic_link_verification_attempt", {
       email: emailParam,
       token_length: tokenParam?.length || 0,
@@ -179,7 +158,6 @@ export function MagicLinkScreen() {
       // Extract refresh token from URL parameters if available
       const refreshToken =
         paramsFromUrl?.refresh_token || magicParams.refresh_token;
-      console.log("[MagicLinkScreen] Refresh token available:", !!refreshToken);
 
       const result = await verifyMagicLink(
         emailParam,
@@ -188,7 +166,6 @@ export function MagicLinkScreen() {
         refreshToken
       );
       setVerifyResult(result);
-      console.log("[MagicLinkScreen] verifyMagicLink result:", result);
 
       if (result && result.error) {
         setStatus("error");
@@ -215,7 +192,6 @@ export function MagicLinkScreen() {
         type: typeParam,
         error: e?.message || "Unexpected JS error",
       });
-      console.log("[MagicLinkScreen] Caught JS error:", e);
     }
   };
 
@@ -242,44 +218,44 @@ export function MagicLinkScreen() {
     setStatus("verifying");
   };
 
-  const debugBlock = (
-    <ThemedView
-      style={{
-        backgroundColor: "#222",
-        margin: 16,
-        borderRadius: 8,
-        padding: 8,
-        opacity: 0.85,
-      }}
-    >
-      <ThemedText
-        style={{ fontFamily: "monospace", fontSize: 10, color: "#39f" }}
-      >
-        [DEBUG] Deep Link URL:{"\n"}
-        {deepLinkUrl ?? "n/a"}
-        {"\n"}
-        [DEBUG] useLocalSearchParams:{"\n"}
-        {JSON.stringify(searchParams, null, 2)}
-        {"\n"}
-        [DEBUG] Extracted Hash Params:{"\n"}
-        {JSON.stringify(magicParams, null, 2)}
-        {"\n"}
-        [DEBUG] Params from URL:{"\n"}
-        {JSON.stringify(paramsFromUrl, null, 2)}
-        {"\n"}
-        [DEBUG] State Email: {email}
-        {"\n"}
-        [DEBUG] Verify Result:{"\n"}
-        {JSON.stringify(verifyResult, null, 2)}
-        {"\n"}
-        [DEBUG] Status: {status}
-        {"\n"}
-        [DEBUG] Error: {error}
-        {"\n"}
-        [DEBUG] Verification Attempted: {verificationAttempted.toString()}
-      </ThemedText>
-    </ThemedView>
-  );
+  // const debugBlock = (
+  //   <ThemedView
+  //     style={{
+  //       backgroundColor: "#222",
+  //       margin: 16,
+  //       borderRadius: 8,
+  //       padding: 8,
+  //       opacity: 0.85,
+  //     }}
+  //   >
+  //     <ThemedText
+  //       style={{ fontFamily: "monospace", fontSize: 10, color: "#39f" }}
+  //     >
+  //       [DEBUG] Deep Link URL:{"\n"}
+  //       {deepLinkUrl ?? "n/a"}
+  //       {"\n"}
+  //       [DEBUG] useLocalSearchParams:{"\n"}
+  //       {JSON.stringify(searchParams, null, 2)}
+  //       {"\n"}
+  //       [DEBUG] Extracted Hash Params:{"\n"}
+  //       {JSON.stringify(magicParams, null, 2)}
+  //       {"\n"}
+  //       [DEBUG] Params from URL:{"\n"}
+  //       {JSON.stringify(paramsFromUrl, null, 2)}
+  //       {"\n"}
+  //       [DEBUG] State Email: {email}
+  //       {"\n"}
+  //       [DEBUG] Verify Result:{"\n"}
+  //       {JSON.stringify(verifyResult, null, 2)}
+  //       {"\n"}
+  //       [DEBUG] Status: {status}
+  //       {"\n"}
+  //       [DEBUG] Error: {error}
+  //       {"\n"}
+  //       [DEBUG] Verification Attempted: {verificationAttempted.toString()}
+  //     </ThemedText>
+  //   </ThemedView>
+  // );
 
   return (
     <KeyboardAvoidingView
@@ -329,7 +305,7 @@ export function MagicLinkScreen() {
                 {error}
               </ThemedText>
             )}
-            {debugBlock}
+            {/* {debugBlock} */}
           </>
         )}
         {status === "verifying" && email && (
@@ -339,7 +315,7 @@ export function MagicLinkScreen() {
             <ThemedText style={[styles.subtitle, { color: theme.text }]}>
               Verifying your magic link for {email}
             </ThemedText>
-            {debugBlock}
+            {/* {debugBlock} */}
           </>
         )}
         {status !== "verifying" && (
@@ -366,7 +342,7 @@ export function MagicLinkScreen() {
                 <PrimaryButton title="Go to Login" onPress={handleGoToLogin} />
               </>
             )}
-            {debugBlock}
+            {/* {debugBlock} */}
           </>
         )}
       </ThemedView>
