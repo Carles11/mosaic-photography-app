@@ -1,6 +1,10 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  page: {
+    paddingTop: 0, // navigation handles status bar
+    marginTop: 0,
+  },
   container: {
     flex: 1,
     paddingHorizontal: 18,

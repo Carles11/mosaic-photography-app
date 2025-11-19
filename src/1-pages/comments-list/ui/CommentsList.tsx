@@ -14,6 +14,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { UserCommentWithImage } from "@/4-shared/types/comments";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Image } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./CommentsList.styles";
 
 export default function CommentsList() {
@@ -127,115 +128,122 @@ export default function CommentsList() {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <ThemedView style={styles.header}>
-        <ThemedText type="title" style={styles.title}>
-          Your Comments ({comments.length})
-        </ThemedText>
-        <ThemedText style={styles.subtitle}>
-          All comments you've made on gallery images.
-        </ThemedText>
-      </ThemedView>
-      <FlatList
-        data={comments}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => {
-          const image = item.image;
-          let thumbnailUrl = "";
-          if (image) {
-            const { url } = getBestS3FolderForWidth(image, 100);
-            thumbnailUrl = url;
-          }
-          return (
-            <ThemedView style={styles.imageCard}>
-              {thumbnailUrl ? (
-                <Image
-                  source={{ uri: thumbnailUrl }}
-                  style={styles.thumbnail}
-                  resizeMode="cover"
-                />
-              ) : (
-                <ThemedView
-                  style={[
-                    styles.thumbnail,
-                    {
-                      backgroundColor: "#333",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    },
-                  ]}
-                >
-                  <ThemedText style={{ color: "#fff", fontSize: 12 }}>
-                    No image
-                  </ThemedText>
-                </ThemedView>
-              )}
-              <ThemedView style={styles.imageInfo}>
-                <ThemedText style={styles.imageAuthor}>
-                  {image?.author}
-                </ThemedText>
-                <ThemedText style={styles.imageTitle}>
-                  {image?.title}
-                </ThemedText>
-                <ThemedText style={styles.imageYear}>{image?.year}</ThemedText>
-                {editId === item.id ? (
-                  <>
-                    <ThemedText style={[styles.editLabel, { marginTop: 8 }]}>
-                      Editing:
-                    </ThemedText>
-                    <ThemedTextInput
-                      value={editContent}
-                      onChangeText={setEditContent}
-                      style={styles.editTextArea}
-                      autoFocus
-                      multiline
-                      maxLength={500}
-                      placeholder="Edit your comment..."
-                    />
-                    <ThemedView style={styles.editActions}>
-                      <PrimaryButton
-                        title="Save"
-                        onPress={() => handleEditSave(item)}
-                        disabled={authLoading || !editContent.trim()}
-                      />
-                      <SecondaryButton
-                        title="Cancel"
-                        onPress={() => setEditId(null)}
-                      />
-                    </ThemedView>
-                  </>
+    <SafeAreaView
+      style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
+      edges={["bottom"]}
+    >
+      <ThemedView style={styles.container}>
+        <ThemedView style={styles.header}>
+          <ThemedText type="title" style={styles.title}>
+            Your Comments ({comments.length})
+          </ThemedText>
+          <ThemedText style={styles.subtitle}>
+            All comments you've made on gallery images.
+          </ThemedText>
+        </ThemedView>
+        <FlatList
+          data={comments}
+          keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={styles.listContent}
+          renderItem={({ item }) => {
+            const image = item.image;
+            let thumbnailUrl = "";
+            if (image) {
+              const { url } = getBestS3FolderForWidth(image, 100);
+              thumbnailUrl = url;
+            }
+            return (
+              <ThemedView style={styles.imageCard}>
+                {thumbnailUrl ? (
+                  <Image
+                    source={{ uri: thumbnailUrl }}
+                    style={styles.thumbnail}
+                    resizeMode="cover"
+                  />
                 ) : (
-                  <>
-                    <ThemedText
-                      style={styles.menuItemText}
-                      numberOfLines={3}
-                      ellipsizeMode="tail"
-                    >
-                      {item.content}
+                  <ThemedView
+                    style={[
+                      styles.thumbnail,
+                      {
+                        backgroundColor: "#333",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      },
+                    ]}
+                  >
+                    <ThemedText style={{ color: "#fff", fontSize: 12 }}>
+                      No image
                     </ThemedText>
-                    <ThemedText style={styles.commentDate}>
-                      {new Date(item.created_at).toLocaleString()}
-                    </ThemedText>
-                    <ThemedView style={styles.commentActions}>
-                      <OnlyTextButton
-                        title="Edit"
-                        onPress={() => handleEdit(item)}
-                        style={styles.editButton}
-                      />
-                      <SecondaryButton
-                        title="Delete"
-                        onPress={() => handleDelete(item)}
-                        style={styles.deleteButton}
-                      />
-                    </ThemedView>
-                  </>
+                  </ThemedView>
                 )}
+                <ThemedView style={styles.imageInfo}>
+                  <ThemedText style={styles.imageAuthor}>
+                    {image?.author}
+                  </ThemedText>
+                  <ThemedText style={styles.imageTitle}>
+                    {image?.title}
+                  </ThemedText>
+                  <ThemedText style={styles.imageYear}>
+                    {image?.year}
+                  </ThemedText>
+                  {editId === item.id ? (
+                    <>
+                      <ThemedText style={[styles.editLabel, { marginTop: 8 }]}>
+                        Editing:
+                      </ThemedText>
+                      <ThemedTextInput
+                        value={editContent}
+                        onChangeText={setEditContent}
+                        style={styles.editTextArea}
+                        autoFocus
+                        multiline
+                        maxLength={500}
+                        placeholder="Edit your comment..."
+                      />
+                      <ThemedView style={styles.editActions}>
+                        <PrimaryButton
+                          title="Save"
+                          onPress={() => handleEditSave(item)}
+                          disabled={authLoading || !editContent.trim()}
+                        />
+                        <SecondaryButton
+                          title="Cancel"
+                          onPress={() => setEditId(null)}
+                        />
+                      </ThemedView>
+                    </>
+                  ) : (
+                    <>
+                      <ThemedText
+                        style={styles.menuItemText}
+                        numberOfLines={3}
+                        ellipsizeMode="tail"
+                      >
+                        {item.content}
+                      </ThemedText>
+                      <ThemedText style={styles.commentDate}>
+                        {new Date(item.created_at).toLocaleString()}
+                      </ThemedText>
+                      <ThemedView style={styles.commentActions}>
+                        <OnlyTextButton
+                          title="Edit"
+                          onPress={() => handleEdit(item)}
+                          style={styles.editButton}
+                        />
+                        <SecondaryButton
+                          title="Delete"
+                          onPress={() => handleDelete(item)}
+                          style={styles.deleteButton}
+                        />
+                      </ThemedView>
+                    </>
+                  )}
+                </ThemedView>
               </ThemedView>
-            </ThemedView>
-          );
-        }}
-      />
-    </ThemedView>
+            );
+          }}
+        />
+      </ThemedView>
+    </SafeAreaView>
   );
 }
