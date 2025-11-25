@@ -74,6 +74,7 @@ function InnerLayout() {
       headerTitleStyle: {
         fontFamily: "TradeGothic-Bold",
         fontSize: 18,
+        color: theme.text
       },
       headerShadowVisible: false,
     }),
