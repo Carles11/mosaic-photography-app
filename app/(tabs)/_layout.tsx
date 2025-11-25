@@ -29,6 +29,7 @@ export default function TabLayout() {
           disableTransparentOnScrollEdge: Platform.OS === "ios",
           minimizeBehavior: "onScrollDown" as "onScrollDown",
           shadowColor: theme.border,
+          showLabel: false
         }
       : {}),
   };
