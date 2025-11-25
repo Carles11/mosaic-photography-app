@@ -2,6 +2,7 @@ import { IconSymbolProps, IconType } from '@/4-shared/types/icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { SymbolView, SymbolViewProps } from 'expo-symbols';
 import React from 'react';
 import { Platform, StyleProp, TextStyle, TouchableOpacity } from 'react-native';
 
@@ -21,6 +22,7 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
   onPress,
   accessibilityLabel,
   svgAsset: SvgAsset,
+  weight="regular"
 }) => {
   let resolvedType: IconType = type || (Platform.OS === 'ios' ? 'sf' : 'material');
   let iconName = name;
@@ -71,6 +73,18 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
     );
   } else if (resolvedType === 'sf') {
     if (Platform.OS !== 'ios') {
+iconElement=(
+   <SymbolView
+          name={name as SymbolViewProps['name']}
+          weight={weight}
+          tintColor={color}
+          resizeMode="scaleAspectFit"
+          style={[{ width: size, height: size }, style]}
+          accessibilityLabel={accessibilityLabel}
+        />
+)
+      
+} else {
       type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
       const mappedName = MATERIAL_ICON_MAPPING[iconName ? iconName : ''] || iconName;
       iconElement = (
@@ -82,8 +96,6 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
           accessibilityLabel={accessibilityLabel}
         />
       );
-    } else {
-      iconElement = null;
     }
   }
 
