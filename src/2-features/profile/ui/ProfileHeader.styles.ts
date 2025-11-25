@@ -28,11 +28,9 @@ export const styles = StyleSheet.create({
     shadowRadius: 10,
     borderWidth: 4,
 
-    height: "100%",
     zIndex: 2,
   },
   initial: {
-    height: "100%",
     textAlign: "center",
     textAlignVertical: "center",
     fontWeight: "bold",
