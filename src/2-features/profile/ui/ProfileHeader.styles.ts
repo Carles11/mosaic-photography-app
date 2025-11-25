@@ -21,12 +21,14 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
+
     elevation: 6,
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 10,
     borderWidth: 4,
 
+    height: "100%",
     zIndex: 2,
   },
   initial: {
