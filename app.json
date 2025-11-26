@@ -2,7 +2,7 @@
   "expo": {
     "name": "Iconic Photography",
     "slug": "mosaic-photography-app",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "default",
     "icon": "./src/4-shared/assets/expo-icons/icon.png",
     "scheme": "mosaicphotographyapp",
@@ -12,6 +12,7 @@
       "supportsTablet": true,
       "associatedDomains": ["applinks:www.mosaic.photography"],
       "bundleIdentifier": "com.carlosdelrio.mosaicphotographyapp",
+      "buildNumber": "2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
