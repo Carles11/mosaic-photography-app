@@ -12,7 +12,6 @@
       "supportsTablet": true,
       "associatedDomains": ["applinks:www.mosaic.photography"],
       "bundleIdentifier": "com.carlosdelrio.mosaicphotographyapp",
-      "buildNumber": "2",
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
