@@ -75,7 +75,11 @@ const SwipeableCard: React.FC<
           onPress={onPress}
           activeOpacity={onPress ? 0.85 : 1}
           disabled={!onPress}
-          style={[styles.card, containerStyle]}
+          style={[
+            styles.card,
+            containerStyle,
+            { backgroundColor: theme.background },
+          ]}
         >
           {/* Left: Image */}
           <View style={styles.imageContainer}>
