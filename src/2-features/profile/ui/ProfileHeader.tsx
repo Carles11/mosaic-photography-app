@@ -53,6 +53,8 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             {
               color: mode === "light" ? theme.accent : "#fff",
               fontSize: size * 0.45,
+              width: size,
+              height: size / 1.5,
             },
           ]}
         >
