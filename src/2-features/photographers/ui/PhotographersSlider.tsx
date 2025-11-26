@@ -1,3 +1,4 @@
+import { OnlyTextButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import {
@@ -10,7 +11,6 @@ import {
   ActivityIndicator,
   FlatList,
   Platform,
-  TouchableOpacity,
   UIManager,
   View,
 } from "react-native";
@@ -81,13 +81,12 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         <ThemedText type="subtitle" style={styles.titleLeft}>
           Featured Photographers
         </ThemedText>
-        <TouchableOpacity
+
+        <OnlyTextButton
+          title="Photographers list"
+          style={styles.titleRight}
           onPress={() => router.push("/photographer/photographers-list")}
-        >
-          <ThemedText type="defaultSemiBold" style={styles.titleRight}>
-            Photographers list
-          </ThemedText>
-        </TouchableOpacity>
+        />
       </ThemedView>
       <FlatList
         data={photographers}

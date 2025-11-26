@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     marginBottom: 32,
     textAlign: "center",
+    height: 34,
   },
 
   error: {

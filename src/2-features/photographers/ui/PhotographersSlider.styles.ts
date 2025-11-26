@@ -12,23 +12,16 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    height: 95,
+    marginVertical: 24,
   },
   titleLeft: {
-    marginTop: 16,
-    marginBottom: 22,
-    paddingLeft: 6,
+    alignItems: "center",
   },
   titleRight: {
-    marginTop: 16,
-    marginBottom: 22,
-    paddingRight: 6,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    alignItems: "center",
+    marginTop: 0,
   },
+
   listContent: {
     paddingRight: 0,
   },

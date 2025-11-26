@@ -94,9 +94,7 @@ export function ForgotPasswordScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={[styles.title]}>
-          Forgot Password
-        </ThemedText>
+        <ThemedText style={styles.title}>Forgot Password</ThemedText>
 
         <ThemedTextInput
           value={email}

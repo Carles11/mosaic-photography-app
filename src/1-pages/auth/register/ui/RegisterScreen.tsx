@@ -88,9 +88,7 @@ export const RegisterScreen: React.FC = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={[styles.title]}>
-          Register
-        </ThemedText>
+        <ThemedText style={[styles.title]}>Register</ThemedText>
 
         <ThemedTextInput
           value={email}
