@@ -12,6 +12,7 @@ import { useComments } from "@/4-shared/context/comments/CommentsContext";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { UserCommentWithImage } from "@/4-shared/types/comments";
+import { useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, FlatList, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,6 +26,8 @@ export default function CommentsList() {
   const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>("");
+const navigation = useNavigation()
+
 
   useEffect(() => {
     const load = async () => {

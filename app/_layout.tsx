@@ -68,11 +68,13 @@ function InnerLayout() {
   const { mode, theme } = useTheme();
   const defaultScreenOptions = useMemo(
     () => ({
+      title:"Back",
       headerStyle: { backgroundColor: theme.background },
       headerTintColor: theme.text,
       headerTitleStyle: {
         fontFamily: "TradeGothic-Bold",
         fontSize: 18,
+        color: theme.text
       },
       headerShadowVisible: false,
     }),

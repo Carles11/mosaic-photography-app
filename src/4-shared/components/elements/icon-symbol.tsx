@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 import { IconSymbolProps, IconType } from "@/4-shared/types/icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import React from "react";
 import { Platform, StyleProp, TextStyle, TouchableOpacity } from "react-native";
+=======
+import { IconSymbolProps, IconType } from '@/4-shared/types/icons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { SymbolView, SymbolViewProps } from 'expo-symbols';
+import React from 'react';
+import { Platform, StyleProp, TextStyle, TouchableOpacity } from 'react-native';
+>>>>>>> 023d4c085a7f5ddb132e0ff9f53d0f91e654c6d1
 
 const MATERIAL_ICON_MAPPING: Record<string, string> = {
   "house.fill": "home",
@@ -21,6 +31,7 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
   onPress,
   accessibilityLabel,
   svgAsset: SvgAsset,
+  weight="regular"
 }) => {
   let resolvedType: IconType =
     type || (Platform.OS === "ios" ? "sf" : "material");
@@ -72,6 +83,7 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
         accessibilityLabel={accessibilityLabel}
       />
     );
+<<<<<<< HEAD
   } else if (resolvedType === "sf") {
     if (Platform.OS !== "ios") {
       type MaterialIconName = React.ComponentProps<
@@ -79,6 +91,24 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
       >["name"];
       const mappedName =
         MATERIAL_ICON_MAPPING[iconName ? iconName : ""] || iconName;
+=======
+  } else if (resolvedType === 'sf') {
+    if (Platform.OS !== 'ios') {
+iconElement=(
+   <SymbolView
+          name={name as SymbolViewProps['name']}
+          weight={weight}
+          tintColor={color}
+          resizeMode="scaleAspectFit"
+          style={[{ width: size, height: size }, style]}
+          accessibilityLabel={accessibilityLabel}
+        />
+)
+      
+} else {
+      type MaterialIconName = React.ComponentProps<typeof MaterialIcons>['name'];
+      const mappedName = MATERIAL_ICON_MAPPING[iconName ? iconName : ''] || iconName;
+>>>>>>> 023d4c085a7f5ddb132e0ff9f53d0f91e654c6d1
       iconElement = (
         <MaterialIcons
           name={mappedName as MaterialIconName}
@@ -88,8 +118,6 @@ export const IconSymbol: React.FC<IconSymbolProps> = ({
           accessibilityLabel={accessibilityLabel}
         />
       );
-    } else {
-      iconElement = null;
     }
   }
 

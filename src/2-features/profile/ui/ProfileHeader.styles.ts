@@ -21,6 +21,7 @@ export const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
+
     elevation: 6,
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 3 },
@@ -30,7 +31,6 @@ export const styles = StyleSheet.create({
     zIndex: 2,
   },
   initial: {
-    height: "100%",
     textAlign: "center",
     textAlignVertical: "center",
     fontWeight: "bold",

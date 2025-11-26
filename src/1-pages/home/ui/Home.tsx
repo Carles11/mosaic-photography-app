@@ -25,7 +25,7 @@ import { PhotographerSlug } from "@/4-shared/types/photographers";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Linking, Share } from "react-native";
+import { Linking, Platform, Share } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
@@ -74,7 +74,7 @@ export const Home: React.FC = () => {
   // --- ASO / Analytics: Set navigation title to optimal ASO string ---
   useEffect(() => {
     navigation.setOptions?.({
-      title: ASO.home.title,
+      title: Platform.OS === "android" ? ASO.home.title : "Home",
       subtitle: ASO.home.description,
     });
   }, [navigation]);
