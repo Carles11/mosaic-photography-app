@@ -11,6 +11,18 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
+  badge: {
+    position: "absolute",
+    bottom: 4,
+    left: 22,
+    backgroundColor: "#EB3B34",
+    borderRadius: 4,
+    width: 8,
+    height: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1,
+  },
   logo: {
     width: 40,
     height: 40,

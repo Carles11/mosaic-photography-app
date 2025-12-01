@@ -11,7 +11,7 @@ import {
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useRef } from "react";
-import { Platform, TouchableOpacity, View } from "react-native";
+import { Platform, Pressable, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
@@ -57,6 +57,14 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
     });
   };
 
+  const handleTextChange = (value: string) => {
+    setFilters({ ...filters, text: value });
+  };
+
+  const handleClearText = () => {
+    setFilters({ ...filters, text: "" });
+  };
+
   return (
     <ReusableBottomSheetModal
       ref={bottomSheetModalRef}
@@ -77,6 +85,29 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             <ThemedText type="title" style={styles.title}>
               Gallery Filters
             </ThemedText>
+
+            {/* --- Text Search Filter --- */}
+            <ThemedText type="subtitle" style={styles.label}>
+              Search by keywords
+            </ThemedText>
+            <View style={styles.textSearchContainer}>
+              <BottomSheetTextInput
+                style={styles.input}
+                value={filters.text ?? ""}
+                placeholder="Type to search images..."
+                onChangeText={handleTextChange}
+                placeholderTextColor={theme.inputPlaceholderColor}
+                returnKeyType="search"
+                autoCorrect={false}
+                autoCapitalize="none"
+              />
+              {filters.text ? (
+                <Pressable onPress={handleClearText} style={styles.clearButton}>
+                  <ThemedText style={styles.clearButtonText}>✕</ThemedText>
+                </Pressable>
+              ) : null}
+            </View>
+
             {/* Gender Filter */}
             <ThemedText type="subtitle" style={styles.label}>
               Gender

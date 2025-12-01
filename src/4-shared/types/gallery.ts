@@ -83,6 +83,7 @@ export type GalleryFilter = {
   color?: string;
   print_quality?: string;
   year?: { from: number; to: number };
+  text?: string;
 };
 
 export type UseGalleryFiltersReturn = {

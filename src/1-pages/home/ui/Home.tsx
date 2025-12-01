@@ -59,7 +59,8 @@ export const Home: React.FC = () => {
   const imageMenuSheetRef = useRef<any>(null);
   const reportSheetRef = useRef<ReportBottomSheetRef>(null);
 
-  const { filters, setFilters, resetFilters } = useGalleryFilters();
+  const { filters, setFilters, resetFilters, filtersActive } =
+    useGalleryFilters();
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,6 +128,17 @@ export const Home: React.FC = () => {
             (img.year === undefined || img.year > filters.year.to)))
       )
         return false;
+
+      // --- New text filter ---
+      if (filters.text && filters.text.trim() !== "") {
+        const query = filters.text.trim().toLowerCase();
+        const title = (img.title ?? "").toLowerCase();
+        const description = (img.description ?? "").toLowerCase();
+        if (!title.includes(query) && !description.includes(query)) {
+          return false;
+        }
+      }
+
       return true;
     });
   }, [images, filters]);
@@ -313,7 +325,10 @@ export const Home: React.FC = () => {
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
       edges={["bottom", "top"]}
     >
-      <HomeHeader onOpenFilters={handleOpenFiltersMenu} />
+      <HomeHeader
+        onOpenFilters={handleOpenFiltersMenu}
+        filtersActive={filtersActive}
+      />
 
       <MainGallery
         images={filteredImages}

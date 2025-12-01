@@ -4,20 +4,26 @@ import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useRouter } from "expo-router";
 import React from "react";
+import { View } from "react-native";
 import { styles } from "./HomeHeader.styles";
 
 type HomeHeaderProps = {
   onOpenFilters?: () => void;
+  filtersActive?: boolean;
 };
 
-export const HomeHeader: React.FC<HomeHeaderProps> = ({ onOpenFilters }) => {
+export const HomeHeader: React.FC<HomeHeaderProps> = ({
+  onOpenFilters,
+  filtersActive,
+}) => {
   const colorScheme = useColorScheme();
   const theme = globalTheme[colorScheme];
   const router = useRouter();
-
+  console.log("HomeHeader rendered with filtersActive:", filtersActive);
   return (
     <ThemedView style={styles.header}>
       <ThemedView style={styles.iconsRow}>
+        {filtersActive ? <View style={styles.badge} /> : null}
         <IconSymbol
           type="ion"
           name="filter"

@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
 
   container: {
     flexGrow: 1,
-    minHeight: 600,
+    paddingBottom: 32,
   },
   title: {
     fontWeight: "bold",
@@ -67,5 +67,22 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 18,
     gap: 24,
+  },
+  // New styles for text search
+  textSearchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    marginTop: 4,
+  },
+  clearButton: {
+    marginLeft: 6,
+    padding: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  clearButtonText: {
+    fontSize: 17,
+    color: "#888",
   },
 });

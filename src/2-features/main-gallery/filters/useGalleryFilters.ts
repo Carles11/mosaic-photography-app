@@ -18,7 +18,8 @@ export function useGalleryFilters(
       !!filters.print_quality ||
       (filters.year &&
         typeof filters.year.from === "number" &&
-        typeof filters.year.to === "number")
+        typeof filters.year.to === "number") ||
+      (!!filters.text && filters.text.trim() !== "")
     );
   }, [filters]);
 
