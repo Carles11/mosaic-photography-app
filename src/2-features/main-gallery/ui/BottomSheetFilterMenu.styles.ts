@@ -2,14 +2,21 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   sheet: {
+    borderWidth: 1,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     overflow: "hidden",
     elevation: 8,
   },
 
+  safeArea: {
+    flex: 1,
+    padding: 12,
+  },
+
   container: {
-    padding: 20,
+    flexGrow: 1,
+    minHeight: 600,
   },
   title: {
     fontWeight: "bold",

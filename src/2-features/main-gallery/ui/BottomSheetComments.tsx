@@ -8,7 +8,7 @@ import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetCommentsProps } from "@/4-shared/types";
+import { BottomSheetCommentsProps, Comment } from "@/4-shared/types";
 import {
   BottomSheetFlatList,
   BottomSheetTextInput,
@@ -46,7 +46,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
         onDismiss={onClose}
         enablePanDownToClose
       >
-        <SafeAreaView edges={["bottom"]} style={[styles.safeArea, { flex: 1 }]}>
+        <SafeAreaView edges={["bottom"]} style={styles.safeArea}>
           <View style={{ flex: 1 }}>
             {isLoading ? (
               <ActivityIndicator size="small" style={styles.loadingIndicator} />
@@ -54,7 +54,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
               <BottomSheetFlatList
                 style={{ flex: 1 }}
                 data={comments}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item: Comment) => item.id}
                 ListHeaderComponent={
                   <ThemedText type="subtitle" style={styles.commentsTitle}>
                     Comments
@@ -69,7 +69,7 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                   ...styles.commentsList,
                   paddingBottom: 100,
                 }}
-                renderItem={({ item }) => (
+                renderItem={({ item }: { item: Comment }) => (
                   <ThemedView style={styles.commentItem}>
                     <ThemedView style={styles.commentInfo}>
                       <ThemedText type="defaultSemiBold">
