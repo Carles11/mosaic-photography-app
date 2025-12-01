@@ -15,6 +15,8 @@ export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
     ).catch(() => {});
   };
 
+  console.log("Rendering WebGalleryMessage for", name, surname, slug);
+
   return (
     <ThemedView
       style={[

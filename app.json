@@ -2,6 +2,7 @@
   "expo": {
     "name": "Iconic Photography",
     "slug": "mosaic-photography-app",
+    "displayName": "Mosaic Photography",
     "version": "1.1.0",
     "orientation": "default",
     "icon": "./src/4-shared/assets/expo-icons/icon.png",

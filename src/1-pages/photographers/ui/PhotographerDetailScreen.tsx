@@ -285,6 +285,10 @@ const PhotographerDetailScreen: React.FC = () => {
 
   const ListHeaderComponent = useCallback(() => {
     if (!photographer) return null;
+    console.log(
+      "Rendering ListHeaderComponent for photographer:",
+      photographer.slug
+    );
     return (
       <>
         <RevealOnScroll scrollY={scrollY} height={headerHeight} threshold={32}>
