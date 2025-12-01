@@ -10,8 +10,20 @@ import {
   BottomSheetScrollView,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import React, { useCallback, useEffect, useRef } from "react";
-import { Platform, Pressable, TouchableOpacity, View } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Platform,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
@@ -23,10 +35,12 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   setFilters,
   resetFilters,
   onClose,
+  photographerNames,
 }) => {
   const bottomSheetModalRef = useRef<any>(null);
   const { theme } = useTheme();
   const snapPoints = Platform.OS === "android" ? ["80%"] : ["60%"];
+  const [photographerSearch, setPhotographerSearch] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -35,6 +49,31 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
       bottomSheetModalRef.current?.dismiss();
     }
   }, [isOpen]);
+
+  // Filter photographerNames by search
+  const filteredPhotographers = useMemo(() => {
+    const query = photographerSearch.trim().toLowerCase();
+    if (!query) return []; // <-- show nothing until user starts typing
+    return photographerNames.filter((name) =>
+      name.toLowerCase().includes(query)
+    );
+  }, [photographerNames, photographerSearch]);
+
+  // Toggle photographer selection in filters.author[]
+  const toggleAuthor = (name: string) => {
+    const current = filters.author ?? [];
+    if (current.includes(name)) {
+      setFilters({ ...filters, author: current.filter((a) => a !== name) });
+    } else {
+      setFilters({ ...filters, author: [...current, name] });
+    }
+  };
+
+  // Clear button resets photographer selection
+  const clearAuthors = () => {
+    setFilters({ ...filters, author: [] });
+    setPhotographerSearch("");
+  };
 
   const handleClose = useCallback(() => {
     bottomSheetModalRef.current?.dismiss();
@@ -109,6 +148,57 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                   <ThemedText style={styles.clearButtonText}>✕</ThemedText>
                 </Pressable>
               ) : null}
+            </View>
+
+            {/* --- Photographer Search & Chips --- */}
+            <ThemedText type="subtitle" style={styles.label}>
+              Photographer
+            </ThemedText>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginBottom: 8,
+              }}
+            >
+              <BottomSheetTextInput
+                style={[styles.input, { flex: 1 }]}
+                value={photographerSearch}
+                onChangeText={setPhotographerSearch}
+                placeholder="Search photographer..."
+                autoCapitalize="words"
+                autoCorrect={false}
+              />
+              <TouchableOpacity
+                onPress={clearAuthors}
+                style={styles.clearButton}
+              >
+                <ThemedText style={styles.clearButtonText}>Clear</ThemedText>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.chipsRow}>
+              {filteredPhotographers.length === 0 ? (
+                <ThemedText style={styles.noResult}>No results</ThemedText>
+              ) : null}
+              {filteredPhotographers.map((name) => {
+                const selected = (filters.author ?? []).includes(name);
+                return (
+                  <TouchableOpacity
+                    key={name}
+                    style={[styles.chip, selected && styles.chipSelected]}
+                    onPress={() => toggleAuthor(name)}
+                  >
+                    <Text
+                      style={[
+                        styles.chipText,
+                        selected && styles.chipTextSelected,
+                      ]}
+                    >
+                      {name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             {/* Gender Filter */}

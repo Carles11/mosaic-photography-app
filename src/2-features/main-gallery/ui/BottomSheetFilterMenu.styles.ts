@@ -85,4 +85,36 @@ export const styles = StyleSheet.create({
     fontSize: 17,
     color: "#888",
   },
+  chipsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 12,
+  },
+  chip: {
+    backgroundColor: "#ededed",
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    margin: 4,
+    borderColor: "#bbb",
+    borderWidth: 1,
+  },
+  chipSelected: {
+    backgroundColor: "#3b82f6",
+    borderColor: "#1e4fa3",
+  },
+  chipText: {
+    color: "#222",
+  },
+  chipTextSelected: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  noResult: {
+    color: "#888",
+    fontStyle: "italic",
+    marginVertical: 10,
+  },
 });

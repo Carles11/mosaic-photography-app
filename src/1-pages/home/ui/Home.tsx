@@ -170,6 +170,17 @@ export const Home: React.FC = () => {
     }
   }, [commentsImageId]);
 
+  const photographerNames = useMemo(() => {
+    // Get all unique, non-empty author names
+    const namesSet = new Set<string>();
+    images.forEach((img) => {
+      if (img.author && img.author.trim() !== "") {
+        namesSet.add(img.author.trim());
+      }
+    });
+    return Array.from(namesSet).sort(); // optional: sort alphabetically
+  }, [images]);
+
   // TODO: Analytics: track scroll thresholds CRASHES THE APP ON SCROLL - FIX
 
   const handleOpenImageMenu = (image: GalleryImage) => {
@@ -362,6 +373,7 @@ export const Home: React.FC = () => {
           resetFilters();
           logEvent("filters_reset", {});
         }}
+        photographerNames={photographerNames}
       />
       <BottomSheetThreeDotsMenu
         ref={imageMenuSheetRef}

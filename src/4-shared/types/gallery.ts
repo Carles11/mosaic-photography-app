@@ -84,6 +84,7 @@ export type GalleryFilter = {
   print_quality?: string;
   year?: { from: number; to: number };
   text?: string;
+  author?: string[];
 };
 
 export type UseGalleryFiltersReturn = {
@@ -106,4 +107,5 @@ export type BottomSheetFilterMenuProps = {
   filters: GalleryFilter;
   setFilters: (filters: GalleryFilter) => void;
   resetFilters: () => void;
+  photographerNames: string[];
 };
