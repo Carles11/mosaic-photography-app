@@ -19,7 +19,8 @@ export function useGalleryFilters(
       (filters.year &&
         typeof filters.year.from === "number" &&
         typeof filters.year.to === "number") ||
-      (!!filters.text && filters.text.trim() !== "")
+      (!!filters.text && filters.text.trim() !== "") ||
+      (Array.isArray(filters.author) && filters.author.length > 0)
     );
   }, [filters]);
 

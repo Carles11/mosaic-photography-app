@@ -129,7 +129,7 @@ export const Home: React.FC = () => {
       )
         return false;
 
-      // --- New text filter ---
+      // --- text filter ---
       if (filters.text && filters.text.trim() !== "") {
         const query = filters.text.trim().toLowerCase();
         const title = (img.title ?? "").toLowerCase();
@@ -139,6 +139,17 @@ export const Home: React.FC = () => {
         }
       }
 
+      // --- Photographer (author) filter ---
+      if (Array.isArray(filters.author) && filters.author.length > 0) {
+        // Normalize image author for comparison
+        const imgAuthorNormalized = (img.author ?? "").trim().toLowerCase();
+        // Check if any selected author matches this image's author
+        const isAuthorSelected = filters.author.some(
+          (authorName) =>
+            imgAuthorNormalized === authorName.trim().toLowerCase()
+        );
+        if (!isAuthorSelected) return false;
+      }
       return true;
     });
   }, [images, filters]);
