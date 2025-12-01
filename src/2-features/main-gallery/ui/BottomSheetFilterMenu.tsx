@@ -42,7 +42,10 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   }, [onClose]);
 
   const handleChange = (key: keyof typeof filters, value: any) => {
-    setFilters({ ...filters, [key]: value });
+    setFilters({
+      ...filters,
+      [key]: filters[key] === value ? undefined : value,
+    });
   };
 
   const handleYearRangeChange = (field: "from" | "to", value: string) => {

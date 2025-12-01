@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
   },
 
   input: {
-    width: 72,
+    width: "100%",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
