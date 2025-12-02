@@ -34,7 +34,7 @@ export const MosaicToast = () => {
               ellipsizeMode="tail"
               style={{
                 fontSize: 14,
-                color: "#555",
+                color: "#454545ff",
                 marginTop: 2,
               }}
             >
@@ -70,7 +70,7 @@ export const MosaicToast = () => {
               ellipsizeMode="tail"
               style={{
                 fontSize: 14,
-                color: "#555",
+                color: "#454545ff",
                 marginTop: 2,
               }}
             >

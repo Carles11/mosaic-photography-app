@@ -25,15 +25,14 @@ import {
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { PhotographerSlug } from "@/4-shared/types";
-import { showErrorToast } from "@/4-shared/utility/toast/Toast";
+import { downloadImageToDevice } from "@/4-shared/utility/downloadImage";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/4-shared/utility/toast/Toast";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  Linking,
-  Share,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, Share, TouchableOpacity } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographerDetailScreen.styles";
@@ -199,22 +198,19 @@ const PhotographerDetailScreen: React.FC = () => {
   };
 
   const handleDownloadOption = async (option: DownloadOption) => {
-    if (!selectedImage) return;
-    if (!user) {
-      handleCloseImageMenu();
-      showErrorToast("Please log in to download images.");
-      router.push("/auth/login");
-      return;
-    }
-    try {
-      await Linking.openURL(option.url);
-      logEvent("image_download", {
-        imageId: selectedImage.id,
-        option: option.folder,
-      });
-    } catch (error) {
-      showErrorToast("Failed to open image URL for download.");
-    }
+    await downloadImageToDevice({
+      option,
+      selectedImage,
+      user,
+      logEvent,
+      showSuccessToast,
+      showErrorToast,
+      onRequireLogin: () => {
+        handleCloseImageMenu();
+        router.push("/auth/login");
+      },
+      origin: "photographer_detail_screen",
+    });
   };
 
   const handleShareImage = async () => {

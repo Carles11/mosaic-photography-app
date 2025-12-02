@@ -6,7 +6,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetThreeDotsMenuProps } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import React, { forwardRef, useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetThreeDotsMenu.styles";
@@ -73,11 +73,11 @@ export const BottomSheetThreeDotsMenu = forwardRef<
     return (
       <BottomSheetModal
         ref={ref}
-        snapPoints={["70%"]}
+        snapPoints={["80%"]}
         onDismiss={handleDismiss}
         enablePanDownToClose
       >
-        <BottomSheetView style={styles.sheetView}>
+        <BottomSheetScrollView contentContainerStyle={styles.sheetView}>
           <SafeAreaView edges={["bottom"]} style={styles.safeArea}>
             {selectedImage && (
               <>
@@ -123,7 +123,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
               </>
             )}
           </SafeAreaView>
-        </BottomSheetView>
+        </BottomSheetScrollView>
       </BottomSheetModal>
     );
   }
