@@ -152,7 +152,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
 
             {/* --- Photographer Search & Chips --- */}
             <ThemedText type="subtitle" style={styles.label}>
-              Photographer
+              Search by photographer
             </ThemedText>
             <View
               style={{

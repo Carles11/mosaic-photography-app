@@ -13,10 +13,10 @@ export const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 4,
     borderWidth: 1,
-    borderTopColor: "#c0c0c0",
   },
   originalBlock: {
     marginBottom: 18,
+    padding: 11,
   },
   originalTitleRow: {
     flexDirection: "row",

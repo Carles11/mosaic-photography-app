@@ -14,7 +14,6 @@ export async function downloadImageToDevice({
   origin,
 }: DownloadImageProps) {
   if (!selectedImage) return;
-
   if (!user) {
     if (onRequireLogin) onRequireLogin();
     showErrorToast("Please log in to download images.");

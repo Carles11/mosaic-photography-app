@@ -11,12 +11,21 @@ export const styles = StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 48,
+    top: 32,
     right: 24,
     zIndex: 100,
     backgroundColor: "rgba(30,30,30,0.7)",
-    borderRadius: 20,
-    padding: 8,
+    borderRadius: 12,
+    padding: 6,
+  },
+  downloadButton: {
+    position: "absolute",
+    top: 32,
+    right: 70,
+    backgroundColor: "rgba(30,30,30,0.7)",
+    borderRadius: 12,
+    padding: 6,
+    zIndex: 100,
   },
   imageWrapper: {
     width,
@@ -26,7 +35,7 @@ export const styles = StyleSheet.create({
   },
   indexIndicator: {
     position: "absolute",
-    top: 48,
+    top: 32,
     left: 24,
     zIndex: 100,
     backgroundColor: "rgba(30,30,30,0.7)",
@@ -36,7 +45,6 @@ export const styles = StyleSheet.create({
   },
   indexText: {
     color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 14,
   },
 });

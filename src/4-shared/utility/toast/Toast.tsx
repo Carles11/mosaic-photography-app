@@ -12,6 +12,7 @@ export const MosaicToast = () => {
         {...props}
         style={{
           borderLeftColor: theme.success,
+          zIndex: 999999999,
         }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         renderText1={({ children }: { children: React.ReactNode }) => (

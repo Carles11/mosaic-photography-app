@@ -4,7 +4,7 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
-import { StyleProp, ViewStyle } from "react-native";
+import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { styles } from "./DownloadOptionsPanel.styles";
 
 type DownloadOptionsPanelProps = {
@@ -13,6 +13,7 @@ type DownloadOptionsPanelProps = {
   selectedImage: Pick<GalleryImage, "print_quality" | "width" | "height">;
   onDownloadOption: (option: DownloadOption) => void;
   style?: StyleProp<ViewStyle>;
+  onClose?: () => void;
 };
 
 export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
@@ -21,16 +22,32 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
   selectedImage,
   onDownloadOption,
   style,
+  onClose,
 }) => {
   return (
     <ThemedView style={[styles.panelContainer, style]}>
+      {/* Close button in corner */}
+      {onClose && (
+        <Pressable
+          onPress={onClose}
+          style={{ alignSelf: "flex-end", marginBottom: 8 }}
+          accessibilityLabel="Close"
+        >
+          <ThemedText
+            type="defaultSemiBold"
+            style={{ fontSize: 24, color: "#fff" }}
+          >
+            ×
+          </ThemedText>
+        </Pressable>
+      )}
       {originalOption && (
         <ThemedView style={[styles.originalBlock]}>
           <ThemedView style={styles.originalTitleRow}>
             <ThemedText type="defaultSemiBold">Choose your option</ThemedText>
             <ThemedView style={styles.bestQualityBadge}>
               <ThemedText style={styles.bestQualityBadgeText}>
-                PRINT QUALITY:{" "}
+                QUALITY:{" "}
                 {selectedImage.print_quality?.toUpperCase() ?? "UNKNOWN"}
               </ThemedText>
             </ThemedView>
@@ -60,7 +77,7 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
 
       <ThemedView style={styles.webpBlock}>
         <ThemedView style={styles.webpTitleRow}>
-          <ThemedText>Fast & Free (for Devices)</ThemedText>
+          <ThemedText>Fast & Free (for digital use)</ThemedText>
           <ThemedView style={styles.webpBadge}>
             <ThemedText style={styles.webpBadgeText}>WEBP</ThemedText>
           </ThemedView>
