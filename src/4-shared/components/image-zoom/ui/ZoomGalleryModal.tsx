@@ -4,6 +4,7 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
 import { getAvailableDownloadOptionsForImage } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { ZoomGalleryModalProps } from "@/4-shared/types/gallery";
 import { downloadImageToDevice } from "@/4-shared/utility/downloadImage";
 import {
@@ -29,6 +30,8 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
   const carouselRef = useRef<any>(null);
   const [currentIndex, setCurrentIndex] = React.useState(initialIndex);
   const [showDownloadPanel, setShowDownloadPanel] = useState(false);
+
+  const { theme } = useTheme();
 
   React.useEffect(() => {
     if (visible) setCurrentIndex(initialIndex);
@@ -141,7 +144,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
               bottom: 0,
               zIndex: 100,
               padding: 24,
-              backgroundColor: "rgba(0,0,0,0.96)",
+              backgroundColor: theme.background,
               justifyContent: "center",
             }}
           />

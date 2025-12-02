@@ -2,6 +2,7 @@ import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
@@ -24,6 +25,8 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
   style,
   onClose,
 }) => {
+  const { theme } = useTheme();
+
   return (
     <ThemedView style={[styles.panelContainer, style]}>
       {/* Close button in corner */}
@@ -35,7 +38,7 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
         >
           <ThemedText
             type="defaultSemiBold"
-            style={{ fontSize: 24, color: "#fff" }}
+            style={{ fontSize: 24, color: theme.text }}
           >
             ×
           </ThemedText>
