@@ -258,6 +258,12 @@ export const Home: React.FC = () => {
   };
 
   const handleDownloadOption = async (option: DownloadOption) => {
+    if (Platform.OS === "ios" && option.format === "webp") {
+      showErrorToast(
+        "Please choose the print option. WebP images can't be saved to Photos on iOS."
+      );
+      return;
+    }
     await downloadImageToDevice({
       option,
       selectedImage,

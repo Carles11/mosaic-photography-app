@@ -14,7 +14,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Dimensions, Modal, TouchableOpacity } from "react-native";
+import { Dimensions, Modal, Platform, TouchableOpacity } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { ZoomImage } from "./ImageZoom";
 import { styles } from "./ZoomGalleryModal.styles";
@@ -119,6 +119,12 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
             webpOptions={webpOptions}
             selectedImage={currentImage}
             onDownloadOption={async (option) => {
+              if (Platform.OS === "ios" && option.format === "webp") {
+                showErrorToast(
+                  "Please choose the print option. WebP images can't be saved to Photos on iOS."
+                );
+                return;
+              }
               await downloadImageToDevice({
                 option,
                 selectedImage: currentImage,

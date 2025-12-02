@@ -32,7 +32,12 @@ import {
 } from "@/4-shared/utility/toast/Toast";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Share, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  Share,
+  TouchableOpacity,
+} from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographerDetailScreen.styles";
@@ -198,6 +203,12 @@ const PhotographerDetailScreen: React.FC = () => {
   };
 
   const handleDownloadOption = async (option: DownloadOption) => {
+    if (Platform.OS === "ios" && option.format === "webp") {
+      showErrorToast(
+        "Please choose the print option. WebP images can't be saved to Photos on iOS."
+      );
+      return;
+    }
     await downloadImageToDevice({
       option,
       selectedImage,
