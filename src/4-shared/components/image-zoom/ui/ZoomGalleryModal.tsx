@@ -123,6 +123,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                 showErrorToast(
                   "Please choose the print option. WebP images can't be saved to Photos on iOS."
                 );
+                onClose();
                 return;
               }
               await downloadImageToDevice({
