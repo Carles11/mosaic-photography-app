@@ -134,6 +134,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                 origin: "zoom-gallery",
               });
               setShowDownloadPanel(false);
+              onClose();
             }}
             onClose={() => setShowDownloadPanel(false)}
             style={{
