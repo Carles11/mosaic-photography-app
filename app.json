@@ -33,7 +33,31 @@
             {
               "scheme": "https",
               "host": "www.mosaic.photography",
-              "pathPrefix": "/"
+              "path": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "www.mosaic.photography",
+              "path": "/profile/collections"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "www.mosaic.photography",
+              "pathPrefix": "/auth"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
