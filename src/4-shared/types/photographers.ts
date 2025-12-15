@@ -59,6 +59,11 @@ export interface Store {
   store: string;
   website: string;
   affiliate?: boolean;
+
+  // Optional extra fields commonly stored in Supabase JSON:
+  image?: string; // thumbnail URL
+  item?: string; // e.g. "print" | "book"
+  description?: string;
 }
 
 export interface PhotographerLinksProps {
