@@ -1,4 +1,5 @@
 import { fetchPhotographersList } from "@/2-features/photographers/api/fetchPhotographersList";
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import SwipeableCard from "@/4-shared/components/swipeable-card/ui/SwipeableCard";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
@@ -75,8 +76,9 @@ const PhotographersList = () => {
         },
         {
           icon: (
-            <Ionicons
-              name="share-outline"
+            <IconSymbol
+              name="share"
+              type="material"
               size={26}
               color={mode === "light" ? theme.icon : theme.primary}
             />
