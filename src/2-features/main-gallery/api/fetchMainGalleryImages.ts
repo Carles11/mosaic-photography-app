@@ -39,8 +39,15 @@ function authorToFolder(author: string): string {
   return slugify(author);
 }
 
-export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
-  const { data: images, error } = await supabase.from("images_resize").select(
+/**
+ * Fetch main gallery images.
+ * @param includeNudes - false (default) to hide nude images; true to include nude images.
+ */
+export async function fetchMainGalleryImages(
+  includeNudes: boolean = false
+): Promise<GalleryImage[]> {
+  // Build base query
+  let query = supabase.from("images_resize").select(
     `
       id,
       base_url,
@@ -59,25 +66,26 @@ export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
       year
     `
   );
-  // .eq("nudity", "not-nude");
+
+  // Apply "not-nude" filter when we do NOT want to include nudes
+  if (!includeNudes) {
+    query = query.eq("nudity", "not-nude");
+  }
+
+  const { data: images, error } = await query;
 
   if (error || !images) {
     console.log("Error fetching images:", error);
     return [];
   }
 
-  // Use device screen width for optimal image size selection
-  // If you want to use actual rendered width, pass it in from your component instead of using screenWidth here.
   const screenWidth = require("react-native").Dimensions.get("window").width;
   const pixelDensity = require("react-native").PixelRatio.get();
   const effectiveWidth = screenWidth * pixelDensity;
 
-  // Synchronous, performant mapping using S3 logic
   return images.map((img) => {
     const photographerFolder = authorToFolder(img.author);
 
-    // Construct base_url if not present (fallback to full CDN path)
-    // If your base_url is always present and correct in Supabase, you can omit this fallback logic.
     const baseUrl =
       img.base_url ||
       `https://cdn.mosaic.photography/mosaic-collections/public-domain-collection/${photographerFolder}`;

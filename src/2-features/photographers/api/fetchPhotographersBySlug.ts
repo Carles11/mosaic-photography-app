@@ -2,8 +2,14 @@ import { supabase } from "@/4-shared/api/supabaseClient";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import type { PhotographerSlug } from "@/4-shared/types";
 
+/**
+ * Fetch photographer data and images.
+ * @param slug - photographer slug to fetch
+ * @param includeNudes - false (default) to hide nude images; true to include nude images.
+ */
 export async function fetchPhotographerBySlug(
-  slug: string
+  slug: string,
+  includeNudes: boolean = false
 ): Promise<PhotographerSlug | null> {
   // 1. Fetch photographer by slug
   const { data: photographer, error: photographerError } = await supabase
@@ -18,8 +24,8 @@ export async function fetchPhotographerBySlug(
 
   if (photographerError || !photographer) return null;
 
-  // 2. Fetch all not-nude images for this photographer
-  const { data: notNudeImages, error: notNudeError } = await supabase
+  // 2. Fetch images for this photographer (apply not-nude filter by default)
+  let imagesQuery = supabase
     .from("images_resize")
     .select(
       `
@@ -41,9 +47,15 @@ export async function fetchPhotographerBySlug(
     `
     )
     .eq("author", photographer.author);
-  // .eq("nudity", "not-nude");
+
+  if (!includeNudes) {
+    imagesQuery = imagesQuery.eq("nudity", "not-nude");
+  }
+
+  const { data: notNudeImages, error: notNudeError } = await imagesQuery;
 
   // 3. Fetch all 000_aaa_ portrait images for this photographer (any nudity)
+  // These portrait files are always included regardless of nudity
   const { data: portraitImages, error: portraitError } = await supabase
     .from("images_resize")
     .select(
@@ -68,6 +80,13 @@ export async function fetchPhotographerBySlug(
     .eq("author", photographer.author)
     .ilike("filename", "000_aaa_%");
 
+  if (notNudeError || portraitError) {
+    console.log(
+      "Error fetching photographer images:",
+      notNudeError || portraitError
+    );
+  }
+
   // 4. Combine, removing duplicates by id
   const allImagesMap: Record<string, any> = {};
   (notNudeImages ?? []).forEach((img) => {
@@ -78,13 +97,10 @@ export async function fetchPhotographerBySlug(
   });
   const allImages = Object.values(allImagesMap);
 
-  // Use device screen width for optimal image size selection
-  // If you want to use actual rendered width, pass it in from your component instead of using screenWidth here.
   const screenWidth = require("react-native").Dimensions.get("window").width;
   const pixelDensity = require("react-native").PixelRatio.get();
   const effectiveWidth = screenWidth * pixelDensity;
 
-  // 5. Map images to use the best available resolution in the CDN
   const processedImages = allImages.map((img) => ({
     ...img,
     url: getBestS3FolderForWidth(
@@ -95,7 +111,6 @@ export async function fetchPhotographerBySlug(
       },
       effectiveWidth
     ).url,
-    // 🚫 DO NOT overwrite width here – keep original width!
   }));
 
   return {

@@ -85,7 +85,7 @@ export type GalleryFilter = {
   year?: { from: number; to: number };
   text?: string;
   author?: string[];
-  nudity?: "not-nude" | "nude" | "all";
+  nudity?: "not-nude" | "nude";
 };
 
 export type UseGalleryFiltersReturn = {
