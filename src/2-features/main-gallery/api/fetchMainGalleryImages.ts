@@ -3,7 +3,6 @@ import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth"
 
 import { GalleryImage } from "@/4-shared/types/gallery";
 
-// Author display name to S3 folder mapping
 const authorMap: Record<string, string> = {
   "Alfred Stieglitz": "alfred-stieglitz",
   "Baron Wilhelm Von Gloeden": "wilhelm-von-gloeden",
@@ -14,19 +13,17 @@ const authorMap: Record<string, string> = {
   "Fred Holland Day": "fred-holland-day",
   "Robert Demachy": "robert-demachy",
   "Wilhelm Von Plueschow": "wilhelm-von-plueschow",
-  "Jane de La Vaudère": "jane-de-la-vaudere", // alternate accent spelling
+  "Jane de La Vaudère": "jane-de-la-vaudere",
   "Jane de La Vaudere": "jane-de-la-vaudere",
   "Anne Brigman": "anne-brigman",
   "Mario von Bucovich": "mario-von-bucovich",
-  // Add more as needed
 };
 
 function slugify(text: string): string {
-  // Remove accents, convert to ASCII, lowercase and replace spaces with hyphens
   return text
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-    .replace(/[^a-zA-Z0-9 ]/g, "") // Remove non-alphanumeric except spaces
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9 ]/g, "")
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-");
@@ -39,14 +36,9 @@ function authorToFolder(author: string): string {
   return slugify(author);
 }
 
-/**
- * Fetch main gallery images.
- * @param includeNudes - false (default) to hide nude images; true to include nude images.
- */
 export async function fetchMainGalleryImages(
-  includeNudes: boolean = false
+  nudity: "nude" | "not-nude" | "all" = "not-nude"
 ): Promise<GalleryImage[]> {
-  // Build base query
   let query = supabase.from("images_resize").select(
     `
       id,
@@ -67,9 +59,9 @@ export async function fetchMainGalleryImages(
     `
   );
 
-  // Apply "not-nude" filter when we do NOT want to include nudes
-  if (!includeNudes) {
-    query = query.eq("nudity", "not-nude");
+  // Apply explicit DB filter only when nudity is "nude" or "not-nude".
+  if (nudity === "nude" || nudity === "not-nude") {
+    query = query.eq("nudity", nudity);
   }
 
   const { data: images, error } = await query;

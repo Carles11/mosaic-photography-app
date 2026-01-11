@@ -1,18 +1,46 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { WebGalleryMessageProps } from "@/4-shared/types";
-import { Linking, TouchableOpacity } from "react-native";
+import React from "react";
+import { Linking, TouchableOpacity, View } from "react-native";
 
-export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
+/**
+ * WebGalleryMessage
+ *
+ * Updated to account for the new nudity / other filters:
+ * - Explains that filters (including the nudity filter) may hide images.
+ * - Offers two actions:
+ *   1) "Open filters" — calls optional onOpenFilters() prop if provided (recommended for mobile UX).
+ *   2) "View full gallery on web" — redirects to the website (keeps potential traffic).
+ *
+ * Props:
+ * - name, surname, slug, style (from WebGalleryMessageProps)
+ * - onOpenFilters?: () => void  (optional — if provided, the "Open filters" button is shown)
+ *
+ * Rationale:
+ * - Keep the web redirect to drive traffic if you want it.
+ * - Also give users an immediate way to adjust filters in-app so they don't need to switch to the website.
+ */
+
+type Props = WebGalleryMessageProps & {
+  onOpenFilters?: () => void;
+};
+
+export const WebGalleryMessage: React.FC<Props> = ({
   name,
   surname,
   slug,
   style,
+  onOpenFilters,
 }) => {
   const handlePressWeb = () => {
     Linking.openURL(
       `https://www.mosaic.photography/photographers/${slug}`
     ).catch(() => {});
+  };
+
+  const handlePressFilters = () => {
+    if (onOpenFilters) onOpenFilters();
   };
 
   return (
@@ -42,9 +70,9 @@ export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
           marginBottom: 8,
         }}
       >
-        We found few or no images for {name} {surname}. Would you like to see
-        the complete, uncensored collection?
+        We found few or no images for {name} {surname}.
       </ThemedText>
+
       <ThemedText
         style={{
           color: "#1d1d1d",
@@ -53,32 +81,67 @@ export const WebGalleryMessage: React.FC<WebGalleryMessageProps> = ({
           marginBottom: 12,
         }}
       >
-        We only show a selection of non-nude images in the mobile app. Visit the
-        full gallery, including all nudes, on our website.
+        This may be because you have filters enabled (for example the nudity
+        filter). Try adjusting or clearing filters to see more images in the
+        app. You can also view the complete, uncensored collection on our
+        website.
       </ThemedText>
-      <TouchableOpacity
-        onPress={handlePressWeb}
-        style={{
-          backgroundColor: "#2c106a",
-          paddingVertical: 10,
-          paddingHorizontal: 28,
-          borderRadius: 20,
-          marginTop: 5,
-        }}
-        activeOpacity={0.85}
-      >
-        <ThemedText
+
+      <View style={{ flexDirection: "row", gap: 12, marginTop: 8 }}>
+        {onOpenFilters ? (
+          <TouchableOpacity
+            onPress={handlePressFilters}
+            style={{
+              backgroundColor: "#fff",
+              paddingVertical: 10,
+              paddingHorizontal: 18,
+              borderRadius: 20,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              marginRight: 8,
+            }}
+            activeOpacity={0.85}
+          >
+            <ThemedText
+              style={{
+                color: "#1d1d1d",
+                fontWeight: "700",
+                fontSize: 15,
+                textAlign: "center",
+              }}
+            >
+              Open filters
+            </ThemedText>
+          </TouchableOpacity>
+        ) : null}
+
+        <TouchableOpacity
+          onPress={handlePressWeb}
           style={{
-            color: "#fff",
-            fontWeight: "bold",
-            fontSize: 16,
-            textAlign: "center",
-            letterSpacing: 0.5,
+            backgroundColor: "#2c106a",
+            paddingVertical: 10,
+            paddingHorizontal: 18,
+            borderRadius: 20,
+            marginTop: 0,
           }}
+          activeOpacity={0.85}
         >
-          Go to www.mosaic.photography
-        </ThemedText>
-      </TouchableOpacity>
+          <ThemedText
+            style={{
+              color: "#fff",
+              fontWeight: "bold",
+              fontSize: 15,
+              textAlign: "center",
+              letterSpacing: 0.4,
+              height: 44,
+            }}
+          >
+            View full gallery on mosaic.photography
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 };
+
+export default WebGalleryMessage;

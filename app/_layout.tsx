@@ -3,6 +3,7 @@ import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext"
 import { CollectionsProvider } from "@/4-shared/context/collections/CollectionsContext";
 import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites";
+import { FiltersProvider } from "@/4-shared/context/filters/FiltersContext";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { MosaicToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -47,11 +48,13 @@ export default Sentry.wrap(function RootLayout() {
               <KeyboardProvider>
                 <FontLoader>
                   <CommentsProvider>
-                    <CollectionsProvider>
-                      <FavoritesProvider>
-                        <InnerLayout />
-                      </FavoritesProvider>
-                    </CollectionsProvider>
+                    <FiltersProvider>
+                      <CollectionsProvider>
+                        <FavoritesProvider>
+                          <InnerLayout />
+                        </FavoritesProvider>
+                      </CollectionsProvider>
+                    </FiltersProvider>
                   </CommentsProvider>
                 </FontLoader>
               </KeyboardProvider>
@@ -68,13 +71,13 @@ function InnerLayout() {
   const { mode, theme } = useTheme();
   const defaultScreenOptions = useMemo(
     () => ({
-      title:"Back",
+      title: "Back",
       headerStyle: { backgroundColor: theme.background },
       headerTintColor: theme.text,
       headerTitleStyle: {
         fontFamily: "TradeGothic-Bold",
         fontSize: 18,
-        color: theme.text
+        color: theme.text,
       },
       headerShadowVisible: false,
     }),

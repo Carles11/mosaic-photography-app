@@ -3,15 +3,13 @@ import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth"
 import type { PhotographerSlug } from "@/4-shared/types";
 
 /**
- * Fetch photographer data and images.
- * @param slug - photographer slug to fetch
- * @param includeNudes - false (default) to hide nude images; true to include nude images.
+ * @param slug photographer slug
+ * @param nudity "not-nude" | "nude" | "all" (default "not-nude")
  */
 export async function fetchPhotographerBySlug(
   slug: string,
-  includeNudes: boolean = false
+  nudity: "nude" | "not-nude" | "all" = "not-nude"
 ): Promise<PhotographerSlug | null> {
-  // 1. Fetch photographer by slug
   const { data: photographer, error: photographerError } = await supabase
     .from("photographers")
     .select(
@@ -24,7 +22,6 @@ export async function fetchPhotographerBySlug(
 
   if (photographerError || !photographer) return null;
 
-  // 2. Fetch images for this photographer (apply not-nude filter by default)
   let imagesQuery = supabase
     .from("images_resize")
     .select(
@@ -48,14 +45,14 @@ export async function fetchPhotographerBySlug(
     )
     .eq("author", photographer.author);
 
-  if (!includeNudes) {
-    imagesQuery = imagesQuery.eq("nudity", "not-nude");
+  // Apply explicit DB filter only when nudity is "nude" or "not-nude"
+  if (nudity === "nude" || nudity === "not-nude") {
+    imagesQuery = imagesQuery.eq("nudity", nudity);
   }
 
-  const { data: notNudeImages, error: notNudeError } = await imagesQuery;
+  const { data: imagesForAuthor, error: imagesError } = await imagesQuery;
 
-  // 3. Fetch all 000_aaa_ portrait images for this photographer (any nudity)
-  // These portrait files are always included regardless of nudity
+  // Portrait files 000_aaa_... are always included (any nudity)
   const { data: portraitImages, error: portraitError } = await supabase
     .from("images_resize")
     .select(
@@ -80,28 +77,23 @@ export async function fetchPhotographerBySlug(
     .eq("author", photographer.author)
     .ilike("filename", "000_aaa_%");
 
-  if (notNudeError || portraitError) {
+  if (imagesError || portraitError) {
     console.log(
       "Error fetching photographer images:",
-      notNudeError || portraitError
+      imagesError || portraitError
     );
   }
 
-  // 4. Combine, removing duplicates by id
-  const allImagesMap: Record<string, any> = {};
-  (notNudeImages ?? []).forEach((img) => {
-    allImagesMap[img.id] = img;
-  });
-  (portraitImages ?? []).forEach((img) => {
-    allImagesMap[img.id] = img;
-  });
-  const allImages = Object.values(allImagesMap);
+  const allMap: Record<string, any> = {};
+  (imagesForAuthor ?? []).forEach((img) => (allMap[img.id] = img));
+  (portraitImages ?? []).forEach((img) => (allMap[img.id] = img));
+  const allImages = Object.values(allMap);
 
   const screenWidth = require("react-native").Dimensions.get("window").width;
   const pixelDensity = require("react-native").PixelRatio.get();
   const effectiveWidth = screenWidth * pixelDensity;
 
-  const processedImages = allImages.map((img) => ({
+  const processed = allImages.map((img) => ({
     ...img,
     url: getBestS3FolderForWidth(
       {
@@ -115,6 +107,6 @@ export async function fetchPhotographerBySlug(
 
   return {
     ...photographer,
-    images: processedImages,
+    images: processed,
   };
 }

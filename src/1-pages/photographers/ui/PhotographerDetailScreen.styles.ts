@@ -16,6 +16,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  icon: {
+    width: 28,
+    height: 28,
+    resizeMode: "contain",
+  },
   notFoundText: {
     color: "#c00",
     fontSize: 18,

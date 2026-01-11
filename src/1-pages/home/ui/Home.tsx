@@ -2,7 +2,6 @@ import { HomeHeader } from "@/2-features/home";
 import { HomeHeaderWithSlider } from "@/2-features/home/ui/HomeHeaderWithSlider";
 import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
-import { useGalleryFilters } from "@/2-features/main-gallery/filters/useGalleryFilters";
 import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetComments";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
 import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
@@ -29,13 +28,20 @@ import {
 
 import { downloadImageToDevice } from "@/4-shared/utility/downloadImage";
 import { useNavigation, useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Platform, Share } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
 
-// const SCROLL_THRESHOLDS = [0.25, 0.5, 0.75, 1];
+// Use the Filters context
+import { useFilters } from "@/4-shared/context/filters/FiltersContext";
 
 export const Home: React.FC = () => {
   const { theme } = useTheme();
@@ -64,8 +70,8 @@ export const Home: React.FC = () => {
   const imageMenuSheetRef = useRef<any>(null);
   const reportSheetRef = useRef<ReportBottomSheetRef>(null);
 
-  const { filters, setFilters, resetFilters, filtersActive } =
-    useGalleryFilters();
+  // Get filters from context
+  const { filters, setFilters, clearFilters, filtersActive } = useFilters();
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,22 +106,34 @@ export const Home: React.FC = () => {
     };
   }, []);
 
+  // Fetch images from server using nudity from shared filters.
   useEffect(() => {
+    let active = true;
     (async () => {
       setLoading(true);
       try {
-        const data = await fetchMainGalleryImages();
+        // filters.nudity expected values: "nude" | "not-nude" | "all"
+        const nudityParam: "nude" | "not-nude" | "all" =
+          (filters as any).nudity ?? "not-nude";
+
+        const data = await fetchMainGalleryImages(nudityParam);
+        if (!active) return;
         setImages(data);
         setError(null);
       } catch (e: any) {
-        const msg = e.message || "Error loading images";
-        setError(msg);
-        showErrorToast(msg);
+        const msg = e?.message || "Error loading images";
+        if (active) {
+          setError(msg);
+          showErrorToast(msg);
+        }
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     })();
-  }, []);
+    return () => {
+      active = false;
+    };
+  }, [(filters as any).nudity]);
 
   const filteredImages = useMemo(() => {
     return images.filter((img) => {
@@ -146,11 +164,9 @@ export const Home: React.FC = () => {
 
       // --- Photographer (author) filter ---
       if (Array.isArray(filters.author) && filters.author.length > 0) {
-        // Normalize image author for comparison
         const imgAuthorNormalized = (img.author ?? "").trim().toLowerCase();
-        // Check if any selected author matches this image's author
         const isAuthorSelected = filters.author.some(
-          (authorName) =>
+          (authorName: string) =>
             imgAuthorNormalized === authorName.trim().toLowerCase()
         );
         if (!isAuthorSelected) return false;
@@ -197,7 +213,14 @@ export const Home: React.FC = () => {
     return Array.from(namesSet).sort(); // optional: sort alphabetically
   }, [images]);
 
-  // TODO: Analytics: track scroll thresholds CRASHES THE APP ON SCROLL - FIX
+  // TODO: Analytics: track Filter Menu opened
+  const handleOpenFiltersMenu = () => {
+    setFilterMenuOpen(true);
+    logEvent("filters_menu_opened", {
+      screen: "Home",
+      context: "header",
+    });
+  };
 
   const handleOpenImageMenu = (image: GalleryImage) => {
     setSelectedImage(image);
@@ -336,17 +359,6 @@ export const Home: React.FC = () => {
     } as FilterApplyEventData);
   };
 
-  // Analytics: track Filter Menu opened
-  const handleOpenFiltersMenu = () => {
-    setFilterMenuOpen(true);
-    logEvent("filters_menu_opened", {
-      screen: "Home",
-      context: "header",
-    });
-  };
-
-  // Gallery scroll height (estimated, for scroll tracking)
-  // const GALLERY_ITEM_HEIGHT = 380; // approximate
   return (
     <SafeAreaView
       style={[{ flex: 1 }, styles.page, { backgroundColor: theme.background }]}
@@ -376,9 +388,6 @@ export const Home: React.FC = () => {
             }}
           />
         }
-        // onGalleryScroll={(y) =>
-        //   handleScroll(y, filteredImages.length * GALLERY_ITEM_HEIGHT)
-        // }
       />
       <BottomSheetFilterMenu
         isOpen={isFilterMenuOpen}
@@ -386,7 +395,7 @@ export const Home: React.FC = () => {
         filters={filters}
         setFilters={handleApplyFilter}
         resetFilters={() => {
-          resetFilters();
+          clearFilters();
           logEvent("filters_reset", {});
         }}
         photographerNames={photographerNames}
@@ -425,3 +434,5 @@ export const Home: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+export default Home;

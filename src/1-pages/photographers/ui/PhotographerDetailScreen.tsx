@@ -1,5 +1,4 @@
 import { Gallery } from "@/2-features/gallery/ui/Gallery";
-import { BottomSheetComments } from "@/2-features/main-gallery/ui/BottomSheetComments";
 import { BottomSheetThreeDotsMenu } from "@/2-features/main-gallery/ui/BottomSheetThreeDotsMenu";
 import { fetchPhotographerBySlug } from "@/2-features/photographers/api/fetchPhotographersBySlug";
 import { getTimelineBySlug } from "@/2-features/photographers/model/photographersTimelines";
@@ -37,16 +36,21 @@ import {
   Platform,
   Share,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographerDetailScreen.styles";
 
+import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
+// Use filters context
+import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
+import { useFilters } from "@/4-shared/context/filters/FiltersContext";
+
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const router = useRouter();
 
-  // Responsive dimensions for gallery items
   const {
     galleryItemHeight,
     galleryImageHeight,
@@ -56,7 +60,6 @@ const PhotographerDetailScreen: React.FC = () => {
     headerHeight,
   } = useResponsivePhotographerHeader();
 
-  // Responsive styles for each item
   const photographerGalleryItemStyles = createPhotographerGalleryItemStyles(
     galleryItemHeight,
     galleryImageHeight,
@@ -76,6 +79,7 @@ const PhotographerDetailScreen: React.FC = () => {
     loadCommentsForImage,
     loadCommentCountsBatch,
   } = useComments();
+
   const { slug } = useLocalSearchParams();
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null
@@ -104,11 +108,45 @@ const PhotographerDetailScreen: React.FC = () => {
 
   const scrollY = useSharedValue(0);
 
+  // Use shared filters (context)
+  const { filters, setFilters, clearFilters, filtersActive } = useFilters();
+  const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
+
   useEffect(() => {
     navigation.setOptions({
       title: "Photographer Details",
+      headerRight: () => {
+        return (
+          <ThemedView>
+            <IconSymbol
+              type="ion"
+              name="filter"
+              size={28}
+              color={theme.icon ?? theme.text}
+              style={styles.icon}
+              accessibilityLabel="Open filter menu"
+              onPress={() => setFilterMenuOpen(true)}
+            />
+            {filtersActive ? (
+              <View
+                style={{
+                  position: "absolute",
+                  top: -4,
+                  right: -4,
+                  width: 10,
+                  height: 10,
+                  borderRadius: 6,
+                  backgroundColor: "#FF3B30",
+                  borderWidth: 1,
+                  borderColor: theme.background,
+                }}
+              />
+            ) : null}
+          </ThemedView>
+        );
+      },
     });
-  }, [navigation]);
+  }, [navigation, filtersActive]);
 
   useEffect(() => {
     if (photographer) {
@@ -139,7 +177,21 @@ const PhotographerDetailScreen: React.FC = () => {
         setLoading(false);
         return;
       }
-      const result = await fetchPhotographerBySlug(slugStr);
+
+      // Use nudity from shared filters (context). Fallback to route param or default.
+      const routeParams = new URLSearchParams(
+        typeof window !== "undefined" ? window.location.search : ""
+      );
+      const routeNudity = (routeParams.get("nudity") ?? undefined) as
+        | "nude"
+        | "not-nude"
+        | "all"
+        | undefined;
+
+      const nudityParam: "nude" | "not-nude" | "all" =
+        (filters as any)?.nudity ?? routeNudity ?? "not-nude";
+
+      const result = await fetchPhotographerBySlug(slugStr, nudityParam);
       if (active) {
         if (!result) {
           setNotFound(true);
@@ -153,7 +205,8 @@ const PhotographerDetailScreen: React.FC = () => {
     return () => {
       active = false;
     };
-  }, [slug]);
+    // Re-run when slug or shared nudity filter changes
+  }, [slug, (filters as any)?.nudity]);
 
   const timelineEvents = photographer
     ? getTimelineBySlug(photographer.slug) || []
@@ -355,7 +408,7 @@ const PhotographerDetailScreen: React.FC = () => {
         </ThemedView>
       </>
     );
-  }, [photographer, timelineEvents, scrollY, showWebMsg]);
+  }, [photographer, timelineEvents, scrollY, showWebMsg, slug, headerHeight]);
 
   if (loading) {
     return (
@@ -380,7 +433,6 @@ const PhotographerDetailScreen: React.FC = () => {
     ? commentsLoading[commentsImageId]
     : false;
 
-  // FlatList key for full remount/layout on rotation for Gallery
   const galleryKey = `${galleryItemHeight}_${galleryImageHeight}_${galleryYearHeight}_${galleryDescriptionHeight}_${galleryFooterHeight}`;
 
   return (
@@ -432,22 +484,16 @@ const PhotographerDetailScreen: React.FC = () => {
         user={user}
         router={router}
       />
-      <BottomSheetComments
-        ref={commentsSheetRef}
-        isOpen={!!commentsImageId}
-        onClose={handleCloseComments}
-        comments={imageComments}
-        isLoading={isCommentsLoading}
-        commentText={commentText}
-        setCommentText={setCommentText}
-        handleSaveComment={handleSaveComment}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        authLoading={authLoading}
-        editMode={editMode}
-        user={user}
-        reportSheetRef={reportSheetRef}
-        router={router}
+      <BottomSheetFilterMenu
+        isOpen={isFilterMenuOpen}
+        onClose={() => setFilterMenuOpen(false)}
+        filters={filters}
+        setFilters={setFilters}
+        resetFilters={() => {
+          clearFilters();
+        }}
+        photographerNames={[]}
+        showAuthorFilter={false}
       />
       <ZoomGalleryModal
         visible={zoomVisible}

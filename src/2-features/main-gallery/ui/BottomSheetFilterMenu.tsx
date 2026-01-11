@@ -29,13 +29,22 @@ import { styles } from "./BottomSheetFilterMenu.styles";
 
 import { BottomSheetFilterMenuProps } from "@/4-shared/types";
 
-export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
+interface Props extends BottomSheetFilterMenuProps {
+  /**
+   * When false, the photographer search / author chips are hidden.
+   * Default: true (show the author filter — used on the main gallery).
+   */
+  showAuthorFilter?: boolean;
+}
+
+export const BottomSheetFilterMenu: React.FC<Props> = ({
   isOpen,
   filters,
   setFilters,
   resetFilters,
   onClose,
   photographerNames,
+  showAuthorFilter = true,
 }) => {
   const bottomSheetModalRef = useRef<any>(null);
   const { theme } = useTheme();
@@ -53,8 +62,8 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
   // Filter photographerNames by search
   const filteredPhotographers = useMemo(() => {
     const query = photographerSearch.trim().toLowerCase();
-    if (!query) return []; // <-- show nothing until user starts typing
-    return photographerNames.filter((name) =>
+    if (!query) return []; // show nothing until user types
+    return (photographerNames ?? []).filter((name) =>
       name.toLowerCase().includes(query)
     );
   }, [photographerNames, photographerSearch]);
@@ -107,7 +116,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
     setFilters({ ...filters, text: "" });
   };
 
-  // Nudity default value when not present in filters
+  // Nudity current value default to "not-nude"
   const currentNudity = (filters as any).nudity ?? "not-nude";
 
   return (
@@ -154,55 +163,61 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
             </View>
 
             {/* --- Photographer Search & Chips --- */}
-            <ThemedText type="subtitle" style={styles.label}>
-              Search by photographer
-            </ThemedText>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 8,
-              }}
-            >
-              <BottomSheetTextInput
-                style={[styles.input, { flex: 1 }]}
-                value={photographerSearch}
-                onChangeText={setPhotographerSearch}
-                placeholder="Search photographer..."
-                autoCapitalize="words"
-                autoCorrect={false}
-              />
-              <TouchableOpacity
-                onPress={clearAuthors}
-                style={styles.clearButton}
-              >
-                <ThemedText style={styles.clearButtonText}>Clear</ThemedText>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.chipsRow}>
-              {filteredPhotographers.length === 0 ? (
-                <ThemedText style={styles.noResult}>No results</ThemedText>
-              ) : null}
-              {filteredPhotographers.map((name) => {
-                const selected = (filters.author ?? []).includes(name);
-                return (
+            {showAuthorFilter && (
+              <>
+                <ThemedText type="subtitle" style={styles.label}>
+                  Search by photographer
+                </ThemedText>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 8,
+                  }}
+                >
+                  <BottomSheetTextInput
+                    style={[styles.input, { flex: 1 }]}
+                    value={photographerSearch}
+                    onChangeText={setPhotographerSearch}
+                    placeholder="Search photographer..."
+                    autoCapitalize="words"
+                    autoCorrect={false}
+                  />
                   <TouchableOpacity
-                    key={name}
-                    style={[styles.chip, selected && styles.chipSelected]}
-                    onPress={() => toggleAuthor(name)}
+                    onPress={clearAuthors}
+                    style={styles.clearButton}
                   >
-                    <Text
-                      style={[
-                        styles.chipText,
-                        selected && styles.chipTextSelected,
-                      ]}
-                    >
-                      {name}
-                    </Text>
+                    <ThemedText style={styles.clearButtonText}>
+                      Clear
+                    </ThemedText>
                   </TouchableOpacity>
-                );
-              })}
-            </View>
+                </View>
+                <View style={styles.chipsRow}>
+                  {filteredPhotographers.length === 0 ? (
+                    <ThemedText style={styles.noResult}>No results</ThemedText>
+                  ) : null}
+                  {filteredPhotographers.map((name) => {
+                    const selected = (filters.author ?? []).includes(name);
+                    return (
+                      <TouchableOpacity
+                        key={name}
+                        style={[styles.chip, selected && styles.chipSelected]}
+                        onPress={() => toggleAuthor(name)}
+                      >
+                        <Text
+                          style={[
+                            styles.chipText,
+                            selected && styles.chipTextSelected,
+                          ]}
+                        >
+                          {name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              </>
+            )}
 
             {/* Gender Filter */}
             <ThemedText type="subtitle" style={styles.label}>
@@ -226,6 +241,34 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 </TouchableOpacity>
               ))}
             </ThemedView>
+
+            {/* Nudity Filter (three-state) */}
+            <ThemedText type="subtitle" style={styles.label}>
+              Nudity
+            </ThemedText>
+            <ThemedView style={styles.row}>
+              {[
+                { key: "not-nude", label: "Hide nudes (default)" },
+                { key: "nude", label: "Only nudes" },
+                { key: "all", label: "Include nudes" },
+              ].map((opt) => (
+                <TouchableOpacity
+                  key={opt.key}
+                  style={[
+                    styles.option,
+                    currentNudity === opt.key && styles.optionActive,
+                  ]}
+                  onPress={() => handleChange("nudity", opt.key)}
+                >
+                  <ThemedText
+                    style={currentNudity === opt.key && styles.optionActiveText}
+                  >
+                    {opt.label}
+                  </ThemedText>
+                </TouchableOpacity>
+              ))}
+            </ThemedView>
+
             {/* Orientation Filter */}
             <ThemedText type="subtitle" style={styles.label}>
               Orientation
@@ -250,6 +293,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 </TouchableOpacity>
               ))}
             </ThemedView>
+
             {/* Color Filter */}
             <ThemedText type="subtitle" style={styles.label}>
               Color
@@ -268,32 +312,6 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                     style={filters.color === opt && styles.optionActiveText}
                   >
                     {opt}
-                  </ThemedText>
-                </TouchableOpacity>
-              ))}
-            </ThemedView>
-
-            {/* Nudity Filter (default: not-nude) */}
-            <ThemedText type="subtitle" style={styles.label}>
-              Nudity
-            </ThemedText>
-            <ThemedView style={styles.row}>
-              {[
-                { key: "not-nude", label: "Hide nudes (default)" },
-                { key: "all", label: "Include nudes" },
-              ].map((opt) => (
-                <TouchableOpacity
-                  key={opt.key}
-                  style={[
-                    styles.option,
-                    currentNudity === opt.key && styles.optionActive,
-                  ]}
-                  onPress={() => handleChange("nudity", opt.key)}
-                >
-                  <ThemedText
-                    style={currentNudity === opt.key && styles.optionActiveText}
-                  >
-                    {opt.label}
                   </ThemedText>
                 </TouchableOpacity>
               ))}
@@ -323,6 +341,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 </TouchableOpacity>
               ))}
             </ThemedView>
+
             {/* Year Range Filter */}
             <ThemedText type="subtitle" style={styles.label}>
               Year Range
@@ -348,6 +367,7 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 returnKeyType="done"
               />
             </ThemedView>
+
             {/* Actions */}
             <ThemedView style={styles.actionsRow}>
               <ThemedView

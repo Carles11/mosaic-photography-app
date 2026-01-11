@@ -23,16 +23,36 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
   return (
     <ThemedView style={styles.header}>
       <ThemedView style={styles.iconsRow}>
-        {filtersActive ? <View style={styles.badge} /> : null}
-        <IconSymbol
-          type="ion"
-          name="filter"
-          size={28}
-          color={theme.icon ?? theme.text}
-          style={styles.icon}
-          accessibilityLabel="Open filter menu"
-          onPress={onOpenFilters}
-        />
+        {/* Filter icon + badge — wrapped so badge overlays the icon but does not change layout */}
+        <View style={{ position: "relative" }}>
+          <IconSymbol
+            type="ion"
+            name="filter"
+            size={28}
+            color={theme.icon ?? theme.text}
+            style={styles.icon}
+            accessibilityLabel="Open filter menu"
+            onPress={onOpenFilters}
+          />
+          {filtersActive ? (
+            <View
+              // badge positioned over the top-right of the filter icon
+              style={{
+                position: "absolute",
+                top: -4,
+                right: -4,
+                width: 10,
+                height: 10,
+                borderRadius: 6,
+                backgroundColor: "#FF3B30",
+                borderWidth: 1,
+                borderColor: theme.background,
+              }}
+            />
+          ) : null}
+        </View>
+
+        {/* Keep the chat icon exactly where it was */}
         <IconSymbol
           type="material"
           name="chat-bubble-outline"
