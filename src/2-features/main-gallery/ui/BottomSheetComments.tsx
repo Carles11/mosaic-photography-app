@@ -42,7 +42,9 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
     return (
       <ReusableBottomSheetModal
         ref={ref}
-        snapPoints={["80%"]}
+        // Provide two snap points and default to the larger one so inputs are visible
+        snapPoints={["95%"]}
+        index={1}
         onDismiss={onClose}
         enablePanDownToClose
       >
@@ -67,7 +69,8 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
                 }
                 contentContainerStyle={{
                   ...styles.commentsList,
-                  paddingBottom: 100,
+                  // keep a small bottom padding to avoid overlap but not huge
+                  paddingBottom: 24,
                 }}
                 renderItem={({ item }: { item: Comment }) => (
                   <ThemedView style={styles.commentItem}>
@@ -125,34 +128,48 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
               />
             )}
           </View>
+
+          {/* Footer area: input/send (or login prompt) + Close button */}
           {user ? (
-            <ThemedView style={styles.inputRow}>
-              <BottomSheetTextInput
-                placeholder="Write a comment..."
-                value={commentText}
-                onChangeText={setCommentText}
-                placeholderTextColor={theme.inputPlaceholderColor ?? "#999"}
-                style={styles.textInput}
+            <View>
+              <ThemedView style={styles.inputRow}>
+                <BottomSheetTextInput
+                  placeholder="Write a comment..."
+                  value={commentText}
+                  onChangeText={setCommentText}
+                  placeholderTextColor={theme.inputPlaceholderColor ?? "#999"}
+                  style={styles.textInput}
+                />
+                <PrimaryButton
+                  title={editMode ? "Update" : "Send"}
+                  onPress={handleSaveComment}
+                  disabled={authLoading || !commentText.trim()}
+                  style={styles.sendButton}
+                />
+              </ThemedView>
+
+              <SecondaryButton
+                title="Close"
+                onPress={onClose}
+                style={styles.closeButton}
               />
-              <PrimaryButton
-                title={editMode ? "Update" : "Send"}
-                onPress={handleSaveComment}
-                disabled={authLoading || !commentText.trim()}
-                style={styles.sendButton}
-              />
-            </ThemedView>
+            </View>
           ) : (
-            <ThemedText style={styles.loginText}>
-              Log in to write and manage your comments.
-            </ThemedText>
+            <>
+              <ThemedText style={styles.loginText}>
+                Log in to write and manage your comments.
+              </ThemedText>
+              <SecondaryButton
+                title="Close"
+                onPress={onClose}
+                style={styles.closeButton}
+              />
+            </>
           )}
-          <SecondaryButton
-            title="Close"
-            onPress={onClose}
-            style={styles.closeButton}
-          />
         </SafeAreaView>
       </ReusableBottomSheetModal>
     );
   }
 );
+
+export default BottomSheetComments;

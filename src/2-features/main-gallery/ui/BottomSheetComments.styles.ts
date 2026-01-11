@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
     borderBottomColor: "#eee",
     borderBottomWidth: 1,
     flexDirection: "column",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
   },
   commentInfo: {
@@ -34,11 +34,14 @@ export const styles = StyleSheet.create({
   },
   commentDate: {
     fontSize: 10,
+    marginTop: 6,
   },
   editActions: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    width: "100%",
+    marginTop: 8,
   },
   editActionsLeft: {
     flexDirection: "row",
@@ -61,28 +64,32 @@ export const styles = StyleSheet.create({
     paddingVertical: 2,
     paddingHorizontal: 8,
   },
+
+  // Footer / input row
   inputRow: {
     flexDirection: "row",
-    marginTop: 33,
+    marginTop: 12,
+    alignItems: "center",
   },
   textInput: {
     flex: 1,
     borderColor: "#ccc",
     borderWidth: 1,
-    padding: 8,
-    borderRadius: 4,
+    padding: 10,
+    borderRadius: 8,
     marginRight: 8,
     backgroundColor: "#fff",
+    minHeight: 44,
   },
   sendButton: {
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 16,
   },
   loginText: {
-    marginTop: 16,
+    marginTop: 12,
     color: "#999",
   },
   closeButton: {
-    marginTop: 24,
+    marginTop: 12,
   },
 });
