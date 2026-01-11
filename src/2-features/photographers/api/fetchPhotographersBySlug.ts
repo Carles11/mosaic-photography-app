@@ -40,8 +40,8 @@ export async function fetchPhotographerBySlug(
       year
     `
     )
-    .eq("author", photographer.author)
-    .eq("nudity", "not-nude");
+    .eq("author", photographer.author);
+  // .eq("nudity", "not-nude");
 
   // 3. Fetch all 000_aaa_ portrait images for this photographer (any nudity)
   const { data: portraitImages, error: portraitError } = await supabase

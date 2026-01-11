@@ -40,10 +40,8 @@ function authorToFolder(author: string): string {
 }
 
 export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
-  const { data: images, error } = await supabase
-    .from("images_resize")
-    .select(
-      `
+  const { data: images, error } = await supabase.from("images_resize").select(
+    `
       id,
       base_url,
       filename,
@@ -60,8 +58,8 @@ export async function fetchMainGalleryImages(): Promise<GalleryImage[]> {
       nudity,
       year
     `
-    )
-    .eq("nudity", "not-nude");
+  );
+  // .eq("nudity", "not-nude");
 
   if (error || !images) {
     console.log("Error fetching images:", error);

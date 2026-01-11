@@ -107,6 +107,9 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
     setFilters({ ...filters, text: "" });
   };
 
+  // Nudity default value when not present in filters
+  const currentNudity = (filters as any).nudity ?? "not-nude";
+
   return (
     <ReusableBottomSheetModal
       ref={bottomSheetModalRef}
@@ -269,6 +272,33 @@ export const BottomSheetFilterMenu: React.FC<BottomSheetFilterMenuProps> = ({
                 </TouchableOpacity>
               ))}
             </ThemedView>
+
+            {/* Nudity Filter (default: not-nude) */}
+            <ThemedText type="subtitle" style={styles.label}>
+              Nudity
+            </ThemedText>
+            <ThemedView style={styles.row}>
+              {[
+                { key: "not-nude", label: "Hide nudes (default)" },
+                { key: "all", label: "Include nudes" },
+              ].map((opt) => (
+                <TouchableOpacity
+                  key={opt.key}
+                  style={[
+                    styles.option,
+                    currentNudity === opt.key && styles.optionActive,
+                  ]}
+                  onPress={() => handleChange("nudity", opt.key)}
+                >
+                  <ThemedText
+                    style={currentNudity === opt.key && styles.optionActiveText}
+                  >
+                    {opt.label}
+                  </ThemedText>
+                </TouchableOpacity>
+              ))}
+            </ThemedView>
+
             {/* Print Quality Filter */}
             <ThemedText type="subtitle" style={styles.label}>
               Print Quality
