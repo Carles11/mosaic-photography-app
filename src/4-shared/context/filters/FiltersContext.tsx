@@ -1,5 +1,6 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
 import { GalleryFilter } from "@/4-shared/types/gallery";
 import React, {
   createContext,
@@ -20,6 +21,7 @@ import React, {
  * - Debounce delay: 1000ms
  * - When persisting for logged-in users we READ the current server row and MERGE serverFilters
  *   with local filters before upserting. This preserves server-only keys such as nudity_consent.
+ * - Emits analytics event `filters_saved` after successful merged upsert.
  */
 
 type FiltersContextType = {
@@ -148,21 +150,13 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
             .single();
           if (!readErr && existing?.filters) serverFilters = existing.filters;
         } catch (e) {
-          console.debug(
-            "[FiltersProvider] failed to read existing filters before save:",
-            e
-          );
+          // ignore read error and proceed with local filters
         }
 
         const mergedFilters = {
           ...(serverFilters ?? {}),
           ...(filters ?? {}),
         };
-
-        console.debug(
-          "[FiltersProvider] upserting mergedFilters:",
-          mergedFilters
-        );
 
         const { error } = await supabase.from("user_profiles").upsert({
           id: user.id,
@@ -174,6 +168,17 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
           console.warn("[FiltersProvider] Failed to save user filters:", error);
         } else {
           lastSavedRef.current = mergedFilters ?? {};
+          // Analytics: filters_saved
+          try {
+            logEvent("filters_saved", {
+              source: "filters_provider",
+              mergedKeys: Object.keys(mergedFilters ?? {}).length,
+              nudity: (mergedFilters as any)?.nudity ?? null,
+              user_state: user?.id ? "logged_in" : "anonymous",
+            });
+          } catch {
+            // swallow analytics error
+          }
         }
       } catch (e) {
         console.error("[FiltersProvider] Error saving user filters:", e);
@@ -208,10 +213,7 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
             .single();
           if (!readErr && existing?.filters) serverFilters = existing.filters;
         } catch (e) {
-          console.debug(
-            "[FiltersProvider] failed to read existing filters before clear:",
-            e
-          );
+          // ignore read error and proceed with defaults
         }
 
         const mergedFilters = {
@@ -220,22 +222,30 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
           nudity: "not-nude",
         };
 
-        console.debug(
-          "[FiltersProvider] clearing filters, upserting mergedFilters:",
-          mergedFilters
-        );
-
         const { error } = await supabase.from("user_profiles").upsert({
           id: user.id,
           filters: mergedFilters,
           updated_at: new Date().toISOString(),
         });
-        if (error)
+        if (error) {
           console.warn(
             "[FiltersProvider] Failed to clear user filters:",
             error
           );
-        lastSavedRef.current = mergedFilters ?? { nudity: "not-nude" };
+        } else {
+          lastSavedRef.current = mergedFilters ?? { nudity: "not-nude" };
+          // Analytics: filters_saved for clear action
+          try {
+            logEvent("filters_saved", {
+              source: "filters_provider_clear",
+              mergedKeys: Object.keys(mergedFilters ?? {}).length,
+              nudity: (mergedFilters as any)?.nudity ?? null,
+              user_state: user?.id ? "logged_in" : "anonymous",
+            });
+          } catch {
+            /* swallow */
+          }
+        }
       } catch (e) {
         console.warn("[FiltersProvider] Error clearing user filters:", e);
       }

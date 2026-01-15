@@ -28,10 +28,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
 import AgeGateModal from "@/4-shared/components/age-gate/AgeGateModal";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
 import useNudityConsent from "@/4-shared/hooks/use-nudity-consent";
 import { BottomSheetFilterMenuProps } from "@/4-shared/types";
-
 interface Props extends BottomSheetFilterMenuProps {
   /**
    * When false, the photographer search / author chips are hidden.
@@ -53,7 +53,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
   const { theme } = useTheme();
   const snapPoints = Platform.OS === "android" ? ["80%"] : ["60%"];
   const [photographerSearch, setPhotographerSearch] = useState("");
-
+  const { user } = useAuthSession();
   useEffect(() => {
     if (isOpen) {
       bottomSheetModalRef.current?.present();
@@ -131,10 +131,31 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
 
   // New handler for nudity option selection
   const handleNuditySelection = async (value: string) => {
-    // If selecting the hide option, apply immediately
+    const userState = user?.id ? "logged_in" : "anonymous";
+
+    try {
+      logEvent("nudity_selection", {
+        value,
+        origin: "filters_menu",
+        user_state: userState,
+      });
+    } catch {
+      /* swallow analytics error */
+    }
+
+    // Apply immediately for hide option
     if (value === "not-nude") {
       handleChange("nudity", value);
-      logEvent("nudity_selection", { value });
+      try {
+        logEvent("nudity_selection_applied", {
+          value,
+          origin: "filters_menu",
+          user_state: userState,
+          method: "immediate",
+        });
+      } catch {
+        /* swallow */
+      }
       return;
     }
 
@@ -143,21 +164,52 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
       const consent = await hasConsent();
       if (consent) {
         handleChange("nudity", value);
-        logEvent("nudity_opt_in", { method: "existing_consent", value });
+        try {
+          logEvent("nudity_selection_applied", {
+            value,
+            origin: "filters_menu",
+            user_state: userState,
+            method: "existing_consent",
+          });
+        } catch {
+          /* swallow */
+        }
+        try {
+          logEvent("nudity_opt_in", { method: "existing_consent", value });
+        } catch {
+          /* swallow */
+        }
       } else {
-        // show age gate modal and store pending value
         setPendingNudityValue(value);
         setAgeGateVisible(true);
-        logEvent("nudity_agegate_shown", { origin: "filters_menu" });
+        try {
+          logEvent("nudity_selection_pending", {
+            value,
+            origin: "filters_menu",
+            user_state: userState,
+          });
+          logEvent("nudity_agegate_shown", { origin: "filters_menu" });
+        } catch {
+          /* swallow */
+        }
       }
     } catch (e) {
-      // fallback: show age gate
       setPendingNudityValue(value);
       setAgeGateVisible(true);
-      logEvent("nudity_agegate_shown", {
-        origin: "filters_menu",
-        error: String(e),
-      });
+      try {
+        logEvent("nudity_selection_pending", {
+          value,
+          origin: "filters_menu",
+          user_state: userState,
+          error: String(e),
+        });
+        logEvent("nudity_agegate_shown", {
+          origin: "filters_menu",
+          error: String(e),
+        });
+      } catch {
+        /* swallow */
+      }
     }
   };
 

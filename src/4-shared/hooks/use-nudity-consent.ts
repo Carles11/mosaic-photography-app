@@ -1,14 +1,15 @@
-// src/4-shared/hooks/useNudityConsent.ts
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
 import { useCallback } from "react";
 
 /**
- * Resilient nudity-consent hook (fixed storage key).
+ * Resilient nudity-consent hook (analytics added).
  *
  * Notes:
  * - Uses sanitized storage key for native SecureStore to avoid "Invalid key" errors.
  * - For anonymous users tries, in order: expo-secure-store, AsyncStorage, in-memory fallback.
+ * - Emits analytics events (via shared logEvent helper) for save/revoke operations.
  */
 
 const RAW_STORAGE_KEY = "mosaic:nudity_consent";
@@ -40,10 +41,6 @@ function initRuntimeStorageIfNeeded() {
     if (SecureStore && (SecureStore.getItemAsync || SecureStore.setItemAsync)) {
       runtimeStorage = SecureStore;
       runtimeStorageType = "securestore";
-      console.debug(
-        "[useNudityConsent] Using expo-secure-store for anonymous consent. Storage key:",
-        STORAGE_KEY
-      );
       return;
     }
   } catch (e) {
@@ -58,10 +55,6 @@ function initRuntimeStorageIfNeeded() {
     if (AsyncStorage && (AsyncStorage.getItem || AsyncStorage.setItem)) {
       runtimeStorage = AsyncStorage;
       runtimeStorageType = "asyncstorage";
-      console.debug(
-        "[useNudityConsent] Using @react-native-async-storage/async-storage for anonymous consent. Storage key:",
-        STORAGE_KEY
-      );
       return;
     }
   } catch (e) {
@@ -130,6 +123,7 @@ export function useNudityConsent() {
   // Persist consent
   const confirmConsent = useCallback(
     async (payload: { confirmedAt: string }) => {
+      const userState = user?.id ? "logged_in" : "anonymous";
       if (user?.id) {
         try {
           // merge nudity_consent into existing filters to avoid schema migration
@@ -146,11 +140,30 @@ export function useNudityConsent() {
             nudity_consent: { optedIn: true, confirmedAt: payload.confirmedAt },
           };
 
-          await supabase.from("user_profiles").upsert({
-            id: user.id,
-            filters: updatedFilters,
-            updated_at: new Date().toISOString(),
-          });
+          const { error: upsertError } = await supabase
+            .from("user_profiles")
+            .upsert({
+              id: user.id,
+              filters: updatedFilters,
+              updated_at: new Date().toISOString(),
+            });
+
+          if (!upsertError) {
+            try {
+              logEvent("nudity_consent_saved", {
+                method: "supabase",
+                user_state: userState,
+                confirmedAt: payload.confirmedAt,
+              });
+            } catch {
+              // swallow analytics errors
+            }
+          } else {
+            console.warn(
+              "[useNudityConsent] confirmConsent supabase upsert error:",
+              upsertError
+            );
+          }
         } catch (e) {
           console.warn("[useNudityConsent] confirmConsent supabase error:", e);
         }
@@ -180,6 +193,16 @@ export function useNudityConsent() {
               JSON.stringify({ confirmedAt: payload.confirmedAt })
             );
           }
+
+          try {
+            logEvent("nudity_consent_saved", {
+              method: runtimeStorageType ?? "unknown",
+              user_state: userState,
+              confirmedAt: payload.confirmedAt,
+            });
+          } catch {
+            // swallow analytics errors
+          }
         } catch (e) {
           console.warn(
             "[useNudityConsent] confirmConsent anonymous storage error:",
@@ -193,6 +216,7 @@ export function useNudityConsent() {
 
   // Revoke consent
   const revokeConsent = useCallback(async () => {
+    const userState = user?.id ? "logged_in" : "anonymous";
     if (user?.id) {
       try {
         const { data: profile } = await supabase
@@ -202,11 +226,28 @@ export function useNudityConsent() {
           .single();
         const filters = profile?.filters ?? { nudity: "not-nude" };
         const { nudity_consent, ...rest } = filters as any;
-        await supabase.from("user_profiles").upsert({
-          id: user.id,
-          filters: rest,
-          updated_at: new Date().toISOString(),
-        });
+        const { error: upsertError } = await supabase
+          .from("user_profiles")
+          .upsert({
+            id: user.id,
+            filters: rest,
+            updated_at: new Date().toISOString(),
+          });
+        if (!upsertError) {
+          try {
+            logEvent("nudity_consent_revoked", {
+              method: "supabase",
+              user_state: userState,
+            });
+          } catch {
+            /* swallow */
+          }
+        } else {
+          console.warn(
+            "[useNudityConsent] revokeConsent supabase upsert error:",
+            upsertError
+          );
+        }
       } catch (e) {
         console.warn("[useNudityConsent] revokeConsent supabase error:", e);
       }
@@ -225,6 +266,15 @@ export function useNudityConsent() {
           await runtimeStorage.removeItem(STORAGE_KEY);
         } else {
           memoryStore.delete(STORAGE_KEY);
+        }
+
+        try {
+          logEvent("nudity_consent_revoked", {
+            method: runtimeStorageType ?? "unknown",
+            user_state: userState,
+          });
+        } catch {
+          /* swallow */
         }
       } catch (e) {
         console.warn(

@@ -3,6 +3,8 @@ import {
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
 import React, { useEffect, useState } from "react";
 import { Modal, Pressable, View } from "react-native";
 import { ThemedView } from "../themed-view";
@@ -21,16 +23,43 @@ export const AgeGateModal: React.FC<{
   onConfirm: (payload: AgeGatePayload) => void;
   onCancel: () => void;
 }> = ({ visible, onConfirm, onCancel }) => {
+  const { user } = useAuthSession();
+  const userState = user?.id ? "logged_in" : "anonymous";
   const [checked, setChecked] = useState(false);
 
-  // Reset checkbox whenever modal opened
+  // Reset checkbox whenever modal opened and log shown event
   useEffect(() => {
-    if (visible) setChecked(false);
-  }, [visible]);
+    if (visible) {
+      setChecked(false);
+      try {
+        logEvent("agegate_shown", { user_state: userState });
+      } catch {
+        /* swallow */
+      }
+    }
+  }, [visible, userState]);
 
   if (!visible) return null;
 
-  console.debug("[AgeGateModal] rendered visible=true, checked=", checked);
+  const handleCancel = () => {
+    try {
+      logEvent("agegate_canceled", { user_state: userState });
+    } catch {
+      /* swallow */
+    }
+    onCancel();
+  };
+
+  const handleConfirm = () => {
+    if (!checked) return;
+    const confirmedAt = new Date().toISOString();
+    try {
+      logEvent("agegate_confirmed", { user_state: userState, confirmedAt });
+    } catch {
+      /* swallow */
+    }
+    onConfirm({ confirmedAt });
+  };
 
   return (
     <Modal
@@ -38,8 +67,7 @@ export const AgeGateModal: React.FC<{
       transparent
       visible={visible}
       onRequestClose={() => {
-        console.debug("[AgeGateModal] onRequestClose (back button) -> cancel");
-        onCancel();
+        handleCancel();
       }}
       statusBarTranslucent={true}
       presentationStyle="overFullScreen"
@@ -47,13 +75,12 @@ export const AgeGateModal: React.FC<{
       <Pressable
         style={styles.overlay}
         onPress={() => {
-          console.debug("[AgeGateModal] backdrop pressed -> cancel");
-          onCancel();
+          handleCancel();
         }}
       >
         {/* Stop propagation so presses on the dialog don't trigger backdrop */}
         <Pressable style={styles.dialog} onPress={() => {}}>
-          <ThemedView style={{ padding: 20 }}>
+          <ThemedView style={{ padding: 20, alignItems: "center" }}>
             <ThemedText type="title" style={styles.title}>
               Content notice — Historical / Artistic Nudity
             </ThemedText>
@@ -80,19 +107,13 @@ export const AgeGateModal: React.FC<{
               <SecondaryButton
                 title="Cancel"
                 onPress={() => {
-                  console.debug("[AgeGateModal] Cancel pressed");
-                  onCancel();
+                  handleCancel();
                 }}
               />
               <PrimaryButton
                 title="Continue"
                 onPress={() => {
-                  console.debug(
-                    "[AgeGateModal] Continue pressed, checked=",
-                    checked
-                  );
-                  if (!checked) return;
-                  onConfirm({ confirmedAt: new Date().toISOString() });
+                  handleConfirm();
                 }}
                 disabled={!checked}
                 style={{ marginLeft: 8 }}
