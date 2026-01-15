@@ -3,19 +3,16 @@ import {
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { ThemedView } from "@/4-shared/components/themed-view";
-import React, { useState } from "react";
-import { Pressable, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Modal, Pressable, View } from "react-native";
+import { ThemedView } from "../themed-view";
 import { styles } from "./AgeGateModal.styles";
 
 /**
- * AgeGateModal
- * - visible: whether to render
- * - onConfirm: called with { confirmedAt: ISOString }
- * - onCancel: called when the user cancels (keeps previous state)
- *
- * Note: This component is intentionally simple (checkbox + continue) to keep reviewer flow fast.
- * If you prefer a date-of-birth input instead, tell me and I will change it.
+ * AgeGateModal (native Modal overlay)
+ * - Renders above all content (including bottom sheet) using RN Modal with transparent backdrop.
+ * - onConfirm receives { confirmedAt: ISOString }
+ * - onCancel called on backdrop press or Android back button
  */
 export type AgeGatePayload = { confirmedAt: string };
 
@@ -26,41 +23,85 @@ export const AgeGateModal: React.FC<{
 }> = ({ visible, onConfirm, onCancel }) => {
   const [checked, setChecked] = useState(false);
 
+  // Reset checkbox whenever modal opened
+  useEffect(() => {
+    if (visible) setChecked(false);
+  }, [visible]);
+
   if (!visible) return null;
 
+  console.debug("[AgeGateModal] rendered visible=true, checked=", checked);
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
-        Content notice — Historical / Artistic Nudity
-      </ThemedText>
-
-      <ThemedText style={styles.body}>
-        This section contains historical and artistic nude photography
-        (public-domain, 19th–early 20th century). These images are presented for
-        educational, historical, and artistic purposes only.
-      </ThemedText>
-
+    <Modal
+      animationType="fade"
+      transparent
+      visible={visible}
+      onRequestClose={() => {
+        console.debug("[AgeGateModal] onRequestClose (back button) -> cancel");
+        onCancel();
+      }}
+      statusBarTranslucent={true}
+      presentationStyle="overFullScreen"
+    >
       <Pressable
-        onPress={() => setChecked(!checked)}
-        style={styles.checkboxRow}
+        style={styles.overlay}
+        onPress={() => {
+          console.debug("[AgeGateModal] backdrop pressed -> cancel");
+          onCancel();
+        }}
       >
-        <ThemedText style={styles.checkboxText}>
-          {checked ? "☑" : "☐"} I confirm I am 18 years or older and wish to
-          view this content.
-        </ThemedText>
-      </Pressable>
+        {/* Stop propagation so presses on the dialog don't trigger backdrop */}
+        <Pressable style={styles.dialog} onPress={() => {}}>
+          <ThemedView style={{ padding: 20 }}>
+            <ThemedText type="title" style={styles.title}>
+              Content notice — Historical / Artistic Nudity
+            </ThemedText>
 
-      <View style={styles.actionsRow}>
-        <SecondaryButton title="Cancel" onPress={onCancel} />
-        <PrimaryButton
-          title="Continue"
-          onPress={() => onConfirm({ confirmedAt: new Date().toISOString() })}
-          disabled={!checked}
-          // small left margin to separate buttons; variant components accept style
-          style={{ marginLeft: 8 }}
-        />
-      </View>
-    </ThemedView>
+            <ThemedText style={styles.body}>
+              This area contains historical and artistic nude photography
+              (public-domain, 19th–early 20th century). Images are presented for
+              educational, historical, and artistic purposes only.
+            </ThemedText>
+
+            <Pressable
+              onPress={() => setChecked((c) => !c)}
+              style={styles.checkboxRow}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked }}
+            >
+              <ThemedText style={styles.checkboxText}>
+                {checked ? "☑" : "☐"} I confirm I am 18 years or older and wish
+                to view this content.
+              </ThemedText>
+            </Pressable>
+
+            <View style={styles.actionsRow}>
+              <SecondaryButton
+                title="Cancel"
+                onPress={() => {
+                  console.debug("[AgeGateModal] Cancel pressed");
+                  onCancel();
+                }}
+              />
+              <PrimaryButton
+                title="Continue"
+                onPress={() => {
+                  console.debug(
+                    "[AgeGateModal] Continue pressed, checked=",
+                    checked
+                  );
+                  if (!checked) return;
+                  onConfirm({ confirmedAt: new Date().toISOString() });
+                }}
+                disabled={!checked}
+                style={{ marginLeft: 8 }}
+              />
+            </View>
+          </ThemedView>
+        </Pressable>
+      </Pressable>
+    </Modal>
   );
 };
 

@@ -85,21 +85,53 @@ export function usePersistentGalleryFilters(
       clearTimeout(saveTimeout.current);
       saveTimeout.current = null;
     }
+    // --- Replace the current upsert save block with this ---
     saveTimeout.current = setTimeout(async () => {
       try {
-        // Use upsert to create or merge the row. We only care that the filters field is updated.
+        // Read current server-side filters to preserve any server-only keys (e.g., nudity_consent)
+        let serverFilters: any = {};
+        try {
+          const { data: existing, error: readErr } = await supabase
+            .from("user_profiles")
+            .select("filters")
+            .eq("id", user.id)
+            .single();
+          if (!readErr && existing?.filters) serverFilters = existing.filters;
+        } catch (e) {
+          console.debug(
+            "[usePersistentGalleryFilters] failed to read existing filters before save:",
+            e
+          );
+        }
+
+        const mergedFilters = {
+          ...(serverFilters ?? {}),
+          ...(filters ?? {}),
+        };
+
+        console.debug(
+          "[usePersistentGalleryFilters] upserting mergedFilters:",
+          mergedFilters
+        );
+
         const { error } = await supabase.from("user_profiles").upsert({
           id: user.id,
-          filters: filters ?? {},
+          filters: mergedFilters,
           updated_at: new Date().toISOString(),
         });
         if (error) {
-          console.warn("Failed to save user filters:", error);
+          console.warn(
+            "[usePersistentGalleryFilters] Failed to save user filters:",
+            error
+          );
         } else {
-          lastSavedRef.current = filters ?? {};
+          lastSavedRef.current = mergedFilters ?? {};
         }
       } catch (e) {
-        console.error("Error saving user filters:", e);
+        console.error(
+          "[usePersistentGalleryFilters] Error saving user filters:",
+          e
+        );
       }
     }, 1000);
 

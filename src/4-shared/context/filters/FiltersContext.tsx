@@ -17,9 +17,9 @@ import React, {
  * - Persists to user_profiles.filters for logged-in users (debounced save)
  *
  * Notes:
- * - Debounce delay: 1000ms (adjust as needed)
- * - Uses upsert-like behavior via update; if your user_profiles row may be missing,
- *   the upsert approach can be used instead — tell me if you want upsert.
+ * - Debounce delay: 1000ms
+ * - When persisting for logged-in users we READ the current server row and MERGE serverFilters
+ *   with local filters before upserting. This preserves server-only keys such as nudity_consent.
  */
 
 type FiltersContextType = {
@@ -135,22 +135,48 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
       clearTimeout(saveTimeout.current);
       saveTimeout.current = null;
     }
+
+    // Debounced save that reads server filters and MERGES before upsert to preserve server-only keys.
     saveTimeout.current = setTimeout(async () => {
       try {
-        // Update existing row. If you need to create the row when missing, switch to upsert.
+        let serverFilters: any = {};
+        try {
+          const { data: existing, error: readErr } = await supabase
+            .from("user_profiles")
+            .select("filters")
+            .eq("id", user.id)
+            .single();
+          if (!readErr && existing?.filters) serverFilters = existing.filters;
+        } catch (e) {
+          console.debug(
+            "[FiltersProvider] failed to read existing filters before save:",
+            e
+          );
+        }
+
+        const mergedFilters = {
+          ...(serverFilters ?? {}),
+          ...(filters ?? {}),
+        };
+
+        console.debug(
+          "[FiltersProvider] upserting mergedFilters:",
+          mergedFilters
+        );
+
         const { error } = await supabase.from("user_profiles").upsert({
           id: user.id,
-          filters: filters ?? {},
+          filters: mergedFilters,
           updated_at: new Date().toISOString(),
         });
 
         if (error) {
-          console.warn("Failed to save user filters:", error);
+          console.warn("[FiltersProvider] Failed to save user filters:", error);
         } else {
-          lastSavedRef.current = filters ?? {};
+          lastSavedRef.current = mergedFilters ?? {};
         }
       } catch (e) {
-        console.error("Error saving user filters:", e);
+        console.error("[FiltersProvider] Error saving user filters:", e);
       }
     }, 1000);
 
@@ -172,15 +198,46 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
     if (!user?.id) return;
     (async () => {
       try {
+        // Read current server-side filters to preserve server-only keys then overwrite filter fields
+        let serverFilters: any = {};
+        try {
+          const { data: existing, error: readErr } = await supabase
+            .from("user_profiles")
+            .select("filters")
+            .eq("id", user.id)
+            .single();
+          if (!readErr && existing?.filters) serverFilters = existing.filters;
+        } catch (e) {
+          console.debug(
+            "[FiltersProvider] failed to read existing filters before clear:",
+            e
+          );
+        }
+
+        const mergedFilters = {
+          ...(serverFilters ?? {}),
+          // overwrite user-visible filters to defaults
+          nudity: "not-nude",
+        };
+
+        console.debug(
+          "[FiltersProvider] clearing filters, upserting mergedFilters:",
+          mergedFilters
+        );
+
         const { error } = await supabase.from("user_profiles").upsert({
           id: user.id,
-          filters: { nudity: "not-nude" },
+          filters: mergedFilters,
           updated_at: new Date().toISOString(),
         });
-        if (error) console.warn("Failed to clear user filters:", error);
-        lastSavedRef.current = { nudity: "not-nude" };
+        if (error)
+          console.warn(
+            "[FiltersProvider] Failed to clear user filters:",
+            error
+          );
+        lastSavedRef.current = mergedFilters ?? { nudity: "not-nude" };
       } catch (e) {
-        console.warn("Error clearing user filters:", e);
+        console.warn("[FiltersProvider] Error clearing user filters:", e);
       }
     })();
   };
