@@ -249,8 +249,8 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
             <ThemedView style={styles.row}>
               {[
                 { key: "not-nude", label: "Hide nudes (default)" },
-                { key: "nude", label: "Only nudes" },
                 { key: "all", label: "Include nudes" },
+                { key: "nude", label: "Only nudes" },
               ].map((opt) => (
                 <TouchableOpacity
                   key={opt.key}
