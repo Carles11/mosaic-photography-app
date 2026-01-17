@@ -86,9 +86,11 @@ export const AgeGateModal: React.FC<{
             </ThemedText>
 
             <ThemedText style={styles.body}>
-              This area contains historical and artistic nude photography
-              (public-domain, 19th–early 20th century). Images are presented for
-              educational, historical, and artistic purposes only.
+              This content contains public-domain photographic works from the
+              19th and early 20th centuries that include nudity presented for
+              educational, historical, and artistic purposes only. Images are
+              non-sexual in intent and shown with contextual information where
+              available.
             </ThemedText>
 
             <Pressable
@@ -98,8 +100,9 @@ export const AgeGateModal: React.FC<{
               accessibilityState={{ checked }}
             >
               <ThemedText style={styles.checkboxText}>
-                {checked ? "☑" : "☐"} I confirm I am 18 years or older and wish
-                to view this content.
+                {checked ? "☑" : "☐"} I confirm I am 18 years or older (or meet
+                the legal minimum age in my country) and wish to view historical
+                & artistic nude images for educational or historical purposes.
               </ThemedText>
             </Pressable>
 
