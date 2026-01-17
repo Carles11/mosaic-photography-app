@@ -7,23 +7,10 @@ import {
 } from "@/4-shared/types";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Platform,
-  UIManager,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { fetchPhotographersList } from "../api/fetchPhotographersList";
 import { styles } from "./PhotographersSlider.styles";
 import { PhotographersSliderItem } from "./PhotographersSliderItem";
-
-if (
-  Platform.OS === "android" &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   onPhotographerPress,
