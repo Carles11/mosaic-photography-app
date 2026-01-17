@@ -2,11 +2,15 @@ import { OnlyTextButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import {
+  FEATURED_PHOTOGRAPHERS_LIMIT,
+  FEATURED_PHOTOGRAPHERS_THUMB_WIDTH,
+} from "@/4-shared/config/photographers";
+import {
   PhotographerListItem,
   PhotographersSliderProps,
 } from "@/4-shared/types";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { fetchPhotographersList } from "../api/fetchPhotographersList";
 import { styles } from "./PhotographersSlider.styles";
@@ -15,28 +19,82 @@ import { PhotographersSliderItem } from "./PhotographersSliderItem";
 export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   onPhotographerPress,
 }) => {
+  console.count("[PhotographersSlider] render");
+
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
     []
   );
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
+  // Prefetch featured photographers and thumbnail images on app startup
   useEffect(() => {
     let mounted = true;
-    fetchPhotographersList().then((data) => {
-      if (mounted) {
-        setPhotographers(data);
-        setLoading(false);
-      }
-    });
+    console.log("[PhotographersSlider] effect: started");
+    console.log("[PhotographersSlider] fetch:start");
+    const start = Date.now();
+
+    fetchPhotographersList(
+      FEATURED_PHOTOGRAPHERS_LIMIT,
+      FEATURED_PHOTOGRAPHERS_THUMB_WIDTH
+    )
+      .then((data) => {
+        const took = Date.now() - start;
+        console.log(
+          `[PhotographersSlider] fetch:loaded time=${took}ms count=${
+            data?.length ?? 0
+          }`
+        );
+        if (mounted) {
+          console.log("[PhotographersSlider] about to setPhotographers", {
+            sampleFirstId: data && data.length ? data[0].id : null,
+          });
+          setPhotographers(data);
+          console.log("[PhotographersSlider] setPhotographers called");
+          setLoading(false);
+          console.log("[PhotographersSlider] setLoading(false) called");
+        } else {
+          console.log(
+            "[PhotographersSlider] mounted is false; skipping state update"
+          );
+        }
+      })
+      .catch((err) => {
+        const took = Date.now() - start;
+        console.warn(
+          `[PhotographersSlider] fetch:error time=${took}ms error=${String(
+            err
+          )}`
+        );
+        if (mounted) {
+          setPhotographers([]);
+          setLoading(false);
+        }
+      });
+
     return () => {
       mounted = false;
+      console.log("[PhotographersSlider] effect: cleanup (mounted=false)");
     };
   }, []);
 
-  const handleNavigateToPhotographer = (slug: string) => {
-    router.push(`/photographer/${slug}`);
-  };
+  const handleNavigateToPhotographer = useCallback(
+    (slug: string) => {
+      router.push(`/photographer/${slug}`);
+    },
+    [router]
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: PhotographerListItem }) => (
+      <PhotographersSliderItem
+        item={item}
+        onPhotographerPress={onPhotographerPress}
+        onNavigateToPhotographer={handleNavigateToPhotographer}
+      />
+    ),
+    [onPhotographerPress, handleNavigateToPhotographer]
+  );
 
   if (loading) {
     return (
@@ -81,15 +139,9 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        initialNumToRender={5}
-        windowSize={7}
-        renderItem={({ item }) => (
-          <PhotographersSliderItem
-            item={item}
-            onPhotographerPress={onPhotographerPress}
-            onNavigateToPhotographer={handleNavigateToPhotographer}
-          />
-        )}
+        initialNumToRender={FEATURED_PHOTOGRAPHERS_LIMIT}
+        windowSize={3}
+        renderItem={renderItem}
       />
     </View>
   );

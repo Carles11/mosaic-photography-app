@@ -1,3 +1,4 @@
+import { fetchPhotographersList } from "@/2-features/photographers/api/fetchPhotographersList";
 import FontLoader from "@/4-shared/components/FontLoader";
 import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext";
 import { CollectionsProvider } from "@/4-shared/context/collections/CollectionsContext";
@@ -11,6 +12,7 @@ import * as Sentry from "@sentry/react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useMemo } from "react";
+import { Image } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
@@ -37,6 +39,36 @@ export const unstable_settings = {
 export default Sentry.wrap(function RootLayout() {
   useEffect(() => {
     logEvent("gallery_opened", { screen: "home", userType: "guest" });
+  }, []);
+
+  // Prefetch featured photographers on app startup to warm in-memory cache used by slider
+  useEffect(() => {
+    const FEATURED_LIMIT = 6;
+    const FEATURED_THUMB_WIDTH = 200; // must match PhotographersSlider
+
+    fetchPhotographersList(FEATURED_LIMIT, FEATURED_THUMB_WIDTH)
+      .then(async (data) => {
+        console.log("[app/_layout] prefetched photographers", {
+          count: data?.length ?? 0,
+        });
+
+        // Log the portrait URLs we will prefetch
+        const urls = (data ?? []).map((p) => p?.portrait).filter(Boolean);
+        console.log("[app/_layout] about to prefetch urls", urls);
+
+        // Prefetch thumbnail image bytes into native cache and log results
+        try {
+          const results = await Promise.allSettled(
+            urls.map((u) => Image.prefetch(u))
+          );
+          console.log("[app/_layout] Image.prefetch results", results);
+        } catch (e) {
+          console.warn("[app/_layout] Image.prefetch overall error", e);
+        }
+      })
+      .catch((err) => {
+        console.warn("[app/_layout] photographers prefetch failed", err);
+      });
   }, []);
 
   return (

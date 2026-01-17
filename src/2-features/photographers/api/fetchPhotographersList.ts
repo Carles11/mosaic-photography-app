@@ -4,49 +4,71 @@ import { Dimensions } from "react-native";
 
 import { PhotographerListItem } from "@/4-shared/types";
 
-export async function fetchPhotographersList(): Promise<
-  PhotographerListItem[]
-> {
-  // Step 1: Fetch all photographers
-  const { data: photographers, error: photographerError } = await supabase
-    .from("photographers")
-    .select("id, name, surname, slug, author, intro")
-    .order("surname");
+/**
+ * Fetch photographers with optional limit and optional target image width (in px).
+ * Uses the public.photographers_with_portrait view to return one portrait per photographer in a single query.
+ * Adds a lightweight in-memory cache for the session to avoid repeated DB calls.
+ *
+ * @param limit optional number of photographers to return
+ * @param targetImageWidth optional target width in px for portraits (defaults to device width)
+ */
+const _photographersCache: Record<string, PhotographerListItem[]> = {};
 
-  if (photographerError || !photographers) return [];
+export async function fetchPhotographersList(
+  limit?: number,
+  targetImageWidth?: number
+): Promise<PhotographerListItem[]> {
+  const resolvedTargetWidth =
+    typeof targetImageWidth === "number"
+      ? targetImageWidth
+      : Dimensions.get("window").width;
 
-  // Step 2: Extract all author fields
-  const authors = photographers.map((p) => p.author);
-
-  // Step 3: Fetch all portrait images for those authors in one query
-  const { data: portraitImages, error: imagesError } = await supabase
-    .from("images_resize")
-    .select("author, filename, base_url, width")
-    .in("author", authors)
-    .ilike("filename", "000_aaa%");
-
-  // Step 4: Build a map for quick lookup
-  const portraitMap = new Map();
-  if (portraitImages) {
-    for (const img of portraitImages) {
-      if (img.author && !portraitMap.has(img.author)) {
-        portraitMap.set(img.author, img);
-      }
-    }
+  const cacheKey = `limit:${limit ?? "all"}|w:${resolvedTargetWidth}`;
+  if (_photographersCache[cacheKey]) {
+    return _photographersCache[cacheKey].slice();
   }
 
-  const deviceWidth = Dimensions.get("window").width;
+  const t0 = Date.now();
+  console.log("[fetchPhotographersList] start (view)", {
+    limit,
+    targetImageWidth: resolvedTargetWidth,
+  });
 
-  // Step 5: Build the result list
-  return photographers.map((photographer: any) => {
-    const img = portraitMap.get(photographer.author);
+  // Query the view photographers_with_portrait in a single request
+  let query = supabase
+    .from("photographers_with_portrait")
+    .select(
+      "id, name, surname, slug, author, intro, filename, base_url, img_width"
+    )
+    .order("surname");
+
+  if (typeof limit === "number" && limit > 0) {
+    query = (query as any).limit(limit);
+  }
+
+  const { data: rows, error } = await query;
+  const t1 = Date.now();
+  console.log(
+    `[fetchPhotographersList] view query time=${t1 - t0}ms count=${
+      rows?.length ?? 0
+    }`
+  );
+
+  if (error || !rows) {
+    console.warn("[fetchPhotographersList] view query error", error);
+    return [];
+  }
+
+  // Build result list using getBestS3FolderForWidth with the portrait info from the view
+  const deviceWidth = resolvedTargetWidth;
+  const result: PhotographerListItem[] = rows.map((r: any) => {
     let portrait = "";
-    if (img) {
+    if (r.filename && r.base_url) {
       const best = getBestS3FolderForWidth(
         {
-          filename: img.filename,
-          base_url: img.base_url,
-          width: img.width,
+          filename: r.filename,
+          base_url: r.base_url,
+          width: r.img_width,
         },
         deviceWidth
       );
@@ -54,13 +76,23 @@ export async function fetchPhotographersList(): Promise<
     }
 
     return {
-      id: photographer.id,
-      name: photographer.name,
-      surname: photographer.surname,
-      slug: photographer.slug,
-      intro: photographer.intro,
-      author: photographer.author,
+      id: r.id,
+      name: r.name,
+      surname: r.surname,
+      slug: r.slug,
+      intro: r.intro,
+      author: r.author,
       portrait,
     };
   });
+
+  const t2 = Date.now();
+  console.log(
+    `[fetchPhotographersList] mapping/build time=${t2 - t1}ms total time=${
+      t2 - t0
+    }ms`
+  );
+
+  _photographersCache[cacheKey] = result.slice();
+  return result;
 }

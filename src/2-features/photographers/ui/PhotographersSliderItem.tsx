@@ -1,7 +1,8 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { PhotographerListItem } from "@/4-shared/types";
-import React from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import { Image as ExpoImage } from "expo-image";
+import React, { useEffect, useRef } from "react";
+import { TouchableOpacity, View } from "react-native";
 import { styles } from "./PhotographersSliderItem.styles";
 
 interface PhotographerSliderItemProps {
@@ -15,6 +16,17 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
   onPhotographerPress,
   onNavigateToPhotographer,
 }) => {
+  // non-hook render logging (temporary for debugging)
+  console.count(`[PhotographersSliderItem] render id=${item?.id ?? "unknown"}`);
+
+  // mount timestamp to measure image load time
+  const mountTsRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    mountTsRef.current = Date.now();
+    console.log(`[PhotographersSliderItem] mount id=${item?.id ?? "unknown"}`);
+  }, [item?.id]);
+
   const hasPortrait = !!item.portrait && item.portrait.length > 0;
 
   return (
@@ -30,11 +42,33 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
       >
         <View style={styles.portraitWrapper}>
           {hasPortrait ? (
-            <Image
-              source={{ uri: item.portrait }}
+            <ExpoImage
+              source={item.portrait}
               style={styles.portrait}
-              resizeMode="cover"
-              accessibilityLabel={`${item.name} ${item.surname} portrait`}
+              contentFit="cover"
+              priority="high"
+              onLoadStart={() => {
+                console.log(
+                  `[PhotographersSliderItem] image:onLoadStart id=${item.id} uri=${item.portrait}`
+                );
+              }}
+              onLoad={() => {
+                const start = mountTsRef.current ?? Date.now();
+                const took = Date.now() - start;
+                console.log(
+                  `[PhotographersSliderItem] image:loaded id=${
+                    item?.id ?? "unknown"
+                  } time=${took}ms uri=${item.portrait}`
+                );
+              }}
+              onError={(e) =>
+                console.warn(
+                  `[PhotographersSliderItem] image:error id=${
+                    item?.id ?? "unknown"
+                  } uri=${item.portrait}`,
+                  e
+                )
+              }
             />
           ) : (
             <View style={styles.placeholderPortrait}>
