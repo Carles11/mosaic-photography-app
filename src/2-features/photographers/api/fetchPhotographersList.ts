@@ -28,12 +28,6 @@ export async function fetchPhotographersList(
     return _photographersCache[cacheKey].slice();
   }
 
-  const t0 = Date.now();
-  console.log("[fetchPhotographersList] start (view)", {
-    limit,
-    targetImageWidth: resolvedTargetWidth,
-  });
-
   // Query the view photographers_with_portrait in a single request
   let query = supabase
     .from("photographers_with_portrait")
@@ -47,12 +41,6 @@ export async function fetchPhotographersList(
   }
 
   const { data: rows, error } = await query;
-  const t1 = Date.now();
-  console.log(
-    `[fetchPhotographersList] view query time=${t1 - t0}ms count=${
-      rows?.length ?? 0
-    }`
-  );
 
   if (error || !rows) {
     console.warn("[fetchPhotographersList] view query error", error);
@@ -85,13 +73,6 @@ export async function fetchPhotographersList(
       portrait,
     };
   });
-
-  const t2 = Date.now();
-  console.log(
-    `[fetchPhotographersList] mapping/build time=${t2 - t1}ms total time=${
-      t2 - t0
-    }ms`
-  );
 
   _photographersCache[cacheKey] = result.slice();
   return result;

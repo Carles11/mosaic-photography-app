@@ -19,8 +19,6 @@ import { PhotographersSliderItem } from "./PhotographersSliderItem";
 export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   onPhotographerPress,
 }) => {
-  console.count("[PhotographersSlider] render");
-
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
     []
   );
@@ -30,42 +28,19 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   // Prefetch featured photographers and thumbnail images on app startup
   useEffect(() => {
     let mounted = true;
-    console.log("[PhotographersSlider] effect: started");
-    console.log("[PhotographersSlider] fetch:start");
-    const start = Date.now();
 
     fetchPhotographersList(
       FEATURED_PHOTOGRAPHERS_LIMIT,
       FEATURED_PHOTOGRAPHERS_THUMB_WIDTH
     )
       .then((data) => {
-        const took = Date.now() - start;
-        console.log(
-          `[PhotographersSlider] fetch:loaded time=${took}ms count=${
-            data?.length ?? 0
-          }`
-        );
         if (mounted) {
-          console.log("[PhotographersSlider] about to setPhotographers", {
-            sampleFirstId: data && data.length ? data[0].id : null,
-          });
           setPhotographers(data);
-          console.log("[PhotographersSlider] setPhotographers called");
           setLoading(false);
-          console.log("[PhotographersSlider] setLoading(false) called");
-        } else {
-          console.log(
-            "[PhotographersSlider] mounted is false; skipping state update"
-          );
         }
       })
       .catch((err) => {
-        const took = Date.now() - start;
-        console.warn(
-          `[PhotographersSlider] fetch:error time=${took}ms error=${String(
-            err
-          )}`
-        );
+        console.warn("[PhotographersSlider] fetch error", err);
         if (mounted) {
           setPhotographers([]);
           setLoading(false);
@@ -74,7 +49,6 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
 
     return () => {
       mounted = false;
-      console.log("[PhotographersSlider] effect: cleanup (mounted=false)");
     };
   }, []);
 

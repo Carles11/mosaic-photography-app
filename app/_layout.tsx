@@ -48,20 +48,10 @@ export default Sentry.wrap(function RootLayout() {
 
     fetchPhotographersList(FEATURED_LIMIT, FEATURED_THUMB_WIDTH)
       .then(async (data) => {
-        console.log("[app/_layout] prefetched photographers", {
-          count: data?.length ?? 0,
-        });
-
-        // Log the portrait URLs we will prefetch
+        // Prefetch thumbnail image bytes into native cache
         const urls = (data ?? []).map((p) => p?.portrait).filter(Boolean);
-        console.log("[app/_layout] about to prefetch urls", urls);
-
-        // Prefetch thumbnail image bytes into native cache and log results
         try {
-          const results = await Promise.allSettled(
-            urls.map((u) => Image.prefetch(u))
-          );
-          console.log("[app/_layout] Image.prefetch results", results);
+          await Promise.allSettled(urls.map((u) => Image.prefetch(u)));
         } catch (e) {
           console.warn("[app/_layout] Image.prefetch overall error", e);
         }

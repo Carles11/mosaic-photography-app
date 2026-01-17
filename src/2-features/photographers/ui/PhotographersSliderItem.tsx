@@ -16,15 +16,13 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
   onPhotographerPress,
   onNavigateToPhotographer,
 }) => {
-  // non-hook render logging (temporary for debugging)
-  console.count(`[PhotographersSliderItem] render id=${item?.id ?? "unknown"}`);
-
-  // mount timestamp to measure image load time
+  // mount timestamp to measure overall time since mount
   const mountTsRef = useRef<number | null>(null);
+  // per-component reference to record onLoadStart time (accurate download+decode window)
+  const imageLoadStartRef = useRef<number | null>(null);
 
   useEffect(() => {
     mountTsRef.current = Date.now();
-    console.log(`[PhotographersSliderItem] mount id=${item?.id ?? "unknown"}`);
   }, [item?.id]);
 
   const hasPortrait = !!item.portrait && item.portrait.length > 0;
@@ -48,18 +46,17 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
               contentFit="cover"
               priority="high"
               onLoadStart={() => {
-                console.log(
-                  `[PhotographersSliderItem] image:onLoadStart id=${item.id} uri=${item.portrait}`
-                );
+                imageLoadStartRef.current = Date.now();
               }}
               onLoad={() => {
-                const start = mountTsRef.current ?? Date.now();
-                const took = Date.now() - start;
-                console.log(
-                  `[PhotographersSliderItem] image:loaded id=${
-                    item?.id ?? "unknown"
-                  } time=${took}ms uri=${item.portrait}`
-                );
+                const now = Date.now();
+                const start =
+                  imageLoadStartRef.current ?? mountTsRef.current ?? now;
+                const tookStartToLoad = now - start;
+                const tookSinceMount = now - (mountTsRef.current ?? now);
+                // kept for future telemetry (no debug logs here)
+                void tookStartToLoad;
+                void tookSinceMount;
               }}
               onError={(e) =>
                 console.warn(
