@@ -1,40 +1,8 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { authorToFolder, slugify } from "@/4-shared/lib/authorSlug";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 
 import { GalleryImage } from "@/4-shared/types/gallery";
-
-const authorMap: Record<string, string> = {
-  "Alfred Stieglitz": "alfred-stieglitz",
-  "Baron Wilhelm Von Gloeden": "wilhelm-von-gloden",
-  "Clarence Hudson White": "clarence-hudson-white",
-  "Edward Weston": "edward-weston",
-  "Eugene Durieu": "eugene-durieu",
-  "Felix Jacques Moulin": "jacques-moulin",
-  "Fred Holland Day": "fred-holland-day",
-  "Robert Demachy": "robert-demachy",
-  "Wilhelm Von Plueschow": "wilhelm-von-plueschow",
-  "Jane de La Vaudère": "jane-de-la-vaudere",
-  "Jane de La Vaudere": "jane-de-la-vaudere",
-  "Anne Brigman": "anne-brigman",
-  "Mario von Bucovich": "mario-von-bucovich",
-};
-
-function slugify(text: string): string {
-  return text
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-zA-Z0-9 ]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, "-");
-}
-
-function authorToFolder(author: string): string {
-  if (author in authorMap) {
-    return authorMap[author];
-  }
-  return slugify(author);
-}
 
 type FetchMainGalleryOptions = {
   bannedTitles?: string[]; // case-insensitive substring match against title
@@ -143,6 +111,45 @@ export async function fetchMainGalleryImages(
       bannedObj.web === true || String(bannedObj.web) === "true";
     // If any channel is banned, remove the image entirely (per your "do not show any banned image" request)
     return !(mobileBanned || webBanned);
+  });
+
+  // --- NEW: fetch photographer slugs for the distinct authors present in `filtered` ---
+  const authors = Array.from(
+    new Set((filtered.map((f: any) => f.author) as string[]).filter(Boolean)),
+  );
+
+  const authorSlugMap: Record<string, string> = {};
+
+  if (authors.length > 0) {
+    try {
+      // bulk lookup: get author->slug mapping from photographers table
+      const { data: photRows, error: photError } = await supabase
+        .from("photographers")
+        .select("author, slug")
+        .in("author", authors);
+
+      if (photError) {
+        console.warn("Error fetching photographer slugs:", photError);
+      } else if (photRows) {
+        photRows.forEach((p: any) => {
+          if (p && p.author) authorSlugMap[p.author] = p.slug;
+        });
+      }
+    } catch (e) {
+      console.warn("Failed to fetch photographer slugs:", e);
+    }
+  }
+
+  // Attach photographerSlug to each filtered image. If no DB slug found, fall back to a slugify fallback.
+  filtered.forEach((img: any) => {
+    if (img.author && authorSlugMap[img.author]) {
+      img.photographerSlug = authorSlugMap[img.author];
+    } else if (img.author) {
+      // fallback only if we don't have DB slug. this ensures navigation will still work.
+      img.photographerSlug = slugify(img.author);
+    } else {
+      img.photographerSlug = undefined;
+    }
   });
 
   // If nudity parameter allows nudes ("nude" or "all"), enforce first-block exclusion of male images.

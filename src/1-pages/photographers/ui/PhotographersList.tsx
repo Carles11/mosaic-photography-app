@@ -16,7 +16,7 @@ import { styles } from "./PhotographersList.styles";
 
 const PhotographersList = () => {
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
-    []
+    [],
   );
   const [loading, setLoading] = useState(true);
   const { theme, mode } = useTheme();

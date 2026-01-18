@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export function createMainGalleryItemStyles(
   itemHeight: number,
-  imageHeight: number
+  imageHeight: number,
 ) {
   return StyleSheet.create({
     itemContainer: {
@@ -27,8 +27,14 @@ export function createMainGalleryItemStyles(
       fontSize: 15,
       fontWeight: "bold",
       marginHorizontal: 12,
-      marginTop: 10,
-      marginBottom: 8,
+      marginBottom: 10,
+    },
+    author: {
+      fontSize: 12,
+      marginTop: 6,
+      marginHorizontal: 12,
+      opacity: 0.85,
+      fontStyle: "italic",
     },
     imagePlaceholder: {
       position: "absolute",
