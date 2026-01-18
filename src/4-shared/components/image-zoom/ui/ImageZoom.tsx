@@ -1,11 +1,14 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { slugify } from "@/4-shared/lib/authorSlug";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
 import { ZoomImageProps } from "@/4-shared/types/gallery";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
-import React, { useState } from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Image as RNImage,
+  TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
@@ -75,6 +78,16 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
   const hasPreview = !!previewUrl && previewUrl.length > 0;
   // Defensive: Only use zoomUrl if not empty
   const hasZoom = !!zoomUrl && zoomUrl.length > 0;
+
+  const router = useRouter();
+
+  const handlePressAuthor = useCallback(() => {
+    if (!image?.author) return;
+    // Prefer DB-provided slug if present, else fallback to slugify
+    const slug = (image as any).photographerSlug || slugify(image.author);
+    router.push(`/photographer/${slug}`);
+  }, [image, router]);
+
   return (
     <View style={[styles.container, style]}>
       {/* Preview image (always shown until zoom image is loaded) */}
@@ -113,89 +126,41 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           scale={scale}
         />
       )}
-      {/* Top legend: author and year */}
+      {/* Top legend: author and year
+          Use pointerEvents="box-none" so touches reach the TouchableOpacity inside.
+          The TouchableOpacity itself is the actionable element for navigation. */}
       <Animated.View
-        style={[
-          {
-            position: "absolute",
-            top: "11%",
-            left: 0,
-            right: 0,
-            alignItems: "center",
-            zIndex: 12,
-            paddingHorizontal: 16,
-          },
-          overlayStyle,
-        ]}
-        pointerEvents="none"
+        style={[styles.topLegendContainer, overlayStyle]}
+        pointerEvents="box-none"
       >
         {(image.author || image.year) && (
-          <ThemedText
-            style={{
-              backgroundColor: "rgba(30,30,30,0.85)",
-              color: "#fff",
-              fontWeight: "600",
-              borderRadius: 14,
-              paddingHorizontal: 14,
-              paddingVertical: 5,
-              overflow: "hidden",
-              textAlign: "center",
-            }}
+          <TouchableOpacity
+            onPress={handlePressAuthor}
+            activeOpacity={0.75}
+            accessibilityRole="link"
+            disabled={!image.author}
           >
-            {image.author}
-            {image.author && image.year ? ", " : ""}
-            {image.year}
-          </ThemedText>
+            <ThemedText style={styles.topLegendText}>
+              {image.author && image.author}
+              {image.year ? `, ${image.year}` : ""}
+            </ThemedText>
+          </TouchableOpacity>
         )}
       </Animated.View>
       {/* Bottom legend: description */}
       <Animated.View
-        style={[
-          {
-            position: "absolute",
-            left: 0,
-            right: 0,
-            bottom: "6%",
-            // leave room for scale badge
-            alignItems: "center",
-            zIndex: 12,
-            paddingHorizontal: 16,
-          },
-          overlayStyle,
-        ]}
+        style={[styles.descriptionTextContainer, overlayStyle]}
         pointerEvents="none"
       >
         {image.description ? (
-          <ThemedText
-            style={{
-              backgroundColor: "rgba(30,30,30,0.8)",
-              color: "#fff",
-
-              borderRadius: 12,
-              paddingHorizontal: 12,
-              paddingVertical: 5,
-              overflow: "hidden",
-              textAlign: "center",
-            }}
-          >
+          <ThemedText style={styles.descriptionText}>
             {image.description}
           </ThemedText>
         ) : null}
       </Animated.View>
       {/* Zoom scale overlay */}
       <Animated.View
-        style={[
-          {
-            position: "absolute",
-            bottom: "13%",
-            right: 16,
-
-            paddingVertical: 4,
-            paddingHorizontal: 10,
-            zIndex: 10,
-          },
-          overlayStyle,
-        ]}
+        style={[styles.zoomScaleBadge, overlayStyle]}
         pointerEvents="none"
       >
         <Animated.Text>
@@ -212,24 +177,12 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
         <ActivityIndicator
           size="large"
           color="#fff"
-          style={{ position: "absolute", alignSelf: "center" }}
+          style={styles.activityIndicator}
         />
       )}
       {/* Placeholder if no preview or zoom image at all */}
       {!hasPreview && !hasZoom && (
-        <View
-          style={[
-            styles.image,
-            {
-              backgroundColor: "#333",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-            },
-          ]}
-        >
+        <View style={[styles.image, styles.noImageContainer]}>
           <ThemedText style={{ color: "#fff", fontSize: 12 }}>
             No image
           </ThemedText>
