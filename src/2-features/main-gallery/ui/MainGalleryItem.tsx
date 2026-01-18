@@ -29,7 +29,6 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
     if (!item.author) return;
     // Prefer slug from DB if present; fallback to slugify only as a last resort
     const slug = (item as any).photographerSlug || slugify(item.author);
-    console.log("Navigating to photographer slug:", slug);
     router.push(`/photographer/${slug}`);
   }, [router, item.author, (item as any).photographerSlug]);
 

@@ -1,4 +1,5 @@
 import { createMainGalleryItemStyles } from "@/2-features/main-gallery/ui/MainGalleryItem.styles";
+import { StyleProp, ViewStyle } from "react-native";
 import { SharedValue } from "react-native-reanimated";
 
 export type Photographer = {
@@ -114,4 +115,23 @@ export type BottomSheetFilterMenuProps = {
 export type FetchMainGalleryOptions = {
   bannedTitles?: string[]; // case-insensitive substring match against title
   firstBlockSize?: number; // number of first images that must avoid male-nudity (default 30)
+};
+
+export type ZoomImageProps = {
+  image: {
+    width?: number;
+    filename: string;
+    base_url: string;
+    author?: string;
+    year?: string | number;
+    description?: string;
+  };
+  minScale?: number;
+  maxScale?: number;
+  doubleTapScale?: number;
+  loading?: boolean;
+  onInteractionStart?: () => void;
+  onInteractionEnd?: () => void;
+  style?: StyleProp<ViewStyle>;
+  imageStyle?: any;
 };

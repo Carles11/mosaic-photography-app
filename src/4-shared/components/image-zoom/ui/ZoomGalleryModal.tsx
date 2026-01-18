@@ -47,7 +47,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
   const allOptions = getAvailableDownloadOptionsForImage(currentImage);
   const originalOption = allOptions.find((o) => o.isOriginal);
   const webpOptions = allOptions.filter(
-    (o) => o.format === "webp" && !o.isOriginal
+    (o) => o.format === "webp" && !o.isOriginal,
   );
 
   return (
@@ -121,7 +121,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
             onDownloadOption={async (option) => {
               if (Platform.OS === "ios" && option.format === "webp") {
                 showErrorToast(
-                  "Please choose the print option. WebP images can't be saved to Photos on iOS."
+                  "Please choose the print option. WebP images can't be saved to Photos on iOS.",
                 );
                 onClose();
                 return;
@@ -144,17 +144,10 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
               onClose();
             }}
             onClose={() => setShowDownloadPanel(false)}
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              zIndex: 100,
-              padding: 24,
-              backgroundColor: theme.background,
-              justifyContent: "center",
-            }}
+            style={[
+              styles.downloadOptionsPanel,
+              { backgroundColor: theme.background },
+            ]}
           />
         )}
       </ThemedView>

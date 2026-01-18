@@ -1,14 +1,13 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
+import { ZoomImageProps } from "@/4-shared/types/gallery";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
   Image as RNImage,
-  StyleProp,
   useWindowDimensions,
   View,
-  ViewStyle,
 } from "react-native";
 import Animated, {
   runOnJS,
@@ -18,25 +17,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { styles } from "./ImageZoom.styles";
 import { ZoomScaleBadge } from "./ZoomScaleBadge";
-
-type ZoomImageProps = {
-  image: {
-    width?: number;
-    filename: string;
-    base_url: string;
-    author?: string;
-    year?: string | number;
-    description?: string;
-  };
-  minScale?: number;
-  maxScale?: number;
-  doubleTapScale?: number;
-  loading?: boolean;
-  onInteractionStart?: () => void;
-  onInteractionEnd?: () => void;
-  style?: StyleProp<ViewStyle>;
-  imageStyle?: any;
-};
 
 export const ZoomImage: React.FC<ZoomImageProps> = ({
   image,
@@ -53,7 +33,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
 
   const { previewUrl, zoomUrl } = getBestS3UrlsForProgressiveZoom(
     image,
-    deviceWidth
+    deviceWidth,
   );
 
   const [zoomLoaded, setZoomLoaded] = useState(false);
@@ -71,7 +51,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
         runOnJS(setDisplayScale)(current);
       }
     },
-    []
+    [],
   );
 
   const handleZoomLoad = () => {
@@ -83,7 +63,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
     () => ({
       opacity: overlaysVisible && zoomLoaded ? 1 : 0,
     }),
-    [overlaysVisible, zoomLoaded]
+    [overlaysVisible, zoomLoaded],
   );
 
   // Handler: single tap toggles overlays

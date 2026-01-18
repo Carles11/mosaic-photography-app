@@ -47,4 +47,15 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 14,
   },
+  DownloadOptionsPanel: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    zIndex: 100,
+    padding: 24,
+    backgroundColor: theme.background,
+    justifyContent: "center",
+  },
 });
