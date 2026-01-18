@@ -30,7 +30,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
       user,
       router,
     },
-    ref
+    ref,
   ) => {
     const { theme } = useTheme();
     const [showDownloadOptions, setShowDownloadOptions] = useState(false);
@@ -73,7 +73,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
     return (
       <BottomSheetModal
         ref={ref}
-        snapPoints={["80%"]}
+        snapPoints={["97%"]}
         onDismiss={handleDismiss}
         enablePanDownToClose
       >
@@ -126,7 +126,7 @@ export const BottomSheetThreeDotsMenu = forwardRef<
         </BottomSheetScrollView>
       </BottomSheetModal>
     );
-  }
+  },
 );
 
 type ActionRowProps = {

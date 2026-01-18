@@ -6,13 +6,6 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 16,
     paddingBottom: 44,
-
-    borderRadius: 18,
-    shadowColor: "#000",
-    shadowOpacity: 0.07,
-    shadowRadius: 20,
-    elevation: 4,
-    borderWidth: 1,
   },
   originalBlock: {
     marginBottom: 18,

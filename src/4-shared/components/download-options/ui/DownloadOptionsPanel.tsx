@@ -1,21 +1,12 @@
 import { PrimaryButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { DownloadOption } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { GalleryImage } from "@/4-shared/types/gallery";
 import React from "react";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import { Pressable } from "react-native";
 import { styles } from "./DownloadOptionsPanel.styles";
 
-type DownloadOptionsPanelProps = {
-  originalOption?: DownloadOption | null;
-  webpOptions: DownloadOption[];
-  selectedImage: Pick<GalleryImage, "print_quality" | "width" | "height">;
-  onDownloadOption: (option: DownloadOption) => void;
-  style?: StyleProp<ViewStyle>;
-  onClose?: () => void;
-};
+import { DownloadOptionsPanelProps } from "@/4-shared/types";
 
 export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
   originalOption,
@@ -40,7 +31,7 @@ export const DownloadOptionsPanel: React.FC<DownloadOptionsPanelProps> = ({
             type="defaultSemiBold"
             style={{ fontSize: 24, color: theme.text }}
           >
-            ×
+            x
           </ThemedText>
         </Pressable>
       )}
