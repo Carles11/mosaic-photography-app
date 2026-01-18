@@ -167,7 +167,7 @@ export const Home: React.FC = () => {
         const imgAuthorNormalized = (img.author ?? "").trim().toLowerCase();
         const isAuthorSelected = filters.author.some(
           (authorName: string) =>
-            imgAuthorNormalized === authorName.trim().toLowerCase()
+            imgAuthorNormalized === authorName.trim().toLowerCase(),
         );
         if (!isAuthorSelected) return false;
       }
@@ -178,7 +178,7 @@ export const Home: React.FC = () => {
   useEffect(() => {
     if (filteredImages.length > 0) {
       const imageIds = filteredImages.map((img) =>
-        typeof img.id === "string" ? img.id : String(img.id)
+        typeof img.id === "string" ? img.id : String(img.id),
       );
       loadCommentCountsBatch(imageIds);
     }
@@ -283,7 +283,7 @@ export const Home: React.FC = () => {
   const handleDownloadOption = async (option: DownloadOption) => {
     if (Platform.OS === "ios" && option.format === "webp") {
       showErrorToast(
-        "Please choose the print option. WebP images can't be saved to Photos on iOS."
+        "Please choose the print option. WebP images can't be saved to Photos on iOS.",
       );
       return;
     }

@@ -3,6 +3,7 @@ import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGaller
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { ASO } from "@/4-shared/config/aso";
+import { GALLERY_FIRST_BLOCK } from "@/4-shared/constants/gallery";
 import { logEvent } from "@/4-shared/firebase";
 import { useResponsiveGalleryDimensions } from "@/4-shared/hooks/use-responsive-gallery-dimensions";
 import { GalleryImage, MainGalleryProps } from "@/4-shared/types";
@@ -12,7 +13,9 @@ import { createMainGalleryStyles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 import { createMainGalleryItemStyles } from "./MainGalleryItem.styles";
 
-export const MainGallery: React.FC<MainGalleryProps> = ({
+export const MainGallery: React.FC<
+  MainGalleryProps & { firstBlockSize?: number }
+> = ({
   images,
   loading,
   error,
@@ -20,6 +23,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   onPressComments,
   scrollY,
   ListHeaderComponent,
+  firstBlockSize,
 }) => {
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
@@ -27,23 +31,83 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 
   const mainGalleryStyles = createMainGalleryStyles(
     galleryItemHeight,
-    imageHeight
+    imageHeight,
   );
 
   const mainGalleryItemStyles = createMainGalleryItemStyles(
     galleryItemHeight,
-    imageHeight
+    imageHeight,
   );
 
-  // 1. Shuffle images when images changes, stable between renders:
-  const shuffledImages = useMemo(() => {
-    const arr = [...images];
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+  // ---------- Seeded shuffle helpers ----------
+  // xmur3: string -> 32-bit seed
+  const xmur3 = (str: string) => {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
     }
-    return arr;
-  }, [images]);
+    return () => {
+      h = Math.imul(h ^ (h >>> 16), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      const t = (h ^= h >>> 16) >>> 0;
+      return t;
+    };
+  };
+
+  // mulberry32 PRNG from 32-bit seed
+  const mulberry32 = (a: number) => {
+    return () => {
+      let t = (a += 0x6d2b79f5);
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
+  const seededShuffle = <T,>(arr: T[], seedStr: string) => {
+    const arrCopy = [...arr];
+    const seedFn = xmur3(seedStr);
+    const seed = seedFn();
+    const rand = mulberry32(seed);
+    for (let i = arrCopy.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arrCopy[i], arrCopy[j]] = [arrCopy[j], arrCopy[i]];
+    }
+    return arrCopy;
+  };
+
+  // ---------- Seeded shuffle usage ----------
+  // Preserve first block (firstBlockSize) and seeded-shuffle remainder.
+  // Seed lifetime: per-day (YYYYMMDD).
+  const FIRST_BLOCK = firstBlockSize ?? GALLERY_FIRST_BLOCK;
+
+  // Use today's date (YYYYMMDD) as seed basis so ordering changes daily.
+  const todaySeed = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+
+  const shuffledImages = useMemo(() => {
+    if (!images || images.length === 0) return [];
+    if (images.length <= FIRST_BLOCK) return images;
+
+    const firstBlock = images.slice(0, FIRST_BLOCK);
+    const rest = images.slice(FIRST_BLOCK);
+
+    // Build a seed from today's date + count of images to slightly vary if needed.
+    const seed = `${todaySeed}:${images.length}`;
+
+    const shuffledRest = seededShuffle(rest, seed);
+
+    const final = [...firstBlock, ...shuffledRest];
+
+    // Optional logging (enabled): seed and first 10 displayed IDs
+    try {
+      const first10 = final.slice(0, 10).map((i) => i.id);
+    } catch (e) {
+      // ignore logging errors in production
+    }
+
+    return final;
+  }, [images, todaySeed, FIRST_BLOCK]);
 
   useEffect(() => {
     logEvent("main_gallery_screen_view", {
@@ -65,7 +129,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         });
       }
     },
-    [shuffledImages]
+    [shuffledImages],
   );
 
   const handleOpenMenu = useCallback(
@@ -76,7 +140,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
       });
       onOpenMenu?.(item);
     },
-    [onOpenMenu]
+    [onOpenMenu],
   );
 
   const handleOpenComments = useCallback(
@@ -87,7 +151,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
       });
       onPressComments?.(String(imageId));
     },
-    [onPressComments]
+    [onPressComments],
   );
 
   if (loading) {
@@ -119,7 +183,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
       <Gallery
         galleryTitle={ASO.home.title}
         scrollY={scrollY}
-        images={shuffledImages} // Use shuffled!
+        images={shuffledImages}
         itemHeight={galleryItemHeight}
         ListHeaderComponent={ListHeaderComponent}
         renderItem={(item, index) => (
@@ -137,7 +201,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         )}
       />
       <ZoomGalleryModal
-        images={shuffledImages} // Use shuffled!
+        images={shuffledImages}
         visible={zoomVisible}
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}

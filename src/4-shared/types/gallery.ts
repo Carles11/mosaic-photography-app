@@ -110,3 +110,8 @@ export type BottomSheetFilterMenuProps = {
   resetFilters: () => void;
   photographerNames: string[];
 };
+
+export type FetchMainGalleryOptions = {
+  bannedTitles?: string[]; // case-insensitive substring match against title
+  firstBlockSize?: number; // number of first images that must avoid male-nudity (default 30)
+};

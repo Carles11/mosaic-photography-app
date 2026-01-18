@@ -42,9 +42,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
               },
             ]}
           >
-            <ThemedText style={{ color: "#fff", fontSize: 12 }}>
-              No image
-            </ThemedText>
+            <ThemedText style={{ fontSize: 12 }}>No image</ThemedText>
           </ThemedView>
         )}
       </TouchableOpacity>
