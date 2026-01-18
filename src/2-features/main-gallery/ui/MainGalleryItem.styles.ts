@@ -35,6 +35,9 @@ export function createMainGalleryItemStyles(
       marginHorizontal: 12,
       opacity: 0.85,
       fontStyle: "italic",
+      textDecorationLine: "underline",
+      textDecorationStyle: "solid",
+      textDecorationColor: "#888",
     },
     imagePlaceholder: {
       position: "absolute",
