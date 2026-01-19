@@ -10,8 +10,13 @@ import {
   PhotographersSliderProps,
 } from "@/4-shared/types";
 import { useRouter } from "expo-router";
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  ListRenderItemInfo,
+  View,
+} from "react-native";
 import { fetchPhotographersList } from "../api/fetchPhotographersList";
 import { styles } from "./PhotographersSlider.styles";
 import { PhotographersSliderItem } from "./PhotographersSliderItem";
@@ -19,56 +24,118 @@ import { PhotographersSliderItem } from "./PhotographersSliderItem";
 export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
   onPhotographerPress,
 }) => {
+  const pageSize = FEATURED_PHOTOGRAPHERS_LIMIT;
+  const thumbWidth = FEATURED_PHOTOGRAPHERS_THUMB_WIDTH;
+
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
-    []
+    [],
   );
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingMore, setLoadingMore] = useState<boolean>(false);
+  const [pageIndex, setPageIndex] = useState<number>(0); // zero-based
+  const [hasMore, setHasMore] = useState<boolean>(true);
   const router = useRouter();
 
-  // Prefetch featured photographers and thumbnail images on app startup
+  // guard to avoid multiple onEndReached triggers while a request is in-flight
+  const isFetchingRef = useRef(false);
+
+  // Prefetch first page
   useEffect(() => {
     let mounted = true;
-
-    fetchPhotographersList(
-      FEATURED_PHOTOGRAPHERS_LIMIT,
-      FEATURED_PHOTOGRAPHERS_THUMB_WIDTH
-    )
-      .then((data) => {
-        if (mounted) {
-          setPhotographers(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
+    isFetchingRef.current = true;
+    (async () => {
+      try {
+        const fetched = await fetchPhotographersList(pageSize, thumbWidth);
+        if (!mounted) return;
+        const initial = fetched.slice(0, pageSize);
+        setPhotographers(initial);
+        // if fetched returned exactly pageSize, there might be more
+        setHasMore(fetched.length === pageSize);
+      } catch (err) {
         console.warn("[PhotographersSlider] fetch error", err);
+        if (!mounted) return;
+        setPhotographers([]);
+        setHasMore(false);
+      } finally {
         if (mounted) {
-          setPhotographers([]);
           setLoading(false);
+          isFetchingRef.current = false;
         }
-      });
+      }
+    })();
 
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleNavigateToPhotographer = useCallback(
     (slug: string) => {
       router.push(`/photographer/${slug}`);
     },
-    [router]
+    [router],
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: PhotographerListItem }) => (
+    ({ item }: ListRenderItemInfo<PhotographerListItem>) => (
       <PhotographersSliderItem
         item={item}
         onPhotographerPress={onPhotographerPress}
         onNavigateToPhotographer={handleNavigateToPhotographer}
       />
     ),
-    [onPhotographerPress, handleNavigateToPhotographer]
+    [onPhotographerPress, handleNavigateToPhotographer],
   );
+
+  // Load the next page using the existing fetchPhotographersList(limit, width).
+  // Because fetchPhotographersList accepts only limit (no offset), we request a cumulative
+  // limit: (pageIndex+1 + 1) * pageSize, then slice out only the new page entries.
+  const loadNextPage = useCallback(async () => {
+    if (loadingMore || isFetchingRef.current || !hasMore) return;
+    setLoadingMore(true);
+    isFetchingRef.current = true;
+    try {
+      const nextPageIndex = pageIndex + 1;
+      const requestedLimit = (nextPageIndex + 1) * pageSize; // cumulative
+      const fetched = await fetchPhotographersList(requestedLimit, thumbWidth);
+      const offset = nextPageIndex * pageSize;
+      const pageItems = fetched.slice(offset, offset + pageSize);
+
+      // Append only new unique items (defensive)
+      setPhotographers((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newItems = pageItems.filter((p) => !existingIds.has(p.id));
+        return newItems.length ? [...prev, ...newItems] : prev;
+      });
+
+      // hasMore if we received a full page
+      setHasMore(pageItems.length === pageSize);
+      setPageIndex(nextPageIndex);
+    } catch (err) {
+      console.warn("[PhotographersSlider] loadNextPage error", err);
+    } finally {
+      setLoadingMore(false);
+      isFetchingRef.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageIndex, pageSize, thumbWidth, loadingMore, hasMore]);
+
+  // onEndReached is sometimes noisy on horizontal FlatList.
+  // We guard with isFetchingRef and loadingMore to avoid duplicate requests.
+  const handleEndReached = useCallback(() => {
+    if (!hasMore) return;
+    void loadNextPage();
+  }, [hasMore, loadNextPage]);
+
+  const listFooterComponent = useCallback(() => {
+    if (!loadingMore) return null;
+    return (
+      <View style={styles.loadingMoreContainer}>
+        <ActivityIndicator size="small" />
+      </View>
+    );
+  }, [loadingMore]);
 
   if (loading) {
     return (
@@ -113,9 +180,12 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        initialNumToRender={FEATURED_PHOTOGRAPHERS_LIMIT}
+        initialNumToRender={pageSize}
         windowSize={3}
         renderItem={renderItem}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.6}
+        ListFooterComponent={listFooterComponent}
       />
     </View>
   );

@@ -44,7 +44,7 @@ type Props = {
 
 const REPORT_REASONS = [
   "Spam",
-  "Inappropriate language",
+  "Inappropriate content",
   "Harassment or hate speech",
   "Copyright violation",
   "Other",
@@ -215,7 +215,7 @@ export const ReportBottomSheet = forwardRef<ReportBottomSheetRef, Props>(
         </BottomSheetView>
       </BottomSheetModal>
     );
-  }
+  },
 );
 
 ReportBottomSheet.displayName = "ReportBottomSheet";

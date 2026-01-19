@@ -2,32 +2,50 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
-    paddingHorizontal: 11,
+    paddingVertical: 12,
   },
+
+  // Used while the initial page is loading
+  loadingContainer: {
+    height: 120,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   pageTitle: {
-    marginVertical: 11,
+    fontSize: 22,
+    marginBottom: 8,
+    paddingHorizontal: 12,
   },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 24,
+    paddingHorizontal: 12,
+    marginTop: 8,
+    marginBottom: 8,
   },
+
   titleLeft: {
-    alignItems: "center",
+    fontSize: 16,
   },
+
   titleRight: {
-    alignItems: "center",
-    marginTop: 0,
+    paddingHorizontal: 8,
   },
 
   listContent: {
-    paddingRight: 0,
+    paddingHorizontal: 8,
   },
-  loadingContainer: {
-    paddingVertical: 20,
-    alignItems: "center",
+
+  // Footer shown at the end of the horizontal FlatList while loading more pages.
+  // Use a fixed-ish height to match item height so the spinner is vertically centered.
+  // SEARCH: loadingMoreContainer
+  loadingMoreContainer: {
     justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    height: 240, // matches PhotographersSliderItem portrait + label (adjust if you change item sizes)
   },
 });

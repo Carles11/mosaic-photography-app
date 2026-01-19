@@ -42,11 +42,16 @@ import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographerDetailScreen.styles";
 
-import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
-
 import BottomSheetComments from "@/2-features/main-gallery/ui/BottomSheetComments";
+import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { useFilters } from "@/4-shared/context/filters/FiltersContext";
+
+// ADDED: Report bottom sheet so report actions can open the reporting UI.
+import {
+  ReportBottomSheet,
+  ReportBottomSheetRef,
+} from "@/2-features/reporting/ui/ReportBottomSheet";
 
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -99,7 +104,9 @@ const PhotographerDetailScreen: React.FC = () => {
 
   const [commentsImageId, setCommentsImageId] = useState<string | null>(null);
   const commentsSheetRef = useRef<any>(null);
-  const reportSheetRef = useRef<any>(null);
+
+  // Use specific typed ref for the report sheet
+  const reportSheetRef = useRef<ReportBottomSheetRef | null>(null);
 
   const [commentText, setCommentText] = useState("");
   const [editMode, setEditMode] = useState<{
@@ -342,6 +349,21 @@ const PhotographerDetailScreen: React.FC = () => {
     deleteComment(commentsImageId, commentId, user.id);
   };
 
+  // ADDED: report handler equivalent to Home's implementation so the three-dots menu can open the report sheet.
+  const handleReportImage = useCallback(() => {
+    if (!selectedImage) return;
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+    reportSheetRef.current?.open({
+      imageId: selectedImage ? Number(selectedImage.id) : undefined,
+    });
+    logEvent("report_image", {
+      imageId: selectedImage.id,
+    });
+  }, [selectedImage, user, router]);
+
   const imageCount = Array.isArray(photographer?.images)
     ? photographer!.images.length
     : 0;
@@ -483,6 +505,7 @@ const PhotographerDetailScreen: React.FC = () => {
         onAddToFavorites={handleAddToFavorites}
         isFavorite={isFavorite}
         onShare={handleShareImage}
+        onReport={handleReportImage} // <-- ensure report action is wired
         downloadOptions={downloadOptions}
         onDownloadOption={handleDownloadOption}
         user={user}
@@ -522,6 +545,9 @@ const PhotographerDetailScreen: React.FC = () => {
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}
       />
+
+      {/* ADDED: Report bottom sheet so the report flow works from this screen */}
+      <ReportBottomSheet ref={reportSheetRef} />
     </SafeAreaView>
   );
 };

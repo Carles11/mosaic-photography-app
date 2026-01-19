@@ -16,7 +16,7 @@ const _photographersCache: Record<string, PhotographerListItem[]> = {};
 
 export async function fetchPhotographersList(
   limit?: number,
-  targetImageWidth?: number
+  targetImageWidth?: number,
 ): Promise<PhotographerListItem[]> {
   const resolvedTargetWidth =
     typeof targetImageWidth === "number"
@@ -32,7 +32,7 @@ export async function fetchPhotographersList(
   let query = supabase
     .from("photographers_with_portrait")
     .select(
-      "id, name, surname, slug, author, intro, filename, base_url, img_width"
+      "id, name, surname, slug, author, intro, filename, base_url, img_width",
     )
     .order("surname");
 
@@ -58,7 +58,7 @@ export async function fetchPhotographersList(
           base_url: r.base_url,
           width: r.img_width,
         },
-        deviceWidth
+        deviceWidth,
       );
       portrait = best.url;
     }

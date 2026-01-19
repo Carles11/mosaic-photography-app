@@ -63,7 +63,7 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
                   `[PhotographersSliderItem] image:error id=${
                     item?.id ?? "unknown"
                   } uri=${item.portrait}`,
-                  e
+                  e,
                 )
               }
             />

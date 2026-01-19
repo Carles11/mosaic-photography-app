@@ -26,8 +26,7 @@ export default function CommentsList() {
   const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState<string>("");
-const navigation = useNavigation()
-
+  const navigation = useNavigation();
 
   useEffect(() => {
     const load = async () => {
@@ -56,12 +55,12 @@ const navigation = useNavigation()
         comment.image_id,
         comment.id,
         comment.user_id,
-        editContent.trim()
+        editContent.trim(),
       );
       setComments((prev) =>
         prev.map((c) =>
-          c.id === comment.id ? { ...c, content: editContent.trim() } : c
-        )
+          c.id === comment.id ? { ...c, content: editContent.trim() } : c,
+        ),
       );
       setEditId(null);
       setEditContent("");
@@ -85,7 +84,7 @@ const navigation = useNavigation()
               await deleteComment(
                 comment.image_id,
                 comment.id,
-                comment.user_id
+                comment.user_id,
               );
               setComments((prev) => prev.filter((c) => c.id !== comment.id));
             } catch (e) {
@@ -93,7 +92,7 @@ const navigation = useNavigation()
             }
           },
         },
-      ]
+      ],
     );
   };
 
