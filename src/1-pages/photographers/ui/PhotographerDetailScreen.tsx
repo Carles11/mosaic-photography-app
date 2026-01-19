@@ -65,7 +65,7 @@ const PhotographerDetailScreen: React.FC = () => {
     galleryImageHeight,
     galleryYearHeight,
     galleryDescriptionHeight,
-    galleryFooterHeight
+    galleryFooterHeight,
   );
 
   const { user, loading: authLoading } = useAuthSession();
@@ -82,7 +82,7 @@ const PhotographerDetailScreen: React.FC = () => {
 
   const { slug } = useLocalSearchParams();
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
-    null
+    null,
   );
 
   const { theme } = useTheme();
@@ -180,7 +180,7 @@ const PhotographerDetailScreen: React.FC = () => {
 
       // Use nudity from shared filters (context). Fallback to route param or default.
       const routeParams = new URLSearchParams(
-        typeof window !== "undefined" ? window.location.search : ""
+        typeof window !== "undefined" ? window.location.search : "",
       );
       const routeNudity = (routeParams.get("nudity") ?? undefined) as
         | "nude"
@@ -258,7 +258,7 @@ const PhotographerDetailScreen: React.FC = () => {
   const handleDownloadOption = async (option: DownloadOption) => {
     if (Platform.OS === "ios" && option.format === "webp") {
       showErrorToast(
-        "Please choose the print option. WebP images can't be saved to Photos on iOS."
+        "Please choose the print option. WebP images can't be saved to Photos on iOS.",
       );
       return;
     }
@@ -341,7 +341,10 @@ const PhotographerDetailScreen: React.FC = () => {
     deleteComment(commentsImageId, commentId, user.id);
   };
 
-  const showWebMsg = photographer && (photographer.images?.length ?? 0) < 5;
+  const imageCount = Array.isArray(photographer?.images)
+    ? photographer!.images.length
+    : 0;
+  const showWebMsg = !!photographer && imageCount < 5;
 
   const ListHeaderComponent = useCallback(() => {
     if (!photographer) return null;

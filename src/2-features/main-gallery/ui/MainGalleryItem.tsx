@@ -77,7 +77,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
         </TouchableOpacity>
       ) : null}
 
-      <ThemedText style={s.title} numberOfLines={2}>
+      <ThemedText style={s.title} numberOfLines={1}>
         {item.description}
       </ThemedText>
 

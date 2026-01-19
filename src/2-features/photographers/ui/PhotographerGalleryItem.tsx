@@ -2,22 +2,10 @@ import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
 import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { PhotographerGalleryItemProps } from "@/4-shared/types";
 import React from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { createPhotographerGalleryItemStyles } from "./PhotographerGalleryItem.styles";
-
-export type PhotographerGalleryItemProps = {
-  item: any;
-  itemHeight: number;
-  imageHeight: number;
-  yearHeight: number;
-  descriptionHeight: number;
-  footerHeight: number;
-  styles?: ReturnType<typeof createPhotographerGalleryItemStyles>;
-  onOpenMenu: () => void;
-  onPressComments: () => void;
-  onPressZoom: () => void;
-};
 
 export const PhotographerGalleryItem: React.FC<
   PhotographerGalleryItemProps
@@ -40,7 +28,7 @@ export const PhotographerGalleryItem: React.FC<
       imageHeight,
       yearHeight,
       descriptionHeight,
-      footerHeight
+      footerHeight,
     );
 
   const hasImage = !!item.url && item.url.length > 0;
@@ -84,7 +72,9 @@ export const PhotographerGalleryItem: React.FC<
           <View style={{ height: yearHeight }} />
         )}
         {item.description ? (
-          <ThemedText style={s.imageDescription}>{item.description}</ThemedText>
+          <ThemedText numberOfLines={1} style={s.imageDescription}>
+            {item.description}
+          </ThemedText>
         ) : (
           <View style={{ height: descriptionHeight }} />
         )}
@@ -100,5 +90,5 @@ export const PhotographerGalleryItem: React.FC<
 };
 
 export const MemoizedPhotographerGalleryItem = React.memo(
-  PhotographerGalleryItem
+  PhotographerGalleryItem,
 );

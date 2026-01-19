@@ -1,3 +1,4 @@
+import { createPhotographerGalleryItemStyles } from "@/2-features/photographers/ui/PhotographerGalleryItem.styles";
 import { GalleryImage } from "./gallery";
 
 type TimelineOrientation = "HORIZONTAL" | "VERTICAL" | "VERTICAL_ALTERNATING";
@@ -99,3 +100,16 @@ export type WebGalleryMessageProps = {
 export interface HomeHeaderWithSliderProps {
   onPhotographerPress: (photographer: any) => void;
 }
+
+export type PhotographerGalleryItemProps = {
+  item: any;
+  itemHeight: number;
+  imageHeight: number;
+  yearHeight: number;
+  descriptionHeight: number;
+  footerHeight: number;
+  styles?: ReturnType<typeof createPhotographerGalleryItemStyles>;
+  onOpenMenu: () => void;
+  onPressComments: () => void;
+  onPressZoom: () => void;
+};

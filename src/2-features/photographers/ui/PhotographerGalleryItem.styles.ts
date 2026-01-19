@@ -5,7 +5,7 @@ export function createPhotographerGalleryItemStyles(
   imageHeight: number,
   yearHeight: number,
   descriptionHeight: number,
-  footerHeight: number
+  footerHeight: number,
 ) {
   return StyleSheet.create({
     galleryImageWrapper: {
@@ -28,7 +28,6 @@ export function createPhotographerGalleryItemStyles(
       fontSize: 15,
       textAlign: "center",
       paddingHorizontal: 8,
-      marginVertical: 0,
       includeFontPadding: false,
       textAlignVertical: "center",
     },
@@ -37,7 +36,6 @@ export function createPhotographerGalleryItemStyles(
       fontSize: 14,
       textAlign: "center",
       paddingHorizontal: 8,
-      marginVertical: 0,
       includeFontPadding: false,
       textAlignVertical: "center",
     },
