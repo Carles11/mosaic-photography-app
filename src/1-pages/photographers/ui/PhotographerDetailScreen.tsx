@@ -43,7 +43,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./PhotographerDetailScreen.styles";
 
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
-// Use filters context
+
+import BottomSheetComments from "@/2-features/main-gallery/ui/BottomSheetComments";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { useFilters } from "@/4-shared/context/filters/FiltersContext";
 
@@ -485,6 +486,23 @@ const PhotographerDetailScreen: React.FC = () => {
         downloadOptions={downloadOptions}
         onDownloadOption={handleDownloadOption}
         user={user}
+        router={router}
+      />
+      <BottomSheetComments
+        ref={commentsSheetRef}
+        isOpen={!!commentsImageId}
+        onClose={handleCloseComments}
+        comments={imageComments}
+        isLoading={isCommentsLoading}
+        commentText={commentText}
+        setCommentText={setCommentText}
+        handleSaveComment={handleSaveComment}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        editMode={editMode}
+        user={user}
+        authLoading={authLoading}
+        reportSheetRef={reportSheetRef}
         router={router}
       />
       <BottomSheetFilterMenu
