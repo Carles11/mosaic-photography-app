@@ -16,6 +16,7 @@ import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { useColorScheme } from "@/4-shared/hooks/use-color-scheme";
+import { useSubscription } from "@/4-shared/subscription";
 import { globalTheme } from "@/4-shared/theme/globalTheme";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { ProfileData } from "@/4-shared/types";
@@ -53,7 +54,7 @@ export default function ProfileScreen() {
         showErrorToast("Please login to access your profile");
         router.replace("/auth/login");
       }
-    }, [authLoading, user, router])
+    }, [authLoading, user, router]),
   );
 
   // Fetch profile data on mount or when user changes
@@ -95,7 +96,7 @@ export default function ProfileScreen() {
   // 3. Multi-purpose profile update handler
   const handleProfileFieldChange = (
     field: keyof ProfileData,
-    value: string
+    value: string,
   ) => {
     setProfileFields((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
@@ -156,18 +157,18 @@ export default function ProfileScreen() {
                       Alert.alert(
                         "Error",
                         "Failed to delete account: " +
-                          (error?.message || "Unknown error")
+                          (error?.message || "Unknown error"),
                       );
                     } finally {
                       setDeleting(false);
                     }
                   },
                 },
-              ]
+              ],
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -196,6 +197,28 @@ export default function ProfileScreen() {
       </ThemedView>
     );
   }
+
+  const TestRevenueCat = () => {
+    const { isInitializing, hasProSubscription, availablePackages, error } =
+      useSubscription();
+
+    if (isInitializing) {
+      return <ThemedText>Loading RevenueCat...</ThemedText>;
+    }
+
+    return (
+      <ThemedView
+        style={{ padding: 20, backgroundColor: "#f0f0f0", margin: 10 }}
+      >
+        <ThemedText>🧪 RevenueCat Test</ThemedText>
+        <ThemedText>
+          Pro Status: {hasProSubscription ? "✅ Pro User" : "❌ Free User"}
+        </ThemedText>
+        <ThemedText>Available Packages: {availablePackages.length}</ThemedText>
+        <ThemedText>Error: {error || "None"}</ThemedText>
+      </ThemedView>
+    );
+  };
 
   return (
     <SafeAreaView
@@ -241,6 +264,8 @@ export default function ProfileScreen() {
           disabled={profileSaving}
           style={{ marginVertical: 12, alignSelf: "center" }}
         />
+
+        <TestRevenueCat />
 
         <DangerZoneCard onDelete={handleDeleteAccount} loading={deleting} />
       </ScrollView>

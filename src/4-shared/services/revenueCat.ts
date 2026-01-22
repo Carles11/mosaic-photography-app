@@ -53,7 +53,7 @@ class RevenueCatService {
       console.log("RevenueCat initialized successfully");
 
       // Log initialization event
-      await logEvent("revenuecat_initialized", {});
+      logEvent("revenuecat_initialized", {});
     } catch (error) {
       console.error("Failed to initialize RevenueCat:", error);
       throw error;

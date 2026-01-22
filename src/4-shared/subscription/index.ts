@@ -1,5 +1,5 @@
 // Services
-export { revenueCatService } from "../services/revenueCat";
+export { revenueCatService } from "@/4-shared/services/revenueCat";
 
 // Context and Hooks
 export {
@@ -7,38 +7,38 @@ export {
   useHasProSubscription,
   useRevenueCat,
   useSubscriptionInfo,
-} from "../context/subscription/RevenueCatContext";
-export { useSubscription } from "../hooks/useSubscription";
+} from "@/4-shared/context/subscription/RevenueCatContext";
+export { useSubscription } from "@/4-shared/hooks/useSubscription";
 
 // Components
-export { CustomerCenter } from "../components/subscription/CustomerCenter";
-export { Paywall } from "../components/subscription/Paywall";
+export { CustomerCenter } from "@/4-shared/components/subscription/CustomerCenter";
+export { Paywall } from "@/4-shared/components/subscription/Paywall";
 export {
   RevenueCatFooterPaywall,
   RevenueCatPaywall,
-} from "../components/subscription/RevenueCatPaywall";
+} from "@/4-shared/components/subscription/RevenueCatPaywall";
 export {
   AdvancedFiltersSection,
   ProfileSubscriptionSection,
   ProtectedDownloadButton,
-} from "../components/subscription/SubscriptionExamples";
+} from "@/4-shared/components/subscription/SubscriptionExamples";
 export {
   SimpleSubscriptionGate,
   SubscriptionBadge,
   SubscriptionGate,
-} from "../components/subscription/SubscriptionGate";
+} from "@/4-shared/components/subscription/SubscriptionGate";
 
 // Utilities
 export {
-  ENTITLEMENTS,
+  createFeatureGatedFunction,
   EntitlementManager,
+  ENTITLEMENTS,
   FEATURES,
   FREE_TIER_LIMITS,
   FreeTierLimits,
   PRODUCTS,
-  createFeatureGatedFunction,
   requiresSubscription,
-} from "../utility/entitlements";
+} from "@/4-shared/utility/entitlements";
 
 // Types
-export type { SubscriptionPackageInfo } from "../hooks/useSubscription";
+export type { SubscriptionPackageInfo } from "@/4-shared/hooks/useSubscription";
