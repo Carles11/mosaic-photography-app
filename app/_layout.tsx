@@ -5,6 +5,8 @@ import { CollectionsProvider } from "@/4-shared/context/collections/CollectionsC
 import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites";
 import { FiltersProvider } from "@/4-shared/context/filters/FiltersContext";
+import { RevenueCatProvider } from "@/4-shared/context/subscription/RevenueCatContext";
+import { logEvent } from "@/4-shared/firebase";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { MosaicToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -17,7 +19,6 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { logEvent } from "src/4-shared/firebase";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -66,21 +67,23 @@ export default Sentry.wrap(function RootLayout() {
       <ThemeProvider>
         <GestureHandlerRootView>
           <AuthSessionProvider>
-            <BottomSheetModalProvider>
-              <KeyboardProvider>
-                <FontLoader>
-                  <CommentsProvider>
-                    <FiltersProvider>
-                      <CollectionsProvider>
-                        <FavoritesProvider>
-                          <InnerLayout />
-                        </FavoritesProvider>
-                      </CollectionsProvider>
-                    </FiltersProvider>
-                  </CommentsProvider>
-                </FontLoader>
-              </KeyboardProvider>
-            </BottomSheetModalProvider>
+            <RevenueCatProvider>
+              <BottomSheetModalProvider>
+                <KeyboardProvider>
+                  <FontLoader>
+                    <CommentsProvider>
+                      <FiltersProvider>
+                        <CollectionsProvider>
+                          <FavoritesProvider>
+                            <InnerLayout />
+                          </FavoritesProvider>
+                        </CollectionsProvider>
+                      </FiltersProvider>
+                    </CommentsProvider>
+                  </FontLoader>
+                </KeyboardProvider>
+              </BottomSheetModalProvider>
+            </RevenueCatProvider>
           </AuthSessionProvider>
         </GestureHandlerRootView>
       </ThemeProvider>
@@ -103,7 +106,7 @@ function InnerLayout() {
       },
       headerShadowVisible: false,
     }),
-    [theme]
+    [theme],
   );
 
   return (
