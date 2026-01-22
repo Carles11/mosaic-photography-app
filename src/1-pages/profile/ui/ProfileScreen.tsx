@@ -207,9 +207,7 @@ export default function ProfileScreen() {
     }
 
     return (
-      <ThemedView
-        style={{ padding: 20, backgroundColor: "#f0f0f0", margin: 10 }}
-      >
+      <ThemedView style={{ padding: 20, margin: 10 }}>
         <ThemedText>🧪 RevenueCat Test</ThemedText>
         <ThemedText>
           Pro Status: {hasProSubscription ? "✅ Pro User" : "❌ Free User"}

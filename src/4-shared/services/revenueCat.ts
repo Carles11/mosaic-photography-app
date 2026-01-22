@@ -1,3 +1,4 @@
+import Constants from "expo-constants";
 import Purchases, {
   CustomerInfo,
   LOG_LEVEL,
@@ -14,7 +15,8 @@ import { logEvent } from "@/4-shared/firebase";
  */
 class RevenueCatService {
   private isInitialized = false;
-  private readonly API_KEY = process.env.REVENUECAT_PUBLIC_API_KEY || "";
+  private readonly API_KEY =
+    Constants.expoConfig?.extra?.REVENUECAT_PUBLIC_API_KEY || "";
 
   /**
    * Initialize RevenueCat with configuration
