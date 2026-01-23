@@ -122,9 +122,7 @@ export const ProfileSubscriptionSection: React.FC = () => {
               style={[styles.upgradeButton, { backgroundColor: theme.primary }]}
               onPress={handleUpgrade}
             >
-              <Text
-                style={[styles.upgradeButtonText, { color: theme.surface }]}
-              >
+              <Text style={[styles.upgradeButtonText, { color: theme.text }]}>
                 Upgrade to Pro
               </Text>
             </TouchableOpacity>

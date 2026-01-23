@@ -12,7 +12,7 @@ import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { styles } from "./LoginScreen.styles";
@@ -22,6 +22,11 @@ export const LoginScreen: React.FC = () => {
   const { user, loading } = useAuthSession();
   const router = useRouter();
   const navigation = useNavigation();
+  const { returnTo, feature, from } = useLocalSearchParams<{
+    returnTo?: string;
+    feature?: string;
+    from?: string;
+  }>();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,12 +50,21 @@ export const LoginScreen: React.FC = () => {
     };
   }, [navigation]);
 
-  // Redirect to home if already logged in
+  // Redirect to appropriate screen if already logged in
   useEffect(() => {
     if (!loading && user) {
-      router.replace("/");
+      if (returnTo === "subscription") {
+        // Redirect to subscription screen with context
+        router.replace({
+          pathname: "/subscription",
+          params: { feature: feature || "", from: from || "login" },
+        });
+      } else {
+        // Default redirect to home
+        router.replace("/");
+      }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, returnTo, feature, from]);
 
   const handleLogin = async () => {
     setIsSubmitting(true);
@@ -155,8 +169,8 @@ export const LoginScreen: React.FC = () => {
                 ? "Sending..."
                 : "Logging in..."
               : useMagicLink
-              ? "Send Magic Link"
-              : "Login"
+                ? "Send Magic Link"
+                : "Login"
           }
           onPress={handleLogin}
           loading={isSubmitting || loading}

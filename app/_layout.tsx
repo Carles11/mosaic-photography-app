@@ -152,6 +152,7 @@ function InnerLayout() {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="auth/magic-link" options={{ headerShown: false }} />
+        <Stack.Screen name="subscription" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style={mode === "light" ? "dark" : "light"} />
     </>

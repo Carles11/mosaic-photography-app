@@ -106,7 +106,7 @@ export const SubscriptionGate: React.FC<SubscriptionGateProps> = ({
             onPress={handleUpgradePress}
             activeOpacity={0.8}
           >
-            <Text style={[styles.upgradeButtonText, { color: theme.surface }]}>
+            <Text style={[styles.upgradeButtonText, { color: theme.text }]}>
               Upgrade to Pro
             </Text>
           </TouchableOpacity>
@@ -127,6 +127,106 @@ export const SimpleSubscriptionGate: React.FC<{
   const { canAccessFeature } = useSubscription();
 
   return canAccessFeature(feature) ? <>{children}</> : <>{fallback}</>;
+};
+
+/**
+ * Subtle Subscription Gate - Shows feature with badge, blocks interaction
+ * Perfect for filters and UI elements that should remain visible
+ */
+export const SubtleSubscriptionGate: React.FC<{
+  children: ReactNode;
+  feature: string;
+  onUpgradePress?: () => void;
+  badgeStyle?: ViewStyle;
+}> = ({ children, feature, onUpgradePress, badgeStyle }) => {
+  const { canAccessFeature, showUpgradePrompt, hasProSubscription } =
+    useSubscription();
+  const { theme } = useTheme();
+
+  const hasAccess = canAccessFeature(feature);
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log(
+      `SubtleSubscriptionGate [${feature}]: hasAccess=${hasAccess}, hasProSubscription=${hasProSubscription}`,
+    );
+  }, [feature, hasAccess, hasProSubscription]);
+
+  const handleInteraction = () => {
+    if (hasAccess) return; // Don't block if user has access
+
+    if (onUpgradePress) {
+      onUpgradePress();
+    } else {
+      showUpgradePrompt(feature);
+    }
+  };
+
+  if (hasAccess) {
+    return <>{children}</>;
+  }
+
+  // Show feature with badge and intercept interactions
+  return (
+    <View style={{ position: "relative", opacity: 0.7 }}>
+      {/* Premium badge */}
+      <View
+        style={[
+          {
+            position: "absolute",
+            top: -8,
+            right: -8,
+            backgroundColor: theme.primary,
+            borderRadius: 12,
+            paddingHorizontal: 6,
+            paddingVertical: 2,
+            zIndex: 10,
+            flexDirection: "row",
+            alignItems: "center",
+          },
+          badgeStyle,
+        ]}
+      >
+        <Text
+          style={{
+            color: theme.surface,
+            fontSize: 10,
+            fontWeight: "bold",
+            marginRight: 2,
+          }}
+        >
+          🔒
+        </Text>
+        <Text
+          style={{
+            color: theme.surface,
+            fontSize: 10,
+            fontWeight: "bold",
+          }}
+        >
+          PRO
+        </Text>
+      </View>
+
+      {/* Overlay to capture touches */}
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 5,
+          backgroundColor: "transparent",
+        }}
+        onPress={handleInteraction}
+        activeOpacity={1}
+      />
+
+      {/* Feature content (slightly dimmed) */}
+      <View pointerEvents="none">{children}</View>
+    </View>
+  );
 };
 
 /**

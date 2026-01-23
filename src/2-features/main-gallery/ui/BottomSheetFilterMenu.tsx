@@ -28,9 +28,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./BottomSheetFilterMenu.styles";
 
 import AgeGateModal from "@/4-shared/components/age-gate/AgeGateModal";
+import { isFeaturePremium } from "@/4-shared/config/premiumFeatures";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
 import useNudityConsent from "@/4-shared/hooks/use-nudity-consent";
+import { useSubscription } from "@/4-shared/hooks/useSubscription";
+import { SubtleSubscriptionGate } from "@/4-shared/subscription";
 import { BottomSheetFilterMenuProps } from "@/4-shared/types";
 interface Props extends BottomSheetFilterMenuProps {
   /**
@@ -54,6 +57,38 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
   const snapPoints = Platform.OS === "android" ? ["80%"] : ["60%"];
   const [photographerSearch, setPhotographerSearch] = useState("");
   const { user } = useAuthSession();
+
+  const {
+    hasProSubscription,
+    canAccessFeature,
+    showUpgradePrompt,
+    refreshCustomerInfo,
+  } = useSubscription();
+
+  // Force refresh subscription status when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      // Refresh customer info to ensure we have the latest subscription state
+      refreshCustomerInfo().catch(console.error);
+    }
+  }, [isOpen, refreshCustomerInfo]);
+
+  const handleClose = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+    onClose();
+  }, [onClose]);
+
+  // Custom upgrade handler that closes menu first
+  const handleUpgrade = useCallback(
+    (feature: string) => {
+      handleClose();
+      setTimeout(() => {
+        showUpgradePrompt(feature);
+      }, 100);
+    },
+    [handleClose, showUpgradePrompt],
+  );
+
   useEffect(() => {
     if (isOpen) {
       bottomSheetModalRef.current?.present();
@@ -66,7 +101,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
     const query = photographerSearch.trim().toLowerCase();
     if (!query) return []; // show nothing until user types
     return (photographerNames ?? []).filter((name) =>
-      name.toLowerCase().includes(query)
+      name.toLowerCase().includes(query),
     );
   }, [photographerNames, photographerSearch]);
 
@@ -85,11 +120,6 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
     setFilters({ ...filters, author: [] });
     setPhotographerSearch("");
   };
-
-  const handleClose = useCallback(() => {
-    bottomSheetModalRef.current?.dismiss();
-    onClose();
-  }, [onClose]);
 
   const handleChange = (key: keyof typeof filters, value: any) => {
     setFilters({
@@ -124,7 +154,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
   // Age-gate state
   const [ageGateVisible, setAgeGateVisible] = useState(false);
   const [pendingNudityValue, setPendingNudityValue] = useState<string | null>(
-    null
+    null,
   );
 
   const { hasConsent, confirmConsent } = useNudityConsent();
@@ -266,29 +296,66 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
               </ThemedText>
 
               {/* Text search */}
-              <ThemedText type="subtitle" style={styles.label}>
-                Search by keywords
-              </ThemedText>
-              <View style={styles.textSearchContainer}>
-                <BottomSheetTextInput
-                  style={styles.input}
-                  value={filters.text ?? ""}
-                  placeholder="Type to search images..."
-                  onChangeText={handleTextChange}
-                  placeholderTextColor={theme.inputPlaceholderColor}
-                  returnKeyType="search"
-                  autoCorrect={false}
-                  autoCapitalize="none"
-                />
-                {filters.text ? (
-                  <Pressable
-                    onPress={handleClearText}
-                    style={styles.clearButton}
-                  >
-                    <ThemedText style={styles.clearButtonText}>✕</ThemedText>
-                  </Pressable>
-                ) : null}
-              </View>
+              {isFeaturePremium("ADVANCED_SEARCH") ? (
+                <SubtleSubscriptionGate
+                  feature="advanced_search"
+                  onUpgradePress={() => handleUpgrade("advanced_search")}
+                >
+                  <ThemedText type="subtitle" style={styles.label}>
+                    Search by keywords
+                  </ThemedText>
+                  <View style={styles.textSearchContainer}>
+                    <BottomSheetTextInput
+                      style={styles.input}
+                      value={filters.text ?? ""}
+                      placeholder="Type to search images..."
+                      onChangeText={handleTextChange}
+                      placeholderTextColor={theme.inputPlaceholderColor}
+                      returnKeyType="search"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                    />
+                    {filters.text ? (
+                      <Pressable
+                        onPress={handleClearText}
+                        style={styles.clearButton}
+                      >
+                        <ThemedText style={styles.clearButtonText}>
+                          ✕
+                        </ThemedText>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                </SubtleSubscriptionGate>
+              ) : (
+                <>
+                  <ThemedText type="subtitle" style={styles.label}>
+                    Search by keywords
+                  </ThemedText>
+                  <View style={styles.textSearchContainer}>
+                    <BottomSheetTextInput
+                      style={styles.input}
+                      value={filters.text ?? ""}
+                      placeholder="Type to search images..."
+                      onChangeText={handleTextChange}
+                      placeholderTextColor={theme.inputPlaceholderColor}
+                      returnKeyType="search"
+                      autoCorrect={false}
+                      autoCapitalize="none"
+                    />
+                    {filters.text ? (
+                      <Pressable
+                        onPress={handleClearText}
+                        style={styles.clearButton}
+                      >
+                        <ThemedText style={styles.clearButtonText}>
+                          ✕
+                        </ThemedText>
+                      </Pressable>
+                    ) : null}
+                  </View>
+                </>
+              )}
 
               {/* Photographer search & chips (keeps existing behavior) */}
               {showAuthorFilter && (
@@ -448,57 +515,129 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
                 ))}
               </ThemedView>
 
-              <ThemedText type="subtitle" style={styles.label}>
-                Print Quality
-              </ThemedText>
-              <ThemedView style={styles.row}>
-                {["standard", "good", "excellent", "professional"].map(
-                  (opt) => (
-                    <TouchableOpacity
-                      key={opt}
-                      style={[
-                        styles.option,
-                        filters.print_quality === opt && styles.optionActive,
-                      ]}
-                      onPress={() => handleChange("print_quality", opt)}
-                    >
-                      <ThemedText
-                        style={
-                          filters.print_quality === opt &&
-                          styles.optionActiveText
-                        }
-                      >
-                        {opt}
-                      </ThemedText>
-                    </TouchableOpacity>
-                  )
-                )}
-              </ThemedView>
+              {isFeaturePremium("PRINT_QUALITY_FILTER") ? (
+                <SubtleSubscriptionGate
+                  feature="print_quality_filter"
+                  onUpgradePress={() => handleUpgrade("print_quality_filter")}
+                >
+                  <ThemedText type="subtitle" style={styles.label}>
+                    Print Quality
+                  </ThemedText>
+                  <ThemedView style={styles.row}>
+                    {["standard", "good", "excellent", "professional"].map(
+                      (opt) => (
+                        <TouchableOpacity
+                          key={opt}
+                          style={[
+                            styles.option,
+                            filters.print_quality === opt &&
+                              styles.optionActive,
+                          ]}
+                          onPress={() => handleChange("print_quality", opt)}
+                        >
+                          <ThemedText
+                            style={
+                              filters.print_quality === opt &&
+                              styles.optionActiveText
+                            }
+                          >
+                            {opt}
+                          </ThemedText>
+                        </TouchableOpacity>
+                      ),
+                    )}
+                  </ThemedView>
+                </SubtleSubscriptionGate>
+              ) : (
+                <>
+                  <ThemedText type="subtitle" style={styles.label}>
+                    Print Quality
+                  </ThemedText>
+                  <ThemedView style={styles.row}>
+                    {["standard", "good", "excellent", "professional"].map(
+                      (opt) => (
+                        <TouchableOpacity
+                          key={opt}
+                          style={[
+                            styles.option,
+                            filters.print_quality === opt &&
+                              styles.optionActive,
+                          ]}
+                          onPress={() => handleChange("print_quality", opt)}
+                        >
+                          <ThemedText
+                            style={
+                              filters.print_quality === opt &&
+                              styles.optionActiveText
+                            }
+                          >
+                            {opt}
+                          </ThemedText>
+                        </TouchableOpacity>
+                      ),
+                    )}
+                  </ThemedView>
+                </>
+              )}
 
-              <ThemedText type="subtitle" style={styles.label}>
-                Year Range
-              </ThemedText>
-              <ThemedView style={styles.row}>
-                <BottomSheetTextInput
-                  style={styles.input}
-                  keyboardType="numeric"
-                  value={filters.year?.from?.toString() ?? ""}
-                  placeholder="From"
-                  onChangeText={(v) => handleYearRangeChange("from", v)}
-                  placeholderTextColor={theme.inputPlaceholderColor}
-                  returnKeyType="done"
-                />
-                <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
-                <BottomSheetTextInput
-                  style={styles.input}
-                  keyboardType="numeric"
-                  value={filters.year?.to?.toString() ?? ""}
-                  placeholder="To"
-                  onChangeText={(v) => handleYearRangeChange("to", v)}
-                  placeholderTextColor={theme.inputPlaceholderColor}
-                  returnKeyType="done"
-                />
-              </ThemedView>
+              {isFeaturePremium("YEAR_RANGE_FILTER") ? (
+                <SubtleSubscriptionGate
+                  feature="year_range_filter"
+                  onUpgradePress={() => handleUpgrade("year_range_filter")}
+                >
+                  <ThemedText type="subtitle" style={styles.label}>
+                    Year Range
+                  </ThemedText>
+                  <ThemedView style={styles.row}>
+                    <BottomSheetTextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      value={filters.year?.from?.toString() ?? ""}
+                      placeholder="From"
+                      onChangeText={(v) => handleYearRangeChange("from", v)}
+                      placeholderTextColor={theme.inputPlaceholderColor}
+                      returnKeyType="done"
+                    />
+                    <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
+                    <BottomSheetTextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      value={filters.year?.to?.toString() ?? ""}
+                      placeholder="To"
+                      onChangeText={(v) => handleYearRangeChange("to", v)}
+                      placeholderTextColor={theme.inputPlaceholderColor}
+                      returnKeyType="done"
+                    />
+                  </ThemedView>
+                </SubtleSubscriptionGate>
+              ) : (
+                <>
+                  <ThemedText type="subtitle" style={styles.label}>
+                    Year Range
+                  </ThemedText>
+                  <ThemedView style={styles.row}>
+                    <BottomSheetTextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      value={filters.year?.from?.toString() ?? ""}
+                      placeholder="From"
+                      onChangeText={(v) => handleYearRangeChange("from", v)}
+                      placeholderTextColor={theme.inputPlaceholderColor}
+                      returnKeyType="done"
+                    />
+                    <ThemedText style={{ marginHorizontal: 8 }}>–</ThemedText>
+                    <BottomSheetTextInput
+                      style={styles.input}
+                      keyboardType="numeric"
+                      value={filters.year?.to?.toString() ?? ""}
+                      placeholder="To"
+                      onChangeText={(v) => handleYearRangeChange("to", v)}
+                      placeholderTextColor={theme.inputPlaceholderColor}
+                      returnKeyType="done"
+                    />
+                  </ThemedView>
+                </>
+              )}
 
               {/* Actions */}
               <ThemedView style={styles.actionsRow}>

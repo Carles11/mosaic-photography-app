@@ -26,6 +26,7 @@ export {
   SimpleSubscriptionGate,
   SubscriptionBadge,
   SubscriptionGate,
+  SubtleSubscriptionGate,
 } from "@/4-shared/components/subscription/SubscriptionGate";
 
 // Utilities

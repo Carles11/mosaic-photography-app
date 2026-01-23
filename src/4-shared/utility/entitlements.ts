@@ -1,3 +1,4 @@
+import { getFeatureDisplayName } from "../config/premiumFeatures";
 import { revenueCatService } from "../services/revenueCat";
 
 /**
@@ -18,11 +19,15 @@ export const PRODUCTS = {
 
 /**
  * Feature identifiers for subscription gating
+ * Note: Now managed centrally in premiumFeatures.ts
  */
 export const FEATURES = {
   UNLIMITED_DOWNLOADS: "unlimited_downloads",
   HIGH_RESOLUTION_IMAGES: "high_resolution_images",
   ADVANCED_FILTERS: "advanced_filters",
+  ADVANCED_SEARCH: "advanced_search",
+  PRINT_QUALITY_FILTER: "print_quality_filter",
+  YEAR_RANGE_FILTER: "year_range_filter",
   PRIORITY_SUPPORT: "priority_support",
   AD_FREE_EXPERIENCE: "ad_free_experience",
   EXCLUSIVE_CONTENT: "exclusive_content",
@@ -30,6 +35,13 @@ export const FEATURES = {
   COLLECTIONS_UNLIMITED: "collections_unlimited",
   FAVORITES_UNLIMITED: "favorites_unlimited",
 } as const;
+
+/**
+ * Get feature display names from centralized config
+ */
+export const getFeatureTitle = (feature: string): string => {
+  return getFeatureDisplayName(feature) || feature.replace(/_/g, " ");
+};
 
 /**
  * Entitlement utility functions

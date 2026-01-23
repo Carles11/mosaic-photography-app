@@ -3,6 +3,8 @@ import { Alert } from "react-native";
 import { PurchasesPackage } from "react-native-purchases";
 
 import { logEvent } from "@/4-shared/firebase";
+import { useRouter } from "expo-router";
+import { useAuthSession } from "../context/auth/AuthSessionContext";
 import { useRevenueCat } from "../context/subscription/RevenueCatContext";
 
 /**
@@ -47,6 +49,9 @@ export const useSubscription = () => {
     clearError,
   } = useRevenueCat();
 
+  const { user, signOut } = useAuthSession();
+  const router = useRouter();
+
   /**
    * Get formatted packages with additional info
    */
@@ -55,9 +60,22 @@ export const useSubscription = () => {
 
     return currentOffering.availablePackages.map((pkg) => {
       const product = pkg.product;
-      const isMonthly = pkg.identifier.includes("monthly");
-      const isYearly = pkg.identifier.includes("yearly");
-      const isLifetime = pkg.identifier.includes("lifetime");
+      const id = pkg.identifier.toLowerCase();
+
+      // Improved package type detection
+      const isMonthly =
+        id.includes("monthly") ||
+        id.includes("month") ||
+        id.includes("$rc_monthly");
+      const isYearly =
+        id.includes("yearly") ||
+        id.includes("annual") ||
+        id.includes("year") ||
+        id.includes("$rc_annual");
+      const isLifetime =
+        id.includes("lifetime") ||
+        id.includes("life") ||
+        id.includes("permanent");
 
       let period = "";
       let savings = "";
@@ -67,9 +85,14 @@ export const useSubscription = () => {
       } else if (isYearly) {
         period = "Yearly";
         // Calculate savings if monthly package exists
-        const monthlyPkg = currentOffering.availablePackages.find((p) =>
-          p.identifier.includes("monthly"),
-        );
+        const monthlyPkg = currentOffering.availablePackages.find((p) => {
+          const monthlyId = p.identifier.toLowerCase();
+          return (
+            monthlyId.includes("monthly") ||
+            monthlyId.includes("month") ||
+            monthlyId.includes("$rc_monthly")
+          );
+        });
         if (monthlyPkg) {
           const monthlyPrice = monthlyPkg.product.price;
           const yearlyPrice = product.price;
@@ -108,9 +131,33 @@ export const useSubscription = () => {
    */
   const getPackageByType = useCallback(
     (type: "monthly" | "yearly" | "lifetime") => {
-      return availablePackages.find((pkg) =>
-        pkg.identifier.toLowerCase().includes(type),
-      );
+      return availablePackages.find((pkg) => {
+        const id = pkg.identifier.toLowerCase();
+
+        switch (type) {
+          case "monthly":
+            return (
+              id.includes("monthly") ||
+              id.includes("month") ||
+              id.includes("$rc_monthly")
+            );
+          case "yearly":
+            return (
+              id.includes("yearly") ||
+              id.includes("annual") ||
+              id.includes("year") ||
+              id.includes("$rc_annual")
+            );
+          case "lifetime":
+            return (
+              id.includes("lifetime") ||
+              id.includes("life") ||
+              id.includes("permanent")
+            );
+          default:
+            return false;
+        }
+      });
     },
     [availablePackages],
   );
@@ -283,6 +330,10 @@ export const useSubscription = () => {
         case "unlimited_downloads":
         case "high_resolution_images":
         case "advanced_filters":
+        case "advanced_search":
+        case "print_quality_filter":
+        case "year_range_filter":
+        case "favorites_unlimited":
         case "priority_support":
         case "ad_free_experience":
         case "exclusive_content":
@@ -306,6 +357,33 @@ export const useSubscription = () => {
    */
   const showUpgradePrompt = useCallback(
     (feature?: string) => {
+      // Check if user is logged in first
+      if (!user) {
+        Alert.alert(
+          "Login Required",
+          "Please create an account or login to purchase a subscription and unlock premium features.",
+          [
+            { text: "Cancel", style: "cancel" },
+            {
+              text: "Login",
+              onPress: () => {
+                logEvent("login_required_for_purchase", { feature });
+                // Navigate to login with subscription context
+                router.push({
+                  pathname: "/auth/login",
+                  params: {
+                    returnTo: "subscription",
+                    feature: feature || "",
+                    from: "filter",
+                  },
+                });
+              },
+            },
+          ],
+        );
+        return;
+      }
+
       const message = feature
         ? getFeatureGateMessage(feature)
         : "Upgrade to Mosaic Pro to unlock all premium features.";
@@ -313,15 +391,23 @@ export const useSubscription = () => {
       Alert.alert("Upgrade to Pro", message, [
         { text: "Later", style: "cancel" },
         {
-          text: "Upgrade Now",
+          text: "View Plans",
           onPress: () => {
-            // You would navigate to paywall here
             logEvent("upgrade_prompt_tapped", { feature });
+
+            // Navigate directly to subscription screen
+            router.push({
+              pathname: "/subscription",
+              params: {
+                feature: feature || "",
+                from: "upgrade_prompt",
+              },
+            });
           },
         },
       ]);
     },
-    [getFeatureGateMessage],
+    [getFeatureGateMessage, user, router],
   );
 
   /**
