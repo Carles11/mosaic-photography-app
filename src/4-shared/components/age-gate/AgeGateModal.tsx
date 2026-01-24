@@ -1,3 +1,4 @@
+import qaLogEvent from "@/4-shared//lib/qaLogger"; // QA/event logger (non-PII reviewer logs)
 import {
   PrimaryButton,
   SecondaryButton,
@@ -5,8 +6,9 @@ import {
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
+import Constants from "expo-constants";
 import React, { useEffect, useState } from "react";
-import { Modal, Pressable, View } from "react-native";
+import { Modal, Platform, Pressable, View } from "react-native";
 import { ThemedView } from "../themed-view";
 import { styles } from "./AgeGateModal.styles";
 
@@ -32,7 +34,19 @@ export const AgeGateModal: React.FC<{
     if (visible) {
       setChecked(false);
       try {
+        // Existing analytics (firebase)
         logEvent("agegate_shown", { user_state: userState });
+      } catch {
+        /* swallow */
+      }
+      try {
+        // QA reviewer-friendly non-PII log
+        void qaLogEvent("agegate_shown", {
+          userType: userState,
+          appVersion: Constants?.expoConfig?.version || "dev",
+          deviceOs: Platform.OS,
+          source: "agegate",
+        });
       } catch {
         /* swallow */
       }
@@ -47,6 +61,16 @@ export const AgeGateModal: React.FC<{
     } catch {
       /* swallow */
     }
+    try {
+      void qaLogEvent("agegate_canceled", {
+        userType: userState,
+        appVersion: Constants?.expoConfig?.version || "dev",
+        deviceOs: Platform.OS,
+        source: "agegate",
+      });
+    } catch {
+      /* swallow */
+    }
     onCancel();
   };
 
@@ -55,6 +79,17 @@ export const AgeGateModal: React.FC<{
     const confirmedAt = new Date().toISOString();
     try {
       logEvent("agegate_confirmed", { user_state: userState, confirmedAt });
+    } catch {
+      /* swallow */
+    }
+    try {
+      void qaLogEvent("agegate_confirmed", {
+        userType: userState,
+        appVersion: Constants?.expoConfig?.version || "dev",
+        deviceOs: Platform.OS,
+        metadata: { confirmedAt },
+        source: "agegate",
+      });
     } catch {
       /* swallow */
     }
