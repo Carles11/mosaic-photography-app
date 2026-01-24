@@ -86,8 +86,8 @@ export const AgeGateModal: React.FC<{
             </ThemedText>
 
             <ThemedText style={styles.body}>
-              This content contains public-domain photographic works from the
-              19th and early 20th centuries that include nudity presented for
+              This gallery shows public-domain photographic works from the 19th
+              and early 20th centuries that might include nudity presented for
               educational, historical, and artistic purposes only. Images are
               non-sexual in intent and shown with contextual information where
               available.

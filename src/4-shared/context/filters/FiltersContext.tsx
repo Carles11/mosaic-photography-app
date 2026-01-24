@@ -2,6 +2,7 @@ import { supabase } from "@/4-shared/api/supabaseClient";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
 import { GalleryFilter } from "@/4-shared/types/gallery";
+import { showSuccessToast } from "@/4-shared/utility/toast/Toast";
 import React, {
   createContext,
   ReactNode,
@@ -51,6 +52,7 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
   const [loadingProfile, setLoadingProfile] = useState<boolean>(false);
   const saveTimeout = useRef<NodeJS.Timeout | null>(null);
   const lastSavedRef = useRef<any>(null);
+  const previousNudityRef = useRef<string | undefined>(undefined);
 
   // Compute filtersActive with same logic used elsewhere
   const filtersActive = useMemo(() => {
@@ -193,6 +195,31 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, [filters, user?.id]);
 
+  // Show toast when nudity filter is enabled or disabled
+  useEffect(() => {
+    const currentNudity = (filters as any).nudity;
+    const previousNudity = previousNudityRef.current;
+
+    // Skip initial load/mount
+    if (previousNudity !== undefined) {
+      if (
+        (currentNudity === "nude" || currentNudity === "all") &&
+        currentNudity !== previousNudity
+      ) {
+        showSuccessToast("Nudity enabled — you can change it in Filters");
+      } else if (
+        (previousNudity === "nude" || previousNudity === "all") &&
+        currentNudity !== previousNudity &&
+        currentNudity !== "nude" &&
+        currentNudity !== "all"
+      ) {
+        showSuccessToast("Nudity disabled");
+      }
+    }
+
+    previousNudityRef.current = currentNudity;
+  }, [(filters as any).nudity]);
+
   const setFilters = (next: GalleryFilter) => {
     setFiltersState(next);
   };
@@ -230,7 +257,7 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
         if (error) {
           console.warn(
             "[FiltersProvider] Failed to clear user filters:",
-            error
+            error,
           );
         } else {
           lastSavedRef.current = mergedFilters ?? { nudity: "not-nude" };
