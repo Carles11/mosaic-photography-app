@@ -1,33 +1,35 @@
 export const ASO = {
+  // Home / Main listing
   home: {
-    title: "Vintage Photography Gallery | Mosaic",
+    title: "Mosaic — Vintage Photography",
+    // Keep description clear, tasteful, and mention nudity as optional & age-gated
     description:
-      "Discover Mosaic’s curated gallery of public domain vintage photography. Explore timeless images from legendary photographers—preserved, free, and ready to inspire.",
+      "Discover Mosaic’s curated gallery of high‑resolution public‑domain vintage photography. Explore historical, museum‑grade images — some include tasteful artistic nudity (hidden by default and available only after a one‑time 18+ confirmation). Powerful filters, downloads, and photographer pages make discovery easy and educational.",
+    // Safer, prioritized keywords for discovery (avoid repeated raw 'nude' tokens; include 'artistic nudity' with qualifier)
     keywords: [
       "public domain photography",
-      "public domain nude photography",
       "vintage photos",
-      "free vintage images",
-      "classic photography",
       "public domain vintage photos",
-      "vintage photography",
-      "free vintage photos",
-      "vintage nude photography",
+      "historical photography",
+      "artistic nudity",
+      "historical nude photography",
+      "curated photo gallery",
+      "museum photography",
+      "museum‑grade images",
+      "high resolution photos",
+      "download vintage photos",
+      "photographer biographies",
+      "archival images",
+      "classic photography",
+      "educational images",
+      "free vintage images",
       "public domain art",
       "retro photography",
-      "retro nude photography",
-      "classic photo gallery",
-      "free to use photography",
-      "legendary photographers",
-      "high-resolution image downloads",
+      "printable prints",
+      "photo collections",
+      "photo filters",
+      "photo archive",
       "timeless photo art",
-      "historical photography",
-      "creative commons",
-      "open access images",
-      "museum quality prints",
-      "collectible vintage photography",
-      "printable vintage photos",
-      "copyright-free images",
     ],
     shareTemplate: ({
       imageTitle,
@@ -41,69 +43,67 @@ export const ASO = {
       appName?: string;
     }) =>
       `Check out "${imageTitle ?? "a vintage photo"}" by ${
-        photographer ?? "legendary photographers"
-      } on ${appName} — public domain vintage photography preserved and shared for everyone. ${
+        photographer ?? "a legendary photographer"
+      } on ${appName} — curated, public domain photography preserved for everyone. ${
         url ?? ""
       }`,
+    // helpful text you can copy into reviewer notes when submitting builds
+    reviewNotes:
+      "This app includes optional, age‑gated artistic nudity from public‑domain / historical imagery. Nudity is hidden by default and requires a one‑time 18+ confirmation. The Filters UI and age confirmation are available from the Home screen. No explicit images are shown in store assets.",
   },
 
+  // Favorites
   favorites: {
-    title: "Favorites | Mosaic Gallery",
+    title: "Favorites — Mosaic",
     description:
-      "Access your private list of favorite public domain vintage photographs. Only you can view your own curated collection.",
+      "Your private list of favorite public‑domain vintage photographs. Curate, revisit, and download your best historical images.",
     keywords: [
       "favorites",
-      "favorite photos",
-      "private favorites",
+      "saved photos",
       "curated images",
-      "nude photography",
-      "photo gallery",
-      "private gallery",
-      "liked vintage photos",
-      "saved images",
-      "personal collection",
+      "my gallery",
       "public domain",
       "vintage photography",
-      "Mosaic Gallery",
+      "archival favorites",
+      "photo collection",
+      "bookmark photos",
+      "download images",
     ],
   },
 
+  // Collections
   collections: {
-    title: "Collections | Mosaic Gallery",
+    title: "Collections — Mosaic",
     description:
-      "Organize your favorite images into themed collections. Group, curate, and share your best public domain vintage photography.",
+      "Organize your favorite images into themed collections. Group, curate, and share historical public‑domain photography with others.",
     keywords: [
       "collections",
       "curated collections",
-      "nude photography collections",
       "photo collections",
-      "gallery",
-      "curated images",
       "vintage photography",
       "public domain",
       "favorites",
-      "themed image sets",
-      "Mosaic Gallery",
+      "themed galleries",
+      "archive collections",
+      "curation tools",
     ],
     emptyTitle: "No collections yet",
     emptyText: "Create your first collection to organize your favorite images.",
   },
 
+  // Collection detail
   collectionDetail: {
-    title: (name: string) => `${name || "Mosaic Gallery Collection"}`,
+    title: (name: string) => `${name || "Mosaic Collection"}`,
     description: (desc: string, count: number) =>
-      `${desc} — ${count} images in this curated collection of public domain vintage photography.`,
+      `${desc} — ${count} images in this curated collection of public‑domain vintage photography.`,
     keywords: [
       "collection",
       "curated collection",
-      "vintage nude photography",
       "vintage photography",
-      "nude photography",
-      "photo-curation",
-      "curated",
+      "photo curation",
       "public domain images",
       "gallery",
-      "Mosaic Gallery",
+      "Mosaic",
     ],
     emptyTitle: "No images in this collection",
     emptyText:
@@ -119,11 +119,12 @@ export const ASO = {
       url?: string;
       count?: number;
     }) =>
-      `Check out my collection "${name}" on Mosaic Gallery! ${
-        description ? `${description} — ` : ""
-      }${count ? `${count} images. ` : ""}View it here: ${url ?? ""}`,
+      `Check out my collection "${name}" on Mosaic — ${description ? `${description} — ` : ""}${
+        count ? `${count} images. ` : ""
+      }View it here: ${url ?? ""}`,
   },
 
+  // Photographer page
   photographer: {
     title: ({
       name,
@@ -136,7 +137,7 @@ export const ASO = {
     }) =>
       `${name ?? ""} ${surname ?? ""} – Vintage Photography${
         origin ? " (" + origin + ")" : ""
-      } | Mosaic Gallery`,
+      } | Mosaic`,
     description: ({
       name,
       surname,
@@ -148,11 +149,9 @@ export const ASO = {
       origin?: string;
       galleryCount?: number;
     }) =>
-      `Discover the vintage nude photography of ${name ?? ""} ${surname ?? ""}${
+      `Discover the vintage photography of ${name ?? ""} ${surname ?? ""}${
         origin ? " (" + origin + ")" : ""
-      }, legendary in public domain art. View biography, gallery (${
-        galleryCount ?? 0
-      } images), and historical milestones at Mosaic Photography.`,
+      }. View biography, gallery (${galleryCount ?? 0} images), and historical context. Some historic images may include tasteful artistic nudity — hidden by default and age‑gated.`,
     keywords: ({
       name,
       surname,
@@ -163,17 +162,16 @@ export const ASO = {
       origin?: string;
     }) =>
       [
-        "vintage nude photography",
         "vintage photography",
-        "nude photography",
         "public domain photography",
-        "public domain",
-        "classic nude art",
-        "gallery",
-        "iconic photographers",
+        "historical photos",
+        "photographer biography",
+        "archival images",
+        "artistic nudity",
+        "historical nude photography",
         name ?? "",
         surname ?? "",
-        "Mosaic Gallery",
+        "Mosaic",
         origin ?? "",
       ].filter((kw) => !!kw && kw.length > 0),
     shareTemplate: ({
@@ -189,9 +187,7 @@ export const ASO = {
     }) =>
       `Explore ${name ?? ""} ${
         surname ?? ""
-      }'s vintage nude photography on Mosaic Gallery — view ${
-        galleryCount ?? 0
-      } images, bio, and milestones. ${url ?? ""}`,
+      }'s vintage photography on Mosaic — view ${galleryCount ?? 0} images, bio, and milestones. ${url ?? ""}`,
     openGraph: ({
       name,
       surname,
@@ -207,12 +203,10 @@ export const ASO = {
       galleryCount?: number;
       canonicalUrl?: string;
     }) => ({
-      title: `${name ?? ""} ${
-        surname ?? ""
-      } – Vintage Nude Photography | Mosaic Gallery`,
+      title: `${name ?? ""} ${surname ?? ""} – Vintage Photography | Mosaic`,
       description: `Explore ${name ?? ""} ${
         surname ?? ""
-      }'s biography, public domain nude photography, and curated gallery. Discover classic art and historical milestones.`,
+      }'s biography and curated vintage photography. Some historical images may be age‑gated due to artistic nudity.`,
       type: "profile",
       url: canonicalUrl || "",
       images: [
@@ -235,23 +229,21 @@ export const ASO = {
       galleryCount?: number;
     }) => ({
       card: "summary_large_image",
-      title: `${name ?? ""} ${
-        surname ?? ""
-      } – Vintage Nude Photography | Mosaic Gallery`,
-      description: `Explore the vintage nude photography and biography of ${
+      title: `${name ?? ""} ${surname ?? ""} – Vintage Photography | Mosaic`,
+      description: `Explore the vintage photography and biography of ${
         name ?? ""
-      } ${surname ?? ""}, legendary public domain artist. View gallery (${
-        galleryCount ?? 0
-      } images) at Mosaic Photography.`,
+      } ${surname ?? ""}. View gallery (${galleryCount ?? 0} images) at Mosaic.`,
       images: [
         ogImageUrl || "https://www.mosaic.photography/images/og-image.jpg",
       ],
     }),
   },
+
+  // Photographers list
   photographers: {
-    title: "Photographers | Mosaic Gallery",
+    title: "Photographers — Mosaic",
     description:
-      "Browse our curated list of legendary vintage photographers, discover their galleries, explore their biographies and unique photographic styles, and find your next inspiration.",
+      "Browse our curated list of legendary vintage photographers. Discover galleries, biographies, and historic photo series that shaped photography.",
     keywords: [
       "photographers",
       "vintage photographers",
@@ -261,30 +253,21 @@ export const ASO = {
       "photographer gallery",
       "vintage photography",
       "biographies",
-      "photographic style",
       "art history",
-      "nude photography artists",
-      "retro photo artists",
-      "legendary photographers",
-      "timeless photo art",
-      "public domain",
-      "Mosaic Gallery",
+      "archival images",
+      "Mosaic",
     ],
     emptyTitle: "No photographers yet",
     emptyText: "No photographers found. Please check back soon.",
     shareTemplate: ({
       photographer,
       url,
-      appName = "Mosaic Gallery",
+      appName = "Mosaic",
     }: {
       photographer?: string;
       url?: string;
       appName?: string;
     }) =>
-      `Discover legendary photographer${
-        photographer ? " " + photographer : "s"
-      } on ${appName} — explore classic, public domain photography. ${
-        url ?? ""
-      }`,
+      `Discover legendary photographer${photographer ? " " + photographer : "s"} on ${appName} — explore classic public domain photography. ${url ?? ""}`,
   },
 };
