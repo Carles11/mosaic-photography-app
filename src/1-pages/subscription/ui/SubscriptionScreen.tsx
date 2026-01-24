@@ -3,6 +3,7 @@ import {
   SecondaryButton,
 } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { ThemedView } from "@/4-shared/components/themed-view";
 import { useRevenueCat } from "@/4-shared/context/subscription/RevenueCatContext";
 import { logEvent } from "@/4-shared/firebase";
 import { useSubscription } from "@/4-shared/hooks/useSubscription";
@@ -133,24 +134,24 @@ export function SubscriptionScreen() {
       >
         {/* Only show a star/ribbon for lifetime */}
         {key === "lifetime" && (
-          <View style={styles.starRibbon}>
+          <ThemedView style={styles.starRibbon}>
             <ThemedText style={styles.starText}>★</ThemedText>
-          </View>
+          </ThemedView>
         )}
 
-        <View style={styles.bigCardInner}>
-          <View style={styles.bigCardHeader}>
-            <View style={styles.radioAndLabel}>
+        <ThemedView style={styles.bigCardInner}>
+          <ThemedView style={styles.bigCardHeader}>
+            <ThemedView style={styles.radioAndLabel}>
               {/* The highlighted card should always display its radio as selected */}
-              <View style={[styles.radioCircle, styles.radioSelected]} />
+              <ThemedView style={[styles.radioCircle, styles.radioSelected]} />
               <ThemedText style={styles.bigCardTitle}>{title}</ThemedText>
-            </View>
+            </ThemedView>
 
             <ThemedText style={styles.bigCardPrice}>
               {priceLabel}{" "}
               {key === "monthly" ? "/m" : key === "yearly" ? "/y" : ""}
             </ThemedText>
-          </View>
+          </ThemedView>
 
           <ThemedText style={styles.bigCardSub}>
             {key === "monthly"
@@ -160,15 +161,15 @@ export function SubscriptionScreen() {
                 : "One-time payment • No recurring fees"}
           </ThemedText>
 
-          <View style={styles.bullets}>
+          <ThemedView style={styles.bullets}>
             {bullets.map((b, i) => (
-              <View key={i} style={styles.bulletRow}>
-                <View style={styles.bulletDot} />
+              <ThemedView key={i} style={styles.bulletRow}>
+                <ThemedView style={styles.bulletDot} />
                 <ThemedText style={styles.bulletText}>{b}</ThemedText>
-              </View>
+              </ThemedView>
             ))}
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
       </Pressable>
     );
   };
@@ -191,14 +192,14 @@ export function SubscriptionScreen() {
         accessibilityRole={"button" as AccessibilityRole}
         accessibilityLabel={`${title} plan`}
       >
-        <View style={styles.compactLeft}>
-          <View
+        <ThemedView style={styles.compactLeft}>
+          <ThemedView
             style={[
               styles.radioSmall,
               isSelected ? styles.radioSmallSelected : null,
             ]}
           />
-          <View style={{ marginLeft: 10 }}>
+          <ThemedView style={{ marginLeft: 10 }}>
             <ThemedText style={styles.compactTitle}>{title}</ThemedText>
             <ThemedText style={styles.compactSub}>
               {key === "monthly"
@@ -207,8 +208,8 @@ export function SubscriptionScreen() {
                   ? "Pay for a year"
                   : "One-time payment"}
             </ThemedText>
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
         <ThemedText style={styles.compactPrice}>
           {priceLabel}
           {key === "monthly" ? "/m" : key === "yearly" ? "/y" : ""}
@@ -226,33 +227,37 @@ export function SubscriptionScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.headerRow}>
+        <ThemedView style={styles.headerRow}>
           <Pressable onPress={onDismiss} style={styles.backTouchable}>
             <ThemedText style={styles.backText}>‹</ThemedText>
           </Pressable>
 
-          <View style={styles.headerTextWrap}>
+          <ThemedView style={styles.headerTextWrap}>
             <ThemedText style={styles.h1}>Choose a plan</ThemedText>
             <ThemedText style={styles.h2}>All features, No limits.</ThemedText>
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
 
-        <View style={{ paddingHorizontal: 20, marginTop: 18 }}>
+        <ThemedView
+          style={{
+            paddingHorizontal: 20,
+            marginTop: 18,
+          }}
+        >
           {renderHighlightedCard()}
-
+          {/* Highlighted card bottom shadow */}
           <View style={{ height: 14 }} />
-
-          <View>
+          <ThemedView>
             {(["monthly", "yearly", "lifetime"] as const)
               .filter((k) => k !== selected)
               .map((k) => renderCompactCard(k))}
-          </View>
-        </View>
+          </ThemedView>
+        </ThemedView>
 
-        <View style={{ height: 140 }} />
+        <ThemedView style={{ height: 140 }} />
       </ScrollView>
 
-      <View style={styles.bottom}>
+      <ThemedView style={styles.bottom}>
         <PrimaryButton
           title="Make Payment"
           onPress={onPressPrimary}
@@ -263,7 +268,7 @@ export function SubscriptionScreen() {
           onPress={onDismiss}
           style={styles.maybeLater}
         />
-      </View>
+      </ThemedView>
     </SafeAreaView>
   );
 }

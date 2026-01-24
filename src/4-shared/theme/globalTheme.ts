@@ -16,6 +16,7 @@ export const darkTheme = {
   shareIcon: "#29bde6ff",
   commentIcon: "#9BA1A6",
   link: "#1371d6",
+  mutedText: "#687076",
 
   // inputs
   inputBackgroundColor: "#dedede",
@@ -57,7 +58,7 @@ export const lightTheme = {
   shareIcon: "#29bde6ff",
   commentIcon: "#9BA1A6",
   link: "#1371d6",
-
+  mutedText: "#687076",
   // inputs
   inputBackgroundColor: "#dedede",
   inputTextColor: "#1d1d1d",

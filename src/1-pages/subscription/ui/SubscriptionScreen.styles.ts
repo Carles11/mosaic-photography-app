@@ -49,8 +49,8 @@ const createStyles = (theme: any) =>
       borderRadius: 16,
       overflow: "hidden",
       borderWidth: 1.8,
-      borderColor: "rgba(255,255,255,0.03)",
-      backgroundColor: theme.cardBackground ?? "#151515",
+      borderColor: theme.accent ?? "#F7D874",
+      backgroundColor: theme.background ?? "#151515",
     },
     bigCardInner: {
       padding: 18,
@@ -124,7 +124,7 @@ const createStyles = (theme: any) =>
       alignItems: "center",
       justifyContent: "space-between",
       borderWidth: 1,
-      borderColor: "rgba(255,255,255,0.06)",
+      borderColor: theme.mutedText ?? "#687076",
       borderRadius: 12,
       paddingVertical: 14,
       paddingHorizontal: 14,
@@ -132,8 +132,8 @@ const createStyles = (theme: any) =>
       backgroundColor: "transparent",
     },
     compactCardSelected: {
-      borderColor: theme.accent ?? "#00A3FF",
-      backgroundColor: theme.cardBackground ?? "#151515",
+      borderColor: theme.accent ?? "#F7D874",
+      backgroundColor: theme.background ?? "#151515",
     },
     compactLeft: {
       flexDirection: "row",
@@ -145,13 +145,13 @@ const createStyles = (theme: any) =>
       height: 14,
       borderRadius: 7,
       borderWidth: 2,
-      borderColor: "rgba(255,255,255,0.2)",
+      borderColor: (theme.mutedText as string) ?? "#687076",
       marginRight: 10,
     },
     // Small radio selected highlight (yellow)
     radioSmallSelected: {
-      backgroundColor: (theme.highlight as string) ?? "#F7D874",
-      borderColor: (theme.highlight as string) ?? "#F7D874",
+      backgroundColor: (theme.accent as string) ?? "#F7D874",
+      borderColor: (theme.accent as string) ?? "#F7D874",
     },
     compactTitle: {
       fontSize: 16,
@@ -173,7 +173,7 @@ const createStyles = (theme: any) =>
       position: "absolute",
       right: -6,
       top: -6,
-      backgroundColor: theme.accent ?? "#00A3FF",
+      backgroundColor: theme.accent ?? "#F7D874",
       paddingHorizontal: 8,
       paddingVertical: 6,
       borderTopRightRadius: 14,
@@ -181,7 +181,7 @@ const createStyles = (theme: any) =>
       zIndex: 10,
     },
     starText: {
-      color: theme.accentText ?? "#fff",
+      color: "#fff",
       fontSize: 14,
       fontWeight: "900",
     },
@@ -208,7 +208,7 @@ const createStyles = (theme: any) =>
       borderRadius: 28,
       paddingVertical: 14,
       // If PrimaryButton expects background styling, tweak below
-      backgroundColor: theme.primaryButtonBackground ?? "#0096FF",
+      backgroundColor: theme.buttonBackgroundColor ?? "#0096FF",
     },
     maybeLater: {
       marginTop: 10,
