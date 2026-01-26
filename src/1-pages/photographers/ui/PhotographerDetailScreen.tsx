@@ -29,6 +29,7 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "@/4-shared/utility/toast/Toast";
+import * as Sentry from "@sentry/react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -89,6 +90,10 @@ const PhotographerDetailScreen: React.FC = () => {
   const { slug } = useLocalSearchParams();
   // Debug: show which slug is being used
   console.debug("[PhotographerDetailScreen] Using slug param:", slug);
+  // Sentry: always log screen load attempt
+  Sentry.captureMessage(
+    `[PhotographerDetailScreen] Loading for slug: ${Array.isArray(slug) ? slug[0] : slug}`,
+  );
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null,
   );
@@ -205,10 +210,45 @@ const PhotographerDetailScreen: React.FC = () => {
       if (active) {
         if (!result) {
           setNotFound(true);
+          setLoading(false);
+          // Enhanced debug and Sentry logs for null result
+          console.debug(
+            "[PhotographerDetailScreen] fetchPhotographerBySlug returned null",
+            { slug: slugStr, nudity: nudityParam },
+          );
+          Sentry.captureMessage(
+            `[PhotographerDetailScreen] fetchPhotographerBySlug returned null`,
+            {
+              level: "warning",
+              extra: {
+                slug: slugStr,
+                nudity: nudityParam,
+                notFound: true,
+                loading: false,
+              },
+            },
+          );
         } else {
           setPhotographer(result);
+          setLoading(false);
+          // Enhanced debug and Sentry logs for valid result
+          console.debug(
+            "[PhotographerDetailScreen] fetchPhotographerBySlug success",
+            { slug: slugStr, nudity: nudityParam, photographer: result },
+          );
+          Sentry.captureMessage(
+            `[PhotographerDetailScreen] fetchPhotographerBySlug success`,
+            {
+              level: "info",
+              extra: {
+                slug: slugStr,
+                nudity: nudityParam,
+                photographerId: result.id,
+                imageCount: result.images?.length,
+              },
+            },
+          );
         }
-        setLoading(false);
       }
     }
     fetchData();

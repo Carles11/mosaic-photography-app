@@ -1,6 +1,7 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import type { PhotographerSlug } from "@/4-shared/types";
+import * as Sentry from "@sentry/react-native";
 
 /**
  * @param slug photographer slug
@@ -12,6 +13,12 @@ export async function fetchPhotographerBySlug(
   nudity: "nude" | "not-nude" | "all" = "not-nude",
 ): Promise<PhotographerSlug | null> {
   console.debug("[fetchPhotographerBySlug] slug param:", slug);
+  // Sentry: always log fetch attempt
+  Sentry.captureMessage(`[fetchPhotographerBySlug] Fetching for slug: ${slug}`);
+
+  // Defensive: log before/after fetch
+  let fetchError = null;
+  let photographerResult = null;
   const { data: photographer, error: photographerError } = await supabase
     .from("photographers")
     .select(
@@ -23,13 +30,20 @@ export async function fetchPhotographerBySlug(
     .single();
 
   if (photographerError || !photographer) {
+    fetchError = photographerError || "not found";
     console.error(
       "[fetchPhotographerBySlug] Error or not found:",
       photographerError,
       "slug:",
       slug,
     );
+    Sentry.captureMessage("[fetchPhotographerBySlug] Error or not found", {
+      level: "error",
+      extra: { slug, photographerError, notFound: !photographer },
+    });
     return null;
+  } else {
+    photographerResult = photographer;
   }
 
   let imagesQuery = supabase
@@ -134,8 +148,22 @@ export async function fetchPhotographerBySlug(
     ).url,
   }));
 
-  return {
+  const resultObj = {
     ...photographer,
     images: processed,
   };
+  // Log success with summary
+  console.debug("[fetchPhotographerBySlug] Success", {
+    slug,
+    imageCount: processed.length,
+  });
+  Sentry.captureMessage("[fetchPhotographerBySlug] Success", {
+    level: "info",
+    extra: {
+      slug,
+      photographerId: photographer.id,
+      imageCount: processed.length,
+    },
+  });
+  return resultObj;
 }
