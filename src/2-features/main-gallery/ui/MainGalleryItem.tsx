@@ -2,7 +2,7 @@ import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
 import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { slugify } from "@/4-shared/lib/authorSlug";
+import { canonicalSlugMap, slugify } from "@/4-shared/lib/authorSlug";
 import { MainGalleryItemProps } from "@/4-shared/types";
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
@@ -27,8 +27,19 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
 
   const handlePressAuthor = useCallback(() => {
     if (!item.author) return;
-    // Prefer slug from DB if present; fallback to slugify only as a last resort
-    const slug = (item as any).photographerSlug || slugify(item.author);
+    let slug = (item as any).photographerSlug;
+    let source = "photographerSlug";
+    if (!slug && canonicalSlugMap[item.author]) {
+      slug = canonicalSlugMap[item.author];
+      source = "canonicalSlugMap";
+    }
+    if (!slug) {
+      slug = slugify(item.author);
+      source = "slugify";
+    }
+    console.debug(
+      `[handlePressAuthor] using slug: ${slug} source: ${source} author: ${item.author}`,
+    );
     router.push(`/photographer/${slug}`);
   }, [router, item.author, (item as any).photographerSlug]);
 

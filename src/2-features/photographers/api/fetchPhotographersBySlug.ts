@@ -10,6 +10,7 @@ export async function fetchPhotographerBySlug(
   slug: string,
   nudity: "nude" | "not-nude" | "all" = "not-nude",
 ): Promise<PhotographerSlug | null> {
+  console.debug("[fetchPhotographerBySlug] slug param:", slug);
   const { data: photographer, error: photographerError } = await supabase
     .from("photographers")
     .select(

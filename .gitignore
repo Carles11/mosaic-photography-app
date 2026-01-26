@@ -26,11 +26,12 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
-# certificates
+# certificates and keys
 cert_extract/
 *.apk
 mosaic-photography-app.git
 mosaic-photography-app.git.bfg-report
+play-service-account.json
 
 # macOS
 .DS_Store

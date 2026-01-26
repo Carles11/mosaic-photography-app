@@ -1,5 +1,5 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { slugify } from "@/4-shared/lib/authorSlug";
+import { canonicalSlugMap, slugify } from "@/4-shared/lib/authorSlug";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
 import { ZoomImageProps } from "@/4-shared/types/gallery";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
@@ -83,8 +83,19 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
 
   const handlePressAuthor = useCallback(() => {
     if (!image?.author) return;
-    // Prefer DB-provided slug if present, else fallback to slugify
-    const slug = (image as any).photographerSlug || slugify(image.author);
+    let slug = (image as any).photographerSlug;
+    let source = "photographerSlug";
+    if (!slug && canonicalSlugMap[image.author]) {
+      slug = canonicalSlugMap[image.author];
+      source = "canonicalSlugMap";
+    }
+    if (!slug) {
+      slug = slugify(image.author);
+      source = "slugify";
+    }
+    console.debug(
+      `[handlePressAuthor] using slug: ${slug} source: ${source} author: ${image.author}`,
+    );
     router.push(`/photographer/${slug}`);
   }, [image, router]);
 

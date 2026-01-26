@@ -1,6 +1,11 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
-import { authorToFolder, slugify } from "@/4-shared/lib/authorSlug";
+import {
+  authorToFolder,
+  canonicalSlugMap,
+  slugify,
+} from "@/4-shared/lib/authorSlug";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
+import * as Sentry from "@sentry/react-native";
 
 import { GalleryImage } from "@/4-shared/types/gallery";
 
@@ -144,9 +149,16 @@ export async function fetchMainGalleryImages(
   filtered.forEach((img: any) => {
     if (img.author && authorSlugMap[img.author]) {
       img.photographerSlug = authorSlugMap[img.author];
+    } else if (img.author && canonicalSlugMap[img.author]) {
+      img.photographerSlug = canonicalSlugMap[img.author];
+      Sentry.captureMessage(
+        `[photographerSlug fallback] Used canonicalSlugMap for author: ${img.author}, slug: ${img.photographerSlug}`,
+      );
     } else if (img.author) {
-      // fallback only if we don't have DB slug. this ensures navigation will still work.
       img.photographerSlug = slugify(img.author);
+      Sentry.captureMessage(
+        `[photographerSlug fallback] Used slugify for author: ${img.author}, slug: ${img.photographerSlug}`,
+      );
     } else {
       img.photographerSlug = undefined;
     }
