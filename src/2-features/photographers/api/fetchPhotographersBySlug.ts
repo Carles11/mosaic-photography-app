@@ -6,6 +6,7 @@ import type { PhotographerSlug } from "@/4-shared/types";
  * @param slug photographer slug
  * @param nudity "not-nude" | "nude" | "all" (default "not-nude")
  */
+
 export async function fetchPhotographerBySlug(
   slug: string,
   nudity: "nude" | "not-nude" | "all" = "not-nude",
@@ -21,7 +22,15 @@ export async function fetchPhotographerBySlug(
     .eq("slug", slug)
     .single();
 
-  if (photographerError || !photographer) return null;
+  if (photographerError || !photographer) {
+    console.error(
+      "[fetchPhotographerBySlug] Error or not found:",
+      photographerError,
+      "slug:",
+      slug,
+    );
+    return null;
+  }
 
   let imagesQuery = supabase
     .from("images_resize")
@@ -81,9 +90,12 @@ export async function fetchPhotographerBySlug(
     .ilike("filename", "000_aaa_%");
 
   if (imagesError || portraitError) {
-    console.log(
-      "Error fetching photographer images:",
-      imagesError || portraitError,
+    console.error(
+      "[fetchPhotographerBySlug] Error fetching photographer images:",
+      imagesError,
+      portraitError,
+      "author:",
+      photographer.author,
     );
   }
 

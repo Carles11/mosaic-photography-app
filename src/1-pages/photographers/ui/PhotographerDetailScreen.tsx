@@ -87,6 +87,8 @@ const PhotographerDetailScreen: React.FC = () => {
   } = useComments();
 
   const { slug } = useLocalSearchParams();
+  // Debug: show which slug is being used
+  console.debug("[PhotographerDetailScreen] Using slug param:", slug);
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null,
   );
@@ -440,6 +442,10 @@ const PhotographerDetailScreen: React.FC = () => {
     return (
       <ThemedView style={styles.centered}>
         <ActivityIndicator size="large" />
+        {/* Debug: show slug being used for fetch */}
+        <ThemedText style={{ marginTop: 16, color: "#888", fontSize: 12 }}>
+          Loading photographer for slug: {Array.isArray(slug) ? slug[0] : slug}
+        </ThemedText>
       </ThemedView>
     );
   }
