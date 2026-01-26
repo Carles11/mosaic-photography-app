@@ -97,6 +97,8 @@ const PhotographerDetailScreen: React.FC = () => {
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null,
   );
+  // Track any error that should be shown in the loading screen
+  const [screenError, setScreenError] = useState<string | null>(null);
 
   const { theme } = useTheme();
   const [loading, setLoading] = useState(true);
@@ -181,15 +183,28 @@ const PhotographerDetailScreen: React.FC = () => {
     }
   }, [photographer, navigation]);
 
+  // For collecting debug logs to print on screen
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+  function addDebugLog(msg: string) {
+    setDebugLogs((prev) => [...prev, msg]);
+    console.debug(msg);
+  }
+
   useEffect(() => {
     let active = true;
     async function fetchData() {
       setLoading(true);
       setNotFound(false);
+      setScreenError(null);
+      setDebugLogs([]);
       const slugStr = Array.isArray(slug) ? slug[0] : slug;
+      addDebugLog(`[fetchData] Start for slug: ${slugStr}`);
       if (!slugStr) {
         setNotFound(true);
         setLoading(false);
+        setScreenError("No slug provided");
+        addDebugLog(`[fetchData] No slug provided`);
         return;
       }
 
@@ -206,49 +221,100 @@ const PhotographerDetailScreen: React.FC = () => {
       const nudityParam: "nude" | "not-nude" | "all" =
         (filters as any)?.nudity ?? routeNudity ?? "not-nude";
 
-      const result = await fetchPhotographerBySlug(slugStr, nudityParam);
-      if (active) {
-        if (!result) {
-          setNotFound(true);
-          setLoading(false);
-          // Enhanced debug and Sentry logs for null result
-          console.debug(
-            "[PhotographerDetailScreen] fetchPhotographerBySlug returned null",
-            { slug: slugStr, nudity: nudityParam },
-          );
-          Sentry.captureMessage(
-            `[PhotographerDetailScreen] fetchPhotographerBySlug returned null`,
-            {
-              level: "warning",
-              extra: {
-                slug: slugStr,
-                nudity: nudityParam,
-                notFound: true,
-                loading: false,
+      // Add a timeout to catch hanging fetches
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Timeout fetching photographer")),
+          10000,
+        ),
+      );
+      try {
+        addDebugLog(
+          `[fetchData] Fetching photographer with slug: ${slugStr}, nudity: ${nudityParam}`,
+        );
+        const result = await Promise.race([
+          fetchPhotographerBySlug(slugStr, nudityParam),
+          timeoutPromise,
+        ]);
+        if (active) {
+          if (!result) {
+            setNotFound(true);
+            setLoading(false);
+            setScreenError("No photographer found for slug: " + slugStr);
+            addDebugLog(
+              `[fetchData] No photographer found for slug: ${slugStr}`,
+            );
+            // Enhanced debug and Sentry logs for null result
+            Sentry.captureMessage(
+              `[PhotographerDetailScreen] fetchPhotographerBySlug returned null`,
+              {
+                level: "warning",
+                extra: {
+                  slug: slugStr,
+                  nudity: nudityParam,
+                  notFound: true,
+                  loading: false,
+                },
               },
-            },
-          );
-        } else {
-          setPhotographer(result);
-          setLoading(false);
-          // Enhanced debug and Sentry logs for valid result
-          console.debug(
-            "[PhotographerDetailScreen] fetchPhotographerBySlug success",
-            { slug: slugStr, nudity: nudityParam, photographer: result },
-          );
-          Sentry.captureMessage(
-            `[PhotographerDetailScreen] fetchPhotographerBySlug success`,
-            {
-              level: "info",
-              extra: {
-                slug: slugStr,
-                nudity: nudityParam,
-                photographerId: result.id,
-                imageCount: result.images?.length,
+            );
+          } else if (
+            result &&
+            typeof result === "object" &&
+            "id" in result &&
+            "slug" in result
+          ) {
+            setPhotographer(result as PhotographerSlug);
+            setLoading(false);
+            setScreenError(null);
+            addDebugLog(
+              `[fetchData] Photographer loaded: ${JSON.stringify(result)}`,
+            );
+            // Enhanced debug and Sentry logs for valid result
+            Sentry.captureMessage(
+              `[PhotographerDetailScreen] fetchPhotographerBySlug success`,
+              {
+                level: "info",
+                extra: {
+                  slug: slugStr,
+                  nudity: nudityParam,
+                  photographerId: (result as PhotographerSlug).id,
+                  imageCount: (result as PhotographerSlug).images?.length,
+                },
               },
-            },
-          );
+            );
+          } else {
+            setNotFound(true);
+            setLoading(false);
+            setScreenError("No photographer found for slug: " + slugStr);
+            addDebugLog(
+              `[fetchData] Invalid photographer object returned for slug: ${slugStr}`,
+            );
+            Sentry.captureMessage(
+              `[PhotographerDetailScreen] fetchPhotographerBySlug returned invalid object`,
+              {
+                level: "warning",
+                extra: {
+                  slug: slugStr,
+                  nudity: nudityParam,
+                  notFound: true,
+                  loading: false,
+                  result,
+                },
+              },
+            );
+          }
         }
+      } catch (err) {
+        setScreenError(
+          "Error loading photographer: " +
+            (err instanceof Error ? err.message : String(err)),
+        );
+        setLoading(false);
+        setNotFound(true);
+        addDebugLog(
+          `[fetchData] Error: ${err instanceof Error ? err.message : String(err)}`,
+        );
+        Sentry.captureException(err);
       }
     }
     fetchData();
@@ -486,6 +552,25 @@ const PhotographerDetailScreen: React.FC = () => {
         <ThemedText style={{ marginTop: 16, color: "#888", fontSize: 12 }}>
           Loading photographer for slug: {Array.isArray(slug) ? slug[0] : slug}
         </ThemedText>
+        {/* Show any error encountered during loading */}
+        {screenError && (
+          <ThemedText style={{ color: "red", marginTop: 8 }}>
+            Error: {screenError}
+          </ThemedText>
+        )}
+        {/* Print debug logs on screen for easier diagnosis */}
+        {debugLogs.length > 0 && (
+          <View style={{ marginTop: 16, maxHeight: 200 }}>
+            <ThemedText style={{ color: "#555", fontSize: 11 }}>
+              Debug logs:
+            </ThemedText>
+            {debugLogs.map((log, i) => (
+              <ThemedText key={i} style={{ color: "#555", fontSize: 11 }}>
+                {log}
+              </ThemedText>
+            ))}
+          </View>
+        )}
       </ThemedView>
     );
   }
