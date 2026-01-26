@@ -32,6 +32,13 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
+// Confirm Sentry init in all builds
+console.debug("[Sentry] Sentry.init called, DSN:", process.env.SENTRY_DSN);
+Sentry.captureMessage("[Sentry] Sentry.init called", {
+  level: "info",
+  extra: { dsn: process.env.SENTRY_DSN },
+});
+
 export const unstable_settings = {
   anchor: "(tabs)",
 };
@@ -39,6 +46,13 @@ export const unstable_settings = {
 export default Sentry.wrap(function RootLayout() {
   useEffect(() => {
     logEvent("gallery_opened", { screen: "home", userType: "guest" });
+    // Test Sentry event in internal builds only
+    if (process.env.EAS_BUILD_PROFILE === "internal") {
+      console.debug("[Sentry] Sending test error from internal build");
+      Sentry.captureException(
+        new Error("[Sentry] Test error from internal build"),
+      );
+    }
   }, []);
 
   // Prefetch featured photographers on app startup to warm in-memory cache used by slider
@@ -103,7 +117,7 @@ function InnerLayout() {
       },
       headerShadowVisible: false,
     }),
-    [theme]
+    [theme],
   );
 
   return (
