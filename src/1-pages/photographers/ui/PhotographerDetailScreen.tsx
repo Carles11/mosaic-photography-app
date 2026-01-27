@@ -88,12 +88,7 @@ const PhotographerDetailScreen: React.FC = () => {
   } = useComments();
 
   const { slug } = useLocalSearchParams();
-  // Debug: show which slug is being used
-  console.debug("[PhotographerDetailScreen] Using slug param:", slug);
-  // Sentry: always log screen load attempt
-  Sentry.captureMessage(
-    `[PhotographerDetailScreen] Loading for slug: ${Array.isArray(slug) ? slug[0] : slug}`,
-  );
+
   const [photographer, setPhotographer] = useState<PhotographerSlug | null>(
     null,
   );
@@ -222,6 +217,14 @@ const PhotographerDetailScreen: React.FC = () => {
         addDebugLog(
           `[fetchData] Fetching photographer with slug: ${slugStr}, nudity: ${nudityParam}`,
         );
+
+        // breadcrumb: fetch start
+        Sentry.addBreadcrumb({
+          message: "fetchPhotographerBySlug:start",
+          level: "info",
+          data: { slug: slugStr, nudity: nudityParam },
+        });
+
         const result = await Promise.race([
           fetchPhotographerBySlug(slugStr, nudityParam),
           timeoutPromise,
@@ -234,19 +237,12 @@ const PhotographerDetailScreen: React.FC = () => {
             addDebugLog(
               `[fetchData] No photographer found for slug: ${slugStr}`,
             );
-            // Enhanced debug and Sentry logs for null result
-            Sentry.captureMessage(
-              `[PhotographerDetailScreen] fetchPhotographerBySlug returned null`,
-              {
-                level: "warning",
-                extra: {
-                  slug: slugStr,
-                  nudity: nudityParam,
-                  notFound: true,
-                  loading: false,
-                },
-              },
-            );
+
+            Sentry.addBreadcrumb({
+              message: "fetchPhotographerBySlug:no-result",
+              level: "warning",
+              data: { slug: slugStr, nudity: nudityParam },
+            });
           } else if (
             result &&
             typeof result === "object" &&
@@ -259,19 +255,17 @@ const PhotographerDetailScreen: React.FC = () => {
             addDebugLog(
               `[fetchData] Photographer loaded: ${JSON.stringify(result)}`,
             );
-            // Enhanced debug and Sentry logs for valid result
-            Sentry.captureMessage(
-              `[PhotographerDetailScreen] fetchPhotographerBySlug success`,
-              {
-                level: "info",
-                extra: {
-                  slug: slugStr,
-                  nudity: nudityParam,
-                  photographerId: (result as PhotographerSlug).id,
-                  imageCount: (result as PhotographerSlug).images?.length,
-                },
+
+            Sentry.addBreadcrumb({
+              message: "fetchPhotographerBySlug:success",
+              level: "info",
+              data: {
+                slug: slugStr,
+                nudity: nudityParam,
+                photographerId: (result as PhotographerSlug).id,
+                imageCount: (result as PhotographerSlug).images?.length,
               },
-            );
+            });
           } else {
             setNotFound(true);
             setLoading(false);
@@ -279,19 +273,16 @@ const PhotographerDetailScreen: React.FC = () => {
             addDebugLog(
               `[fetchData] Invalid photographer object returned for slug: ${slugStr}`,
             );
-            Sentry.captureMessage(
-              `[PhotographerDetailScreen] fetchPhotographerBySlug returned invalid object`,
-              {
-                level: "warning",
-                extra: {
-                  slug: slugStr,
-                  nudity: nudityParam,
-                  notFound: true,
-                  loading: false,
-                  result,
-                },
+
+            Sentry.addBreadcrumb({
+              message: "fetchPhotographerBySlug:invalid-result",
+              level: "warning",
+              data: {
+                slug: slugStr,
+                nudity: nudityParam,
+                result,
               },
-            );
+            });
           }
         }
       } catch (err) {
@@ -304,7 +295,19 @@ const PhotographerDetailScreen: React.FC = () => {
         addDebugLog(
           `[fetchData] Error: ${err instanceof Error ? err.message : String(err)}`,
         );
+
+        // Capture the real exception
         Sentry.captureException(err);
+
+        // Also add a breadcrumb for context
+        Sentry.addBreadcrumb({
+          message: "fetchPhotographerBySlug:error",
+          level: "error",
+          data: {
+            slug: Array.isArray(slug) ? slug[0] : slug,
+            error: String(err),
+          },
+        });
       }
     }
     fetchData();
@@ -321,25 +324,23 @@ const PhotographerDetailScreen: React.FC = () => {
   const galleryImages = photographer?.images || [];
 
   // Diagnostic: warn if any returned image lacks a DB-provided photographerSlug.
-  // This helps locate missing slugs in the data import pipeline.
+  // Keep as debug + breadcrumb (no noisy Sentry event).
   if (galleryImages.length > 0) {
     const missing = galleryImages.filter(
       (img) => !(img as any).photographerSlug,
     );
     if (missing.length > 0) {
-      console.warn(
+      console.debug(
         `[PhotographerDetailScreen] ${missing.length} images missing photographerSlug for photographer=${photographer?.slug}`,
       );
-      Sentry.captureMessage(
-        `[PhotographerDetailScreen] images missing photographerSlug`,
-        {
-          level: "warning",
-          extra: {
-            photographer: photographer?.slug,
-            missingCount: missing.length,
-          },
+      Sentry.addBreadcrumb({
+        message: "images:missing-photographerSlug",
+        level: "warning",
+        data: {
+          photographer: photographer?.slug,
+          missingCount: missing.length,
         },
-      );
+      });
     }
   }
 

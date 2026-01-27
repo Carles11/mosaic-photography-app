@@ -91,18 +91,13 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
     if (!navSlug) {
       if (!warnedAuthorsRef.current.has(author)) {
         warnedAuthorsRef.current.add(author);
-        console.warn(
-          `[handlePressAuthor] Missing photographerSlug for author: ${author}`,
-        );
       }
       showErrorToast("Photographer page unavailable.");
       return;
     }
 
     const source = dbSlug ? "photographerSlug" : "canonicalSlugMap";
-    console.debug(
-      `[handlePressAuthor] using slug: ${navSlug} source: ${source} author: ${author}`,
-    );
+
     router.push(`/photographer/${navSlug}`);
   }, [author, navSlug, dbSlug, router]);
 

@@ -62,7 +62,6 @@ Sentry.init({
   ],
 });
 
-console.debug("[Sentry] Sentry.init called, DSN:", SENTRY_DSN);
 Sentry.captureMessage("[Sentry] Sentry.init called", {
   level: "info",
   extra: { dsn: SENTRY_DSN },

@@ -41,18 +41,13 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
       // Warn only once per author to avoid log spam
       if (!warnedAuthorsRef.current.has(author)) {
         warnedAuthorsRef.current.add(author);
-        console.warn(
-          `[handlePressAuthor] Missing photographerSlug for author: ${author}`,
-        );
       }
       showErrorToast("Photographer page unavailable.");
       return;
     }
 
     const source = dbSlug ? "photographerSlug" : "canonicalSlugMap";
-    console.debug(
-      `[handlePressAuthor] using slug: ${navSlug} source: ${source} author: ${author}`,
-    );
+
     router.push(`/photographer/${navSlug}`);
   }, [router, author, navSlug, dbSlug]);
 
