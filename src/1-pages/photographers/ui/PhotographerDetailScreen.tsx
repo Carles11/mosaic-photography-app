@@ -194,7 +194,6 @@ const PhotographerDetailScreen: React.FC = () => {
       setScreenError(null);
       setDebugLogs([]);
       const slugStr = Array.isArray(slug) ? slug[0] : slug;
-      addDebugLog(`[fetchData] Start for slug: ${slugStr}`);
       if (!slugStr) {
         setNotFound(true);
         setLoading(false);
@@ -214,17 +213,6 @@ const PhotographerDetailScreen: React.FC = () => {
         ),
       );
       try {
-        addDebugLog(
-          `[fetchData] Fetching photographer with slug: ${slugStr}, nudity: ${nudityParam}`,
-        );
-
-        // breadcrumb: fetch start
-        Sentry.addBreadcrumb({
-          message: "fetchPhotographerBySlug:start",
-          level: "info",
-          data: { slug: slugStr, nudity: nudityParam },
-        });
-
         const result = await Promise.race([
           fetchPhotographerBySlug(slugStr, nudityParam),
           timeoutPromise,
@@ -234,9 +222,6 @@ const PhotographerDetailScreen: React.FC = () => {
             setNotFound(true);
             setLoading(false);
             setScreenError("No photographer found for slug: " + slugStr);
-            addDebugLog(
-              `[fetchData] No photographer found for slug: ${slugStr}`,
-            );
 
             Sentry.addBreadcrumb({
               message: "fetchPhotographerBySlug:no-result",
@@ -252,27 +237,10 @@ const PhotographerDetailScreen: React.FC = () => {
             setPhotographer(result as PhotographerSlug);
             setLoading(false);
             setScreenError(null);
-            addDebugLog(
-              `[fetchData] Photographer loaded: ${JSON.stringify(result)}`,
-            );
-
-            Sentry.addBreadcrumb({
-              message: "fetchPhotographerBySlug:success",
-              level: "info",
-              data: {
-                slug: slugStr,
-                nudity: nudityParam,
-                photographerId: (result as PhotographerSlug).id,
-                imageCount: (result as PhotographerSlug).images?.length,
-              },
-            });
           } else {
             setNotFound(true);
             setLoading(false);
             setScreenError("No photographer found for slug: " + slugStr);
-            addDebugLog(
-              `[fetchData] Invalid photographer object returned for slug: ${slugStr}`,
-            );
 
             Sentry.addBreadcrumb({
               message: "fetchPhotographerBySlug:invalid-result",
@@ -292,9 +260,6 @@ const PhotographerDetailScreen: React.FC = () => {
         );
         setLoading(false);
         setNotFound(true);
-        addDebugLog(
-          `[fetchData] Error: ${err instanceof Error ? err.message : String(err)}`,
-        );
 
         // Capture the real exception
         Sentry.captureException(err);
@@ -322,27 +287,6 @@ const PhotographerDetailScreen: React.FC = () => {
     : [];
 
   const galleryImages = photographer?.images || [];
-
-  // Diagnostic: warn if any returned image lacks a DB-provided photographerSlug.
-  // Keep as debug + breadcrumb (no noisy Sentry event).
-  if (galleryImages.length > 0) {
-    const missing = galleryImages.filter(
-      (img) => !(img as any).photographerSlug,
-    );
-    if (missing.length > 0) {
-      console.debug(
-        `[PhotographerDetailScreen] ${missing.length} images missing photographerSlug for photographer=${photographer?.slug}`,
-      );
-      Sentry.addBreadcrumb({
-        message: "images:missing-photographerSlug",
-        level: "warning",
-        data: {
-          photographer: photographer?.slug,
-          missingCount: missing.length,
-        },
-      });
-    }
-  }
 
   useEffect(() => {
     if (galleryImages.length > 0) {

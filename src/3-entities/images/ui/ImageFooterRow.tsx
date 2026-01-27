@@ -3,6 +3,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { useComments } from "@/4-shared/context/comments";
 import { useFavorites } from "@/4-shared/context/favorites";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { FavoriteButton } from "./FavoriteButton";
@@ -27,6 +28,7 @@ export const ImageFooterRow: React.FC<ImageFooterRowProps> = ({
 
   const handleFavoritePress = (imageId: string | number) => {
     if (!isUserLoggedIn()) {
+      showErrorToast("Please log in to add favorites.");
       router.push("/auth/login");
       return;
     }

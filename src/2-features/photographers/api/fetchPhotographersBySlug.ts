@@ -12,10 +12,6 @@ export async function fetchPhotographerBySlug(
   slug: string,
   nudity: "nude" | "not-nude" | "all" = "not-nude",
 ): Promise<PhotographerSlug | null> {
-  console.debug("[fetchPhotographerBySlug] slug param:", slug);
-  // Sentry: always log fetch attempt
-  Sentry.captureMessage(`[fetchPhotographerBySlug] Fetching for slug: ${slug}`);
-
   // Defensive: log before/after fetch
   let fetchError = null;
   let photographerResult = null;
@@ -152,18 +148,6 @@ export async function fetchPhotographerBySlug(
     ...photographer,
     images: processed,
   };
-  // Log success with summary
-  console.debug("[fetchPhotographerBySlug] Success", {
-    slug,
-    imageCount: processed.length,
-  });
-  Sentry.captureMessage("[fetchPhotographerBySlug] Success", {
-    level: "info",
-    extra: {
-      slug,
-      photographerId: photographer.id,
-      imageCount: processed.length,
-    },
-  });
+
   return resultObj;
 }
