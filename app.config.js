@@ -1,4 +1,3 @@
-// app.config.js
 const fs = require("fs");
 const dotenv = require("dotenv");
 
@@ -6,16 +5,127 @@ if (fs.existsSync(".env")) {
   dotenv.config({ path: ".env" });
 }
 
-module.exports = ({ config }) => {
-  return {
-    ...config,
-    extra: {
-      // preserve any existing extras from app.json/app.config
-      ...(config.extra || {}),
-      // bring SENTRY_DSN into expo.extra for runtime access
-      SENTRY_DSN: process.env.SENTRY_DSN || "",
-      // You can add other env vars you want here:
-      // EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL || "",
+module.exports = ({ config }) => ({
+  // START Expo app configuration
+  name: "Iconic Photography by Mosaic",
+  slug: "mosaic-photography-app",
+  version: "1.3.1",
+  orientation: "default",
+  icon: "./src/4-shared/assets/expo-icons/icon.png",
+  scheme: "mosaicphotographyapp",
+  userInterfaceStyle: "automatic",
+  newArchEnabled: true,
+  ios: {
+    buildNumber: "1.3.1",
+    supportsTablet: true,
+    associatedDomains: ["applinks:www.mosaic.photography"],
+    bundleIdentifier: "com.carlosdelrio.mosaicphotographyapp",
+    googleServicesFile: "./GoogleService-Info.plist",
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
     },
-  };
-};
+  },
+  android: {
+    adaptiveIcon: {
+      backgroundColor: "#1d1d1d",
+      foregroundImage: "./src/4-shared/assets/expo-icons/adaptive-icon.png",
+    },
+    edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: false,
+    intentFilters: [
+      {
+        action: "VIEW",
+        autoVerify: true,
+        data: [
+          {
+            scheme: "https",
+            host: "www.mosaic.photography",
+            path: "/",
+          },
+        ],
+        category: ["BROWSABLE", "DEFAULT"],
+      },
+      {
+        action: "VIEW",
+        autoVerify: true,
+        data: [
+          {
+            scheme: "https",
+            host: "www.mosaic.photography",
+            path: "/profile/collections",
+          },
+        ],
+        category: ["BROWSABLE", "DEFAULT"],
+      },
+      {
+        action: "VIEW",
+        autoVerify: true,
+        data: [
+          {
+            scheme: "https",
+            host: "www.mosaic.photography",
+            pathPrefix: "/auth",
+          },
+        ],
+        category: ["BROWSABLE", "DEFAULT"],
+      },
+    ],
+    package: "com.carlos_delrio.mosaicphotographyapp",
+    googleServicesFile: "./google-services.json",
+  },
+  web: {
+    output: "static",
+    favicon: "./src/4-shared/assets/expo-icons/favicon.png",
+  },
+  plugins: [
+    "expo-router",
+    [
+      "expo-splash-screen",
+      {
+        image: "./src/4-shared/assets/expo-icons/splash-icon.png",
+        imageWidth: 375,
+        resizeMode: "contain",
+        backgroundColor: "#1d1d1d",
+        dark: {
+          backgroundColor: "#1d1d1d",
+        },
+      },
+    ],
+    [
+      "@sentry/react-native/expo",
+      {
+        url: "https://sentry.io/",
+        project: "mosaic-photography",
+        organization: "carles-del-rio-frances",
+      },
+    ],
+    "@react-native-firebase/app",
+    [
+      "expo-build-properties",
+      {
+        ios: {
+          useFrameworks: "static",
+          podfileProperties: { "use_modular_headers!": true },
+          buildReactNativeFromSource: true,
+        },
+      },
+    ],
+    "expo-web-browser",
+  ],
+  experiments: {
+    typedRoutes: true,
+    reactCompiler: true,
+  },
+  extra: {
+    ...(config.extra || {}),
+    // Existing extras you want to preserve from EAS or elsewhere
+    SENTRY_DSN: process.env.SENTRY_DSN || "",
+    router: {},
+    eas: {
+      projectId: "2989e5c6-09a8-4746-ba94-44b2ec60b552",
+    },
+  },
+  owner: "carles-at-notjustdev",
+  platforms: ["ios", "android"],
+  // END Expo app configuration
+});
