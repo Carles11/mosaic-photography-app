@@ -19,8 +19,8 @@ import {
   getAvailableDownloadOptionsForImage,
 } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { PhotographerSlug } from "@/4-shared/types";
 import { GalleryImage } from "@/4-shared/types/gallery";
-import { PhotographerSlug } from "@/4-shared/types/photographers";
 import {
   showErrorToast,
   showSuccessToast,

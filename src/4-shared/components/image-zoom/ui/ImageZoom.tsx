@@ -5,7 +5,7 @@ import { ZoomImageProps } from "@/4-shared/types/gallery";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import { useRouter } from "expo-router";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image as RNImage,
@@ -76,30 +76,35 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
 
   const router = useRouter();
 
+  // Local stable values
+  const author = image?.author ? String(image.author).trim() : "";
+  const dbSlug = (image as any)?.photographerSlug as string | undefined;
+  const canonical = author ? getCanonicalSlug(author) : undefined;
+  const navSlug = dbSlug ?? canonical;
+
+  // Dedupe missing-slug warnings per author during this session
+  const warnedAuthorsRef = useRef<Set<string>>(new Set());
+
   const handlePressAuthor = useCallback(() => {
-    if (!image?.author) return;
-    // Prefer DB-provided slug; fallback to canonical map via getCanonicalSlug
-    let slug = (image as any).photographerSlug;
-    let source = "photographerSlug";
-    if (!slug) {
-      const canonical = getCanonicalSlug(image.author);
-      if (canonical) {
-        slug = canonical;
-        source = "canonicalSlugMap";
+    if (!author) return;
+
+    if (!navSlug) {
+      if (!warnedAuthorsRef.current.has(author)) {
+        warnedAuthorsRef.current.add(author);
+        console.warn(
+          `[handlePressAuthor] Missing photographerSlug for author: ${author}`,
+        );
       }
-    }
-    if (!slug) {
-      console.warn(
-        `[handlePressAuthor] Missing photographerSlug for author: ${image.author}`,
-      );
       showErrorToast("Photographer page unavailable.");
       return;
     }
+
+    const source = dbSlug ? "photographerSlug" : "canonicalSlugMap";
     console.debug(
-      `[handlePressAuthor] using slug: ${slug} source: ${source} author: ${image.author}`,
+      `[handlePressAuthor] using slug: ${navSlug} source: ${source} author: ${author}`,
     );
-    router.push(`/photographer/${slug}`);
-  }, [image, router]);
+    router.push(`/photographer/${navSlug}`);
+  }, [author, navSlug, dbSlug, router]);
 
   return (
     <View style={[styles.container, style]}>
@@ -141,19 +146,30 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
         style={[styles.topLegendContainer, overlayStyle]}
         pointerEvents="box-none"
       >
-        {(image.author || image.year) && (
-          <TouchableOpacity
-            onPress={handlePressAuthor}
-            activeOpacity={0.75}
-            accessibilityRole="link"
-            disabled={!image.author}
-          >
-            <ThemedText style={styles.topLegendText}>
-              {image.author && image.author}
-              {image.year ? `, ${image.year}` : ""}
-            </ThemedText>
-          </TouchableOpacity>
-        )}
+        {(author || image?.year) &&
+          (navSlug ? (
+            <TouchableOpacity
+              onPress={handlePressAuthor}
+              activeOpacity={0.75}
+              accessibilityRole="link"
+              accessibilityLabel={`Open photographer ${author}`}
+            >
+              <ThemedText style={styles.topLegendText}>
+                {author && author}
+                {image.year ? `, ${image.year}` : ""}
+              </ThemedText>
+            </TouchableOpacity>
+          ) : (
+            <View pointerEvents="none">
+              <ThemedText
+                style={styles.topLegendText}
+                accessibilityLabel={`${author ? author : "Unknown author"} (photographer page unavailable)`}
+              >
+                {author && author}
+                {image.year ? `, ${image.year}` : ""}
+              </ThemedText>
+            </View>
+          ))}
       </Animated.View>
       <Animated.View
         style={[styles.descriptionTextContainer, overlayStyle]}

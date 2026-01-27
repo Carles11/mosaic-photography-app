@@ -3,12 +3,20 @@ import { authorToFolder, canonicalSlugMap } from "@/4-shared/lib/authorSlug";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import * as Sentry from "@sentry/react-native";
 
-import { GalleryImage } from "@/4-shared/types/gallery";
+import { GalleryImage } from "@/4-shared/types";
 
 type FetchMainGalleryOptions = {
   bannedTitles?: string[]; // case-insensitive substring match against title
   firstBlockSize?: number; // number of first images that must avoid male images (default 30)
 };
+
+// Module-level cache & logging helpers
+let _cachedAuthorSlugMap: Record<string, string> = {};
+let _cachedAuthorSlugMapUpdatedAt = 0;
+const AUTHOR_SLUG_CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+
+// Keep track of which authors we've already reported as missing to avoid Sentry/log spam.
+const _loggedMissingAuthors = new Set<string>();
 
 /**
  * Fetch main gallery images.
@@ -121,25 +129,34 @@ export async function fetchMainGalleryImages(
     ),
   );
 
-  const authorSlugMap: Record<string, string> = {};
+  // If cache expired, reset it
+  if (Date.now() - _cachedAuthorSlugMapUpdatedAt > AUTHOR_SLUG_CACHE_TTL) {
+    _cachedAuthorSlugMap = {};
+    _cachedAuthorSlugMapUpdatedAt = 0;
+  }
 
-  if (authors.length > 0) {
+  // Find which authors we still need to fetch
+  const authorsToFetch = authors.filter((a) => !(a in _cachedAuthorSlugMap));
+
+  if (authorsToFetch.length > 0) {
     try {
-      // bulk lookup: get author->slug mapping from photographers table
+      // bulk lookup: get author->slug mapping from photographers table for only missing authors
       const { data: photRows, error: photError } = await supabase
         .from("photographers")
         .select("author, slug")
         .in(
           "author",
-          authors.map((a) => a),
+          authorsToFetch.map((a) => a),
         );
 
       if (photError) {
         console.warn("Error fetching photographer slugs:", photError);
       } else if (photRows) {
         photRows.forEach((p: any) => {
-          if (p && p.author) authorSlugMap[String(p.author).trim()] = p.slug;
+          if (p && p.author)
+            _cachedAuthorSlugMap[String(p.author).trim()] = p.slug;
         });
+        _cachedAuthorSlugMapUpdatedAt = Date.now();
       }
     } catch (e) {
       console.warn("Failed to fetch photographer slugs:", e);
@@ -150,23 +167,30 @@ export async function fetchMainGalleryImages(
   // IMPORTANT: do NOT fallback to slugify here. If DB slug is missing, set undefined and log so the import pipeline can be fixed.
   filtered.forEach((img: any) => {
     const authorKey = img.author ? String(img.author).trim() : "";
-    if (authorKey && authorSlugMap[authorKey]) {
-      img.photographerSlug = authorSlugMap[authorKey];
+    if (authorKey && _cachedAuthorSlugMap[authorKey]) {
+      img.photographerSlug = _cachedAuthorSlugMap[authorKey];
     } else if (authorKey && canonicalSlugMap[authorKey]) {
       // Keep the canonical map as a temporary emergency fallback (non-authoritative).
       img.photographerSlug = canonicalSlugMap[authorKey];
-      Sentry.captureMessage(
-        `[photographerSlug fallback] Used canonicalSlugMap for author: ${authorKey}, slug: ${img.photographerSlug}`,
-      );
+      // Only report this fallback once per author to avoid spamming Sentry.
+      if (!_loggedMissingAuthors.has(authorKey)) {
+        _loggedMissingAuthors.add(authorKey);
+        Sentry.captureMessage(
+          `[photographerSlug fallback] Used canonicalSlugMap for author: ${authorKey}, slug: ${img.photographerSlug}`,
+        );
+      }
     } else if (authorKey) {
-      // No slug found — do not generate slug using slugify. Log for data pipeline fix.
+      // No slug found — do not generate slug using slugify. Log for data pipeline fix once per author.
       img.photographerSlug = undefined;
-      Sentry.captureMessage(
-        `[photographerSlug missing] No DB slug for author: ${authorKey}. Recommend updating import pipeline to include photographer slug.`,
-      );
-      console.debug(
-        `[fetchMainGalleryImages] No slug found for author: ${authorKey}`,
-      );
+      if (!_loggedMissingAuthors.has(authorKey)) {
+        _loggedMissingAuthors.add(authorKey);
+        Sentry.captureMessage(
+          `[photographerSlug missing] No DB slug for author: ${authorKey}. Recommend updating import pipeline to include photographer slug.`,
+        );
+        console.debug(
+          `[fetchMainGalleryImages] No slug found for author: ${authorKey}`,
+        );
+      }
     } else {
       img.photographerSlug = undefined;
     }

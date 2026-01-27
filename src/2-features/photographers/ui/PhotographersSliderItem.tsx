@@ -1,5 +1,6 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { PhotographerListItem } from "@/4-shared/types";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { Image as ExpoImage } from "expo-image";
 import React, { useEffect, useRef } from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -27,15 +28,48 @@ export const PhotographersSliderItem: React.FC<PhotographerSliderItemProps> = ({
 
   const hasPortrait = !!item.portrait && item.portrait.length > 0;
 
+  const handlePress = async () => {
+    // Defensive: ensure slug exists before navigating
+    const slug = item?.slug;
+    if (!slug || typeof slug !== "string" || slug.trim() === "") {
+      console.warn(
+        `[PhotographersSliderItem] Missing slug for photographer id=${item?.id} name=${item?.name} ${item?.surname}`,
+      );
+      showErrorToast("Photographer page unavailable.");
+      return;
+    }
+
+    try {
+      // Allow the parent navigation handler to run (may be synchronous or async).
+      // Use Promise.resolve to support both sync and async handlers.
+      await Promise.resolve(onNavigateToPhotographer(slug));
+    } catch (err) {
+      console.warn(
+        `[PhotographersSliderItem] Navigation to photographer failed slug=${slug}`,
+        err,
+      );
+    }
+
+    // Call onPhotographerPress after navigation so parent telemetry/side-effects
+    // happen once navigation attempt finished.
+    if (onPhotographerPress) {
+      try {
+        onPhotographerPress(item);
+      } catch (err) {
+        console.warn(
+          "[PhotographersSliderItem] onPhotographerPress handler error",
+          err,
+        );
+      }
+    }
+  };
+
   return (
     <View style={styles.item}>
       <TouchableOpacity
         style={{ alignItems: "center" }}
         activeOpacity={0.7}
-        onPress={() => {
-          onNavigateToPhotographer(item.slug);
-          if (onPhotographerPress) onPhotographerPress(item);
-        }}
+        onPress={handlePress}
         accessibilityLabel={`Discover vintage photography by ${item.name} ${item.surname}`}
       >
         <View style={styles.portraitWrapper}>

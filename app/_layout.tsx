@@ -9,6 +9,7 @@ import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { MosaicToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as Sentry from "@sentry/react-native";
+import Constants from "expo-constants";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useMemo } from "react";
@@ -19,8 +20,38 @@ import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { logEvent } from "src/4-shared/firebase";
 
+/**
+ * Safely return the runtime "extra" object.
+ * - Prefer Constants.expoConfig.extra (current, non-deprecated API)
+ * - Fallback to Constants.manifest.extra for older dev flows
+ * - Return an empty object if none present
+ *
+ * We use 'as any' only for narrow, safe runtime access to avoid TypeScript complaints.
+ */
+function getExpoExtra(): Record<string, any> {
+  try {
+    // expoConfig is the recommended place in newer SDKs (EAS builds / expo prebuild)
+    const expoConfig = (Constants as any).expoConfig;
+    if (expoConfig && typeof expoConfig === "object" && expoConfig.extra) {
+      return expoConfig.extra as Record<string, any>;
+    }
+
+    // Fallback for older dev servers / classic manifest
+    const manifest = (Constants as any).manifest;
+    if (manifest && typeof manifest === "object" && manifest.extra) {
+      return manifest.extra as Record<string, any>;
+    }
+  } catch (e) {
+    // ignore shape errors
+  }
+  return {};
+}
+
+const EXPO_EXTRA = getExpoExtra();
+const SENTRY_DSN = EXPO_EXTRA.SENTRY_DSN ?? process.env.SENTRY_DSN ?? "";
+
 Sentry.init({
-  dsn: process.env.SENTRY_DSN,
+  dsn: SENTRY_DSN || undefined,
   sendDefaultPii: true,
   enableLogs: true,
   replaysSessionSampleRate: 0.1,
@@ -29,14 +60,12 @@ Sentry.init({
     Sentry.mobileReplayIntegration(),
     Sentry.feedbackIntegration(),
   ],
-  // spotlight: __DEV__,
 });
 
-// Confirm Sentry init in all builds
-console.debug("[Sentry] Sentry.init called, DSN:", process.env.SENTRY_DSN);
+console.debug("[Sentry] Sentry.init called, DSN:", SENTRY_DSN);
 Sentry.captureMessage("[Sentry] Sentry.init called", {
   level: "info",
-  extra: { dsn: process.env.SENTRY_DSN },
+  extra: { dsn: SENTRY_DSN },
 });
 
 export const unstable_settings = {

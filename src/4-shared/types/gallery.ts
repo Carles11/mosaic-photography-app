@@ -39,6 +39,11 @@ export type GalleryImage = {
   url: string;
   thumbnailUrl?: string;
   mosaicType?: "normal" | "large" | "wide" | "tall";
+
+  // Optional canonical slug attached by the data layer (fetchers) when available.
+  // UI components should prefer this for navigation (item.photographerSlug), and
+  // only fall back to a curated canonical map if absolutely necessary.
+  photographerSlug?: string;
 };
 
 export type MainGalleryItemProps = {
@@ -125,6 +130,8 @@ export type ZoomImageProps = {
     author?: string;
     year?: string | number;
     description?: string;
+    // optional nav slug available when provided by the data layer
+    photographerSlug?: string;
   };
   minScale?: number;
   maxScale?: number;
