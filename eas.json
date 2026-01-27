@@ -37,7 +37,6 @@
   "submit": {
     "production": {
       "android": {
-        "buildType": "app-bundle",
         "serviceAccountKeyPath": "./play-service-account.json",
         "track": "internal"
       },
