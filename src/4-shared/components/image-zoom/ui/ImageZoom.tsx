@@ -1,7 +1,8 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { canonicalSlugMap, slugify } from "@/4-shared/lib/authorSlug";
+import { getCanonicalSlug } from "@/4-shared/lib/authorSlug";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
 import { ZoomImageProps } from "@/4-shared/types/gallery";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
@@ -43,10 +44,8 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
   const scale = useSharedValue(1);
   const [displayScale, setDisplayScale] = useState(1);
 
-  // Overlay visibility state (legends, scale, spinner)
   const [overlaysVisible, setOverlaysVisible] = useState(true);
 
-  // Sync reanimated scale value to react state for smooth UI update
   useAnimatedReaction(
     () => scale.value,
     (current, prev) => {
@@ -61,7 +60,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
     setZoomLoaded(true);
   };
 
-  // Animated style for overlay fade
   const overlayStyle = useAnimatedStyle(
     () => ({
       opacity: overlaysVisible && zoomLoaded ? 1 : 0,
@@ -69,29 +67,33 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
     [overlaysVisible, zoomLoaded],
   );
 
-  // Handler: single tap toggles overlays
   const handleSingleTap = () => {
     setOverlaysVisible((prev) => !prev);
   };
 
-  // Defensive: Only show preview if URL exists and is not empty.
   const hasPreview = !!previewUrl && previewUrl.length > 0;
-  // Defensive: Only use zoomUrl if not empty
   const hasZoom = !!zoomUrl && zoomUrl.length > 0;
 
   const router = useRouter();
 
   const handlePressAuthor = useCallback(() => {
     if (!image?.author) return;
+    // Prefer DB-provided slug; fallback to canonical map via getCanonicalSlug
     let slug = (image as any).photographerSlug;
     let source = "photographerSlug";
-    if (!slug && canonicalSlugMap[image.author]) {
-      slug = canonicalSlugMap[image.author];
-      source = "canonicalSlugMap";
+    if (!slug) {
+      const canonical = getCanonicalSlug(image.author);
+      if (canonical) {
+        slug = canonical;
+        source = "canonicalSlugMap";
+      }
     }
     if (!slug) {
-      slug = slugify(image.author);
-      source = "slugify";
+      console.warn(
+        `[handlePressAuthor] Missing photographerSlug for author: ${image.author}`,
+      );
+      showErrorToast("Photographer page unavailable.");
+      return;
     }
     console.debug(
       `[handlePressAuthor] using slug: ${slug} source: ${source} author: ${image.author}`,
@@ -101,7 +103,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
 
   return (
     <View style={[styles.container, style]}>
-      {/* Preview image (always shown until zoom image is loaded) */}
       {!zoomLoaded && hasPreview && (
         <RNImage
           source={{ uri: previewUrl }}
@@ -110,7 +111,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           blurRadius={1}
         />
       )}
-      {/* Zoom image (progressively loaded) */}
       {hasZoom && (
         <ImageZoom
           uri={zoomUrl}
@@ -137,9 +137,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           scale={scale}
         />
       )}
-      {/* Top legend: author and year
-          Use pointerEvents="box-none" so touches reach the TouchableOpacity inside.
-          The TouchableOpacity itself is the actionable element for navigation. */}
       <Animated.View
         style={[styles.topLegendContainer, overlayStyle]}
         pointerEvents="box-none"
@@ -158,7 +155,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           </TouchableOpacity>
         )}
       </Animated.View>
-      {/* Bottom legend: description */}
       <Animated.View
         style={[styles.descriptionTextContainer, overlayStyle]}
         pointerEvents="none"
@@ -169,7 +165,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           </ThemedText>
         ) : null}
       </Animated.View>
-      {/* Zoom scale overlay */}
       <Animated.View
         style={[styles.zoomScaleBadge, overlayStyle]}
         pointerEvents="none"
@@ -183,7 +178,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           />
         </Animated.Text>
       </Animated.View>
-      {/* Show spinner while loading high-res zoom image */}
       {(loading || !zoomLoaded) && overlaysVisible && (
         <ActivityIndicator
           size="large"
@@ -191,7 +185,6 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           style={styles.activityIndicator}
         />
       )}
-      {/* Placeholder if no preview or zoom image at all */}
       {!hasPreview && !hasZoom && (
         <View style={[styles.image, styles.noImageContainer]}>
           <ThemedText style={{ color: "#fff", fontSize: 12 }}>

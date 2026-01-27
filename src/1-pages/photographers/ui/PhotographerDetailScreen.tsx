@@ -129,6 +129,14 @@ const PhotographerDetailScreen: React.FC = () => {
   const { filters, setFilters, clearFilters, filtersActive } = useFilters();
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
 
+  // For collecting debug logs to print on screen
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+  function addDebugLog(msg: string) {
+    setDebugLogs((prev) => [...prev, msg]);
+    console.debug(msg);
+  }
+
   useEffect(() => {
     navigation.setOptions({
       title: "Photographer Details",
@@ -183,14 +191,6 @@ const PhotographerDetailScreen: React.FC = () => {
     }
   }, [photographer, navigation]);
 
-  // For collecting debug logs to print on screen
-  const [debugLogs, setDebugLogs] = useState<string[]>([]);
-
-  function addDebugLog(msg: string) {
-    setDebugLogs((prev) => [...prev, msg]);
-    console.debug(msg);
-  }
-
   useEffect(() => {
     let active = true;
     async function fetchData() {
@@ -208,18 +208,8 @@ const PhotographerDetailScreen: React.FC = () => {
         return;
       }
 
-      // Use nudity from shared filters (context). Fallback to route param or default.
-      const routeParams = new URLSearchParams(
-        typeof window !== "undefined" ? window.location.search : "",
-      );
-      const routeNudity = (routeParams.get("nudity") ?? undefined) as
-        | "nude"
-        | "not-nude"
-        | "all"
-        | undefined;
-
-      const nudityParam: "nude" | "not-nude" | "all" =
-        (filters as any)?.nudity ?? routeNudity ?? "not-nude";
+      // Use nudity from shared filters (context).
+      const nudityParam: "nude" | "not-nude" | "all" = (filters as any)?.nudity;
 
       // Add a timeout to catch hanging fetches
       const timeoutPromise = new Promise((_, reject) =>
@@ -329,6 +319,29 @@ const PhotographerDetailScreen: React.FC = () => {
     : [];
 
   const galleryImages = photographer?.images || [];
+
+  // Diagnostic: warn if any returned image lacks a DB-provided photographerSlug.
+  // This helps locate missing slugs in the data import pipeline.
+  if (galleryImages.length > 0) {
+    const missing = galleryImages.filter(
+      (img) => !(img as any).photographerSlug,
+    );
+    if (missing.length > 0) {
+      console.warn(
+        `[PhotographerDetailScreen] ${missing.length} images missing photographerSlug for photographer=${photographer?.slug}`,
+      );
+      Sentry.captureMessage(
+        `[PhotographerDetailScreen] images missing photographerSlug`,
+        {
+          level: "warning",
+          extra: {
+            photographer: photographer?.slug,
+            missingCount: missing.length,
+          },
+        },
+      );
+    }
+  }
 
   useEffect(() => {
     if (galleryImages.length > 0) {

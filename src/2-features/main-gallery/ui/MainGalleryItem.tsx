@@ -2,8 +2,9 @@ import { ImageFooterRow } from "@/3-entities/images/ui/ImageFooterRow";
 import { ImageHeaderRow } from "@/3-entities/images/ui/ImageHeaderRow";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
-import { canonicalSlugMap, slugify } from "@/4-shared/lib/authorSlug";
+import { getCanonicalSlug } from "@/4-shared/lib/authorSlug";
 import { MainGalleryItemProps } from "@/4-shared/types";
+import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { Image, TouchableOpacity } from "react-native";
@@ -18,7 +19,6 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
   onPressComments,
   onPressZoom,
 }) => {
-  // Use provided styles, or create them (for standalone usage/testing)
   const s = styles || createMainGalleryItemStyles(itemHeight, imageHeight);
 
   const hasImage = !!item.url && item.url.length > 0;
@@ -27,15 +27,23 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
 
   const handlePressAuthor = useCallback(() => {
     if (!item.author) return;
+    // Prefer DB-provided slug; fallback to canonical map via getCanonicalSlug (no slugify).
     let slug = (item as any).photographerSlug;
     let source = "photographerSlug";
-    if (!slug && canonicalSlugMap[item.author]) {
-      slug = canonicalSlugMap[item.author];
-      source = "canonicalSlugMap";
+    if (!slug) {
+      const canonical = getCanonicalSlug(item.author);
+      if (canonical) {
+        slug = canonical;
+        source = "canonicalSlugMap";
+      }
     }
     if (!slug) {
-      slug = slugify(item.author);
-      source = "slugify";
+      // Do not construct slug client-side. Notify and avoid navigating to a potentially wrong route.
+      console.warn(
+        `[handlePressAuthor] Missing photographerSlug for author: ${item.author}`,
+      );
+      showErrorToast("Photographer page unavailable.");
+      return;
     }
     console.debug(
       `[handlePressAuthor] using slug: ${slug} source: ${source} author: ${item.author}`,
@@ -69,7 +77,6 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
         )}
       </TouchableOpacity>
 
-      {/* Author name: subtle, linkable to photographer page; renders "Author, Year" */}
       {item.author ? (
         <TouchableOpacity
           onPress={handlePressAuthor}

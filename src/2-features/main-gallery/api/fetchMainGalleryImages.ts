@@ -1,9 +1,5 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
-import {
-  authorToFolder,
-  canonicalSlugMap,
-  slugify,
-} from "@/4-shared/lib/authorSlug";
+import { authorToFolder, canonicalSlugMap } from "@/4-shared/lib/authorSlug";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import * as Sentry from "@sentry/react-native";
 
@@ -103,24 +99,26 @@ export async function fetchMainGalleryImages(
   });
 
   // NEW: Filter out any image with moderation indicating it's banned.
-  // We treat an image as banned if moderation?.banned?.mobile === true OR moderation?.banned?.web === true.
   filtered = filtered.filter((img) => {
     const mod = (img as any).moderation;
     if (!mod) return true;
     const bannedObj = mod.banned;
     if (!bannedObj) return true;
-    // handle both boolean and string-boolean cases defensively
     const mobileBanned =
       bannedObj.mobile === true || String(bannedObj.mobile) === "true";
     const webBanned =
       bannedObj.web === true || String(bannedObj.web) === "true";
-    // If any channel is banned, remove the image entirely (per your "do not show any banned image" request)
     return !(mobileBanned || webBanned);
   });
 
   // --- NEW: fetch photographer slugs for the distinct authors present in `filtered` ---
+  // Normalize author keys (trim) to avoid whitespace mismatches.
   const authors = Array.from(
-    new Set((filtered.map((f: any) => f.author) as string[]).filter(Boolean)),
+    new Set(
+      filtered
+        .map((f: any) => (f.author ? String(f.author).trim() : ""))
+        .filter(Boolean) as string[],
+    ),
   );
 
   const authorSlugMap: Record<string, string> = {};
@@ -131,13 +129,16 @@ export async function fetchMainGalleryImages(
       const { data: photRows, error: photError } = await supabase
         .from("photographers")
         .select("author, slug")
-        .in("author", authors);
+        .in(
+          "author",
+          authors.map((a) => a),
+        );
 
       if (photError) {
         console.warn("Error fetching photographer slugs:", photError);
       } else if (photRows) {
         photRows.forEach((p: any) => {
-          if (p && p.author) authorSlugMap[p.author] = p.slug;
+          if (p && p.author) authorSlugMap[String(p.author).trim()] = p.slug;
         });
       }
     } catch (e) {
@@ -145,19 +146,26 @@ export async function fetchMainGalleryImages(
     }
   }
 
-  // Attach photographerSlug to each filtered image. If no DB slug found, fall back to a slugify fallback.
+  // Attach photographerSlug to each filtered image.
+  // IMPORTANT: do NOT fallback to slugify here. If DB slug is missing, set undefined and log so the import pipeline can be fixed.
   filtered.forEach((img: any) => {
-    if (img.author && authorSlugMap[img.author]) {
-      img.photographerSlug = authorSlugMap[img.author];
-    } else if (img.author && canonicalSlugMap[img.author]) {
-      img.photographerSlug = canonicalSlugMap[img.author];
+    const authorKey = img.author ? String(img.author).trim() : "";
+    if (authorKey && authorSlugMap[authorKey]) {
+      img.photographerSlug = authorSlugMap[authorKey];
+    } else if (authorKey && canonicalSlugMap[authorKey]) {
+      // Keep the canonical map as a temporary emergency fallback (non-authoritative).
+      img.photographerSlug = canonicalSlugMap[authorKey];
       Sentry.captureMessage(
-        `[photographerSlug fallback] Used canonicalSlugMap for author: ${img.author}, slug: ${img.photographerSlug}`,
+        `[photographerSlug fallback] Used canonicalSlugMap for author: ${authorKey}, slug: ${img.photographerSlug}`,
       );
-    } else if (img.author) {
-      img.photographerSlug = slugify(img.author);
+    } else if (authorKey) {
+      // No slug found — do not generate slug using slugify. Log for data pipeline fix.
+      img.photographerSlug = undefined;
       Sentry.captureMessage(
-        `[photographerSlug fallback] Used slugify for author: ${img.author}, slug: ${img.photographerSlug}`,
+        `[photographerSlug missing] No DB slug for author: ${authorKey}. Recommend updating import pipeline to include photographer slug.`,
+      );
+      console.debug(
+        `[fetchMainGalleryImages] No slug found for author: ${authorKey}`,
       );
     } else {
       img.photographerSlug = undefined;
@@ -165,7 +173,6 @@ export async function fetchMainGalleryImages(
   });
 
   // If nudity parameter allows nudes ("nude" or "all"), enforce first-block exclusion of male images.
-  // If nudity === "not-nude", no special first-block treatment is necessary (there won't be nude images).
   const shouldExcludeMaleInFirstBlock = nudity === "nude" || nudity === "all";
 
   const includedIds = new Set<string>();
@@ -181,7 +188,6 @@ export async function fetchMainGalleryImages(
       }
     }
   } else {
-    // Simply take the first N images as the first block when we are in not-nude mode.
     for (let i = 0; i < Math.min(firstBlockSize, filtered.length); i++) {
       const img = filtered[i];
       firstBlock.push(img);
@@ -189,10 +195,7 @@ export async function fetchMainGalleryImages(
     }
   }
 
-  // Preserve original order for the remainder, skipping those already added to firstBlock
   const remainder = filtered.filter((img) => !includedIds.has(String(img.id)));
-
-  // Final gallery: firstBlock followed by remainder
   const finalGallery = [...firstBlock, ...remainder];
 
   return finalGallery;
