@@ -564,27 +564,8 @@ const PhotographerDetailScreen: React.FC = () => {
         <ActivityIndicator size="large" />
         {/* Debug: show slug being used for fetch */}
         <ThemedText style={{ marginTop: 16, color: "#888", fontSize: 12 }}>
-          Loading photographer for slug: {Array.isArray(slug) ? slug[0] : slug}
+          Loading photographer: {Array.isArray(slug) ? slug[0] : slug}
         </ThemedText>
-        {/* Show any error encountered during loading */}
-        {screenError && (
-          <ThemedText style={{ color: "red", marginTop: 8 }}>
-            Error: {screenError}
-          </ThemedText>
-        )}
-        {/* Print debug logs on screen for easier diagnosis */}
-        {debugLogs.length > 0 && (
-          <View style={{ marginTop: 16, maxHeight: 200 }}>
-            <ThemedText style={{ color: "#555", fontSize: 11 }}>
-              Debug logs:
-            </ThemedText>
-            {debugLogs.map((log, i) => (
-              <ThemedText key={i} style={{ color: "#555", fontSize: 11 }}>
-                {log}
-              </ThemedText>
-            ))}
-          </View>
-        )}
       </ThemedView>
     );
   }
