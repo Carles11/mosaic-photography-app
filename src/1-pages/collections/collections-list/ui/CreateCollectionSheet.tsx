@@ -8,19 +8,22 @@ import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useCollections } from "@/4-shared/context/collections/CollectionsContext";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
+import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Platform } from "react-native";
 import { styles } from "./CreateCollectionSheet.styles";
 
 export type CreateCollectionSheetRef = {
   open: () => void;
   close: () => void;
+  snapToIndex?: (index: number) => void;
+  expand?: () => void;
 };
 
 type Props = {
@@ -35,18 +38,66 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
     const { theme } = useTheme();
     const sheetRef = useRef<any>(null);
 
+    // small dev-only visual debug style to help detect if the sheet is rendered
+    const debugSheetStyle = __DEV__
+      ? { backgroundColor: "rgba(255,0,0,0.03)" }
+      : {};
+
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
 
     useImperativeHandle(ref, () => ({
       open: () => {
-        sheetRef.current?.present();
+        console.log(
+          "CreateCollectionSheet [useImperativeHandle > open]",
+          sheetRef.current,
+        );
+        try {
+          sheetRef.current?.present();
+        } catch (e) {
+          console.warn("CreateCollectionSheet.present() threw:", e);
+        }
+        // small delay then try to snap/expand as a fallback for visibility
+        setTimeout(() => {
+          try {
+            console.log(
+              "CreateCollectionSheet: attempting snapToIndex/expand fallback",
+              sheetRef.current,
+            );
+            sheetRef.current?.snapToIndex?.(0);
+            sheetRef.current?.expand?.();
+          } catch (err) {
+            console.warn("CreateCollectionSheet fallback failed:", err);
+          }
+        }, 120);
       },
       close: () => {
         sheetRef.current?.dismiss();
       },
+      snapToIndex: (index: number) => {
+        try {
+          sheetRef.current?.snapToIndex?.(index);
+        } catch (e) {
+          console.warn("CreateCollectionSheet.snapToIndex failed:", e);
+        }
+      },
+      expand: () => {
+        try {
+          sheetRef.current?.expand?.();
+        } catch (e) {
+          console.warn("CreateCollectionSheet.expand failed:", e);
+        }
+      },
     }));
+
+    useEffect(() => {
+      // Log methods/keys available on the sheetRef to help diagnose portal/host issues
+      console.log(
+        "CreateCollectionSheet mounted, sheetRef keys:",
+        Object.keys(sheetRef.current || {}),
+      );
+    }, []);
 
     const handleCreate = async () => {
       if (!user?.id) {
@@ -69,18 +120,21 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
         snapPoints={["90%"]}
         enablePanDownToClose
         index={0}
+        onDismiss={() => {
+          setName("");
+          setDescription("");
+        }}
         keyboardBehavior="interactive"
         keyboardBlurBehavior="restore"
       >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={[
+        <BottomSheetView
+          style={[
             styles.sheet,
+            debugSheetStyle,
             {
               paddingBottom: Platform.OS === "android" ? 64 : 0,
             },
           ]}
-          showsVerticalScrollIndicator={false}
         >
           <ThemedText type="subtitle" style={{ marginBottom: 8 }}>
             Create New Collection
@@ -142,7 +196,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
               }}
             />
           </ThemedView>
-        </ScrollView>
+        </BottomSheetView>
       </ReusableBottomSheetModal>
     );
   },

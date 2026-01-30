@@ -53,7 +53,28 @@ export default function CollectionsList() {
 
   const handleOpenCreateSheet = () => {
     if (sheetRef.current) {
-      sheetRef.current.open();
+      console.log(
+        "[CollectionsList] calling sheetRef.current.open()",
+        sheetRef.current,
+      );
+      try {
+        sheetRef.current.open();
+      } catch (e) {
+        console.warn("[CollectionsList] open() threw:", e);
+      }
+      // fallback: try snapping/expanding in case present() alone doesn't make it visible
+      setTimeout(() => {
+        try {
+          console.log(
+            "[CollectionsList] fallback snapToIndex/expand",
+            sheetRef.current,
+          );
+          sheetRef.current?.snapToIndex?.(0);
+          sheetRef.current?.expand?.();
+        } catch (err) {
+          console.warn("[CollectionsList] fallback failed:", err);
+        }
+      }, 120);
     } else {
       console.warn("[CollectionsList] handleOpenCreateSheet: sheetRef is null");
     }

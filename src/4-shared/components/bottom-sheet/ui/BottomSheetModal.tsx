@@ -16,6 +16,8 @@ import { styles } from "./BottomSheetModal.styles";
 export type BottomSheetModalRef = {
   present: () => void;
   dismiss: () => void;
+  snapToIndex?: (index: number) => void;
+  expand?: () => void;
 };
 
 type KeyboardBehaviorType = "interactive" | "extend" | "fillParent" | undefined;
@@ -52,7 +54,7 @@ export const BottomSheetModal = forwardRef<
       modalRef,
       index = 0,
     },
-    ref
+    ref,
   ) => {
     const { theme } = useTheme();
     const localSheetRef = useRef<GorhomBottomSheetModal>(null);
@@ -60,11 +62,14 @@ export const BottomSheetModal = forwardRef<
     useImperativeHandle(ref ?? modalRef, () => ({
       present: () => localSheetRef.current?.present(),
       dismiss: () => localSheetRef.current?.dismiss(),
+      snapToIndex: (index: number) =>
+        localSheetRef.current?.snapToIndex?.(index),
+      expand: () => localSheetRef.current?.expand?.(),
     }));
 
     const resolvedSnapPoints = useMemo(
       () => snapPoints ?? ["60%"],
-      [snapPoints]
+      [snapPoints],
     );
 
     // Always flatten the style prop so it is a single style object
@@ -100,7 +105,7 @@ export const BottomSheetModal = forwardRef<
         {children}
       </GorhomBottomSheetModal>
     );
-  }
+  },
 );
 
 BottomSheetModal.displayName = "BottomSheetModal";
