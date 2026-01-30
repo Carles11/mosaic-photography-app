@@ -145,7 +145,7 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
         </ScrollView>
       </ReusableBottomSheetModal>
     );
-  }
+  },
 );
 
 export default CreateCollectionSheet;

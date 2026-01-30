@@ -37,7 +37,7 @@ export default function CollectionsList() {
         return;
       }
       reloadCollections();
-    }, [user?.id, router, reloadCollections])
+    }, [user?.id, router, reloadCollections]),
   );
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function CollectionsList() {
 
   const handleDeleteCollection = (
     collectionId: string,
-    collectionName: string
+    collectionName: string,
   ) => {
     Alert.alert(
       "Delete Collection",
@@ -79,7 +79,7 @@ export default function CollectionsList() {
             await deleteCollection(collectionId);
           },
         },
-      ]
+      ],
     );
   };
 

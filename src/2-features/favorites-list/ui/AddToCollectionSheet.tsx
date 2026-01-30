@@ -120,7 +120,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
 
         setAdding(false);
       },
-      [selectedImageId, user, onAdded, ensureFavorite]
+      [selectedImageId, user, onAdded, ensureFavorite],
     );
 
     // FIX: Use the returned collection directly
@@ -280,7 +280,7 @@ const AddToCollectionSheet = forwardRef<AddToCollectionSheetRef, Props>(
         </BottomSheetView>
       </ReusableBottomSheetModal>
     );
-  }
+  },
 );
 
 export default AddToCollectionSheet;

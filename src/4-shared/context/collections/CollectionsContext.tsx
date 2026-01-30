@@ -37,19 +37,19 @@ type CollectionsContextType = {
   }) => Promise<BasicCollection | null>;
   deleteCollection: (collectionId: string) => Promise<boolean>;
   getCollectionDetail: (
-    collectionId: string
+    collectionId: string,
   ) => Promise<CollectionDetail | null>;
   /** NEW: Remove an image (by favoriteId) from a collection */
   removeImageFromCollection: (
     collectionId: string,
-    favoriteId: number
+    favoriteId: number,
   ) => Promise<boolean>;
   basicCollections: BasicCollection[];
   reloadBasicCollections: () => Promise<void>;
 };
 
 const CollectionsContext = createContext<CollectionsContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const useCollections = (): CollectionsContextType => {
@@ -73,7 +73,7 @@ export function CollectionsProvider({
 
   // For AddToCollectionSheet (list of collections with id, name only)
   const [basicCollections, setBasicCollections] = useState<BasicCollection[]>(
-    []
+    [],
   );
 
   // Detail
@@ -139,7 +139,7 @@ export function CollectionsProvider({
         setDetailLoading(false);
       }
     },
-    []
+    [],
   );
 
   // Create a new collection. Returns new collection object (id, name), reloads lists.
@@ -161,19 +161,18 @@ export function CollectionsProvider({
       }
       try {
         // Insert, using direct supabase to get id
-        const { data, error } = await import(
-          "@/4-shared/api/supabaseClient"
-        ).then((mod) =>
-          mod.supabase
-            .from("collections")
-            .insert({
-              user_id: userId,
-              name: name.trim(),
-              description: description?.trim() || null,
-            })
-            .select()
-            .maybeSingle()
-        );
+        const { data, error } =
+          await import("@/4-shared/api/supabaseClient").then((mod) =>
+            mod.supabase
+              .from("collections")
+              .insert({
+                user_id: userId,
+                name: name.trim(),
+                description: description?.trim() || null,
+              })
+              .select()
+              .maybeSingle(),
+          );
         if (error || !data) {
           showErrorToast("Failed to create collection.");
           return null;
@@ -188,7 +187,7 @@ export function CollectionsProvider({
         return null;
       }
     },
-    [userId, reloadCollections, reloadBasicCollections]
+    [userId, reloadCollections, reloadBasicCollections],
   );
 
   // Delete a collection
@@ -208,7 +207,7 @@ export function CollectionsProvider({
         setLoading(false);
       }
     },
-    [reloadCollections, reloadBasicCollections]
+    [reloadCollections, reloadBasicCollections],
   );
 
   // --- NEW: Remove an image from a collection ---
@@ -228,7 +227,7 @@ export function CollectionsProvider({
         setDetailLoading(false);
       }
     },
-    [getCollectionDetail]
+    [getCollectionDetail],
   );
 
   // Memo for context value
@@ -258,7 +257,7 @@ export function CollectionsProvider({
       removeImageFromCollection,
       basicCollections,
       reloadBasicCollections,
-    ]
+    ],
   );
 
   return (
