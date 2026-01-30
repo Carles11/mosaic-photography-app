@@ -32,6 +32,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
   onInteractionEnd,
   style,
   imageStyle,
+  onPressAuthor,
 }) => {
   const { width: deviceWidth } = useWindowDimensions();
 
@@ -89,6 +90,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
     if (!author) return;
 
     if (!navSlug) {
+      // Warn only once per author to avoid log spam
       if (!warnedAuthorsRef.current.has(author)) {
         warnedAuthorsRef.current.add(author);
       }
@@ -96,10 +98,18 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
       return;
     }
 
-    const source = dbSlug ? "photographerSlug" : "canonicalSlugMap";
+    // Give parent a chance to handle navigation (close modal first on iOS)
+    if (onPressAuthor) {
+      try {
+        onPressAuthor(navSlug);
+        return;
+      } catch (e) {
+        console.warn("onPressAuthor handler threw:", e);
+      }
+    }
 
     router.push(`/photographer/${navSlug}`);
-  }, [author, navSlug, dbSlug, router]);
+  }, [author, navSlug, dbSlug, router, onPressAuthor]);
 
   return (
     <View style={[styles.container, style]}>

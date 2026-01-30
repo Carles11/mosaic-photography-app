@@ -46,8 +46,6 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
       return;
     }
 
-    const source = dbSlug ? "photographerSlug" : "canonicalSlugMap";
-
     router.push(`/photographer/${navSlug}`);
   }, [router, author, navSlug, dbSlug]);
 

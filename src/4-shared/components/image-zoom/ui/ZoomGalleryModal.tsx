@@ -106,6 +106,19 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                 doubleTapScale={3}
                 style={{ width, height }}
                 imageStyle={{ width, height }}
+                onPressAuthor={(navSlug: string) => {
+                  // Close modal first (important on iOS), then navigate
+                  try {
+                    setShowDownloadPanel(false);
+                    onClose();
+                  } catch (e) {
+                    console.warn(
+                      "ZoomGalleryModal: error closing modal before navigate",
+                      e,
+                    );
+                  }
+                  setTimeout(() => router.push(`/photographer/${navSlug}`), 80);
+                }}
               />
             </ThemedView>
           )}

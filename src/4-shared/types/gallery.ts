@@ -141,4 +141,5 @@ export type ZoomImageProps = {
   onInteractionEnd?: () => void;
   style?: StyleProp<ViewStyle>;
   imageStyle?: any;
+  onPressAuthor?: (navSlug: string) => void;
 };
