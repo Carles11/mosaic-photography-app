@@ -11,7 +11,6 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet";
 import React, {
   forwardRef,
-  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -90,14 +89,6 @@ const CreateCollectionSheet = forwardRef<CreateCollectionSheetRef, Props>(
         }
       },
     }));
-
-    useEffect(() => {
-      // Log methods/keys available on the sheetRef to help diagnose portal/host issues
-      console.log(
-        "CreateCollectionSheet mounted, sheetRef keys:",
-        Object.keys(sheetRef.current || {}),
-      );
-    }, []);
 
     const handleCreate = async () => {
       if (!user?.id) {
