@@ -4,7 +4,7 @@ export const ASO = {
     title: "Mosaic — Vintage Photography",
     // Keep description clear, tasteful, and mention nudity as optional & age-gated
     description:
-      "Discover Mosaic’s curated gallery of high‑resolution public‑domain vintage photography. Explore historical, museum‑grade images — some include tasteful artistic nudity (hidden by default and available only after a one‑time 18+ confirmation). Powerful filters, downloads, and photographer pages make discovery easy and educational.",
+      "Discover Mosaic's curated gallery of high‑resolution public‑domain vintage photography. Explore historical, museum‑grade images including fine art nude photography and classical nude portraiture from the 19th and early 20th centuries. All artistic nudity is hidden by default and available only after a one‑time 18+ age verification. Powerful filters, downloads, and photographer biographies make discovery easy and educational.",
     // Safer, prioritized keywords for discovery (avoid repeated raw 'nude' tokens; include 'artistic nudity' with qualifier)
     keywords: [
       "public domain photography",
@@ -13,6 +13,21 @@ export const ASO = {
       "historical photography",
       "artistic nudity",
       "historical nude photography",
+      // NEW: Enhanced nudity-related keywords for ASO
+      "artistic nude photography",
+      "fine art nude photography",
+      "museum nude photography",
+      "vintage nude art photography",
+      "classical nude photography",
+      "19th century nude photography",
+      "academic nude art",
+      "nude figure photography",
+      "art history nudes",
+      "historical nude art",
+      "vintage artistic nudity",
+      "fine art nudes",
+      "classical nude portraiture",
+      // END NEW KEYWORDS
       "curated photo gallery",
       "museum photography",
       "museum‑grade images",
@@ -49,7 +64,7 @@ export const ASO = {
       }`,
     // helpful text you can copy into reviewer notes when submitting builds
     reviewNotes:
-      "This app includes optional, age‑gated artistic nudity from public‑domain / historical imagery. Nudity is hidden by default and requires a one‑time 18+ confirmation. The Filters UI and age confirmation are available from the Home screen. No explicit images are shown in store assets.",
+      "This app includes optional, age‑gated artistic nudity from public‑domain / historical imagery. Nudity is hidden by default and requires a one‑time 18+ age verification. The Filters UI and age confirmation are available from the Home screen. No explicit images are shown in store assets.",
   },
 
   // Favorites
@@ -169,6 +184,12 @@ export const ASO = {
         "archival images",
         "artistic nudity",
         "historical nude photography",
+        // NEW: Enhanced keywords for photographer pages
+        "artistic nude photography",
+        "fine art nude photography",
+        "vintage nude art",
+        "classical nude photography",
+        // END NEW KEYWORDS
         name ?? "",
         surname ?? "",
         "Mosaic",
