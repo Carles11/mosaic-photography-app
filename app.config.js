@@ -10,6 +10,9 @@ module.exports = ({ config }) => ({
   name: "Iconic Photography by Mosaic",
   slug: "mosaic-photography-app",
   version: "1.3.2",
+  runtimeVersion: {
+    policy: "appVersion",
+  },
   orientation: "default",
   icon: "./src/4-shared/assets/expo-icons/icon.png",
   scheme: "mosaicphotographyapp",
