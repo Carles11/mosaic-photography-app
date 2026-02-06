@@ -15,6 +15,9 @@ module.exports = ({ config }) => ({
   },
   updates: {
     url: "https://u.expo.dev/2989e5c6-09a8-4746-ba94-44b2ec60b552",
+    enabled: true,
+    checkAutomatically: "ON_LOAD", // Check on every app load
+    fallbackToCacheTimeout: 0,
   },
   orientation: "default",
   icon: "./src/4-shared/assets/expo-icons/icon.png",

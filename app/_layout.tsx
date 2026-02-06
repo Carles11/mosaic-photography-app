@@ -83,7 +83,7 @@ export default Sentry.wrap(function RootLayout() {
       );
     }
 
-    // ← ADD THIS: Check for updates on app launch
+    // Check for updates on app launch
     async function checkForUpdates() {
       if (!__DEV__) {
         // Only in production builds
