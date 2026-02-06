@@ -12,6 +12,7 @@ import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import * as Updates from "expo-updates";
 import { useEffect, useMemo } from "react";
 import { Image } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -81,6 +82,25 @@ export default Sentry.wrap(function RootLayout() {
         new Error("[Sentry] Test error from internal build"),
       );
     }
+
+    // ← ADD THIS: Check for updates on app launch
+    async function checkForUpdates() {
+      if (!__DEV__) {
+        // Only in production builds
+        try {
+          const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            await Updates.fetchUpdateAsync();
+            console.log(
+              "[Updates] Update downloaded. Will apply on next restart.",
+            );
+          }
+        } catch (e) {
+          console.error("[Updates] Error checking for updates:", e);
+        }
+      }
+    }
+    checkForUpdates();
   }, []);
 
   // Prefetch featured photographers on app startup to warm in-memory cache used by slider
