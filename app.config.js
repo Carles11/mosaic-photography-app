@@ -9,7 +9,7 @@ module.exports = ({ config }) => ({
   // START Expo app configuration
   name: "Iconic Photography by Mosaic",
   slug: "mosaic-photography-app",
-  version: "1.3.2",
+  version: "1.3.3",
   runtimeVersion: {
     policy: "appVersion",
   },
@@ -25,7 +25,7 @@ module.exports = ({ config }) => ({
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
-    buildNumber: "1.3.2",
+    buildNumber: "1.3.3",
     supportsTablet: true,
     associatedDomains: ["applinks:www.mosaic.photography"],
     bundleIdentifier: "com.carlosdelrio.mosaicphotographyapp",
