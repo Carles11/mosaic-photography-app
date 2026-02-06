@@ -25,7 +25,6 @@ module.exports = ({ config }) => ({
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
-    buildNumber: "1.3.3",
     supportsTablet: true,
     associatedDomains: ["applinks:www.mosaic.photography"],
     bundleIdentifier: "com.carlosdelrio.mosaicphotographyapp",
