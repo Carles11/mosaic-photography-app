@@ -10,9 +10,11 @@ import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Share } from "react-native";
+import { ActivityIndicator, FlatList, Share, View } from "react-native";
+import Markdown from "react-native-markdown-display";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { styles } from "./PhotographersList.styles";
+
+import { markdownStyles, styles } from "./PhotographersList.styles";
 
 const PhotographersList = () => {
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
@@ -89,7 +91,12 @@ const PhotographersList = () => {
         },
       ]}
       containerStyle={{ marginBottom: 12 }}
-    />
+    >
+      {/* Injecting Markdown directly into the card structure */}
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+        <Markdown style={markdownStyles}>{item.intro || ""}</Markdown>
+      </View>
+    </SwipeableCard>
   );
 
   if (loading) {

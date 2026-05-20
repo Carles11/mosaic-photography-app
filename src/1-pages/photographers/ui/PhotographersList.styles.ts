@@ -1,3 +1,4 @@
+import { theme } from "@/4-shared/theme/globalTheme";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -50,3 +51,11 @@ export const styles = StyleSheet.create({
     maxWidth: 260,
   },
 });
+
+export const markdownStyles = {
+  body: {
+    color: theme.text,
+    fontSize: 14, // Slightly smaller for list cards
+    lineHeight: 18,
+  },
+};

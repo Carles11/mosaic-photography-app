@@ -1,3 +1,4 @@
+import { theme } from "@/4-shared/theme/globalTheme";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -86,6 +87,27 @@ export const styles = StyleSheet.create({
   shareButtonText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+});
+
+export const markdownStyles = StyleSheet.create({
+  body: {
+    color: theme.text,
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  heading3: {
+    color: theme.text,
+    fontSize: 18,
+    fontWeight: "bold", // React Native expects 'bold', not string
+    marginTop: 10,
+  },
+  listUnorderedItem: {
+    flexDirection: "row", // Explicitly 'row'
+  },
+  listUnorderedItemText: {
+    color: theme.text,
     fontSize: 16,
   },
 });

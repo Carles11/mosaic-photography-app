@@ -24,7 +24,10 @@ import { styles } from "./SwipeableCard.styles";
  * />
  */
 const SwipeableCard: React.FC<
-  Omit<SwipeableCardProps, "onImagePress"> & { onPress?: () => void }
+  Omit<SwipeableCardProps, "onImagePress"> & {
+    onPress?: () => void;
+    children?: React.ReactNode;
+  }
 > = memo(
   ({
     imageUrl,
@@ -36,6 +39,7 @@ const SwipeableCard: React.FC<
     containerStyle = {},
     imageStyle = {},
     textStyle = {},
+    children,
   }) => {
     const { theme } = useTheme();
 
@@ -57,6 +61,8 @@ const SwipeableCard: React.FC<
             accessibilityLabel={action.accessibilityLabel}
           >
             {action.icon}
+            {/* Render children only if they are provided */}
+            {children}
           </TouchableOpacity>
         ))}
       </View>
@@ -153,7 +159,7 @@ const SwipeableCard: React.FC<
         </TouchableOpacity>
       </Swipeable>
     );
-  }
+  },
 );
 
 export default SwipeableCard;
