@@ -48,3 +48,16 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+### Deploying Over-The-Air (OTA) Updates
+
+If you have made changes **only** to the JavaScript/TypeScript layer (e.g., modifying React components, updating logic, or changing styling) and have **not** added or modified any native code or libraries, you can push the changes directly to users without submitting a new build to the app stores.
+
+**How to publish an OTA update:**
+
+1. Ensure you are in the project root.
+2. Run the EAS Update command with a descriptive message:
+
+   ```bash
+   eas update --channel production --message "Brief description of the changes"
+   ```
