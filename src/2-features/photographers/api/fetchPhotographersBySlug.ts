@@ -19,7 +19,7 @@ export async function fetchPhotographerBySlug(
     .from("photographers")
     .select(
       `
-      id, name, surname, slug, origin, biography, birthdate, deceasedate, website, store, author
+      id, name, surname, slug, origin, biography, biography_md, birthdate, deceasedate, website, store, author
     `,
     )
     .eq("slug", slug)

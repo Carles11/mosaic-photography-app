@@ -11,6 +11,7 @@ export interface PhotographerSlug {
   author: string;
   origin?: string;
   biography?: string;
+  biography_md?: string;
   birthdate?: string;
   deceasedate?: string;
   website?: string;
@@ -79,6 +80,7 @@ export interface PhotographerListItem {
   slug: string;
   portrait: string;
   intro: string;
+  intro_md: string;
   author: string;
 }
 

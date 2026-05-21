@@ -14,7 +14,8 @@ import { ActivityIndicator, FlatList, Share, View } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { markdownStyles, styles } from "./PhotographersList.styles";
+import { SHOULD_RENDER_MARKDOWN } from "@/4-shared/config/markdown";
+import { styles } from "./PhotographersList.styles";
 
 const PhotographersList = () => {
   const [photographers, setPhotographers] = useState<PhotographerListItem[]>(
@@ -94,7 +95,11 @@ const PhotographersList = () => {
     >
       {/* Injecting Markdown directly into the card structure */}
       <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-        <Markdown style={markdownStyles}>{item.intro || ""}</Markdown>
+        {SHOULD_RENDER_MARKDOWN ? (
+          <Markdown>{item.intro_md || ""}</Markdown>
+        ) : (
+          <ThemedText>{item.intro || ""}</ThemedText>
+        )}
       </View>
     </SwipeableCard>
   );

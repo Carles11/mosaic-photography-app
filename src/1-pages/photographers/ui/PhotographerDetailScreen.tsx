@@ -32,10 +32,16 @@ import {
 import * as Sentry from "@sentry/react-native";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Platform, Share, View } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  Share,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { markdownStyles, styles } from "./PhotographerDetailScreen.styles";
+import { styles } from "./PhotographerDetailScreen.styles";
 
 import BottomSheetComments from "@/2-features/main-gallery/ui/BottomSheetComments";
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
@@ -48,6 +54,7 @@ import {
   ReportBottomSheet,
   ReportBottomSheetRef,
 } from "@/2-features/reporting/ui/ReportBottomSheet";
+import { SHOULD_RENDER_MARKDOWN } from "@/4-shared/config/markdown";
 
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -473,15 +480,40 @@ const PhotographerDetailScreen: React.FC = () => {
 
           <ThemedText style={styles.sectionLabel}>Biography:</ThemedText>
           {/* UPDATED: Markdown rendering here */}
-          <Markdown style={markdownStyles}>
-            {photographer.biography || ""}
-          </Markdown>
+
+          {SHOULD_RENDER_MARKDOWN ? (
+            <Markdown>{photographer.biography_md || ""}</Markdown>
+          ) : (
+            <ThemedText>{photographer.biography || ""}</ThemedText>
+          )}
 
           <PhotographerLinks
             stores={photographer.store}
             website={photographer.website}
           />
-          {/* ... rest of the buttons ... */}
+          <TouchableOpacity
+            style={styles.shareButton}
+            onPress={() => {
+              if (!photographer) return;
+              const msg = ASO.photographer.shareTemplate({
+                name: photographer.name,
+                surname: photographer.surname,
+                galleryCount: photographer.images?.length ?? 0,
+                url: `https://www.mosaic.photography/photographers/${photographer.slug}`,
+              });
+              Share.share({ message: msg });
+            }}
+          >
+            <ThemedText style={styles.shareButtonText}>
+              Share Photographer
+            </ThemedText>
+          </TouchableOpacity>
+          <ThemedText style={styles.sectionTitle}>
+            {photographer.surname}'s Gallery{" "}
+            <ThemedText style={styles.galleryCount}>
+              ({photographer.images?.length || 0})
+            </ThemedText>
+          </ThemedText>
         </ThemedView>
       </>
     );

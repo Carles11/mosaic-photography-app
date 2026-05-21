@@ -61,8 +61,7 @@ const SwipeableCard: React.FC<
             accessibilityLabel={action.accessibilityLabel}
           >
             {action.icon}
-            {/* Render children only if they are provided */}
-            {children}
+            {/* REMOVED: {children} - This was causing the layout to break inside the buttons */}
           </TouchableOpacity>
         ))}
       </View>
@@ -121,6 +120,7 @@ const SwipeableCard: React.FC<
             >
               {title}
             </ThemedText>
+
             {subtitle ? (
               <ThemedText
                 style={[styles.subtitle, textStyle]}

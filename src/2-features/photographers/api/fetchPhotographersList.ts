@@ -69,6 +69,7 @@ export async function fetchPhotographersList(
       surname: r.surname,
       slug: r.slug,
       intro: r.intro,
+      intro_md: r.intro_md,
       author: r.author,
       portrait,
     };
