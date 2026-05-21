@@ -41,6 +41,7 @@ import BottomSheetComments from "@/2-features/main-gallery/ui/BottomSheetComment
 import { BottomSheetFilterMenu } from "@/2-features/main-gallery/ui/BottomSheetFilterMenu";
 import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { useFilters } from "@/4-shared/context/filters/FiltersContext";
+import { useReviewPrompt } from "@/4-shared/hooks/use-review-prompt";
 import Markdown from "react-native-markdown-display";
 // ADDED: Report bottom sheet so report actions can open the reporting UI.
 import {
@@ -51,6 +52,7 @@ import {
 const PhotographerDetailScreen: React.FC = () => {
   const navigation = useNavigation();
   const router = useRouter();
+  const { incrementDownloadCount } = useReviewPrompt();
 
   const {
     galleryItemHeight,
@@ -330,19 +332,26 @@ const PhotographerDetailScreen: React.FC = () => {
       );
       return;
     }
-    await downloadImageToDevice({
-      option,
-      selectedImage,
-      user,
-      logEvent,
-      showSuccessToast,
-      showErrorToast,
-      onRequireLogin: () => {
-        handleCloseImageMenu();
-        router.push("/auth/login");
-      },
-      origin: "photographer_detail_screen",
-    });
+    try {
+      await downloadImageToDevice({
+        option,
+        selectedImage,
+        user,
+        logEvent,
+        showSuccessToast,
+        showErrorToast,
+        onRequireLogin: () => {
+          handleCloseImageMenu();
+          router.push("/auth/login");
+        },
+        origin: "photographer_detail_screen",
+      });
+
+      incrementDownloadCount();
+    } catch (error) {
+      // Error handling is done in downloadImageToDevice, but we catch here to prevent unhandled promise rejections.
+      console.error("Error in handleDownloadOption:", error);
+    }
   };
 
   const handleShareImage = async () => {

@@ -108,7 +108,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
       }
     }
 
-    router.push(`/photographer/${navSlug}`);
+    router.push(`/photographers/${navSlug}`);
   }, [author, navSlug, dbSlug, router, onPressAuthor]);
 
   return (

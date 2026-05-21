@@ -72,7 +72,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
 
   const handleNavigateToPhotographer = useCallback(
     (slug: string) => {
-      router.push(`/photographer/${slug}`);
+      router.push(`/photographers/${slug}`);
     },
     [router],
   );
@@ -171,7 +171,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
         <OnlyTextButton
           title="Photographers list"
           style={styles.titleRight}
-          onPress={() => router.push("/photographer/photographers-list")}
+          onPress={() => router.push("/photographers/photographers-list")}
         />
       </ThemedView>
       <FlatList

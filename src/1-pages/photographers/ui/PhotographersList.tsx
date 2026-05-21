@@ -40,7 +40,7 @@ const PhotographersList = () => {
   }, []);
 
   const handleNavigateToPhotographer = (slug: string) => {
-    router.push(`/photographer/${slug}`);
+    router.push(`/photographers/${slug}`);
   };
 
   const handleShare = async (slug: string) => {

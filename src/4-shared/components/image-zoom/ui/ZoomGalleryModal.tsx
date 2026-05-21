@@ -117,7 +117,10 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                       e,
                     );
                   }
-                  setTimeout(() => router.push(`/photographer/${navSlug}`), 80);
+                  setTimeout(
+                    () => router.push(`/photographers/${navSlug}`),
+                    80,
+                  );
                 }}
               />
             </ThemedView>

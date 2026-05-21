@@ -46,7 +46,7 @@ export const MainGalleryItem: React.FC<MainGalleryItemProps> = ({
       return;
     }
 
-    router.push(`/photographer/${navSlug}`);
+    router.push(`/photographers/${navSlug}`);
   }, [router, author, navSlug, dbSlug]);
 
   const authorIsLink = Boolean(author && navSlug);
