@@ -9,7 +9,7 @@ module.exports = ({ config }) => ({
   // START Expo app configuration
   name: "Iconic Photography by Mosaic",
   slug: "mosaic-photography-app",
-  version: "1.3.3",
+  version: "1.3.4",
   runtimeVersion: {
     policy: "appVersion",
   },
