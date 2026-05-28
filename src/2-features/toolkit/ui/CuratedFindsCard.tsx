@@ -8,6 +8,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { AffiliateProductWithAdvertiser } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
 import { Image as ExpoImage } from "expo-image";
+import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { memo, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
@@ -33,6 +34,7 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
   locale = "en",
 }: Props) {
   const { theme } = useTheme();
+  const router = useRouter();
   const title = getLocalizedText(product.title, locale);
   const description = getLocalizedText(product.description, locale);
   const advertiserName =
@@ -51,6 +53,15 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
       showErrorToast("Could not open this resource.");
     }
   }, [product.affiliate_url]);
+
+  const handleOpenRecommendation = useCallback(() => {
+    const slug = product.affiliate_advertisers?.slug;
+    if (!slug) {
+      showErrorToast("Recommendation details are unavailable.");
+      return;
+    }
+    router.push(`/toolkit/${slug}`);
+  }, [product.affiliate_advertisers?.slug, router]);
 
   return (
     <ThemedView
@@ -118,9 +129,9 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
             textStyles={styles.actionText}
           />
           <SecondaryButton
-            title="Why I recommend this"
-            onPress={() => {}}
-            disabled
+            title="Why this"
+            onPress={handleOpenRecommendation}
+            disabled={!product.affiliate_advertisers?.slug}
             style={styles.whyButton}
             textStyles={styles.actionText}
           />

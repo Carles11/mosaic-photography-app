@@ -67,13 +67,18 @@ export const styles = StyleSheet.create({
   },
   shopButton: {
     flex: 1,
+    minHeight: 42,
     paddingVertical: 6,
     paddingHorizontal: 8,
+    marginVertical: 0,
   },
   whyButton: {
-    flex: 1.12,
+    flex: 0.9,
+    minHeight: 42,
     paddingVertical: 6,
     paddingHorizontal: 8,
+    marginVertical: 0,
+    marginRight: 2,
   },
   actionText: {
     fontSize: 12,

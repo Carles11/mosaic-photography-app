@@ -36,6 +36,10 @@ export type AffiliateProductWithAdvertiser = AffiliateProduct & {
   affiliate_advertisers: AffiliateAdvertiser | null;
 };
 
+export type AffiliateAdvertiserWithProducts = AffiliateAdvertiser & {
+  products?: AffiliateProduct[];
+};
+
 export type AffiliateResourceFilter =
   | "all"
   | "tool"

@@ -1,5 +1,8 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
-import { AffiliateProductWithAdvertiser } from "@/4-shared/types";
+import {
+  AffiliateAdvertiserWithProducts,
+  AffiliateProductWithAdvertiser,
+} from "@/4-shared/types";
 
 const EXCLUDED_ADVERTISER_NAMES = new Set(["fine art america"]);
 
@@ -39,4 +42,34 @@ export async function fetchAffiliateResources(): Promise<
   cachedResources = resources.slice();
   cachedAt = Date.now();
   return resources;
+}
+
+export async function fetchToolkitDataBySlug(
+  slug: string,
+): Promise<AffiliateAdvertiserWithProducts | null> {
+  const { data, error } = await supabase
+    .from("affiliate_advertisers")
+    .select(
+      `
+      *,
+      products:affiliate_products(*)
+    `,
+    )
+    .eq("slug", slug)
+    .single();
+
+  if (error || !data) {
+    console.warn("[fetchToolkitDataBySlug] query error", error);
+    return null;
+  }
+
+  const advertiser = data as AffiliateAdvertiserWithProducts;
+  advertiser.products = [...(advertiser.products ?? [])].sort((a, b) => {
+    const featuredDelta =
+      Number(b.featured ?? false) - Number(a.featured ?? false);
+    if (featuredDelta !== 0) return featuredDelta;
+    return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+  });
+
+  return advertiser;
 }
