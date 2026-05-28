@@ -4,6 +4,8 @@ import {
 } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { AffiliateProductWithAdvertiser } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
@@ -34,6 +36,7 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
   locale = "en",
 }: Props) {
   const { theme } = useTheme();
+  const { user } = useAuthSession();
   const router = useRouter();
   const title = getLocalizedText(product.title, locale);
   const description = getLocalizedText(product.description, locale);
@@ -48,11 +51,25 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
     }
 
     try {
+      logEvent("affiliate_click", {
+        button: "shop_now",
+        advertiser_slug: product.affiliate_advertisers?.slug ?? "",
+        advertiser_name: advertiserName,
+        product_id: product.id,
+        product_type: product.type,
+        screen: "home_curated_finds",
+        user_state: user?.id ? "logged_in" : "anonymous",
+      });
+    } catch {
+      // swallow analytics errors
+    }
+
+    try {
       await WebBrowser.openBrowserAsync(product.affiliate_url);
     } catch {
       showErrorToast("Could not open this resource.");
     }
-  }, [product.affiliate_url]);
+  }, [product, advertiserName, user?.id]);
 
   const handleOpenRecommendation = useCallback(() => {
     const slug = product.affiliate_advertisers?.slug;
@@ -60,8 +77,23 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
       showErrorToast("Recommendation details are unavailable.");
       return;
     }
-    router.push(`/toolkit/${slug}`);
-  }, [product.affiliate_advertisers?.slug, router]);
+
+    try {
+      logEvent("affiliate_click", {
+        button: "why_this",
+        advertiser_slug: slug,
+        advertiser_name: advertiserName,
+        product_id: product.id,
+        product_type: product.type,
+        screen: "home_curated_finds",
+        user_state: user?.id ? "logged_in" : "anonymous",
+      });
+    } catch {
+      // swallow analytics errors
+    }
+
+    router.push(`/toolkit/${slug}` as any);
+  }, [product, advertiserName, user?.id, router]);
 
   return (
     <ThemedView
