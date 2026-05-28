@@ -1,4 +1,5 @@
 import { HomeHeader } from "@/2-features/home";
+import type { HomeSectionTab } from "@/2-features/home";
 import { HomeHeaderWithSlider } from "@/2-features/home/ui/HomeHeaderWithSlider";
 import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
@@ -9,6 +10,7 @@ import {
   ReportBottomSheet,
   ReportBottomSheetRef,
 } from "@/2-features/reporting/ui/ReportBottomSheet";
+import { MosaicCuratedFinds } from "@/2-features/toolkit";
 import { ASO } from "@/4-shared/config/aso";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { useComments } from "@/4-shared/context/comments";
@@ -35,7 +37,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Platform, Share } from "react-native";
+import { LayoutChangeEvent, Platform, Share, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
@@ -50,6 +52,17 @@ export const Home: React.FC = () => {
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [downloadOptions, setDownloadOptions] = useState<DownloadOption[]>([]);
+  const [activeHomeTab, setActiveHomeTab] =
+    useState<HomeSectionTab>("photographers");
+  const [showHeaderTabIcons, setShowHeaderTabIcons] = useState(true);
+  const [sectionHeights, setSectionHeights] = useState({
+    photographers: 0,
+    selection: 0,
+  });
+  const [scrollToOffsetRequest, setScrollToOffsetRequest] = useState<{
+    offset: number;
+    id: number;
+  } | null>(null);
   const { isUserLoggedIn, toggleFavorite, isFavorite } = useFavorites();
   const router = useRouter();
   const navigation = useNavigation();
@@ -71,7 +84,7 @@ export const Home: React.FC = () => {
   const reportSheetRef = useRef<ReportBottomSheetRef>(null);
 
   // Get filters from context
-  const { filters, setFilters, clearFilters, filtersActive } = useFilters();
+  const { filters, setFilters, clearFilters } = useFilters();
 
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,6 +95,60 @@ export const Home: React.FC = () => {
     id: string;
     content: string;
   } | null>(null);
+
+  const sectionOffsets = useMemo(
+    () => ({
+      photographers: 0,
+      selection: sectionHeights.photographers,
+      gallery: sectionHeights.photographers + sectionHeights.selection,
+    }),
+    [sectionHeights],
+  );
+
+  const handleMeasuredSectionLayout = useCallback(
+    (section: "photographers" | "selection") =>
+      (event: LayoutChangeEvent) => {
+        const height = event.nativeEvent.layout.height;
+        setSectionHeights((prev) => {
+          if (Math.abs(prev[section] - height) < 1) return prev;
+          return { ...prev, [section]: height };
+        });
+      },
+    [],
+  );
+
+  const handleHomeTabPress = useCallback(
+    (tab: HomeSectionTab) => {
+      setActiveHomeTab(tab);
+      setScrollToOffsetRequest({
+        offset: sectionOffsets[tab],
+        id: Date.now(),
+      });
+    },
+    [sectionOffsets],
+  );
+
+  const handleGalleryScroll = useCallback(
+    (offsetY: number) => {
+      const activationY = offsetY + 96;
+      const hasSelectionOffset = sectionOffsets.selection > 0;
+      const hasGalleryOffset = sectionOffsets.gallery > sectionOffsets.selection;
+
+      const nextTab: HomeSectionTab =
+        hasGalleryOffset && activationY >= sectionOffsets.gallery
+          ? "gallery"
+          : hasSelectionOffset && activationY >= sectionOffsets.selection
+          ? "selection"
+          : "photographers";
+
+      setActiveHomeTab((prev) => (prev === nextTab ? prev : nextTab));
+      const nextShowIcons = offsetY < 24;
+      setShowHeaderTabIcons((prev) =>
+        prev === nextShowIcons ? prev : nextShowIcons,
+      );
+    },
+    [sectionOffsets],
+  );
 
   // --- ASO / Analytics: Set navigation title to optimal ASO string ---
   useEffect(() => {
@@ -366,7 +433,9 @@ export const Home: React.FC = () => {
     >
       <HomeHeader
         onOpenFilters={handleOpenFiltersMenu}
-        filtersActive={filtersActive}
+        activeTab={activeHomeTab}
+        onTabPress={handleHomeTabPress}
+        showTabIcons={showHeaderTabIcons}
       />
 
       <MainGallery
@@ -375,18 +444,27 @@ export const Home: React.FC = () => {
         error={error}
         onOpenMenu={handleOpenImageMenu}
         onPressComments={handleOpenComments}
+        onGalleryScroll={handleGalleryScroll}
+        scrollToOffsetRequest={scrollToOffsetRequest}
         scrollY={scrollY}
         ListHeaderComponent={
-          <HomeHeaderWithSlider
-            onPhotographerPress={(photographer: PhotographerSlug) => {
-              logEvent("photographer_click", {
-                id: photographer.id,
-                slug: photographer.slug,
-                name: photographer.name,
-                surname: photographer.surname,
-              });
-            }}
-          />
+          <>
+            <View onLayout={handleMeasuredSectionLayout("photographers")}>
+              <HomeHeaderWithSlider
+                onPhotographerPress={(photographer: PhotographerSlug) => {
+                  logEvent("photographer_click", {
+                    id: photographer.id,
+                    slug: photographer.slug,
+                    name: photographer.name,
+                    surname: photographer.surname,
+                  });
+                }}
+              />
+            </View>
+            <View onLayout={handleMeasuredSectionLayout("selection")}>
+              <MosaicCuratedFinds />
+            </View>
+          </>
         }
       />
       <BottomSheetFilterMenu

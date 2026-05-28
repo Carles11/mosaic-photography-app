@@ -3,7 +3,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useResponsiveGalleryDimensions } from "@/4-shared/hooks/use-responsive-gallery-dimensions";
 import { GalleryImage, GalleryProps } from "@/4-shared/types";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Animated from "react-native-reanimated";
 import { styles } from "./Gallery.styles";
 
@@ -14,6 +14,8 @@ export const Gallery: React.FC<GalleryProps> = ({
   scrollY,
   ListHeaderComponent,
   itemHeight,
+  onGalleryScroll,
+  scrollToOffsetRequest,
 }) => {
   const listRef = useRef<Animated.FlatList<GalleryImage>>(null);
   const [showGoTop, setShowGoTop] = useState(false);
@@ -25,15 +27,25 @@ export const Gallery: React.FC<GalleryProps> = ({
   const flatListKey = `${galleryItemHeight}_${imageHeight}`;
 
   const handleOnScroll = (event: any) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
     if (scrollY) {
-      scrollY.value = event.nativeEvent.contentOffset.y;
+      scrollY.value = offsetY;
     }
-    if (event.nativeEvent.contentOffset.y > 150) {
+    onGalleryScroll?.(offsetY);
+    if (offsetY > 150) {
       setShowGoTop(true);
     } else {
       setShowGoTop(false);
     }
   };
+
+  useEffect(() => {
+    if (!scrollToOffsetRequest) return;
+    listRef.current?.scrollToOffset({
+      offset: Math.max(0, scrollToOffsetRequest.offset),
+      animated: true,
+    });
+  }, [scrollToOffsetRequest]);
 
   const getItemLayout = (
     _data: ArrayLike<GalleryImage> | null | undefined,

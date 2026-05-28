@@ -21,6 +21,8 @@ export const MainGallery: React.FC<
   error,
   onOpenMenu,
   onPressComments,
+  onGalleryScroll,
+  scrollToOffsetRequest,
   scrollY,
   ListHeaderComponent,
   firstBlockSize,
@@ -186,6 +188,8 @@ export const MainGallery: React.FC<
         images={shuffledImages}
         itemHeight={galleryItemHeight}
         ListHeaderComponent={ListHeaderComponent}
+        onGalleryScroll={onGalleryScroll}
+        scrollToOffsetRequest={scrollToOffsetRequest}
         renderItem={(item, index) => (
           <MemoizedMainGalleryItem
             item={item}

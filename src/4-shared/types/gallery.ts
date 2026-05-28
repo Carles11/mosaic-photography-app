@@ -68,6 +68,8 @@ export type GalleryProps = {
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
   itemHeight?: number;
   extraData?: any;
+  onGalleryScroll?: (scrollY: number) => void;
+  scrollToOffsetRequest?: { offset: number; id: number } | null;
 };
 
 export type MainGalleryProps = {
@@ -80,6 +82,7 @@ export type MainGalleryProps = {
   scrollY: SharedValue<number>;
   onGalleryScroll?: (scrollY: number) => void;
   ListHeaderComponent?: React.ComponentType<any> | React.ReactElement | null;
+  scrollToOffsetRequest?: { offset: number; id: number } | null;
 };
 
 // Types for filters (mirroring your web app, but omitting "nudity")

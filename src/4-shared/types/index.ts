@@ -1,3 +1,4 @@
+export * from "./affiliate";
 export * from "./bottomSheets";
 export * from "./buttons";
 export * from "./collections";
