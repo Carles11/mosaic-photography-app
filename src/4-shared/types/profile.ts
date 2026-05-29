@@ -8,4 +8,5 @@ export type ProfileData = {
   own_store_url: string;
   created_at: string;
   updated_at: string;
+  avatar_url?: string | null;
 };

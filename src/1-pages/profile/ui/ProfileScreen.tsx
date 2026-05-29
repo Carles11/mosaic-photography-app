@@ -53,7 +53,7 @@ export default function ProfileScreen() {
         showErrorToast("Please login to access your profile");
         router.replace("/auth/login");
       }
-    }, [authLoading, user, router])
+    }, [authLoading, user, router]),
   );
 
   // Fetch profile data on mount or when user changes
@@ -95,7 +95,7 @@ export default function ProfileScreen() {
   // 3. Multi-purpose profile update handler
   const handleProfileFieldChange = (
     field: keyof ProfileData,
-    value: string
+    value: string,
   ) => {
     setProfileFields((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
@@ -156,19 +156,24 @@ export default function ProfileScreen() {
                       Alert.alert(
                         "Error",
                         "Failed to delete account: " +
-                          (error?.message || "Unknown error")
+                          (error?.message || "Unknown error"),
                       );
                     } finally {
                       setDeleting(false);
                     }
                   },
                 },
-              ]
+              ],
             );
           },
         },
-      ]
+      ],
     );
+  };
+
+  // 6 avatar handler
+  const handleAvatarChange = (newUrl: string) => {
+    setProfileFields((prev) => (prev ? { ...prev, avatar_url: newUrl } : prev));
   };
 
   // ————————————————————————————————————————
@@ -196,7 +201,6 @@ export default function ProfileScreen() {
       </ThemedView>
     );
   }
-
   return (
     <SafeAreaView
       style={[styles.safeArea, { backgroundColor: theme.background }]}
@@ -207,7 +211,11 @@ export default function ProfileScreen() {
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-        <ProfileHeader name={profileFields.name} />
+        <ProfileHeader
+          name={profileFields.name}
+          avatarUrl={profileFields.avatar_url}
+          onAvatarChange={handleAvatarChange}
+        />
         <ProfileInfoCard
           name={profileFields.name}
           email={profileFields.email}
@@ -234,14 +242,12 @@ export default function ProfileScreen() {
           }
           onLogout={handleLogout}
         />
-
         <PrimaryButton
           title={profileSaving ? "Saving..." : "Save profile"}
           onPress={handleSaveProfile}
           disabled={profileSaving}
           style={{ marginVertical: 12, alignSelf: "center" }}
         />
-
         <DangerZoneCard onDelete={handleDeleteAccount} loading={deleting} />
       </ScrollView>
     </SafeAreaView>

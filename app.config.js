@@ -119,6 +119,13 @@ module.exports = ({ config }) => ({
       },
     ],
     "expo-web-browser",
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "Mosaic needs access to your photos to update your profile picture.",
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
