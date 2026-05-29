@@ -52,12 +52,9 @@ export function MosaicCuratedFinds() {
 
   return (
     <ThemedView style={styles.section}>
-      <ThemedText type="title" style={styles.title}>
-        Mosaic's Curated Finds
-      </ThemedText>
-      <ThemedText style={styles.subtitle}>
-        Curated tools and resources for photographers and vintage photography
-        lovers.
+      <ThemedText type="title">Mosaic's Curated Finds</ThemedText>
+      <ThemedText type="subtitle">
+        The gear, books, and prints Mosaic actually uses and believes in.
       </ThemedText>
 
       <FlatList

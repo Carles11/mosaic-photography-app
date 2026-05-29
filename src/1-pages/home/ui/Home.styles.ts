@@ -8,4 +8,8 @@ export const styles = StyleSheet.create({
     flexGrow: 1,
     height: 500,
   },
+  title: {
+    marginTop: 20,
+    marginBottom: 8,
+  },
 });

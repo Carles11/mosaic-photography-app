@@ -4,35 +4,23 @@ export const styles = StyleSheet.create({
   container: {
     paddingVertical: 12,
   },
+  seeAllCard: {
+    width: 120,
+    height: 240,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginHorizontal: 6,
+  },
 
   // Used while the initial page is loading
   loadingContainer: {
     height: 120,
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  pageTitle: {
-    fontSize: 22,
-    marginBottom: 8,
-    paddingHorizontal: 12,
-  },
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    marginTop: 8,
-    marginBottom: 8,
-  },
-
-  titleLeft: {
-    fontSize: 16,
-  },
-
-  titleRight: {
-    paddingHorizontal: 8,
   },
 
   listContent: {

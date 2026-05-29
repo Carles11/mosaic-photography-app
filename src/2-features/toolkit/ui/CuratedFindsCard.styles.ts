@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
+    gap: 2,
     marginTop: 12,
   },
   shopButton: {
@@ -78,7 +78,6 @@ export const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     marginVertical: 0,
-    marginRight: 2,
   },
   actionText: {
     fontSize: 12,

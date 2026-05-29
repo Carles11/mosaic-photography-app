@@ -5,19 +5,7 @@ export const styles = StyleSheet.create({
     paddingTop: 20,
     paddingBottom: 18,
   },
-  title: {
-    paddingHorizontal: 12,
-    fontSize: 22,
-    lineHeight: 28,
-    textTransform: "uppercase",
-  },
-  subtitle: {
-    paddingHorizontal: 12,
-    marginTop: 4,
-    fontSize: 15,
-    lineHeight: 21,
-    opacity: 0.88,
-  },
+
   filtersList: {
     paddingHorizontal: 12,
     paddingTop: 14,

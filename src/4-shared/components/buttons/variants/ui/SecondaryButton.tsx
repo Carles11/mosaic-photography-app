@@ -40,8 +40,10 @@ export const SecondaryButton: React.FC<SecondaryButtonProps> = ({
         type="defaultSemiBold"
         style={[
           {
-            color: theme.text,
-            textAlign: "center",
+            fontSize: 12,
+            lineHeight: 16,
+            color: "#1d1d1d",
+            fontWeight: "900",
           },
           textStyles,
         ]}

@@ -161,11 +161,10 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
             textStyles={styles.actionText}
           />
           <SecondaryButton
-            title="Why this"
+            title="Details"
             onPress={handleOpenRecommendation}
             disabled={!product.affiliate_advertisers?.slug}
             style={styles.whyButton}
-            textStyles={styles.actionText}
           />
         </ThemedView>
       </ThemedView>

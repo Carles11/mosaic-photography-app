@@ -3,9 +3,12 @@ import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
-import React, { useState } from "react";
+import * as WebBrowser from "expo-web-browser";
+import React, { useCallback, useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "./SettingsCard.styles";
+
+const KO_FI_URL = "https://ko-fi.com/Q5Q6R6S40";
 
 type SettingsCardProps = {
   mode: "light" | "dark";
@@ -39,6 +42,10 @@ export const SettingsCard: React.FC<SettingsCardProps> = ({
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [showInstaInput, setShowInstaInput] = useState(false);
   const [showWebsiteInput, setShowWebsiteInput] = useState(false);
+
+  const handleSupport = useCallback(() => {
+    WebBrowser.openBrowserAsync(KO_FI_URL).catch(() => {});
+  }, []);
 
   return (
     <ThemedView
@@ -254,6 +261,25 @@ export const SettingsCard: React.FC<SettingsCardProps> = ({
           <ThemedText style={styles.rowLabel}>Log out</ThemedText>
         </View>
       </TouchableOpacity>
+
+      <View style={styles.divider} />
+
+      {/* Support Mosaic */}
+      <View style={[styles.supportBlock, { borderColor: theme.border }]}>
+        <ThemedText style={styles.supportText}>
+          Mosaic is free and open-source — if it's ever been useful to you, a
+          small contribution helps keep it running.
+        </ThemedText>
+        <TouchableOpacity
+          style={[styles.supportButton, { backgroundColor: theme.accent }]}
+          onPress={handleSupport}
+          activeOpacity={0.82}
+        >
+          <ThemedText style={styles.supportButtonText}>
+            ☕ Support Mosaic
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
     </ThemedView>
   );
 };

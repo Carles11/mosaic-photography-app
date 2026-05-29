@@ -66,7 +66,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
     const query = photographerSearch.trim().toLowerCase();
     if (!query) return []; // show nothing until user types
     return (photographerNames ?? []).filter((name) =>
-      name.toLowerCase().includes(query)
+      name.toLowerCase().includes(query),
     );
   }, [photographerNames, photographerSearch]);
 
@@ -124,7 +124,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
   // Age-gate state
   const [ageGateVisible, setAgeGateVisible] = useState(false);
   const [pendingNudityValue, setPendingNudityValue] = useState<string | null>(
-    null
+    null,
   );
 
   const { hasConsent, confirmConsent } = useNudityConsent();
@@ -471,7 +471,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
                         {opt}
                       </ThemedText>
                     </TouchableOpacity>
-                  )
+                  ),
                 )}
               </ThemedView>
 
@@ -513,7 +513,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
                     }}
                   />
                   <SecondaryButton
-                    title="Close"
+                    title="Apply"
                     onPress={handleClose}
                     style={{ paddingVertical: 2, paddingHorizontal: 8 }}
                   />

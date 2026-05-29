@@ -17,7 +17,7 @@ export function ThemedText({
 }: ThemedTextProps) {
   const rawColor = useThemeColor(
     { light: lightColor, dark: darkColor },
-    "text"
+    "text",
   );
   const color =
     typeof rawColor === "number" ? `#${rawColor.toString(16)}` : rawColor;
@@ -34,14 +34,14 @@ export function ThemedText({
     type === "default"
       ? styles.default
       : type === "title"
-      ? styles.title
-      : type === "defaultSemiBold"
-      ? styles.defaultSemiBold
-      : type === "subtitle"
-      ? styles.subtitle
-      : type === "link"
-      ? styles.link
-      : undefined;
+        ? styles.title
+        : type === "defaultSemiBold"
+          ? styles.defaultSemiBold
+          : type === "subtitle"
+            ? styles.subtitle
+            : type === "link"
+              ? styles.link
+              : undefined;
 
   return <Text style={[{ color, fontFamily }, textStyle, style]} {...rest} />;
 }
@@ -57,12 +57,18 @@ const styles = StyleSheet.create({
     // fontWeight removed, handled by fontFamily
   },
   title: {
-    fontSize: 26,
-    lineHeight: 32,
+    paddingHorizontal: 12,
+    fontSize: 22,
+    lineHeight: 28,
+    textTransform: "uppercase",
     // fontWeight removed, handled by fontFamily
   },
   subtitle: {
-    fontSize: 20,
+    paddingHorizontal: 12,
+    marginTop: 4,
+    fontSize: 15,
+    lineHeight: 21,
+    opacity: 0.88,
     // fontWeight removed, handled by fontFamily
   },
   link: {

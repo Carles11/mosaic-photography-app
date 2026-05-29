@@ -62,4 +62,29 @@ export const styles = StyleSheet.create({
     borderColor: "#e0e0e0",
     fontSize: 15,
   },
+  supportBlock: {
+    marginHorizontal: 8,
+    marginTop: 12,
+    marginBottom: 8,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  supportText: {
+    fontSize: 13,
+    lineHeight: 19,
+    marginBottom: 12,
+    opacity: 0.75,
+  },
+  supportButton: {
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  supportButtonText: {
+    fontSize: 14,
+    fontWeight: "900",
+    color: "#1d1d1d",
+    letterSpacing: 0.3,
+  },
 });

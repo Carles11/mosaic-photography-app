@@ -1,10 +1,12 @@
 import { fetchPhotographersList } from "@/2-features/photographers/api/fetchPhotographersList";
 import FontLoader from "@/4-shared/components/FontLoader";
+import { SupportModal } from "@/4-shared/components/support-modal/SupportModal";
 import { AuthSessionProvider } from "@/4-shared/context/auth/AuthSessionContext";
 import { CollectionsProvider } from "@/4-shared/context/collections/CollectionsContext";
 import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites";
 import { FiltersProvider } from "@/4-shared/context/filters/FiltersContext";
+import { useSupportPrompt } from "@/4-shared/hooks/use-support-prompt";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { MosaicToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -20,7 +22,6 @@ import { KeyboardProvider } from "react-native-keyboard-controller";
 import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { logEvent } from "src/4-shared/firebase";
-
 /**
  * Safely return the runtime "extra" object.
  * - Prefer Constants.expoConfig.extra (current, non-deprecated API)
@@ -153,6 +154,8 @@ export default Sentry.wrap(function RootLayout() {
 
 function InnerLayout() {
   const { mode, theme } = useTheme();
+  const { shouldShow, markSeen } = useSupportPrompt();
+
   const defaultScreenOptions = useMemo(
     () => ({
       title: "Back",
@@ -196,6 +199,7 @@ function InnerLayout() {
           name="photographers/photographers-list"
           options={{ headerShown: true, title: "Photographers List" }}
         />
+        <Stack.Screen name="toolkit/[slug]" options={{ headerShown: true }} />
         <Stack.Screen name="auth/login" options={{ headerShown: false }} />
         <Stack.Screen name="auth/register" options={{ headerShown: false }} />
         <Stack.Screen
@@ -212,7 +216,10 @@ function InnerLayout() {
         />
         <Stack.Screen name="auth/magic-link" options={{ headerShown: false }} />
       </Stack>
+
       <StatusBar style={mode === "light" ? "dark" : "light"} />
+
+      <SupportModal visible={shouldShow} onDismiss={markSeen} />
     </>
   );
 }

@@ -183,7 +183,7 @@ export const MainGallery: React.FC<
   return (
     <ThemedView style={{ flex: 1, marginBottom: 122 }}>
       <Gallery
-        galleryTitle={ASO.home.title}
+        galleryTitle=""
         scrollY={scrollY}
         images={shuffledImages}
         itemHeight={galleryItemHeight}
@@ -204,6 +204,7 @@ export const MainGallery: React.FC<
           />
         )}
       />
+
       <ZoomGalleryModal
         images={shuffledImages}
         visible={zoomVisible}

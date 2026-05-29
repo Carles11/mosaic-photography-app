@@ -49,7 +49,7 @@ export const Gallery: React.FC<GalleryProps> = ({
 
   const getItemLayout = (
     _data: ArrayLike<GalleryImage> | null | undefined,
-    index: number
+    index: number,
   ) => ({
     length: computedItemHeight,
     offset: computedItemHeight * index,
@@ -65,6 +65,7 @@ export const Gallery: React.FC<GalleryProps> = ({
           {galleryTitle}
         </ThemedText>
       )}
+
       <Animated.FlatList
         ref={listRef}
         data={images}

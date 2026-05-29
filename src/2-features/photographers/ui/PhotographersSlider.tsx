@@ -1,6 +1,7 @@
-import { OnlyTextButton } from "@/4-shared/components/buttons/variants";
 import { ThemedText } from "@/4-shared/components/themed-text";
-import { ThemedView } from "@/4-shared/components/themed-view";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { Ionicons } from "@expo/vector-icons";
+
 import {
   FEATURED_PHOTOGRAPHERS_LIMIT,
   FEATURED_PHOTOGRAPHERS_THUMB_WIDTH,
@@ -15,6 +16,7 @@ import {
   ActivityIndicator,
   FlatList,
   ListRenderItemInfo,
+  TouchableOpacity,
   View,
 } from "react-native";
 import { fetchPhotographersList } from "../api/fetchPhotographersList";
@@ -38,6 +40,7 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
 
   // guard to avoid multiple onEndReached triggers while a request is in-flight
   const isFetchingRef = useRef(false);
+  const { theme } = useTheme();
 
   // Prefetch first page
   useEffect(() => {
@@ -77,17 +80,30 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
     [router],
   );
 
-  const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<PhotographerListItem>) => (
-      <PhotographersSliderItem
-        item={item}
-        onPhotographerPress={onPhotographerPress}
-        onNavigateToPhotographer={handleNavigateToPhotographer}
-      />
-    ),
-    [onPhotographerPress, handleNavigateToPhotographer],
+  const listCard = (
+    <TouchableOpacity
+      style={styles.seeAllCard}
+      onPress={() => router.push("/photographers/photographers-list")}
+    >
+      <Ionicons name="arrow-forward" size={28} color={theme.text} />
+      <ThemedText type="defaultSemiBold">See them all</ThemedText>
+    </TouchableOpacity>
   );
 
+  const renderItem = useCallback(
+    ({ item }: ListRenderItemInfo<PhotographerListItem | { id: string }>) => {
+      if (item.id === "see-all") return listCard;
+      const photographer = item as PhotographerListItem;
+      return (
+        <PhotographersSliderItem
+          item={photographer}
+          onPhotographerPress={onPhotographerPress}
+          onNavigateToPhotographer={handleNavigateToPhotographer}
+        />
+      );
+    },
+    [onPhotographerPress, handleNavigateToPhotographer, listCard],
+  );
   // Load the next page using the existing fetchPhotographersList(limit, width).
   // Because fetchPhotographersList accepts only limit (no offset), we request a cumulative
   // limit: (pageIndex+1 + 1) * pageSize, then slice out only the new page entries.
@@ -151,31 +167,18 @@ export const PhotographersSlider: React.FC<PhotographersSliderProps> = ({
 
   return (
     <View style={styles.container}>
-      <ThemedText type="title" style={styles.pageTitle}>
-        Welcome to Mosaic
+      <ThemedText type="title">Featured Photographers</ThemedText>
+      <ThemedText type="subtitle">
+        The pioneers who pointed a lens at the world before anyone knew what
+        photography could be.
       </ThemedText>
-      <ThemedView style={{ paddingHorizontal: 4 }}>
-        <ThemedText type="defaultSemiBold">
-          Experience the world’s best vintage photography.
-        </ThemedText>
-        <ThemedText type="default">
-          Curated collections—fast, beautiful, high-res images. Browse,
-          favorite, and download, always copyright free.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.header}>
-        <ThemedText type="subtitle" style={styles.titleLeft}>
-          Featured Photographers
-        </ThemedText>
-
-        <OnlyTextButton
-          title="Photographers list"
-          style={styles.titleRight}
-          onPress={() => router.push("/photographers/photographers-list")}
-        />
-      </ThemedView>
       <FlatList
-        data={photographers}
+        data={
+          [...photographers, { id: "see-all" }] as (
+            | PhotographerListItem
+            | { id: string }
+          )[]
+        }
         horizontal
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item) => item.id}

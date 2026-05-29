@@ -1,5 +1,5 @@
-import { HomeHeader } from "@/2-features/home";
 import type { HomeSectionTab } from "@/2-features/home";
+import { HomeHeader } from "@/2-features/home";
 import { HomeHeaderWithSlider } from "@/2-features/home/ui/HomeHeaderWithSlider";
 import { MainGallery } from "@/2-features/main-gallery";
 import { fetchMainGalleryImages } from "@/2-features/main-gallery/api/fetchMainGalleryImages";
@@ -43,6 +43,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./Home.styles";
 
 // Use the Filters context
+import { ThemedText } from "@/4-shared/components/themed-text";
 import { useFilters } from "@/4-shared/context/filters/FiltersContext";
 
 export const Home: React.FC = () => {
@@ -106,14 +107,13 @@ export const Home: React.FC = () => {
   );
 
   const handleMeasuredSectionLayout = useCallback(
-    (section: "photographers" | "selection") =>
-      (event: LayoutChangeEvent) => {
-        const height = event.nativeEvent.layout.height;
-        setSectionHeights((prev) => {
-          if (Math.abs(prev[section] - height) < 1) return prev;
-          return { ...prev, [section]: height };
-        });
-      },
+    (section: "photographers" | "selection") => (event: LayoutChangeEvent) => {
+      const height = event.nativeEvent.layout.height;
+      setSectionHeights((prev) => {
+        if (Math.abs(prev[section] - height) < 1) return prev;
+        return { ...prev, [section]: height };
+      });
+    },
     [],
   );
 
@@ -132,14 +132,15 @@ export const Home: React.FC = () => {
     (offsetY: number) => {
       const activationY = offsetY + 96;
       const hasSelectionOffset = sectionOffsets.selection > 0;
-      const hasGalleryOffset = sectionOffsets.gallery > sectionOffsets.selection;
+      const hasGalleryOffset =
+        sectionOffsets.gallery > sectionOffsets.selection;
 
       const nextTab: HomeSectionTab =
         hasGalleryOffset && activationY >= sectionOffsets.gallery
           ? "gallery"
           : hasSelectionOffset && activationY >= sectionOffsets.selection
-          ? "selection"
-          : "photographers";
+            ? "selection"
+            : "photographers";
 
       setActiveHomeTab((prev) => (prev === nextTab ? prev : nextTab));
       const nextShowIcons = offsetY < 24;
@@ -449,6 +450,12 @@ export const Home: React.FC = () => {
         scrollY={scrollY}
         ListHeaderComponent={
           <>
+            <ThemedText type="title" style={styles.title}>
+              MOSAIC
+            </ThemedText>
+            <ThemedText type="subtitle">
+              A century of photography, in your pocket.
+            </ThemedText>
             <View onLayout={handleMeasuredSectionLayout("photographers")}>
               <HomeHeaderWithSlider
                 onPhotographerPress={(photographer: PhotographerSlug) => {
@@ -464,6 +471,10 @@ export const Home: React.FC = () => {
             <View onLayout={handleMeasuredSectionLayout("selection")}>
               <MosaicCuratedFinds />
             </View>
+            <ThemedText type="title">GALLERY</ThemedText>
+            <ThemedText type="subtitle">
+              Every image here survived long enough to matter. Start scrolling.
+            </ThemedText>
           </>
         }
       />
