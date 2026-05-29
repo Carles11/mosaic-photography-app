@@ -13,6 +13,8 @@ import { createMainGalleryStyles } from "./MainGallery.styles";
 import { MainGalleryItem } from "./MainGalleryItem";
 import { createMainGalleryItemStyles } from "./MainGalleryItem.styles";
 
+const SESSION_ID = Math.random().toString(36).slice(2);
+
 export const MainGallery: React.FC<
   MainGalleryProps & { firstBlockSize?: number }
 > = ({
@@ -95,7 +97,7 @@ export const MainGallery: React.FC<
     const rest = images.slice(FIRST_BLOCK);
 
     // Build a seed from today's date + count of images to slightly vary if needed.
-    const seed = `${todaySeed}:${images.length}`;
+    const seed = `${todaySeed}:${images.length}:${SESSION_ID}`;
 
     const shuffledRest = seededShuffle(rest, seed);
 
