@@ -3,9 +3,11 @@ import { IconSymbol } from "@/4-shared/components/elements/icon-symbol";
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback, useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
+
 import { styles } from "./SettingsCard.styles";
 
 const KO_FI_URL = "https://ko-fi.com/Q5Q6R6S40";
@@ -42,6 +44,8 @@ export const SettingsCard: React.FC<SettingsCardProps> = ({
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [showInstaInput, setShowInstaInput] = useState(false);
   const [showWebsiteInput, setShowWebsiteInput] = useState(false);
+
+  const router = useRouter();
 
   const handleSupport = useCallback(() => {
     WebBrowser.openBrowserAsync(KO_FI_URL).catch(() => {});
@@ -263,6 +267,26 @@ export const SettingsCard: React.FC<SettingsCardProps> = ({
       </TouchableOpacity>
 
       <View style={styles.divider} />
+      <TouchableOpacity
+        style={styles.row}
+        onPress={() => router.push("/about" as any)}
+      >
+        <View style={styles.rowIconLabel}>
+          <IconSymbol
+            name="info"
+            type="material"
+            size={22}
+            color={theme.icon}
+          />
+          <ThemedText style={styles.rowLabel}>About Mosaic</ThemedText>
+        </View>
+        <IconSymbol
+          name="chevron-right"
+          type="material"
+          size={24}
+          color={theme.icon}
+        />
+      </TouchableOpacity>
 
       {/* Support Mosaic */}
       <View style={[styles.supportBlock, { borderColor: theme.border }]}>

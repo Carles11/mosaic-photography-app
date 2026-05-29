@@ -200,6 +200,11 @@ function InnerLayout() {
           options={{ headerShown: true, title: "Photographers List" }}
         />
         <Stack.Screen name="toolkit/[slug]" options={{ headerShown: true }} />
+        <Stack.Screen
+          name="about"
+          options={{ headerShown: true, title: "About Mosaic" }}
+        />
+        {/* Auth screens */}
         <Stack.Screen name="auth/login" options={{ headerShown: false }} />
         <Stack.Screen name="auth/register" options={{ headerShown: false }} />
         <Stack.Screen

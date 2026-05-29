@@ -2,6 +2,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { logEvent } from "@/4-shared/firebase";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
+import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useCallback } from "react";
 import { Modal, Pressable, TouchableOpacity } from "react-native";
@@ -14,27 +15,30 @@ export const SupportModal: React.FC<{
   onDismiss: () => void;
 }> = ({ visible, onDismiss }) => {
   const { theme } = useTheme();
+  const router = useRouter();
 
   const handleSupport = useCallback(async () => {
     try {
       logEvent("support_modal_tapped", { destination: "kofi" });
-    } catch {
-      // swallow
-    }
+    } catch {}
     onDismiss();
     try {
       await WebBrowser.openBrowserAsync(KO_FI_URL);
-    } catch {
-      // swallow
-    }
+    } catch {}
   }, [onDismiss]);
+
+  const handleLearnMore = useCallback(() => {
+    try {
+      logEvent("support_modal_tapped", { destination: "about" });
+    } catch {}
+    onDismiss();
+    router.push("/about" as any);
+  }, [onDismiss, router]);
 
   const handleDismiss = useCallback(() => {
     try {
       logEvent("support_modal_dismissed");
-    } catch {
-      // swallow
-    }
+    } catch {}
     onDismiss();
   }, [onDismiss]);
 
@@ -71,6 +75,16 @@ export const SupportModal: React.FC<{
             >
               <ThemedText style={styles.supportButtonText}>
                 Support Mosaic on Ko-fi
+              </ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.learnMoreButton, { borderColor: theme.border }]}
+              onPress={handleLearnMore}
+              activeOpacity={0.75}
+            >
+              <ThemedText style={styles.learnMoreText}>
+                Learn more about Mosaic →
               </ThemedText>
             </TouchableOpacity>
 

@@ -52,6 +52,19 @@ export const styles = StyleSheet.create({
     color: "#fff",
     letterSpacing: 0.3,
   },
+  learnMoreButton: {
+    width: "100%",
+    borderRadius: 10,
+    paddingVertical: 11,
+    alignItems: "center",
+    borderWidth: 1,
+    marginBottom: 6,
+  },
+  learnMoreText: {
+    fontSize: 14,
+    fontWeight: "600",
+    opacity: 0.75,
+  },
   dismissButton: {
     paddingVertical: 8,
   },
