@@ -56,8 +56,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     if (result.canceled || !result.assets?.[0]?.uri) return;
 
     setUploading(true);
+    console.log({ result });
     try {
       const publicUrl = await uploadAvatar(user.id, result.assets[0].uri);
+      console.log({ publicUrl });
       await updateProfile(user.id, {
         avatar_url: publicUrl,
         updated_at: new Date().toISOString(),
@@ -65,6 +67,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       onAvatarChange?.(publicUrl);
       showSuccessToast("Avatar updated.");
     } catch (error) {
+      console.log("Upload error:", error);
       showErrorToast("Failed to upload avatar.");
     } finally {
       setUploading(false);

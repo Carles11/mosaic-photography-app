@@ -8,8 +8,10 @@ export async function uploadAvatar(
 ): Promise<string> {
   const path = `${userId}/avatar.jpg`;
 
-  // React Native can't fetch() a local file:// URI directly.
-  // Use FormData which the RN runtime handles natively.
+  // Only change: Force refresh the session before the upload
+  const { error: refreshError } = await supabase.auth.refreshSession();
+  if (refreshError) throw refreshError;
+
   const formData = new FormData();
   formData.append("file", {
     uri: localUri,
