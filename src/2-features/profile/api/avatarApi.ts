@@ -23,10 +23,12 @@ export async function uploadAvatar(
     contentType: "image/jpeg",
     upsert: true,
   });
+  console.log({ error });
 
   if (error) throw error;
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  console.log({ publicUrl: data?.publicUrl });
   return `${data.publicUrl}?t=${Date.now()}`;
 }
 

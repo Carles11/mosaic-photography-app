@@ -26,7 +26,7 @@ const TABS: {
   {
     key: "selection",
     label: "Selection",
-    icon: "auto-awesome",
+    icon: "verified",
     type: "material",
   },
   {
