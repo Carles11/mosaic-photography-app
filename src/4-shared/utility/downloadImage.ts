@@ -21,7 +21,9 @@ export async function downloadImageToDevice({
   }
 
   try {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
+    const { status } = await MediaLibrary.requestPermissionsAsync(false, [
+      "photo",
+    ]);
     if (status !== "granted") {
       showErrorToast("We need your permission to save files to your device.");
       return;

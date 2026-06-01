@@ -1,4 +1,5 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { GALLERY_FIRST_BLOCK } from "@/4-shared/constants/gallery";
 import { authorToFolder, canonicalSlugMap } from "@/4-shared/lib/authorSlug";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import * as Sentry from "@sentry/react-native";
@@ -7,7 +8,7 @@ import { GalleryImage } from "@/4-shared/types";
 
 type FetchMainGalleryOptions = {
   bannedTitles?: string[]; // case-insensitive substring match against title
-  firstBlockSize?: number; // number of first images that must avoid male images (default 30)
+  firstBlockSize?: number; // number of first images that must avoid male images (default: GALLERY_FIRST_BLOCK)
 };
 
 // Module-level cache & logging helpers
@@ -23,13 +24,13 @@ const _loggedMissingAuthors = new Set<string>();
  *
  * - nudity parameter (same as before) can be "nude" | "not-nude" | "all"
  * - options.bannedTitles: string[] (case-insensitive substring match on title). These images are removed entirely.
- * - options.firstBlockSize: number (default 30). When nudity is "nude" or "all", the first N images will not include images with gender === "male".
+ * - options.firstBlockSize: number (default: GALLERY_FIRST_BLOCK). When nudity is "nude" or "all", the first N images will not include images with gender === "male".
  */
 export async function fetchMainGalleryImages(
   nudity: "nude" | "not-nude" | "all" = "not-nude",
   options: FetchMainGalleryOptions = {},
 ): Promise<GalleryImage[]> {
-  const { bannedTitles = [], firstBlockSize = 30 } = options;
+  const { bannedTitles = [], firstBlockSize = GALLERY_FIRST_BLOCK } = options;
 
   // NOTE: include moderation in the select so we can decide to hide banned images on the client
   let query = supabase.from("images_resize").select(
@@ -119,6 +120,48 @@ export async function fetchMainGalleryImages(
     return !(mobileBanned || webBanned);
   });
 
+  const daySeed = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+
+  const xmur3 = (str: string) => {
+    let h = 1779033703 ^ str.length;
+    for (let i = 0; i < str.length; i++) {
+      h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    return () => {
+      h = Math.imul(h ^ (h >>> 16), 2246822507);
+      h = Math.imul(h ^ (h >>> 13), 3266489909);
+      return (h ^= h >>> 16) >>> 0;
+    };
+  };
+
+  const mulberry32 = (a: number) => {
+    return () => {
+      let t = (a += 0x6d2b79f5);
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+
+  const seededShuffle = <T>(arr: T[], seedStr: string) => {
+    const arrCopy = [...arr];
+    const seedFn = xmur3(seedStr);
+    const rand = mulberry32(seedFn());
+
+    for (let i = arrCopy.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [arrCopy[i], arrCopy[j]] = [arrCopy[j], arrCopy[i]];
+    }
+
+    return arrCopy;
+  };
+
+  const shuffled = seededShuffle(
+    filtered,
+    `${daySeed}:${nudity}:${filtered.length}`,
+  );
+
   // --- NEW: fetch photographer slugs for the distinct authors present in `filtered` ---
   // Normalize author keys (trim) to avoid whitespace mismatches.
   const authors = Array.from(
@@ -203,7 +246,7 @@ export async function fetchMainGalleryImages(
   const firstBlock: GalleryImage[] = [];
 
   if (shouldExcludeMaleInFirstBlock) {
-    for (const img of filtered) {
+    for (const img of shuffled) {
       if (firstBlock.length >= firstBlockSize) break;
       const isMale = img.gender && String(img.gender).toLowerCase() === "male";
       if (!isMale) {
@@ -212,14 +255,14 @@ export async function fetchMainGalleryImages(
       }
     }
   } else {
-    for (let i = 0; i < Math.min(firstBlockSize, filtered.length); i++) {
-      const img = filtered[i];
+    for (let i = 0; i < Math.min(firstBlockSize, shuffled.length); i++) {
+      const img = shuffled[i];
       firstBlock.push(img);
       includedIds.add(String(img.id));
     }
   }
 
-  const remainder = filtered.filter((img) => !includedIds.has(String(img.id)));
+  const remainder = shuffled.filter((img) => !includedIds.has(String(img.id)));
   const finalGallery = [...firstBlock, ...remainder];
 
   return finalGallery;

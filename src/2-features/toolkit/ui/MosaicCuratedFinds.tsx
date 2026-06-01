@@ -13,10 +13,10 @@ import { styles } from "./MosaicCuratedFinds.styles";
 
 const FILTERS: { label: string; value: AffiliateResourceFilter }[] = [
   { label: "All", value: "all" },
+  { label: "Prints", value: "print" },
   { label: "Tools", value: "tool" },
   { label: "Framing", value: "framing" },
   { label: "Books", value: "book" },
-  { label: "Prints", value: "print" },
 ];
 
 export function MosaicCuratedFinds() {
@@ -44,7 +44,16 @@ export function MosaicCuratedFinds() {
   }, []);
 
   const filteredResources = useMemo(() => {
-    if (selected === "all") return resources;
+    if (selected === "all") {
+      return [...resources].sort((a, b) => {
+        const aIsPrint = a.type?.toLowerCase() === "print";
+        const bIsPrint = b.type?.toLowerCase() === "print";
+
+        if (aIsPrint === bIsPrint) return 0;
+        return aIsPrint ? -1 : 1;
+      });
+    }
+
     return resources.filter(
       (resource) => resource.type?.toLowerCase() === selected,
     );

@@ -124,6 +124,12 @@ module.exports = ({ config }) => ({
           "Mosaic needs access to your photos to update your profile picture.",
       },
     ],
+    [
+      "expo-media-library",
+      {
+        granularPermissions: ["photo"],
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
