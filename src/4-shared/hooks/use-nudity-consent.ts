@@ -150,7 +150,7 @@ export function useNudityConsent() {
 
           if (!upsertError) {
             try {
-              logEvent("nudity_consent_saved", {
+              logEvent("APP_nudity_consent_saved", {
                 method: "supabase",
                 user_state: userState,
                 confirmedAt: payload.confirmedAt,
@@ -195,7 +195,7 @@ export function useNudityConsent() {
           }
 
           try {
-            logEvent("nudity_consent_saved", {
+            logEvent("APP_nudity_consent_saved", {
               method: runtimeStorageType ?? "unknown",
               user_state: userState,
               confirmedAt: payload.confirmedAt,
@@ -235,7 +235,7 @@ export function useNudityConsent() {
           });
         if (!upsertError) {
           try {
-            logEvent("nudity_consent_revoked", {
+            logEvent("APP_nudity_consent_revoked", {
               method: "supabase",
               user_state: userState,
             });
@@ -269,7 +269,7 @@ export function useNudityConsent() {
         }
 
         try {
-          logEvent("nudity_consent_revoked", {
+          logEvent("APP_nudity_consent_revoked", {
             method: runtimeStorageType ?? "unknown",
             user_state: userState,
           });

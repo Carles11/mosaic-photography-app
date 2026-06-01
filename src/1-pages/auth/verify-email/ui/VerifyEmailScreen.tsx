@@ -8,7 +8,7 @@ export function VerifyEmailScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    logEvent("verify_email_auto_redirect");
+    logEvent("APP_verify_email_auto_redirect");
 
     // Show success message and redirect to login
     Alert.alert(

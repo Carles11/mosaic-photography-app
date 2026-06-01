@@ -57,7 +57,7 @@ export function PasswordResetScreen() {
 
   // Analytics: track screen view on mount
   useEffect(() => {
-    logEvent("password_reset_screen_view", {
+    logEvent("APP_password_reset_screen_view", {
       hasAccessToken: Boolean(accessToken),
       hasTokenType: Boolean(tokenType),
       tokenType: tokenType,
@@ -75,21 +75,21 @@ export function PasswordResetScreen() {
     setSuccess(false);
 
     // Analytics: reset attempt
-    logEvent("password_reset_attempt", {
+    logEvent("APP_password_reset_attempt", {
       hasAccessToken: Boolean(accessToken),
       tokenType: tokenType,
     });
 
     if (!password || !repeatPassword) {
       setError("Please fill out both fields.");
-      logEvent("password_reset_failure", {
+      logEvent("APP_password_reset_failure", {
         reason: "empty_fields",
       });
       return;
     }
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
-      logEvent("password_reset_failure", {
+      logEvent("APP_password_reset_failure", {
         reason: "passwords_do_not_match",
       });
       return;
@@ -98,7 +98,7 @@ export function PasswordResetScreen() {
       setError(
         "Password must be at least 8 characters, including a letter and a number."
       );
-      logEvent("password_reset_failure", {
+      logEvent("APP_password_reset_failure", {
         reason: "weak_password",
       });
       return;
@@ -112,14 +112,14 @@ export function PasswordResetScreen() {
       setError(
         "Invalid or expired password reset link. Please request a new one."
       );
-      logEvent("password_reset_failure", {
+      logEvent("APP_password_reset_failure", {
         reason: "missing_access_token",
       });
       return;
     }
     if (tokenType !== "recovery") {
       setError("Invalid reset link type. Please request a new password reset.");
-      logEvent("password_reset_failure", {
+      logEvent("APP_password_reset_failure", {
         reason: "invalid_token_type",
         tokenType: tokenType,
       });
@@ -133,13 +133,13 @@ export function PasswordResetScreen() {
     if (result.error) {
       setError(result.error);
       setSuccess(false);
-      logEvent("password_reset_failure", {
+      logEvent("APP_password_reset_failure", {
         tokenType: tokenType,
         error: result.error,
       });
     } else {
       setSuccess(true);
-      logEvent("password_reset_success", {
+      logEvent("APP_password_reset_success", {
         tokenType: tokenType,
       });
       // Auto-redirect to login after success
@@ -149,12 +149,12 @@ export function PasswordResetScreen() {
   };
 
   const handleGoToLogin = () => {
-    logEvent("password_reset_goto_login_clicked");
+    logEvent("APP_password_reset_goto_login_clicked");
     router.push("/auth/login");
   };
 
   const handleRequestNewLink = () => {
-    logEvent("password_reset_request_new_link");
+    logEvent("APP_password_reset_request_new_link");
     router.push("/auth/forgot-password");
   };
 

@@ -107,7 +107,7 @@ export function MagicLinkScreen() {
         setStatus("error");
         setError("Invalid magic link. No authentication token found.");
         setVerificationAttempted(true);
-        logEvent("magic_link_verification_failure", {
+        logEvent("APP_magic_link_verification_failure", {
           reason: "missing_token",
           hasDeepLinkParams: !!urlParams,
           hasMagicParams: !!Object.keys(magicParams).length,
@@ -148,7 +148,7 @@ export function MagicLinkScreen() {
     setError(null);
     setVerifyResult(null);
 
-    logEvent("magic_link_verification_attempt", {
+    logEvent("APP_magic_link_verification_attempt", {
       email: emailParam,
       token_length: tokenParam?.length || 0,
       type: typeParam,
@@ -170,7 +170,7 @@ export function MagicLinkScreen() {
       if (result && result.error) {
         setStatus("error");
         setError(result.error);
-        logEvent("magic_link_verification_failure", {
+        logEvent("APP_magic_link_verification_failure", {
           email: emailParam,
           type: typeParam,
           error: result.error,
@@ -178,7 +178,7 @@ export function MagicLinkScreen() {
       } else {
         setStatus("success");
         await clearMagicLinkEmail(); // Cleanup: remove stored email after successful login
-        logEvent("magic_link_verification_success", {
+        logEvent("APP_magic_link_verification_success", {
           email: emailParam,
           type: typeParam,
         });
@@ -187,7 +187,7 @@ export function MagicLinkScreen() {
     } catch (e: any) {
       setStatus("error");
       setError(e?.message || "Unexpected error during verification");
-      logEvent("magic_link_verification_failure", {
+      logEvent("APP_magic_link_verification_failure", {
         email: emailParam,
         type: typeParam,
         error: e?.message || "Unexpected JS error",
@@ -196,7 +196,7 @@ export function MagicLinkScreen() {
   };
 
   const handleGoToLogin = () => {
-    logEvent("magic_link_goto_login_clicked");
+    logEvent("APP_magic_link_goto_login_clicked");
     router.push("/auth/login");
   };
 

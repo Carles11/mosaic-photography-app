@@ -116,7 +116,7 @@ export default function CollectionsList() {
           collection.description ?? ""
         } View it here: ${url}`;
     Share.share({ message });
-    logEvent("collection_shared", {
+    logEvent("APP_collection_shared", {
       collectionId: collection.id,
       collectionName: collection.name,
       imageCount: collection.imageCount,

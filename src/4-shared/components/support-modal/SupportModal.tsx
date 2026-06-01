@@ -19,7 +19,11 @@ export const SupportModal: React.FC<{
 
   const handleSupport = useCallback(async () => {
     try {
-      logEvent("support_modal_tapped", { destination: "kofi" });
+      logEvent("APP_support_modal_tapped", { destination: "kofi" });
+      logEvent("APP_prompt_converted", {
+        prompt_type: "support",
+        conversion: "kofi_click",
+      });
     } catch {}
     onDismiss();
     try {
@@ -29,7 +33,11 @@ export const SupportModal: React.FC<{
 
   const handleLearnMore = useCallback(() => {
     try {
-      logEvent("support_modal_tapped", { destination: "about" });
+      logEvent("APP_support_modal_tapped", { destination: "about" });
+      logEvent("APP_prompt_converted", {
+        prompt_type: "support",
+        conversion: "about_click",
+      });
     } catch {}
     onDismiss();
     router.push("/about" as any);
@@ -37,7 +45,11 @@ export const SupportModal: React.FC<{
 
   const handleDismiss = useCallback(() => {
     try {
-      logEvent("support_modal_dismissed");
+      logEvent("APP_support_modal_dismissed");
+      logEvent("APP_prompt_dismissed", {
+        prompt_type: "support",
+        trigger: "app_open_threshold",
+      });
     } catch {}
     onDismiss();
   }, [onDismiss]);

@@ -45,9 +45,11 @@ import { styles } from "./Home.styles";
 // Use the Filters context
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { useFilters } from "@/4-shared/context/filters/FiltersContext";
+import { useReviewPrompt } from "@/4-shared/hooks/use-review-prompt";
 
 export const Home: React.FC = () => {
   const { theme } = useTheme();
+  const { incrementDownloadCount } = useReviewPrompt();
   const { user, loading: authLoading } = useAuthSession();
   const [isFilterMenuOpen, setFilterMenuOpen] = useState(false);
   const [isImageMenuOpen, setImageMenuOpen] = useState(false);
@@ -161,14 +163,14 @@ export const Home: React.FC = () => {
 
   // --- Analytics: home screen_view event ---
   useEffect(() => {
-    logEvent("screen_view", {
+    logEvent("APP_screen_view", {
       screen: "Home",
       section: "main_gallery",
     });
     const sessionStart = Date.now();
     return () => {
       const duration = (Date.now() - sessionStart) / 1000;
-      logEvent("home_session", {
+      logEvent("APP_home_session", {
         duration,
       });
     };
@@ -284,7 +286,7 @@ export const Home: React.FC = () => {
   // TODO: Analytics: track Filter Menu opened
   const handleOpenFiltersMenu = () => {
     setFilterMenuOpen(true);
-    logEvent("filters_menu_opened", {
+    logEvent("APP_filters_menu_opened", {
       screen: "Home",
       context: "header",
     });
@@ -294,7 +296,7 @@ export const Home: React.FC = () => {
     setSelectedImage(image);
     setDownloadOptions(getAvailableDownloadOptionsForImage(image));
     setImageMenuOpen(!isImageMenuOpen);
-    logEvent("image_view", {
+    logEvent("APP_image_view", {
       imageId: image.id,
       imageTitle: image.title,
       photographer: image.author,
@@ -322,7 +324,7 @@ export const Home: React.FC = () => {
       return;
     }
     await toggleFavorite(selectedImage.id);
-    logEvent("favorite_toggle", {
+    logEvent("APP_favorite_toggle", {
       imageId: selectedImage.id,
       favorited: !isFavorite(selectedImage.id),
     });
@@ -340,7 +342,7 @@ export const Home: React.FC = () => {
       await Share.share({
         message: shareMsg,
       });
-      logEvent("share", {
+      logEvent("APP_share", {
         imageId: selectedImage.id,
       });
     } catch (error) {
@@ -355,7 +357,7 @@ export const Home: React.FC = () => {
       );
       return;
     }
-    await downloadImageToDevice({
+    const didDownload = await downloadImageToDevice({
       option,
       selectedImage,
       user,
@@ -368,6 +370,10 @@ export const Home: React.FC = () => {
       },
       origin: "home_screen",
     });
+
+    if (didDownload) {
+      await incrementDownloadCount();
+    }
   };
 
   useEffect(() => {
@@ -411,7 +417,7 @@ export const Home: React.FC = () => {
     reportSheetRef.current?.open({
       imageId: selectedImage ? Number(selectedImage.id) : undefined,
     });
-    logEvent("report_image", {
+    logEvent("APP_report_image", {
       imageId: selectedImage.id,
     });
   };
@@ -422,7 +428,7 @@ export const Home: React.FC = () => {
 
   const handleApplyFilter = (nextFilters: typeof filters): void => {
     setFilters(nextFilters);
-    logEvent("filter_applied", {
+    logEvent("APP_filter_applied", {
       filters: nextFilters,
     } as FilterApplyEventData);
   };
@@ -459,7 +465,7 @@ export const Home: React.FC = () => {
             <View onLayout={handleMeasuredSectionLayout("photographers")}>
               <HomeHeaderWithSlider
                 onPhotographerPress={(photographer: PhotographerSlug) => {
-                  logEvent("photographer_click", {
+                  logEvent("APP_photographer_click", {
                     id: photographer.id,
                     slug: photographer.slug,
                     name: photographer.name,
@@ -485,7 +491,7 @@ export const Home: React.FC = () => {
         setFilters={handleApplyFilter}
         resetFilters={() => {
           clearFilters();
-          logEvent("filters_reset", {});
+          logEvent("APP_filters_reset", {});
         }}
         photographerNames={photographerNames}
       />

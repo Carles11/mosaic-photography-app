@@ -67,7 +67,7 @@ export function usePersistentGalleryFilters(filters: GalleryFilter) {
           lastSavedRef.current = mergedFilters ?? {};
           // Analytics: filters_saved
           try {
-            logEvent("filters_saved", {
+            logEvent("APP_filters_saved", {
               source: "persistent_hook",
               mergedKeys: Object.keys(mergedFilters ?? {}).length,
               nudity: (mergedFilters as any)?.nudity ?? null,

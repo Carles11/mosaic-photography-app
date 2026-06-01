@@ -37,7 +37,7 @@ export function ForgotPasswordScreen() {
 
   // Analytics: track screen view on mount
   useEffect(() => {
-    logEvent("forgot_password_screen_view");
+    logEvent("APP_forgot_password_screen_view");
   }, []);
 
   const handleForgotPassword = async () => {
@@ -45,20 +45,20 @@ export function ForgotPasswordScreen() {
     setSuccess(false);
 
     // Analytics: attempt
-    logEvent("forgot_password_attempt", {
+    logEvent("APP_forgot_password_attempt", {
       emailFilled: !!email,
     });
 
     if (!email) {
       setError("Please enter your email address.");
-      logEvent("forgot_password_failure", {
+      logEvent("APP_forgot_password_failure", {
         reason: "empty_email",
       });
       return;
     }
     if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
-      logEvent("forgot_password_failure", {
+      logEvent("APP_forgot_password_failure", {
         reason: "invalid_email",
         email,
       });
@@ -70,13 +70,13 @@ export function ForgotPasswordScreen() {
     if (result.error) {
       setError(result.error);
       setSuccess(false);
-      logEvent("forgot_password_failure", {
+      logEvent("APP_forgot_password_failure", {
         error: result.error,
         email,
       });
     } else {
       setSuccess(true);
-      logEvent("forgot_password_success", {
+      logEvent("APP_forgot_password_success", {
         email,
       });
     }
@@ -84,7 +84,7 @@ export function ForgotPasswordScreen() {
   };
 
   const handleGoToLogin = () => {
-    logEvent("forgot_password_goto_login_clicked");
+    logEvent("APP_forgot_password_goto_login_clicked");
     router.push("/auth/login");
   };
 

@@ -320,7 +320,7 @@ const PhotographerDetailScreen: React.FC = () => {
     setTimeout(() => {
       imageMenuSheetRef.current?.present?.();
     }, 0);
-    logEvent("image_view", {
+    logEvent("APP_image_view", {
       imageId: image.id,
       imageTitle: image.title,
       photographer: image.author,
@@ -340,7 +340,7 @@ const PhotographerDetailScreen: React.FC = () => {
       return;
     }
     try {
-      await downloadImageToDevice({
+      const didDownload = await downloadImageToDevice({
         option,
         selectedImage,
         user,
@@ -354,7 +354,9 @@ const PhotographerDetailScreen: React.FC = () => {
         origin: "photographer_detail_screen",
       });
 
-      incrementDownloadCount();
+      if (didDownload) {
+        await incrementDownloadCount();
+      }
     } catch (error) {
       // Error handling is done in downloadImageToDevice, but we catch here to prevent unhandled promise rejections.
       console.error("Error in handleDownloadOption:", error);
@@ -373,7 +375,7 @@ const PhotographerDetailScreen: React.FC = () => {
       await Share.share({
         message: shareMsg,
       });
-      logEvent("share", {
+      logEvent("APP_share", {
         imageId: selectedImage.id,
       });
     } catch (error) {
@@ -388,7 +390,7 @@ const PhotographerDetailScreen: React.FC = () => {
       return;
     }
     await toggleFavorite(selectedImage.id);
-    logEvent("favorite_toggle", {
+    logEvent("APP_favorite_toggle", {
       imageId: selectedImage.id,
       favorited: !isFavorite(selectedImage.id),
     });
@@ -435,7 +437,7 @@ const PhotographerDetailScreen: React.FC = () => {
     reportSheetRef.current?.open({
       imageId: selectedImage ? Number(selectedImage.id) : undefined,
     });
-    logEvent("report_image", {
+    logEvent("APP_report_image", {
       imageId: selectedImage.id,
     });
   }, [selectedImage, user, router]);

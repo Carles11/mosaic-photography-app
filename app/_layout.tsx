@@ -7,6 +7,7 @@ import { CommentsProvider } from "@/4-shared/context/comments";
 import { FavoritesProvider } from "@/4-shared/context/favorites";
 import { FiltersProvider } from "@/4-shared/context/filters/FiltersContext";
 import { useSupportPrompt } from "@/4-shared/hooks/use-support-prompt";
+import { useUpdateAwareness } from "@/4-shared/hooks/use-update-awareness";
 import { ThemeProvider, useTheme } from "@/4-shared/theme/ThemeProvider";
 import { MosaicToast } from "@/4-shared/utility/toast/Toast";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -14,7 +15,6 @@ import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import * as Updates from "expo-updates";
 import { useEffect, useMemo } from "react";
 import { Image } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -75,7 +75,7 @@ export const unstable_settings = {
 
 export default Sentry.wrap(function RootLayout() {
   useEffect(() => {
-    logEvent("gallery_opened", { screen: "home", userType: "guest" });
+    logEvent("APP_gallery_opened", { screen: "home", userType: "guest" });
     // Test Sentry event in internal builds only
     if (process.env.EAS_BUILD_PROFILE === "internal") {
       console.debug("[Sentry] Sending test error from internal build");
@@ -83,25 +83,6 @@ export default Sentry.wrap(function RootLayout() {
         new Error("[Sentry] Test error from internal build"),
       );
     }
-
-    // Check for updates on app launch
-    async function checkForUpdates() {
-      if (!__DEV__) {
-        // Only in production builds
-        try {
-          const update = await Updates.checkForUpdateAsync();
-          if (update.isAvailable) {
-            await Updates.fetchUpdateAsync();
-            console.log(
-              "[Updates] Update downloaded. Will apply on next restart.",
-            );
-          }
-        } catch (e) {
-          console.error("[Updates] Error checking for updates:", e);
-        }
-      }
-    }
-    checkForUpdates();
   }, []);
 
   // Prefetch featured photographers on app startup to warm in-memory cache used by slider
@@ -155,6 +136,9 @@ export default Sentry.wrap(function RootLayout() {
 function InnerLayout() {
   const { mode, theme } = useTheme();
   const { shouldShow, markSeen } = useSupportPrompt();
+
+  // Check for app updates while respecting support prompt visibility and global cooldown.
+  useUpdateAwareness({ blockPrompts: shouldShow });
 
   const defaultScreenOptions = useMemo(
     () => ({

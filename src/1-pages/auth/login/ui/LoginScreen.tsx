@@ -34,12 +34,12 @@ export const LoginScreen: React.FC = () => {
 
   // Track screen land and session duration
   useEffect(() => {
-    logEvent("login_screen_view", { timestamp: Date.now() });
+    logEvent("APP_login_screen_view", { timestamp: Date.now() });
     navigation.setOptions({
       title: "Login",
     });
     return () => {
-      logEvent("login_screen_session", {
+      logEvent("APP_login_screen_session", {
         duration: ((Date.now() - sessionStartRef.current) / 1000).toFixed(1),
       });
     };
@@ -57,24 +57,24 @@ export const LoginScreen: React.FC = () => {
     setError(null);
 
     const method = useMagicLink ? "magic_link" : "email_password";
-    logEvent("login_attempt", { method, email });
+    logEvent("APP_login_attempt", { method, email });
 
     if (useMagicLink) {
       const result = await loginWithMagicLink(email);
       if (result.error) {
         setError(result.error);
-        logEvent("login_failure", { method, error: result.error, email });
+        logEvent("APP_login_failure", { method, error: result.error, email });
       } else {
         setMagicLinkSent(true);
-        logEvent("magic_link_sent", { email });
+        logEvent("APP_magic_link_sent", { email });
       }
     } else {
       const result = await loginWithEmail(email, password);
       if (result.error) {
         setError(result.error);
-        logEvent("login_failure", { method, error: result.error, email });
+        logEvent("APP_login_failure", { method, error: result.error, email });
       } else {
-        logEvent("login_success", { method, email });
+        logEvent("APP_login_success", { method, email });
       }
     }
     setIsSubmitting(false);
@@ -99,13 +99,13 @@ export const LoginScreen: React.FC = () => {
             onPress={() => {
               setMagicLinkSent(false);
               setUseMagicLink(false);
-              logEvent("back_to_login_clicked");
+              logEvent("APP_back_to_login_clicked");
             }}
           />
           <OnlyTextButton
             title="Back to Gallery"
             onPress={() => {
-              logEvent("back_home_clicked", { location: "magic_link" });
+              logEvent("APP_back_home_clicked", { location: "magic_link" });
               router.replace("/");
             }}
           />
@@ -171,7 +171,7 @@ export const LoginScreen: React.FC = () => {
           }
           onPress={() => {
             setUseMagicLink(!useMagicLink);
-            logEvent("toggle_login_method", { useMagicLink: !useMagicLink });
+            logEvent("APP_toggle_login_method", { useMagicLink: !useMagicLink });
           }}
         />
 
@@ -179,7 +179,7 @@ export const LoginScreen: React.FC = () => {
           <OnlyTextButton
             title="Forgot Password?"
             onPress={() => {
-              logEvent("forgot_password_clicked");
+              logEvent("APP_forgot_password_clicked");
               router.push("/auth/forgot-password");
             }}
           />
@@ -188,7 +188,7 @@ export const LoginScreen: React.FC = () => {
         <OnlyTextButton
           title="Don't have an account? Register"
           onPress={() => {
-            logEvent("register_clicked");
+            logEvent("APP_register_clicked");
             router.push("/auth/register");
           }}
         />
@@ -197,7 +197,7 @@ export const LoginScreen: React.FC = () => {
         <OnlyTextButton
           title="Back to Home Gallery"
           onPress={() => {
-            logEvent("back_home_clicked", { location: "bottom" });
+            logEvent("APP_back_home_clicked", { location: "bottom" });
             router.replace("/");
           }}
         />

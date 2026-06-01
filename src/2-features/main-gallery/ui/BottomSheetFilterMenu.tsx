@@ -134,7 +134,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
     const userState = user?.id ? "logged_in" : "anonymous";
 
     try {
-      logEvent("nudity_selection", {
+      logEvent("APP_nudity_selection", {
         value,
         origin: "filters_menu",
         user_state: userState,
@@ -147,7 +147,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
     if (value === "not-nude") {
       handleChange("nudity", value);
       try {
-        logEvent("nudity_selection_applied", {
+        logEvent("APP_nudity_selection_applied", {
           value,
           origin: "filters_menu",
           user_state: userState,
@@ -165,7 +165,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
       if (consent) {
         handleChange("nudity", value);
         try {
-          logEvent("nudity_selection_applied", {
+          logEvent("APP_nudity_selection_applied", {
             value,
             origin: "filters_menu",
             user_state: userState,
@@ -175,7 +175,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
           /* swallow */
         }
         try {
-          logEvent("nudity_opt_in", { method: "existing_consent", value });
+          logEvent("APP_nudity_opt_in", { method: "existing_consent", value });
         } catch {
           /* swallow */
         }
@@ -183,12 +183,12 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
         setPendingNudityValue(value);
         setAgeGateVisible(true);
         try {
-          logEvent("nudity_selection_pending", {
+          logEvent("APP_nudity_selection_pending", {
             value,
             origin: "filters_menu",
             user_state: userState,
           });
-          logEvent("nudity_agegate_shown", { origin: "filters_menu" });
+          logEvent("APP_nudity_agegate_shown", { origin: "filters_menu" });
         } catch {
           /* swallow */
         }
@@ -197,13 +197,13 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
       setPendingNudityValue(value);
       setAgeGateVisible(true);
       try {
-        logEvent("nudity_selection_pending", {
+        logEvent("APP_nudity_selection_pending", {
           value,
           origin: "filters_menu",
           user_state: userState,
           error: String(e),
         });
-        logEvent("nudity_agegate_shown", {
+        logEvent("APP_nudity_agegate_shown", {
           origin: "filters_menu",
           error: String(e),
         });
@@ -219,7 +219,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
     try {
       await confirmConsent(payload);
       handleChange("nudity", pendingNudityValue);
-      logEvent("nudity_opt_in", {
+      logEvent("APP_nudity_opt_in", {
         method: "age_gate",
         value: pendingNudityValue,
       });
@@ -233,7 +233,7 @@ export const BottomSheetFilterMenu: React.FC<Props> = ({
   const handleAgeGateCancel = () => {
     setAgeGateVisible(false);
     setPendingNudityValue(null);
-    logEvent("nudity_opt_out", { origin: "filters_menu" });
+    logEvent("APP_nudity_opt_out", { origin: "filters_menu" });
   };
 
   // Photographer names helper (existing)

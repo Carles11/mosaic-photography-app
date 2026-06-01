@@ -52,7 +52,7 @@ export default function FavoritesList() {
 
   // Analytics: track screen view on mount
   useEffect(() => {
-    logEvent("favorites_screen_view", {
+    logEvent("APP_favorites_screen_view", {
       screen: "Favorites",
       favoritesCount: favorites.size,
     });
@@ -84,7 +84,7 @@ export default function FavoritesList() {
       return;
     }
     toggleFavorite(imageId);
-    logEvent("favorite_toggled", {
+    logEvent("APP_favorite_toggled", {
       imageId,
       favorited: !isFavorite(imageId),
       screen: "Favorites",
@@ -93,7 +93,7 @@ export default function FavoritesList() {
 
   const handleAddToCollectionPress = (imageId: string | number) => {
     addCollectionSheetRef.current?.open(imageId);
-    logEvent("add_to_collection_from_favorites", {
+    logEvent("APP_add_to_collection_from_favorites", {
       imageId,
       screen: "Favorites",
     });
@@ -103,7 +103,7 @@ export default function FavoritesList() {
     setZoomIndex(index);
     setZoomVisible(true);
     if (images[index]) {
-      logEvent("favorites_image_zoom", {
+      logEvent("APP_favorites_image_zoom", {
         imageId: images[index].id,
         index,
         screen: "Favorites",
@@ -127,7 +127,7 @@ export default function FavoritesList() {
   }
 
   if (images.length === 0) {
-    logEvent("favorites_empty_state", {
+    logEvent("APP_favorites_empty_state", {
       screen: "Favorites",
     });
     return (

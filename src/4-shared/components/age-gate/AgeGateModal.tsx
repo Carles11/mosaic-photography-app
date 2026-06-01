@@ -35,7 +35,7 @@ export const AgeGateModal: React.FC<{
       setChecked(false);
       try {
         // Existing analytics (firebase)
-        logEvent("agegate_shown", { user_state: userState });
+        logEvent("APP_agegate_shown", { user_state: userState });
       } catch {
         /* swallow */
       }
@@ -57,7 +57,7 @@ export const AgeGateModal: React.FC<{
 
   const handleCancel = () => {
     try {
-      logEvent("agegate_canceled", { user_state: userState });
+      logEvent("APP_agegate_canceled", { user_state: userState });
     } catch {
       /* swallow */
     }
@@ -78,7 +78,7 @@ export const AgeGateModal: React.FC<{
     if (!checked) return;
     const confirmedAt = new Date().toISOString();
     try {
-      logEvent("agegate_confirmed", { user_state: userState, confirmedAt });
+      logEvent("APP_agegate_confirmed", { user_state: userState, confirmedAt });
     } catch {
       /* swallow */
     }

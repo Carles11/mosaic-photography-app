@@ -3,6 +3,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
+import { useReviewPrompt } from "@/4-shared/hooks/use-review-prompt";
 import { getAvailableDownloadOptionsForImage } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { ZoomGalleryModalProps } from "@/4-shared/types/gallery";
@@ -39,6 +40,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
 
   const router = useRouter();
   const { user } = useAuthSession();
+  const { incrementDownloadCount } = useReviewPrompt();
 
   if (!images.length) return null;
 
@@ -142,7 +144,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                 onClose();
                 return;
               }
-              await downloadImageToDevice({
+              const didDownload = await downloadImageToDevice({
                 option,
                 selectedImage: currentImage,
                 user,
@@ -156,6 +158,11 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                 },
                 origin: "zoom-gallery",
               });
+
+              if (didDownload) {
+                await incrementDownloadCount();
+              }
+
               setShowDownloadPanel(false);
               onClose();
             }}

@@ -172,7 +172,7 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
           lastSavedRef.current = mergedFilters ?? {};
           // Analytics: filters_saved
           try {
-            logEvent("filters_saved", {
+            logEvent("APP_filters_saved", {
               source: "filters_provider",
               mergedKeys: Object.keys(mergedFilters ?? {}).length,
               nudity: (mergedFilters as any)?.nudity ?? null,
@@ -263,7 +263,7 @@ export const FiltersProvider: React.FC<{ children: ReactNode }> = ({
           lastSavedRef.current = mergedFilters ?? { nudity: "not-nude" };
           // Analytics: filters_saved for clear action
           try {
-            logEvent("filters_saved", {
+            logEvent("APP_filters_saved", {
               source: "filters_provider_clear",
               mergedKeys: Object.keys(mergedFilters ?? {}).length,
               nudity: (mergedFilters as any)?.nudity ?? null,

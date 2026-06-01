@@ -12,12 +12,12 @@ export async function downloadImageToDevice({
   showErrorToast,
   onRequireLogin,
   origin,
-}: DownloadImageProps) {
-  if (!selectedImage) return;
+}: DownloadImageProps): Promise<boolean> {
+  if (!selectedImage) return false;
   if (!user) {
     if (onRequireLogin) onRequireLogin();
     showErrorToast("Please log in to download images.");
-    return;
+    return false;
   }
 
   try {
@@ -26,7 +26,7 @@ export async function downloadImageToDevice({
     ]);
     if (status !== "granted") {
       showErrorToast("We need your permission to save files to your device.");
-      return;
+      return false;
     }
 
     const fileName = option.url.split("/").pop() ?? "image.webp";
@@ -41,14 +41,17 @@ export async function downloadImageToDevice({
     showSuccessToast(`Image saved to your device!`, hint);
 
     if (logEvent) {
-      logEvent("image_download", {
+      logEvent("APP_image_download", {
         imageId: selectedImage.id,
         option: option.folder,
         origin,
       });
     }
+
+    return true;
   } catch (error) {
     console.log("Error downloading image:", error);
     showErrorToast("Failed to download image.");
+    return false;
   }
 }

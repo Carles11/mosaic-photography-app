@@ -1,3 +1,7 @@
+import {
+  GLOBAL_PROMPT_LAST_SHOWN_AT_KEY,
+  hasGlobalPromptCooldownElapsed,
+} from "@/4-shared/constants/prompts";
 import { logEvent } from "@/4-shared/firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
@@ -18,12 +22,25 @@ export const useSupportPrompt = () => {
         const stored = await AsyncStorage.getItem(OPEN_COUNT_KEY);
         const current = stored ? parseInt(stored, 10) : 0;
         const next = current + 1;
-        await AsyncStorage.setItem(OPEN_COUNT_KEY, next.toString());
+        const [lastPromptRaw] = await Promise.all([
+          AsyncStorage.getItem(GLOBAL_PROMPT_LAST_SHOWN_AT_KEY),
+          AsyncStorage.setItem(OPEN_COUNT_KEY, next.toString()),
+        ]);
+        const lastPromptAt = lastPromptRaw ? parseInt(lastPromptRaw, 10) : null;
 
-        if (next >= OPEN_THRESHOLD) {
+        if (
+          next >= OPEN_THRESHOLD &&
+          hasGlobalPromptCooldownElapsed(lastPromptAt)
+        ) {
           setShouldShow(true);
           try {
-            logEvent("support_modal_shown", { open_count: next });
+            logEvent("APP_support_modal_shown", { open_count: next });
+            logEvent("APP_prompt_shown", {
+              prompt_type: "support",
+              trigger: "app_open_threshold",
+              threshold: OPEN_THRESHOLD,
+              open_count: next,
+            });
           } catch {
             // swallow
           }
@@ -38,7 +55,13 @@ export const useSupportPrompt = () => {
   const markSeen = async () => {
     setShouldShow(false);
     try {
-      await AsyncStorage.setItem(SEEN_KEY, "true");
+      await Promise.all([
+        AsyncStorage.setItem(SEEN_KEY, "true"),
+        AsyncStorage.setItem(
+          GLOBAL_PROMPT_LAST_SHOWN_AT_KEY,
+          Date.now().toString(),
+        ),
+      ]);
     } catch {
       // swallow
     }

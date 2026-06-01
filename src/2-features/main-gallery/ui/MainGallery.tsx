@@ -38,7 +38,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   );
 
   useEffect(() => {
-    logEvent("main_gallery_screen_view", {
+    logEvent("APP_main_gallery_screen_view", {
       screen: "Home",
       galleryTitle: ASO.home.title,
       imagesCount: images.length,
@@ -50,7 +50,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
       setZoomIndex(index);
       setZoomVisible(true);
       if (images[index]) {
-        logEvent("main_gallery_image_zoom", {
+        logEvent("APP_main_gallery_image_zoom", {
           imageId: images[index].id,
           index,
           screen: "Home",
@@ -62,7 +62,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 
   const handleOpenMenu = useCallback(
     (item: GalleryImage) => {
-      logEvent("main_gallery_image_menu_open", {
+      logEvent("APP_main_gallery_image_menu_open", {
         imageId: item.id,
         screen: "Home",
       });
@@ -73,7 +73,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
 
   const handleOpenComments = useCallback(
     (imageId: string | number) => {
-      logEvent("main_gallery_image_comments_open", {
+      logEvent("APP_main_gallery_image_comments_open", {
         imageId,
         screen: "Home",
       });

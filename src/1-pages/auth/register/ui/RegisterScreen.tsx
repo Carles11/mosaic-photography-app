@@ -31,12 +31,12 @@ export const RegisterScreen: React.FC = () => {
   const sessionStartRef = useRef<number>(Date.now());
 
   useEffect(() => {
-    logEvent("register_screen_view", { timestamp: Date.now() });
+    logEvent("APP_register_screen_view", { timestamp: Date.now() });
     navigation.setOptions({
       title: "Register",
     });
     return () => {
-      logEvent("register_screen_session", {
+      logEvent("APP_register_screen_session", {
         duration: ((Date.now() - sessionStartRef.current) / 1000).toFixed(1),
       });
     };
@@ -53,29 +53,29 @@ export const RegisterScreen: React.FC = () => {
 
     if (!email || !password || !repeatPassword) {
       setError("Please fill all fields.");
-      logEvent("register_missing_fields", { email });
+      logEvent("APP_register_missing_fields", { email });
       return;
     }
 
     if (password !== repeatPassword) {
       setError("Passwords do not match.");
-      logEvent("register_password_mismatch", { email });
+      logEvent("APP_register_password_mismatch", { email });
       return;
     }
 
     setIsSubmitting(true);
-    logEvent("register_attempt", { email });
+    logEvent("APP_register_attempt", { email });
 
     const result = await registerWithEmail(email, password);
 
     if (result.error) {
       setError(result.error);
       setSuccess(false);
-      logEvent("register_failure", { error: result.error, email });
+      logEvent("APP_register_failure", { error: result.error, email });
     } else {
       setSuccess(true);
       setError(null);
-      logEvent("register_success", { email });
+      logEvent("APP_register_success", { email });
     }
     setIsSubmitting(false);
   };
@@ -136,7 +136,7 @@ export const RegisterScreen: React.FC = () => {
         <OnlyTextButton
           title="Already have an account? Login"
           onPress={() => {
-            logEvent("login_clicked");
+            logEvent("APP_login_clicked");
             router.push("/auth/login");
           }}
         />

@@ -75,7 +75,7 @@ const ProductCard: React.FC<{
 
   const handleShopNow = useCallback(() => {
     try {
-      logEvent("affiliate_click", {
+      logEvent("APP_affiliate_click", {
         button: "shop_now",
         advertiser_slug: advertiserSlug,
         advertiser_name: advertiserName,

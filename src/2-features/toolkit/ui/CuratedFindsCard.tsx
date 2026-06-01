@@ -51,7 +51,7 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
     }
 
     try {
-      logEvent("affiliate_click", {
+      logEvent("APP_affiliate_click", {
         button: "shop_now",
         advertiser_slug: product.affiliate_advertisers?.slug ?? "",
         advertiser_name: advertiserName,
@@ -79,7 +79,7 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
     }
 
     try {
-      logEvent("affiliate_click", {
+      logEvent("APP_affiliate_click", {
         button: "why_this",
         advertiser_slug: slug,
         advertiser_name: advertiserName,
