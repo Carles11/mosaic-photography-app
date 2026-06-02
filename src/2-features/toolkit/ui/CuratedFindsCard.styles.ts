@@ -54,6 +54,7 @@ export const styles = StyleSheet.create({
   },
   description: {
     marginTop: 8,
+    marginBottom: 4,
     fontSize: 13,
     lineHeight: 18,
     opacity: 0.86,
