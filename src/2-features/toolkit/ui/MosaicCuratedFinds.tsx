@@ -13,10 +13,10 @@ import { styles } from "./MosaicCuratedFinds.styles";
 
 const FILTERS: { label: string; value: AffiliateResourceFilter }[] = [
   { label: "All", value: "all" },
-  { label: "Prints", value: "print" },
-  { label: "Tools", value: "tool" },
-  { label: "Framing", value: "framing" },
   { label: "Books", value: "book" },
+  { label: "Prints", value: "print" },
+  { label: "Framing", value: "framing" },
+  { label: "Tools", value: "tool" },
 ];
 
 export function MosaicCuratedFinds() {

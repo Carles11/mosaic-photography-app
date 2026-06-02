@@ -1,4 +1,6 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { shuffleArray } from "@/4-shared/helpers/shuffle";
+
 import {
   AffiliateAdvertiserWithProducts,
   AffiliateProductWithAdvertiser,
@@ -25,10 +27,10 @@ export async function fetchAffiliateResources(): Promise<
 
   const { data, error } = await supabase
     .from("affiliate_products")
-    .select("*, affiliate_advertisers(*)")
-    .order("featured", { ascending: false })
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: false });
+    .select("*, affiliate_advertisers(*)");
+  // .order("featured", { ascending: false })
+  // .order("sort_order", { ascending: true })
+  // .order("created_at", { ascending: false });
 
   if (error || !data) {
     console.warn("[fetchAffiliateResources] query error", error);
@@ -41,7 +43,10 @@ export async function fetchAffiliateResources(): Promise<
 
   cachedResources = resources.slice();
   cachedAt = Date.now();
-  return resources;
+
+  const shuffledResources = shuffleArray(resources);
+
+  return shuffledResources;
 }
 
 export async function fetchToolkitDataBySlug(
