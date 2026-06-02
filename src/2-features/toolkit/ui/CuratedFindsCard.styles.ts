@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   },
   body: {
     padding: 12,
-    minHeight: 166,
+    height: 200,
   },
   title: {
     fontSize: 16,
@@ -63,7 +63,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 2,
-    marginTop: 12,
+    marginTop: "auto",
   },
   shopButton: {
     flex: 1,
