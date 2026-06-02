@@ -107,7 +107,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
   }
 
   return (
-    <ThemedView style={{ flex: 1, marginBottom: 122 }}>
+    <ThemedView style={{ flex: 1 }}>
       <Gallery
         galleryTitle=""
         scrollY={scrollY}
