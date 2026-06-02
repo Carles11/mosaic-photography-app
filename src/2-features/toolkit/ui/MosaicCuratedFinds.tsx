@@ -21,7 +21,11 @@ const FILTERS: { label: string; value: AffiliateResourceFilter }[] = [
 
 export function MosaicCuratedFinds() {
   const { theme } = useTheme();
-  const [selected, setSelected] = useState<AffiliateResourceFilter>("all");
+  const [selectedType, setSelectedType] =
+    useState<AffiliateResourceFilter>("all");
+  const [selectedAdvertiser, setSelectedAdvertiser] = useState<string | null>(
+    null,
+  );
   const [resources, setResources] = useState<AffiliateProductWithAdvertiser[]>(
     [],
   );
@@ -44,20 +48,27 @@ export function MosaicCuratedFinds() {
   }, []);
 
   const filteredResources = useMemo(() => {
-    if (selected === "all") {
-      return [...resources].sort((a, b) => {
-        const aIsPrint = a.type?.toLowerCase() === "print";
-        const bIsPrint = b.type?.toLowerCase() === "print";
+    const withoutExcludedAdvertiser = resources.filter((resource) => {
+      const advertiserName = resource.affiliate_advertisers?.name ?? "";
+      // temporary disabled until awin program joining confirms
+      return advertiserName.trim().toLowerCase() !== "fine art america";
+    });
 
-        if (aIsPrint === bIsPrint) return 0;
-        return aIsPrint ? -1 : 1;
-      });
+    const byType =
+      selectedType === "all"
+        ? withoutExcludedAdvertiser
+        : withoutExcludedAdvertiser.filter(
+            (resource) => resource.type?.toLowerCase() === selectedType,
+          );
+
+    if (selectedAdvertiser === null) {
+      return byType;
     }
 
-    return resources.filter(
-      (resource) => resource.type?.toLowerCase() === selected,
+    return byType.filter(
+      (resource) => resource.affiliate_advertisers?.name === selectedAdvertiser,
     );
-  }, [resources, selected]);
+  }, [resources, selectedType, selectedAdvertiser]);
 
   return (
     <ThemedView style={styles.section}>
@@ -73,11 +84,14 @@ export function MosaicCuratedFinds() {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.filtersList}
         renderItem={({ item }) => {
-          const isActive = selected === item.value;
+          const isActive = selectedType === item.value;
           return (
             <TouchableOpacity
               activeOpacity={0.75}
-              onPress={() => setSelected(item.value)}
+              onPress={() => {
+                setSelectedAdvertiser(null);
+                setSelectedType(item.value);
+              }}
               style={[
                 styles.pill,
                 {

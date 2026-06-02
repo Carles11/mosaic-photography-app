@@ -15,6 +15,7 @@ const CACHE_TTL_MS = 1000 * 60 * 5;
 function isVisibleResource(product: AffiliateProductWithAdvertiser) {
   const advertiserName =
     product.affiliate_advertisers?.name ?? product.advertiser_name ?? "";
+  // temporary disabled until awin program joining confirms
   return !EXCLUDED_ADVERTISER_NAMES.has(advertiserName.trim().toLowerCase());
 }
 
@@ -41,10 +42,10 @@ export async function fetchAffiliateResources(): Promise<
     isVisibleResource,
   );
 
-  cachedResources = resources.slice();
-  cachedAt = Date.now();
-
   const shuffledResources = shuffleArray(resources);
+
+  cachedResources = shuffledResources.slice();
+  cachedAt = Date.now();
 
   return shuffledResources;
 }
