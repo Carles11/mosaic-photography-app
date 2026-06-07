@@ -1,8 +1,12 @@
+import { FavoriteButton } from "@/3-entities/images/ui/FavoriteButton";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { useComments } from "@/4-shared/context/comments";
+import { useFavorites } from "@/4-shared/context/favorites";
 import { getCanonicalSlug } from "@/4-shared/lib/authorSlug";
 import { getBestS3UrlsForProgressiveZoom } from "@/4-shared/lib/getBestS3UrlsForProgressiveZoom";
 import { ZoomImageProps } from "@/4-shared/types/gallery";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
+import { Ionicons } from "@expo/vector-icons";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import { useRouter } from "expo-router";
 import React, { useCallback, useRef, useState } from "react";
@@ -33,6 +37,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
   style,
   imageStyle,
   onPressAuthor,
+  onPressComments,
 }) => {
   const { width: deviceWidth } = useWindowDimensions();
 
@@ -70,6 +75,22 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
 
   const handleSingleTap = () => {
     setOverlaysVisible((prev) => !prev);
+  };
+
+  const { isFavorite, toggleFavorite, isUserLoggedIn, loading: favLoading } =
+    useFavorites();
+  const { getCommentCount } = useComments();
+
+  const handleFavoritePress = () => {
+    if (!isUserLoggedIn()) {
+      showErrorToast("Please log in to add favorites.");
+      return;
+    }
+    if (image.id != null) toggleFavorite(image.id);
+  };
+
+  const handleCommentPress = () => {
+    if (image.id != null) onPressComments?.(image.id);
   };
 
   const hasPreview = !!previewUrl && previewUrl.length > 0;
@@ -199,6 +220,32 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
           />
         </Animated.Text>
       </Animated.View>
+
+      {/* Bottom-right action bar: favorites + comments */}
+      {image.id != null && (
+        <Animated.View style={[styles.actionBar, overlayStyle]} pointerEvents="box-none">
+          <View style={styles.actionBarPill}>
+            <FavoriteButton
+              imageId={image.id}
+              size={18}
+              accessibilityLabel="Toggle favorite"
+              onPressFavoriteIcon={handleFavoritePress}
+              isFavorite={isFavorite}
+              loading={favLoading}
+            />
+          </View>
+          <TouchableOpacity
+            style={styles.actionBarPill}
+            onPress={handleCommentPress}
+            accessibilityLabel="Comments"
+          >
+            <Ionicons name="chatbubble-outline" size={18} color="#f0f0f0" />
+            <ThemedText style={styles.actionBarText}>
+              {getCommentCount(String(image.id))}
+            </ThemedText>
+          </TouchableOpacity>
+        </Animated.View>
+      )}
       {(loading || !zoomLoaded) && overlaysVisible && (
         <ActivityIndicator
           size="large"

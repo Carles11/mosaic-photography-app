@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import type { ContributorImage } from "@/4-shared/types";
 import { getBestUrlForWidth } from "@/4-shared/lib/getAllS3Urls";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { styles } from "./ContributorGallery.styles";
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export default function ContributorGallery({ images, onPressImage }: Props) {
+  const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const THUMB = Math.floor((width - 40) / 3);
 
@@ -28,7 +30,7 @@ export default function ContributorGallery({ images, onPressImage }: Props) {
           <TouchableOpacity
             key={img.id}
             onPress={() => onPressImage?.(i)}
-            style={[styles.thumb, { width: THUMB, height: THUMB }]}
+            style={[styles.thumb, { width: THUMB, height: THUMB, backgroundColor: theme.border }]}
           >
             <Image
               source={{ uri: url }}

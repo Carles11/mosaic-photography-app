@@ -60,6 +60,28 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 10,
     zIndex: 10,
   },
+  actionBar: {
+    position: "absolute",
+    bottom: "20%",
+    right: 26,
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 6,
+    zIndex: 11,
+  },
+  actionBarPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(30,30,30,0.7)",
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  actionBarText: {
+    color: "#f0f0f0",
+    fontSize: 13,
+    marginLeft: 2,
+  },
   noImageContainer: {
     backgroundColor: "#333",
     alignItems: "center",

@@ -109,6 +109,7 @@ export type ZoomGalleryModalProps = {
   visible: boolean;
   initialIndex?: number;
   onClose: () => void;
+  onPressComments?: (imageId: number) => void;
 };
 
 export type BottomSheetFilterMenuProps = {
@@ -135,6 +136,7 @@ export type ZoomImageProps = {
     description?: string;
     // optional nav slug available when provided by the data layer
     photographerSlug?: string;
+    id?: number;
   };
   minScale?: number;
   maxScale?: number;
@@ -145,4 +147,5 @@ export type ZoomImageProps = {
   style?: StyleProp<ViewStyle>;
   imageStyle?: any;
   onPressAuthor?: (navSlug: string) => void;
+  onPressComments?: (imageId: number) => void;
 };

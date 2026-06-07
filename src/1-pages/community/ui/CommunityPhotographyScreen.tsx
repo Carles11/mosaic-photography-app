@@ -3,6 +3,7 @@ import { fetchContributorsList } from "@/2-features/community/photography/api/fe
 import ContributorApplicationForm from "@/2-features/community/photography/ui/ContributorApplicationForm";
 import { getBestUrlForWidth } from "@/4-shared/lib/getAllS3Urls";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -36,6 +37,7 @@ const nudityLabel = (value: string | null | undefined): string | null => {
 };
 
 export default function CommunityPhotographyScreen() {
+  const { theme } = useTheme();
   const router = useRouter();
   const scrollRef = useRef<ScrollView>(null);
   const ctaRef = useRef<View>(null);
@@ -98,7 +100,7 @@ export default function CommunityPhotographyScreen() {
 
   if (loading) {
     return (
-      <View style={styles.centered}>
+      <View style={[styles.centered, { backgroundColor: theme.background }]}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -106,10 +108,10 @@ export default function CommunityPhotographyScreen() {
 
   if (error) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View style={[styles.centered, { backgroundColor: theme.background }]}>
+        <Text style={[styles.errorText, { color: theme.icon }]}>{error}</Text>
         <TouchableOpacity
-          style={styles.retryButton}
+          style={[styles.retryButton, { borderColor: theme.border }]}
           onPress={() => {
             setLoading(true);
             setError(null);
@@ -119,7 +121,7 @@ export default function CommunityPhotographyScreen() {
               .finally(() => setLoading(false));
           }}
         >
-          <Text style={styles.retryButtonText}>Retry</Text>
+          <Text style={[styles.retryButtonText, { color: theme.icon }]}>Retry</Text>
         </TouchableOpacity>
       </View>
     );
@@ -128,42 +130,47 @@ export default function CommunityPhotographyScreen() {
   return (
     <ScrollView
       ref={scrollRef}
-      style={styles.page}
+      style={[styles.page, { backgroundColor: theme.background }]}
       contentContainerStyle={styles.content}
     >
       <View style={styles.header}>
-        <Text style={styles.pageTitle}>The community</Text>
-        <Text style={styles.pageSubTitle}>
+        <Text style={[styles.pageTitle, { color: theme.text }]}>
+          The community
+        </Text>
+        <Text style={[styles.pageSubTitle, { color: theme.icon }]}>
           Contemporary photographers and visual artists who share selected work
           through Mosaic Photography.
         </Text>
-        <Text style={styles.intro}>
+        <Text style={[styles.intro, { color: theme.icon }]}>
           Unlike the public domain archive, these photographs are contemporary
           works owned by the photographers who made them, presented here by
           their choice. Mosaic displays them. The photographers keep everything
           else.
         </Text>
-        <Text style={styles.intro}>
+        <Text style={[styles.intro, { color: theme.icon }]}>
           Mosaic favors photographers whose work (analog or digital) embodies a
           thoughtful, vintage, timeless approach to image-making.
         </Text>
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <Text style={styles.shareButtonText}>Share</Text>
+        <TouchableOpacity
+          style={[styles.shareButton, { borderColor: theme.border }]}
+          onPress={handleShare}
+        >
+          <Text style={[styles.shareButtonText, { color: theme.icon }]}>Share</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.infoSection}>
-        <Text style={styles.sectionTitle}>
+        <Text style={[styles.sectionTitle, { color: theme.text, borderLeftColor: theme.icon }]}>
           How community contributor collections work
         </Text>
-        <View style={styles.infoCard}>
+        <View style={[styles.infoCard, { backgroundColor: theme.background, borderColor: theme.border }]}>
           {[
             "Your photographs remain yours, always.",
             "You choose how others may use them.",
             "Mosaic never claims ownership of your work.",
             "Every photographer confirms they hold the rights to what they submit.",
           ].map((item) => (
-            <Text key={item} style={styles.bulletItem}>
+            <Text key={item} style={[styles.bulletItem, { color: theme.icon }]}>
               {"\u2022 "}
               {item}
             </Text>
@@ -171,20 +178,26 @@ export default function CommunityPhotographyScreen() {
         </View>
       </View>
 
-      {/* CTA / Share Your Work — moved before Community Collections */}
-      <View ref={ctaRef} style={styles.ctaSection}>
-        <Text style={styles.ctaTitle}>Share Your Work</Text>
-        <Text style={styles.ctaText}>
+      {/* CTA / Share Your Work */}
+      <View
+        ref={ctaRef}
+        style={[styles.ctaSection, { backgroundColor: theme.background, borderColor: theme.border }]}
+      >
+        <Text style={[styles.ctaTitle, { color: theme.text }]}>Share Your Work</Text>
+        <Text style={[styles.ctaText, { color: theme.icon }]}>
           Mosaic welcomes photographers whose work aligns with the spirit of the
           archive: thoughtful image-making, strong visual storytelling, and a
           respect for photographic heritage.
         </Text>
-        <Text style={styles.ctaText}>
+        <Text style={[styles.ctaText, { color: theme.icon }]}>
           Contributors retain copyright to their work and choose the license
           under which their images are made available.
         </Text>
-        <TouchableOpacity style={styles.ctaButton} onPress={handleToggleForm}>
-          <Text style={styles.ctaButtonText}>
+        <TouchableOpacity
+          style={[styles.ctaButton, { borderColor: theme.border }]}
+          onPress={handleToggleForm}
+        >
+          <Text style={[styles.ctaButtonText, { color: theme.text }]}>
             {formOpen ? "\u2715 Cancel" : "Apply to contribute"}
           </Text>
         </TouchableOpacity>
@@ -201,12 +214,19 @@ export default function CommunityPhotographyScreen() {
               key={f.value}
               style={[
                 styles.pill,
-                isActive && styles.pillActive,
+                {
+                  borderColor: isActive ? theme.text : theme.border,
+                  backgroundColor: isActive ? theme.text : "transparent",
+                },
               ]}
               onPress={() => setNudityFilter(f.value)}
             >
               <Text
-                style={[styles.pillText, isActive && styles.pillTextActive]}
+                style={[
+                  styles.pillText,
+                  { color: isActive ? theme.background : theme.icon },
+                  isActive && styles.pillTextActive,
+                ]}
               >
                 {f.label}
               </Text>
@@ -215,13 +235,15 @@ export default function CommunityPhotographyScreen() {
         })}
       </View>
 
-      <Text style={styles.sectionTitle}>Community Collections</Text>
+      <Text style={[styles.sectionTitle, { color: theme.text, borderLeftColor: theme.icon }]}>
+        Community Collections
+      </Text>
       {!contributors || contributors.length === 0 ? (
-        <Text style={styles.emptyState}>
+        <Text style={[styles.emptyState, { color: theme.icon }]}>
           The gallery is growing. More contributors coming soon.
         </Text>
       ) : filteredContributors.length === 0 ? (
-        <Text style={styles.emptyState}>
+        <Text style={[styles.emptyState, { color: theme.icon }]}>
           No contributors match the selected filter.
         </Text>
       ) : (
@@ -235,11 +257,11 @@ export default function CommunityPhotographyScreen() {
             return (
               <TouchableOpacity
                 key={c.id}
-                style={[styles.card, { width: CARD_WIDTH }]}
+                style={[styles.card, { width: CARD_WIDTH, backgroundColor: theme.background, borderColor: theme.border, borderWidth: 1 }]}
                 onPress={() => router.push(`/community/photography/${c.slug}`)}
                 activeOpacity={0.85}
               >
-                <View style={styles.cardImageWrapper}>
+                <View style={[styles.cardImageWrapper, { backgroundColor: theme.border }]}>
                   {imageUrl ? (
                     <Image
                       source={{ uri: imageUrl }}
@@ -247,7 +269,7 @@ export default function CommunityPhotographyScreen() {
                       resizeMode="cover"
                     />
                   ) : (
-                    <View style={styles.avatarPlaceholder} />
+                    <View style={[styles.avatarPlaceholder, { backgroundColor: theme.border }]} />
                   )}
                   {badge && (
                     <View style={styles.cardBadge}>
@@ -255,13 +277,15 @@ export default function CommunityPhotographyScreen() {
                     </View>
                   )}
                 </View>
-                <Text style={styles.cardName}>{c.name}</Text>
+                <Text style={[styles.cardName, { color: theme.text }]}>{c.name}</Text>
                 <View style={styles.cardMeta}>
-                  <Text style={styles.cardMetaText}>
+                  <Text style={[styles.cardMetaText, { color: theme.icon }]}>
                     {c.country || "Global"}
                   </Text>
                   {c.license_default && (
-                    <Text style={styles.licenseText}>{c.license_default}</Text>
+                    <Text style={[styles.licenseText, { color: theme.icon }]}>
+                      {c.license_default}
+                    </Text>
                   )}
                 </View>
               </TouchableOpacity>

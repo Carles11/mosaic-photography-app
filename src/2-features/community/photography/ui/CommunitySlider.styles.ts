@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   emptyText: {
-    color: "#666",
     fontStyle: "italic",
     fontSize: 14,
   },
@@ -24,7 +23,6 @@ export const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   ctaLinkText: {
-    color: "#888",
     fontSize: 14,
     textDecorationLine: "underline",
   },

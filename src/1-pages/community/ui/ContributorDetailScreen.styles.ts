@@ -1,15 +1,14 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: "#111" },
+  page: { flex: 1 },
   content: { paddingBottom: 60 },
   centered: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#111",
   },
-  errorText: { color: "#888" },
+  errorText: { fontSize: 15 },
   heroWrapper: { width: "100%", position: "relative" },
   heroImage: { width: "100%", height: "100%" },
   heroOverlay: {
@@ -17,11 +16,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.25)",
   },
   backLink: { padding: 16, paddingBottom: 0 },
-  backLinkText: { color: "#888", fontSize: 13 },
+  backLinkText: { fontSize: 13 },
   pageTitle: {
     fontSize: 32,
     fontWeight: "700",
-    color: "#fff",
     paddingHorizontal: 16,
     marginTop: 8,
   },
@@ -33,36 +31,31 @@ export const styles = StyleSheet.create({
     marginTop: 12,
   },
   metaPill: {
-    backgroundColor: "#2a2a2a",
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 5,
   },
-  metaPillText: { color: "#ccc", fontSize: 12 },
+  metaPillText: { fontSize: 12 },
   aboutSection: { padding: 16, marginTop: 8 },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "500",
-    color: "#fff",
     borderLeftWidth: 3,
-    borderLeftColor: "#888",
     paddingLeft: 12,
     marginBottom: 16,
   },
   shareButton: {
     alignSelf: "flex-start",
     borderWidth: 1,
-    borderColor: "#555",
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
     marginBottom: 16,
   },
-  shareButtonText: { color: "#ccc", fontSize: 13 },
-  bio: { color: "#aaa", lineHeight: 24, marginBottom: 12, fontSize: 15 },
+  shareButtonText: { fontSize: 13 },
+  bio: { lineHeight: 24, marginBottom: 12, fontSize: 15 },
   links: { flexDirection: "row", gap: 16, marginTop: 8 },
   externalLink: {
-    color: "#888",
     fontSize: 14,
     textDecorationLine: "underline",
   },
@@ -77,20 +70,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: "#444",
     borderRadius: 16,
-    backgroundColor: "transparent",
   },
-  galleryPillActive: {
-    borderColor: "#fff",
-    backgroundColor: "#fff",
-  },
+  galleryPillActive: {},
   galleryPillText: {
-    color: "#888",
     fontSize: 13,
   },
   galleryPillTextActive: {
-    color: "#000",
     fontWeight: "600",
   },
 });

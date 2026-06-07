@@ -2,6 +2,7 @@ import { DownloadOptionsPanel } from "@/4-shared/components/download-options/ui/
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { useComments } from "@/4-shared/context/comments";
 import { logEvent } from "@/4-shared/firebase";
 import { useReviewPrompt } from "@/4-shared/hooks/use-review-prompt";
 import { getAvailableDownloadOptionsForImage } from "@/4-shared/lib/getAvailableDownloadOptionsForImage";
@@ -27,6 +28,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
   visible,
   initialIndex = 0,
   onClose,
+  onPressComments,
 }) => {
   const carouselRef = useRef<any>(null);
   const [currentIndex, setCurrentIndex] = React.useState(initialIndex);
@@ -41,11 +43,19 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
   const router = useRouter();
   const { user } = useAuthSession();
   const { incrementDownloadCount } = useReviewPrompt();
+  const { loadCommentCountsBatch } = useComments();
+
+  const currentImage = images[currentIndex];
+
+  React.useEffect(() => {
+    if (visible && currentImage) {
+      loadCommentCountsBatch([String(currentImage.id)]);
+    }
+  }, [visible, currentImage, loadCommentCountsBatch]);
 
   if (!images.length) return null;
 
   // Get download options for current image
-  const currentImage = images[currentIndex];
   const allOptions = getAvailableDownloadOptionsForImage(currentImage);
   const originalOption = allOptions.find((o) => o.isOriginal);
   const webpOptions = allOptions.filter(
@@ -123,6 +133,18 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                     () => router.push(`/photographers/${navSlug}`),
                     80,
                   );
+                }}
+                onPressComments={(imageId) => {
+                  try {
+                    setShowDownloadPanel(false);
+                    onClose();
+                  } catch (e) {
+                    console.warn(
+                      "ZoomGalleryModal: error closing modal before comments",
+                      e,
+                    );
+                  }
+                  setTimeout(() => onPressComments?.(imageId), 80);
                 }}
               />
             </ThemedView>

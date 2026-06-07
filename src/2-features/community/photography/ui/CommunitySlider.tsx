@@ -1,6 +1,7 @@
 import type { ContributorWithFeatured } from "@/2-features/community/photography/api/fetchContributorsList";
 import { fetchContributorsList } from "@/2-features/community/photography/api/fetchContributorsList";
 import { ThemedText } from "@/4-shared/components/themed-text";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,6 +16,7 @@ import { styles } from "./CommunitySlider.styles";
 import CommunitySliderCard from "./CommunitySliderCard";
 
 export default function CommunitySlider() {
+  const { theme } = useTheme();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const [contributors, setContributors] = useState<ContributorWithFeatured[]>(
@@ -47,7 +49,7 @@ export default function CommunitySlider() {
         </View>
       ) : contributors.length === 0 ? (
         <View style={styles.centered}>
-          <Text style={styles.emptyText}>More contributors coming soon.</Text>
+          <Text style={[styles.emptyText, { color: theme.icon }]}>More contributors coming soon.</Text>
         </View>
       ) : (
         <FlatList
@@ -66,7 +68,7 @@ export default function CommunitySlider() {
         style={styles.ctaLink}
         onPress={() => router.push("/community/photography")}
       >
-        <Text style={styles.ctaLinkText}>Add your piece to the mosaic {"\u2192"}</Text>
+        <Text style={[styles.ctaLinkText, { color: theme.icon }]}>Add your piece to the mosaic {"\u2192"}</Text>
       </TouchableOpacity>
     </View>
   );

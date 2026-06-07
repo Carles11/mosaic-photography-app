@@ -8,6 +8,7 @@ import {
   Linking,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { styles } from "./ContributorApplicationForm.styles";
 
 const STORAGE_KEY = "contributorApplication";
@@ -52,6 +53,7 @@ const EMPTY_FORM: FormData = {
 };
 
 export default function ContributorApplicationForm() {
+  const { theme } = useTheme();
   const [formData, setFormData] = useState<FormData>(EMPTY_FORM);
   const [rightsAccepted, setRightsAccepted] = useState(false);
   const [errors, setErrors] = useState<
@@ -209,11 +211,13 @@ Submitted: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
     ]);
   };
 
+  const radioOuterColor = theme.icon;
+
   return (
     <View style={styles.form}>
       {TEXT_FIELDS.map((field) => (
         <View key={field} style={styles.formGroup}>
-          <Text style={styles.label}>
+          <Text style={[styles.label, { color: theme.icon }]}>
             {field === "confirmEmail"
               ? "Repeat email *"
               : field === "imageGallery"
@@ -222,7 +226,11 @@ Submitted: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
             {["email", "name"].includes(field) ? " *" : ""}
           </Text>
           <TextInput
-            style={[styles.input, errors[field] ? styles.inputError : null]}
+            style={[
+              styles.input,
+              { backgroundColor: theme.background, borderColor: theme.border, color: theme.text },
+              errors[field] ? styles.inputError : null,
+            ]}
             value={formData[field]}
             onChangeText={set(field)}
             keyboardType={
@@ -232,6 +240,7 @@ Submitted: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
             }
             autoCapitalize="none"
             autoCorrect={false}
+            placeholderTextColor={theme.icon}
           />
           {errors[field] && (
             <Text style={styles.errorText}>{errors[field]}</Text>
@@ -240,66 +249,78 @@ Submitted: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
       ))}
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>Work type *</Text>
-        {WORK_TYPES.map((option) => (
-          <TouchableOpacity
-            key={option}
-            style={styles.radioRow}
-            onPress={() => set("workType")(option)}
-          >
-            <View
-              style={[
-                styles.radio,
-                formData.workType === option && styles.radioSelected,
-              ]}
-            />
-            <Text style={styles.radioLabel}>{option}</Text>
-          </TouchableOpacity>
-        ))}
+        <Text style={[styles.label, { color: theme.icon }]}>Work type *</Text>
+        {WORK_TYPES.map((option) => {
+          const selected = formData.workType === option;
+          return (
+            <TouchableOpacity
+              key={option}
+              style={styles.radioRow}
+              onPress={() => set("workType")(option)}
+            >
+              <View
+                style={[
+                  styles.radio,
+                  { borderColor: radioOuterColor },
+                  selected && { backgroundColor: theme.text, borderColor: theme.text },
+                ]}
+              />
+              <Text style={[styles.radioLabel, { color: theme.text }]}>{option}</Text>
+            </TouchableOpacity>
+          );
+        })}
         {errors.workType && (
           <Text style={styles.errorText}>{errors.workType}</Text>
         )}
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>Nudity preference *</Text>
-        {NUDITY_OPTIONS.map((option) => (
-          <TouchableOpacity
-            key={option}
-            style={styles.radioRow}
-            onPress={() => set("nudity")(option)}
-          >
-            <View
-              style={[
-                styles.radio,
-                formData.nudity === option && styles.radioSelected,
-              ]}
-            />
-            <Text style={styles.radioLabel}>{option}</Text>
-          </TouchableOpacity>
-        ))}
+        <Text style={[styles.label, { color: theme.icon }]}>Nudity preference *</Text>
+        {NUDITY_OPTIONS.map((option) => {
+          const selected = formData.nudity === option;
+          return (
+            <TouchableOpacity
+              key={option}
+              style={styles.radioRow}
+              onPress={() => set("nudity")(option)}
+            >
+              <View
+                style={[
+                  styles.radio,
+                  { borderColor: radioOuterColor },
+                  selected && { backgroundColor: theme.text, borderColor: theme.text },
+                ]}
+              />
+              <Text style={[styles.radioLabel, { color: theme.text }]}>{option}</Text>
+            </TouchableOpacity>
+          );
+        })}
         {errors.nudity && (
           <Text style={styles.errorText}>{errors.nudity}</Text>
         )}
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>Tell us about your work</Text>
+        <Text style={[styles.label, { color: theme.icon }]}>Tell us about your work</Text>
         <TextInput
-          style={[styles.input, styles.textarea]}
+          style={[
+            styles.input,
+            styles.textarea,
+            { backgroundColor: theme.background, borderColor: theme.border, color: theme.text },
+          ]}
           value={formData.message}
           onChangeText={set("message")}
           multiline
           numberOfLines={5}
           textAlignVertical="top"
           placeholder="Share anything about your work, process, cameras, formats..."
-          placeholderTextColor="#555"
+          placeholderTextColor={theme.icon}
         />
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>Rights & Licensing</Text>
-        <Text style={styles.hintText}>
+        <Text style={[styles.label, { color: theme.icon }]}>Rights & Licensing</Text>
+        <Text style={[styles.hintText, { color: theme.icon }]}>
           By applying, you confirm that any photographs later submitted are your
           own work or that you have the necessary rights to license them.
         </Text>
@@ -311,13 +332,17 @@ Submitted: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
           }}
         >
           <View
-            style={[styles.checkbox, rightsAccepted && styles.checkboxChecked]}
+            style={[
+              styles.checkbox,
+              { borderColor: radioOuterColor },
+              rightsAccepted && { backgroundColor: theme.text, borderColor: theme.text },
+            ]}
           >
             {rightsAccepted && (
-              <Text style={styles.checkmark}>{"\u2713"}</Text>
+              <Text style={[styles.checkmark, { color: theme.background }]}>{"\u2713"}</Text>
             )}
           </View>
-          <Text style={styles.checkboxLabel}>
+          <Text style={[styles.checkboxLabel, { color: theme.icon }]}>
             I confirm that I own or control the rights to the photographs I may
             submit.
           </Text>
@@ -327,15 +352,23 @@ Submitted: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
         )}
       </View>
 
-      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitButtonText}>Preview & send application</Text>
+      <TouchableOpacity
+        style={[styles.submitButton, { backgroundColor: theme.text }]}
+        onPress={handleSubmit}
+      >
+        <Text style={[styles.submitButtonText, { color: theme.background }]}>
+          Preview & send application
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.clearButton} onPress={handleClear}>
-        <Text style={styles.clearButtonText}>Clear form</Text>
+      <TouchableOpacity
+        style={[styles.clearButton, { borderColor: theme.border }]}
+        onPress={handleClear}
+      >
+        <Text style={[styles.clearButtonText, { color: theme.icon }]}>Clear form</Text>
       </TouchableOpacity>
 
-      <Text style={styles.formFooter}>
+      <Text style={[styles.formFooter, { color: theme.icon }]}>
         This will open your email app with a pre-filled message. Your
         application is automatically saved on this device until you clear it.
       </Text>

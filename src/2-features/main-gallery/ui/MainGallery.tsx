@@ -136,6 +136,7 @@ export const MainGallery: React.FC<MainGalleryProps> = ({
         visible={zoomVisible}
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}
+        onPressComments={onPressComments ? (imageId) => handleOpenComments(imageId) : undefined}
       />
     </ThemedView>
   );
