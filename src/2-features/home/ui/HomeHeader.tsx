@@ -7,7 +7,11 @@ import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { styles } from "./HomeHeader.styles";
 
-export type HomeSectionTab = "photographers" | "selection" | "gallery";
+export type HomeSectionTab =
+  | "photographers"
+  | "selection"
+  | "community"
+  | "gallery";
 
 type HomeHeaderProps = {
   onOpenFilters?: () => void;
@@ -28,6 +32,12 @@ const TABS: {
     label: "Selection",
     icon: "verified",
     type: "material",
+  },
+  {
+    key: "community",
+    label: "Community",
+    icon: "people",
+    type: "ion",
   },
   {
     key: "gallery",

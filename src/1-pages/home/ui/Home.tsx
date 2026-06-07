@@ -10,6 +10,7 @@ import {
   ReportBottomSheet,
   ReportBottomSheetRef,
 } from "@/2-features/reporting/ui/ReportBottomSheet";
+import CommunitySlider from "@/2-features/community/photography/ui/CommunitySlider";
 import { MosaicCuratedFinds } from "@/2-features/toolkit";
 import { ASO } from "@/4-shared/config/aso";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
@@ -61,6 +62,7 @@ export const Home: React.FC = () => {
   const [sectionHeights, setSectionHeights] = useState({
     photographers: 0,
     selection: 0,
+    community: 0,
   });
   const [scrollToOffsetRequest, setScrollToOffsetRequest] = useState<{
     offset: number;
@@ -103,13 +105,20 @@ export const Home: React.FC = () => {
     () => ({
       photographers: 0,
       selection: sectionHeights.photographers,
-      gallery: sectionHeights.photographers + sectionHeights.selection,
+      community:
+        sectionHeights.photographers + sectionHeights.selection,
+      gallery:
+        sectionHeights.photographers +
+        sectionHeights.selection +
+        sectionHeights.community,
     }),
     [sectionHeights],
   );
 
   const handleMeasuredSectionLayout = useCallback(
-    (section: "photographers" | "selection") => (event: LayoutChangeEvent) => {
+    (
+      section: "photographers" | "selection" | "community",
+    ) => (event: LayoutChangeEvent) => {
       const height = event.nativeEvent.layout.height;
       setSectionHeights((prev) => {
         if (Math.abs(prev[section] - height) < 1) return prev;
@@ -134,15 +143,19 @@ export const Home: React.FC = () => {
     (offsetY: number) => {
       const activationY = offsetY + 96;
       const hasSelectionOffset = sectionOffsets.selection > 0;
+      const hasCommunityOffset =
+        sectionOffsets.community > sectionOffsets.selection;
       const hasGalleryOffset =
-        sectionOffsets.gallery > sectionOffsets.selection;
+        sectionOffsets.gallery > sectionOffsets.community;
 
       const nextTab: HomeSectionTab =
         hasGalleryOffset && activationY >= sectionOffsets.gallery
           ? "gallery"
-          : hasSelectionOffset && activationY >= sectionOffsets.selection
-            ? "selection"
-            : "photographers";
+          : hasCommunityOffset && activationY >= sectionOffsets.community
+            ? "community"
+            : hasSelectionOffset && activationY >= sectionOffsets.selection
+              ? "selection"
+              : "photographers";
 
       setActiveHomeTab((prev) => (prev === nextTab ? prev : nextTab));
       const nextShowIcons = offsetY < 24;
@@ -476,6 +489,9 @@ export const Home: React.FC = () => {
             </View>
             <View onLayout={handleMeasuredSectionLayout("selection")}>
               <MosaicCuratedFinds />
+            </View>
+            <View onLayout={handleMeasuredSectionLayout("community")}>
+              <CommunitySlider />
             </View>
             <ThemedText type="title">GALLERY</ThemedText>
             <ThemedText type="subtitle">

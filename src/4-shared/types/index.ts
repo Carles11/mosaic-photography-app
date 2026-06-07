@@ -1,5 +1,6 @@
 export * from "./affiliate";
 export * from "./bottomSheets";
+export * from "./contributor";
 export * from "./buttons";
 export * from "./collections";
 export * from "./comments";
