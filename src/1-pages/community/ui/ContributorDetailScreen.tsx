@@ -17,6 +17,10 @@ import { getBestUrlForWidth } from "@/4-shared/lib/getAllS3Urls";
 import { ZoomGalleryModal } from "@/4-shared/components/image-zoom/ui/ZoomGalleryModal";
 import type { GalleryImage } from "@/4-shared/types/gallery";
 import ContributorGallery from "@/2-features/community/photography/ui/ContributorGallery";
+import AgeGateModal from "@/4-shared/components/age-gate/AgeGateModal";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
+import useNudityConsent from "@/4-shared/hooks/use-nudity-consent";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { styles } from "./ContributorDetailScreen.styles";
 
@@ -32,7 +36,11 @@ export default function ContributorDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const [galleryNudityFilter, setGalleryNudityFilter] = useState<
     "all" | "nude" | "not-nude"
-  >("all");
+  >("not-nude");
+  const [ageGateVisible, setAgeGateVisible] = useState(false);
+  const [pendingNudityValue, setPendingNudityValue] = useState<string | null>(null);
+  const { hasConsent, confirmConsent } = useNudityConsent();
+  const { user } = useAuthSession();
 
   const [zoomVisible, setZoomVisible] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
@@ -107,6 +115,71 @@ export default function ContributorDetailScreen() {
     ? getBestUrlForWidth(contributor.featuredImage.s3Progressive, width)
     : contributor.featuredImage?.url ?? null;
 
+  const handleNuditySelection = async (value: "all" | "nude" | "not-nude") => {
+    const userState = user?.id ? "logged_in" : "anonymous";
+
+    try {
+      logEvent("APP_nudity_selection", {
+        value,
+        origin: "contributor_detail_screen",
+        user_state: userState,
+      });
+    } catch { /* swallow */ }
+
+    if (value === "not-nude") {
+      setGalleryNudityFilter(value);
+      return;
+    }
+
+    try {
+      const consent = await hasConsent();
+      if (consent) {
+        setGalleryNudityFilter(value);
+        try {
+          logEvent("APP_nudity_opt_in", { method: "existing_consent", value });
+        } catch { /* swallow */ }
+      } else {
+        setPendingNudityValue(value);
+        setAgeGateVisible(true);
+        try {
+          logEvent("APP_nudity_agegate_shown", { origin: "contributor_detail_screen" });
+        } catch { /* swallow */ }
+      }
+    } catch (e) {
+      setPendingNudityValue(value);
+      setAgeGateVisible(true);
+      try {
+        logEvent("APP_nudity_agegate_shown", {
+          origin: "contributor_detail_screen",
+          error: String(e),
+        });
+      } catch { /* swallow */ }
+    }
+  };
+
+  const handleAgeGateConfirm = async (payload: { confirmedAt: string }) => {
+    setAgeGateVisible(false);
+    if (!pendingNudityValue) return;
+    try {
+      await confirmConsent(payload);
+      setGalleryNudityFilter(pendingNudityValue as "all" | "nude" | "not-nude");
+      logEvent("APP_nudity_opt_in", {
+        method: "age_gate",
+        value: pendingNudityValue,
+      });
+    } catch (e) {
+      console.warn("Failed to persist nudity consent:", e);
+    } finally {
+      setPendingNudityValue(null);
+    }
+  };
+
+  const handleAgeGateCancel = () => {
+    setAgeGateVisible(false);
+    setPendingNudityValue(null);
+    logEvent("APP_nudity_opt_out", { origin: "contributor_detail_screen" });
+  };
+
   const handleShare = async () => {
     await Share.share({
       message: `${contributor.name} on Mosaic Photography`,
@@ -115,6 +188,7 @@ export default function ContributorDetailScreen() {
   };
 
   return (
+    <>
     <ScrollView style={[styles.page, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       {heroUrl && (
         <View style={[styles.heroWrapper, { height: width * 0.65 }]}>
@@ -214,7 +288,7 @@ export default function ContributorDetailScreen() {
                       backgroundColor: isActive ? theme.text : "transparent",
                     },
                   ]}
-                  onPress={() => setGalleryNudityFilter(v)}
+                  onPress={() => handleNuditySelection(v)}
                 >
                   <Text
                     style={[
@@ -246,5 +320,12 @@ export default function ContributorDetailScreen() {
         onClose={() => setZoomVisible(false)}
       />
     </ScrollView>
+
+      <AgeGateModal
+        visible={ageGateVisible}
+        onConfirm={handleAgeGateConfirm}
+        onCancel={handleAgeGateCancel}
+      />
+    </>
   );
 }

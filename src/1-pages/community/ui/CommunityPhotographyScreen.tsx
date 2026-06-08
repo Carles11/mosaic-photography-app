@@ -16,6 +16,10 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import AgeGateModal from "@/4-shared/components/age-gate/AgeGateModal";
+import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
+import { logEvent } from "@/4-shared/firebase";
+import useNudityConsent from "@/4-shared/hooks/use-nudity-consent";
 import { styles } from "./CommunityPhotographyScreen.styles";
 
 type NudityFilter = "all" | "nude" | "not-nude";
@@ -50,7 +54,11 @@ export default function CommunityPhotographyScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [nudityFilter, setNudityFilter] = useState<NudityFilter>("all");
+  const [nudityFilter, setNudityFilter] = useState<NudityFilter>("not-nude");
+  const [ageGateVisible, setAgeGateVisible] = useState(false);
+  const [pendingNudityValue, setPendingNudityValue] = useState<string | null>(null);
+  const { hasConsent, confirmConsent } = useNudityConsent();
+  const { user } = useAuthSession();
 
   useEffect(() => {
     async function load() {
@@ -85,6 +93,71 @@ export default function CommunityPhotographyScreen() {
             return c.nudity === "not-nude" || c.nudity === "mixed" || !c.nudity;
           return c.nudity === "nude";
         });
+
+  const handleNuditySelection = async (value: NudityFilter) => {
+    const userState = user?.id ? "logged_in" : "anonymous";
+
+    try {
+      logEvent("APP_nudity_selection", {
+        value,
+        origin: "community_photography_screen",
+        user_state: userState,
+      });
+    } catch { /* swallow */ }
+
+    if (value === "not-nude") {
+      setNudityFilter(value);
+      return;
+    }
+
+    try {
+      const consent = await hasConsent();
+      if (consent) {
+        setNudityFilter(value);
+        try {
+          logEvent("APP_nudity_opt_in", { method: "existing_consent", value });
+        } catch { /* swallow */ }
+      } else {
+        setPendingNudityValue(value);
+        setAgeGateVisible(true);
+        try {
+          logEvent("APP_nudity_agegate_shown", { origin: "community_photography_screen" });
+        } catch { /* swallow */ }
+      }
+    } catch (e) {
+      setPendingNudityValue(value);
+      setAgeGateVisible(true);
+      try {
+        logEvent("APP_nudity_agegate_shown", {
+          origin: "community_photography_screen",
+          error: String(e),
+        });
+      } catch { /* swallow */ }
+    }
+  };
+
+  const handleAgeGateConfirm = async (payload: { confirmedAt: string }) => {
+    setAgeGateVisible(false);
+    if (!pendingNudityValue) return;
+    try {
+      await confirmConsent(payload);
+      setNudityFilter(pendingNudityValue as NudityFilter);
+      logEvent("APP_nudity_opt_in", {
+        method: "age_gate",
+        value: pendingNudityValue,
+      });
+    } catch (e) {
+      console.warn("Failed to persist nudity consent:", e);
+    } finally {
+      setPendingNudityValue(null);
+    }
+  };
+
+  const handleAgeGateCancel = () => {
+    setAgeGateVisible(false);
+    setPendingNudityValue(null);
+    logEvent("APP_nudity_opt_out", { origin: "community_photography_screen" });
+  };
 
   const handleToggleForm = () => {
     const next = !formOpen;
@@ -128,6 +201,7 @@ export default function CommunityPhotographyScreen() {
   }
 
   return (
+    <>
     <ScrollView
       ref={scrollRef}
       style={[styles.page, { backgroundColor: theme.background }]}
@@ -219,7 +293,7 @@ export default function CommunityPhotographyScreen() {
                   backgroundColor: isActive ? theme.text : "transparent",
                 },
               ]}
-              onPress={() => setNudityFilter(f.value)}
+              onPress={() => handleNuditySelection(f.value)}
             >
               <Text
                 style={[
@@ -294,5 +368,12 @@ export default function CommunityPhotographyScreen() {
         </View>
       )}
     </ScrollView>
+
+      <AgeGateModal
+        visible={ageGateVisible}
+        onConfirm={handleAgeGateConfirm}
+        onCancel={handleAgeGateCancel}
+      />
+    </>
   );
 }

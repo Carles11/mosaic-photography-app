@@ -26,4 +26,24 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: "underline",
   },
+  filtersRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: 12,
+    marginBottom: 12,
+    paddingHorizontal: 16,
+  },
+  pill: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderRadius: 16,
+  },
+  pillText: {
+    fontSize: 13,
+  },
+  pillTextActive: {
+    fontWeight: "600",
+  },
 });
