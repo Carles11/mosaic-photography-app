@@ -31,9 +31,7 @@
         "buildType": "app-bundle"
       },
       "ios": {
-        "ios": {
-          "image": "latest"
-        }
+        "image": "latest"
       }
     }
   },
