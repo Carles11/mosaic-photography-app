@@ -111,9 +111,7 @@ module.exports = ({ config }) => ({
       "expo-build-properties",
       {
         ios: {
-          podfileProperties: {
-            "use_modular_headers!": true,
-          },
+          useFrameworks: "static",
         },
       },
     ],
