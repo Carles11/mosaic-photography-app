@@ -112,6 +112,9 @@ module.exports = ({ config }) => ({
       {
         ios: {
           useFrameworks: "static",
+          podfileProperties: {
+            "use_modular_headers!": "true",
+          },
         },
       },
     ],
