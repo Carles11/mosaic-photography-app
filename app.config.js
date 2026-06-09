@@ -107,15 +107,6 @@ module.exports = ({ config }) => ({
       },
     ],
     "@react-native-firebase/app",
-    [
-      "expo-build-properties",
-      {
-        ios: {
-          useFrameworks: "static",
-          podfileProperties: { "use_modular_headers!": true },
-        },
-      },
-    ],
     "expo-web-browser",
     [
       "expo-image-picker",
