@@ -93,9 +93,7 @@ module.exports = ({ config }) => ({
         imageWidth: 375,
         resizeMode: "contain",
         backgroundColor: "#1d1d1d",
-        dark: {
-          backgroundColor: "#1d1d1d",
-        },
+        dark: { backgroundColor: "#1d1d1d" },
       },
     ],
     [
@@ -107,17 +105,17 @@ module.exports = ({ config }) => ({
       },
     ],
     "@react-native-firebase/app",
+    "@react-native-firebase/analytics",
     [
       "expo-build-properties",
       {
         ios: {
           useFrameworks: "static",
-          podfileProperties: {
-            "use_modular_headers!": "true",
-          },
+          forceStaticLinking: ["RNFBApp", "RNFBAnalytics"],
         },
       },
     ],
+    "./plugins/with-rnfb-fix",
     "expo-web-browser",
     [
       "expo-image-picker",
@@ -126,12 +124,7 @@ module.exports = ({ config }) => ({
           "Mosaic needs access to your photos to update your profile picture.",
       },
     ],
-    [
-      "expo-media-library",
-      {
-        granularPermissions: ["photo"],
-      },
-    ],
+    ["expo-media-library", { granularPermissions: ["photo"] }],
   ],
   experiments: {
     typedRoutes: true,
