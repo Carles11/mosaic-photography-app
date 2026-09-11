@@ -150,8 +150,43 @@ The app reads gallery data from Supabase tables and views such as:
 - `comments`
 - `reports`
 - `user_profiles`
+- `affiliate_advertisers`
+- `affiliate_products`
 
 Images are expected to expose `base_url`, `filename`, and dimensions. Shared helpers select the best CDN folder for the current display size, such as `w400`, `w600`, `w1200`, `originalsWEBP`, and `originals`.
+
+### Affiliate data
+
+The affiliate tables are shared with the website, so the two must agree on how
+they read them. Two rules matter:
+
+- **Always filter `is_active`** on both `affiliate_products` and
+  `affiliate_advertisers`. A partner is retired by setting the flag to false,
+  not by deleting rows, so anything that ignores it keeps showing links to dead
+  programmes. Amazon was terminated in September 2026 and its 25 product rows
+  are still in the table.
+- **Never open `affiliate_url` directly.** Some rows are site-relative — the
+  TASCHEN products store `/api/go/taschen?u=...&ref=...`, a route on
+  mosaic.photography that picks the visitor's Awin programme by country and
+  redirects. Pass every affiliate URL through
+  `src/4-shared/lib/resolveAffiliateUrl.ts`, which resolves relative paths
+  against the site and refuses anything that is not http(s). Opening the
+  website's router rather than storing absolute links is what keeps country
+  routing and per-product click tracking working on mobile.
+
+#### Known gap: photographer screens can show an empty shelf
+
+`PhotographerLinks` renders whatever `fetchPhotographerBySlug` returns for that
+photographer, and after Amazon was hidden only six photographers have a book —
+TASCHEN publishes no edition for Weston, Brigman, Demachy or Cameron. Those
+screens now read "No store links available" under "Make it Yours".
+
+The website solved this by topping a thin shelf up with general products
+(`getAffiliateProductsByAuthor` in the web repo: minimum of three, books
+preferred, software excluded, round-robin across partners so one partner cannot
+fill the shelf). Porting that here is the fix — the query already exists as
+`fetchAffiliateProductsByAuthor`; it needs a general-pool fallback and a
+minimum. Until then, an empty shelf is expected, not a bug.
 
 ## Authentication
 

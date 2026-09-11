@@ -15,6 +15,8 @@ export type AffiliateAdvertiser = {
   editorial_note?: LocalizedText | null;
   template?: string | null;
   created_at?: string;
+  /** Added by migration 007. False hides the partner on every surface. */
+  is_active?: boolean;
 };
 
 export type AffiliateProduct = {
@@ -30,6 +32,8 @@ export type AffiliateProduct = {
   featured?: boolean;
   sort_order?: number;
   advertiser_name?: string | null;
+  /** Added by migration 007. False hides the product on every surface. */
+  is_active?: boolean;
 };
 
 export type AffiliateProductWithAdvertiser = AffiliateProduct & {

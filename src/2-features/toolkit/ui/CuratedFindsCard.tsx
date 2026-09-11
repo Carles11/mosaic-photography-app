@@ -6,6 +6,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
+import { resolveAffiliateUrl } from "@/4-shared/lib/resolveAffiliateUrl";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { AffiliateProductWithAdvertiser } from "@/4-shared/types";
 import { showErrorToast } from "@/4-shared/utility/toast/Toast";
@@ -45,7 +46,10 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
   const imageUrl = product.image_url || FALLBACK_IMAGE;
 
   const handleShopNow = useCallback(async () => {
-    if (!product.affiliate_url) {
+    // TASCHEN products store a site-relative router path, which no browser
+    // API here will accept as-is.
+    const url = resolveAffiliateUrl(product.affiliate_url);
+    if (!url) {
       showErrorToast("This resource is unavailable right now.");
       return;
     }
@@ -65,7 +69,7 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
     }
 
     try {
-      await WebBrowser.openBrowserAsync(product.affiliate_url);
+      await WebBrowser.openBrowserAsync(url);
     } catch {
       showErrorToast("Could not open this resource.");
     }
@@ -138,7 +142,8 @@ export const CuratedFindsCard = memo(function CuratedFindsCard({
           style={styles.title}
           numberOfLines={2}
         >
-          {product.photographer_author
+          {product.photographer_author &&
+          (product.type === "print" || product.type === "framing")
             ? `${product.photographer_author}'s ${title}`
             : title}
         </ThemedText>

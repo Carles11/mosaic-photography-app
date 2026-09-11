@@ -1,4 +1,5 @@
 import { supabase } from "@/4-shared/api/supabaseClient";
+import { fetchAffiliateProductsByAuthor } from "@/2-features/toolkit/api/fetchAffiliateResources";
 import { getBestS3FolderForWidth } from "@/4-shared/lib/getBestS3FolderForWidth";
 import type { PhotographerSlug } from "@/4-shared/types";
 import * as Sentry from "@sentry/react-native";
@@ -19,7 +20,7 @@ export async function fetchPhotographerBySlug(
     .from("photographers")
     .select(
       `
-      id, name, surname, slug, origin, biography, biography_md, birthdate, deceasedate, website, store, author
+      id, name, surname, slug, origin, biography, biography_md, birthdate, deceasedate, website, author
     `,
     )
     .eq("slug", slug)
@@ -144,8 +145,31 @@ export async function fetchPhotographerBySlug(
     ).url,
   }));
 
+  // The `store` jsonb column is legacy: it still holds links to the Amazon
+  // account that was terminated in September 2026, and the website stopped
+  // reading it for that reason. The same shape is now filled from the live
+  // affiliate tables, so PhotographerLinks renders current, active partners
+  // without needing to change.
+  const affiliateProducts = await fetchAffiliateProductsByAuthor(
+    photographer.author,
+  );
+
+  const store = affiliateProducts.map((product) => {
+    const title = product.title?.en ?? "";
+    const description = product.description?.en ?? "";
+    return {
+      store: product.affiliate_advertisers?.name ?? product.advertiser_name ?? "",
+      website: product.affiliate_url,
+      affiliate: true,
+      image: product.image_url ?? undefined,
+      item: product.type,
+      description: [title, description].filter(Boolean).join(" - "),
+    };
+  });
+
   const resultObj = {
     ...photographer,
+    store,
     images: processed,
   };
 

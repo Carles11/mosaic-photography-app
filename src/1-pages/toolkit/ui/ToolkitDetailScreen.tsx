@@ -4,6 +4,7 @@ import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
 import { useAuthSession } from "@/4-shared/context/auth/AuthSessionContext";
 import { logEvent } from "@/4-shared/firebase";
+import { resolveAffiliateUrl } from "@/4-shared/lib/resolveAffiliateUrl";
 import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import {
   AffiliateAdvertiserWithProducts,
@@ -42,11 +43,14 @@ function getLocalizedText(
 }
 
 function openLink(url: string | null | undefined) {
-  if (!url) {
+  // Affiliate URLs may be site-relative (the TASCHEN country router), which
+  // expo-web-browser cannot open without a scheme.
+  const resolved = resolveAffiliateUrl(url);
+  if (!resolved) {
     showErrorToast("This link is unavailable right now.");
     return;
   }
-  WebBrowser.openBrowserAsync(url).catch(() =>
+  WebBrowser.openBrowserAsync(resolved).catch(() =>
     showErrorToast("Could not open this link."),
   );
 }

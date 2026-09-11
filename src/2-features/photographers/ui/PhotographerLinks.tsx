@@ -1,5 +1,6 @@
 import { ThemedText } from "@/4-shared/components/themed-text";
 import { ThemedView } from "@/4-shared/components/themed-view";
+import { resolveAffiliateUrl } from "@/4-shared/lib/resolveAffiliateUrl";
 import { PhotographerLinksProps, Store } from "@/4-shared/types";
 import React, { useMemo } from "react";
 import {
@@ -18,7 +19,11 @@ import { styles } from "./PhotographerLinks.styles";
  */
 const safeOpenUrl = async (url?: string) => {
   if (!url) return;
-  const normalized = url.startsWith("http") ? url : `https://${url}`;
+  // Was `url.startsWith("http") ? url : "https://" + url`, which turned the
+  // site-relative "/api/go/taschen?..." into "https:///api/go/taschen?..." -
+  // a malformed URL with an empty host.
+  const normalized = resolveAffiliateUrl(url);
+  if (!normalized) return;
   try {
     const supported = await Linking.canOpenURL(normalized);
     if (supported) {

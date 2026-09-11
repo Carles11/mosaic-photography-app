@@ -26,12 +26,15 @@ export async function fetchAffiliateResources(): Promise<
     return cachedResources.slice();
   }
 
+  // `!inner` turns the join into a filter: products of a hidden partner are
+  // dropped, as are hidden products. Without this the app kept showing the 25
+  // Amazon products after the website hid them - links to a terminated account
+  // that earn nothing.
   const { data, error } = await supabase
     .from("affiliate_products")
-    .select("*, affiliate_advertisers(*)");
-  // .order("featured", { ascending: false })
-  // .order("sort_order", { ascending: true })
-  // .order("created_at", { ascending: false });
+    .select("*, affiliate_advertisers!inner(*)")
+    .eq("is_active", true)
+    .eq("affiliate_advertisers.is_active", true);
 
   if (error || !data) {
     console.warn("[fetchAffiliateResources] query error", error);
@@ -62,6 +65,8 @@ export async function fetchToolkitDataBySlug(
     `,
     )
     .eq("slug", slug)
+    .eq("is_active", true)
+    .eq("products.is_active", true)
     .single();
 
   if (error || !data) {
@@ -78,4 +83,46 @@ export async function fetchToolkitDataBySlug(
   });
 
   return advertiser;
+}
+
+/**
+ * Products tied to one photographer, for their detail screen.
+ *
+ * Fine Art America is NOT excluded here, unlike the home shelf: those prints
+ * are of that photographer's own work and belong on their page. They stay
+ * untracked until the Awin application is approved, but they are still the
+ * most relevant thing we can offer.
+ */
+export async function fetchAffiliateProductsByAuthor(
+  author: string,
+): Promise<AffiliateProductWithAdvertiser[]> {
+  if (!author) return [];
+
+  const { data, error } = await supabase
+    .from("affiliate_products")
+    .select("*, affiliate_advertisers!inner(*)")
+    .eq("photographer_author", author)
+    .eq("is_active", true)
+    .eq("affiliate_advertisers.is_active", true);
+
+  if (error || !data) {
+    console.warn("[fetchAffiliateProductsByAuthor] query error", error);
+    return [];
+  }
+
+  // A print of the work being looked at is the nearest thing to what the
+  // visitor already wants; then a book containing it.
+  const TYPE_RANK: Record<string, number> = {
+    print: 0,
+    framing: 1,
+    book: 2,
+    tool: 3,
+  };
+
+  return (data as AffiliateProductWithAdvertiser[]).sort(
+    (a, b) =>
+      (TYPE_RANK[a.type] ?? 8) - (TYPE_RANK[b.type] ?? 8) ||
+      Number(Boolean(b.featured)) - Number(Boolean(a.featured)) ||
+      (a.sort_order ?? 0) - (b.sort_order ?? 0),
+  );
 }
