@@ -34,6 +34,7 @@ type BottomSheetModalProps = {
   style?: StyleProp<ViewStyle>; // <-- Accept single or array
   modalRef?: React.Ref<BottomSheetModalRef>;
   index?: number;
+  enableDynamicSizing?: boolean;
 };
 
 export const BottomSheetModal = forwardRef<
@@ -53,6 +54,7 @@ export const BottomSheetModal = forwardRef<
       style,
       modalRef,
       index = 0,
+      enableDynamicSizing,
     },
     ref,
   ) => {
@@ -80,6 +82,7 @@ export const BottomSheetModal = forwardRef<
         ref={localSheetRef}
         snapPoints={resolvedSnapPoints}
         index={index}
+        {...(enableDynamicSizing !== undefined ? { enableDynamicSizing } : {})}
         enablePanDownToClose={enablePanDownToClose}
         keyboardBehavior={keyboardBehavior}
         keyboardBlurBehavior={keyboardBlurBehavior}

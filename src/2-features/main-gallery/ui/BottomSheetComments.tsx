@@ -42,9 +42,12 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
     return (
       <ReusableBottomSheetModal
         ref={ref}
-        // Single snap point; keep the default index in range so it re-opens reliably
+        // Dynamic sizing is on by default in @gorhom/bottom-sheet v5 and adds a
+        // content-height snap point, so index={0} would open the sheet only a
+        // few lines tall; disable it so the single 95% snap point is used.
         snapPoints={["95%"]}
         index={0}
+        enableDynamicSizing={false}
         onDismiss={onClose}
         enablePanDownToClose
       >
