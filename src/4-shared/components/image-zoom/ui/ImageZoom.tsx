@@ -38,6 +38,7 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
   imageStyle,
   onPressAuthor,
   onPressComments,
+  onRequireLogin,
 }) => {
   const { width: deviceWidth } = useWindowDimensions();
 
@@ -83,7 +84,11 @@ export const ZoomImage: React.FC<ZoomImageProps> = ({
 
   const handleFavoritePress = () => {
     if (!isUserLoggedIn()) {
-      showErrorToast("Please log in to add favorites.");
+      if (onRequireLogin) {
+        onRequireLogin();
+      } else {
+        showErrorToast("Please log in to add favorites.");
+      }
       return;
     }
     if (image.id != null) toggleFavorite(image.id);

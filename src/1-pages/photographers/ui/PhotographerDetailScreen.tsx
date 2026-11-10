@@ -641,6 +641,7 @@ const PhotographerDetailScreen: React.FC = () => {
         images={galleryImages}
         initialIndex={zoomIndex}
         onClose={() => setZoomVisible(false)}
+        onPressComments={(imageId) => handleOpenComments(String(imageId))}
       />
 
       {/* ADDED: Report bottom sheet so the report flow works from this screen */}
