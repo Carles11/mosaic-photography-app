@@ -42,9 +42,9 @@ export const BottomSheetComments = forwardRef<any, BottomSheetCommentsProps>(
     return (
       <ReusableBottomSheetModal
         ref={ref}
-        // Provide two snap points and default to the larger one so inputs are visible
+        // Single snap point; keep the default index in range so it re-opens reliably
         snapPoints={["95%"]}
-        index={1}
+        index={0}
         onDismiss={onClose}
         enablePanDownToClose
       >

@@ -148,4 +148,5 @@ export type ZoomImageProps = {
   imageStyle?: any;
   onPressAuthor?: (navSlug: string) => void;
   onPressComments?: (imageId: number) => void;
+  onRequireLogin?: () => void;
 };

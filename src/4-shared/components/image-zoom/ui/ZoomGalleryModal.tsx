@@ -10,6 +10,7 @@ import { useTheme } from "@/4-shared/theme/ThemeProvider";
 import { ZoomGalleryModalProps } from "@/4-shared/types/gallery";
 import { downloadImageToDevice } from "@/4-shared/utility/downloadImage";
 import {
+  MosaicToast,
   showErrorToast,
   showSuccessToast,
 } from "@/4-shared/utility/toast/Toast";
@@ -146,6 +147,21 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
                   }
                   setTimeout(() => onPressComments?.(imageId), 80);
                 }}
+                onRequireLogin={() => {
+                  try {
+                    setShowDownloadPanel(false);
+                    onClose();
+                  } catch (e) {
+                    console.warn(
+                      "ZoomGalleryModal: error closing modal before login",
+                      e,
+                    );
+                  }
+                  setTimeout(() => {
+                    showErrorToast("Please log in to add favorites.");
+                    router.push("/auth/login");
+                  }, 80);
+                }}
               />
             </ThemedView>
           )}
@@ -196,6 +212,7 @@ export const ZoomGalleryModal: React.FC<ZoomGalleryModalProps> = ({
           />
         )}
       </ThemedView>
+      <MosaicToast />
     </Modal>
   );
 };
