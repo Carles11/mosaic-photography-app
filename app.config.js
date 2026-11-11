@@ -9,8 +9,8 @@ module.exports = ({ config }) => ({
   // START Expo app configuration
   name: "Iconic Photography by Mosaic",
   slug: "mosaic-photography-app",
-  version: "1.4.0",
-  runtimeVersion: "1.4.0",
+  version: "1.4.1",
+  runtimeVersion: "1.4.1",
   updates: {
     url: "https://u.expo.dev/2989e5c6-09a8-4746-ba94-44b2ec60b552",
     enabled: true,
