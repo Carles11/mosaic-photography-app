@@ -139,7 +139,7 @@ module.exports = ({ config }) => ({
       projectId: "2989e5c6-09a8-4746-ba94-44b2ec60b552",
     },
   },
-  owner: "carles-at-notjustdev",
+  owner: "carles-labs",
   platforms: ["ios", "android"],
   // END Expo app configuration
 });
